@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<title>Pulsar.app</title>
+	
+	<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <link href="webpage_files/bootstrap.min.css" rel="stylesheet">
+    <link href="webpage_files/styles.css" rel="stylesheet">
+</head>
+<body class="fade">
+	<!-- painel lateral -->
+	<div id="painel lateral" class="panel">
+		<img style="align-self: center; margin-top: 25px;" src="webpage_files/logo.svg" alt="Pulsar" width="100%"></img>
+		<p href="#gap1" id='btn1' class = "btn" onclick="click1()">SCMBH</p>
+		<p href="#gap2" id='btn2' class = "btn" onclick="click2()">FHSFA</p>
+	</div>
+	<!-- conteúdo -->
+	<div id="conteudo" class="content">
+		<div class="title">
+			<h1>INTEGRAÇÕES PULSAR</h1>
+			<p>Sítio destinado ao acompanhamento das ondas de integração aos ERPs dos parceiros Pulsar</p>
+		</div>
+		<div id="gap1" class="col-lg-12">
+			<h1>INTEGRAÇÕES SCBH</h1>
+			<h1 style="font-size: 22px; font-weight: bold;">ONDA 01</h1>
+		</div>
+			<ul>
+				<li>Unidade de internação</li>
+				<li>Leito do paciente.</li>
+				<li>Código de prontuário do paciente.</li>
+				<li>Código de atendimento atual do paciente.</li>
+				<li>Nome completo do paciente.</li>
+				<li>Data de nascimento do paciente.</li>
+			</ul>
+		<div class="col-lg-12"><hr></div> <!-- separador -->
+			<div id="gap2" class="col-lg-12">
+			<h1>INTEGRAÇÕES FHSFA</h1>
+			<h1 style="font-size: 22px; font-weight: bold;">ONDA 01</h1>
+		</div>
+		<div id="gap2" class="col-lg-12">
+			<ul>
+				<li>Unidade de internação</li>
+				<li>Leito do paciente.</li>
+				<li>Código de prontuário do paciente.</li>
+				<li>Código de atendimento atual do paciente.</li>
+				<li>Nome completo do paciente.</li>
+				<li>Data de nascimento do paciente.</li>
+			</ul>
+		</div> 
+	</div>
+
+	<!-- javascript -->
+    <script>
+	var step1 = document.getElementById("gap1");
+	var step2 = document.getElementById("gap2");
+	function click1(){
+		step1.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+		document.getElementById('btn1').className='btn-active';
+		document.getElementById('btn2').className='btn';
+	}
+	function click2(){
+		step2.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+		document.getElementById('btn1').className='btn';
+		document.getElementById('btn2').className='btn-active';
+	}
+	</script>
+</body>
+</html>
