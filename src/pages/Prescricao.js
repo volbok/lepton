@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Context from './Context';
-// import moment from 'moment';
+import moment from 'moment';
 import 'moment/locale/pt-br';
 // router.
 import { useHistory } from 'react-router-dom';
@@ -26,8 +26,8 @@ function Prescricao() {
     prescricao, setprescricao,
     atendimentos,
     atendimento,
-    // unidade,
-    // paciente,
+    unidade,
+    paciente, pacientes,
   } = useContext(Context);
 
   // history (router).
@@ -36,10 +36,13 @@ function Prescricao() {
   useEffect(() => {
     if (pagina == 10) {
       loadOpcoesPrescricao();
+      loadItensPrescricao();
       loadPrescricao();
     }
     // eslint-disable-next-line
   }, [pagina]);
+
+  var timeout = null;
 
   // ## OPÇÕES DE ITENS DE PRESCRIÇÃO ## //
   // recuperando opções de itens de prescrição.
@@ -48,7 +51,7 @@ function Prescricao() {
   const loadOpcoesPrescricao = () => {
     axios.get(html + 'opcoes_prescricoes').then((response) => {
       setopcoesprescricao(response.data.rows);
-      setarrayopcoesprescricao(response.data.rows);
+      // setarrayopcoesprescricao(response.data.rows);
     })
       .catch(function (error) {
         if (error.response == undefined) {
@@ -66,7 +69,6 @@ function Prescricao() {
         }
       });
   }
-
   // registrando uma nova opção de item de prescrição.
   const insertOpcaoItemPrescricao = () => {
     var categoria = document.getElementById("inputCategoria").value.toUpperCase();
@@ -97,7 +99,6 @@ function Prescricao() {
       toast(settoast, 'PREENCHER TODOS OS CAMPOS', 'red', 1000);
     }
   }
-
   const insertOpcaoComponentePrescricao = (item) => {
     var obj = {
       nome_item: item.nome_item,
@@ -120,8 +121,7 @@ function Prescricao() {
         }, 5000);
       });
   }
-
-  // atualizando um registro de prescrição.
+  // atualizando um registro de opção de item de prescrição.
   const updateOpcaoItemPrescricao = (id) => {
     setid(id);
     setnome(document.getElementById("inputNome").value.toUpperCase());
@@ -162,9 +162,7 @@ function Prescricao() {
         });
     }, 1000);
   }
-
-
-  // atualizando um registro de prescrição.
+  // atualizando um registro de opção de item de prescrição.
   const updateOpcaoComplementoPrescricao = (item, qtde) => {
     var obj = {
       nome_item: item.nome_item,
@@ -187,8 +185,7 @@ function Prescricao() {
         }, 5000);
       });
   }
-
-  // excluir um item de prescricao.
+  // excluir um registro de opção de item de prescriçao.
   const deleteOpcaoItemPrescricao = (id) => {
     axios.get(html + 'delete_opcoes_prescricao/' + id).then(() => {
       loadOpcoesPrescricao();
@@ -202,12 +199,12 @@ function Prescricao() {
       });
   }
 
-  // recuperando registros de itens de prescrição.
-  const [arrayprescricao, setarrayprescricao] = useState([]);
+  // ## LISTA DE PRESCRIÇÕES ## //
+  // recuperando lista de prescrições.
+  const [arraylistaprescricao, setarraylistaprescricao] = useState([]);
   const loadPrescricao = () => {
     axios.get(html + 'list_prescricoes/' + atendimento).then((response) => {
-      setprescricao(response.data.rows);
-      setarrayprescricao(response.data.rows);
+      setarraylistaprescricao(response.data.rows);
     })
       .catch(function (error) {
         if (error.response == undefined) {
@@ -225,31 +222,16 @@ function Prescricao() {
         }
       });
   }
-
-  var timeout = null;
-
-  // registrando um novo item de prescrição.
-  /*
-  const insertItemPrescricao = (item, pai) => {
+  // inserir registro de prescrição.
+  const insertPrescricao = () => {
     var obj = {
-      id_unidade: unidade,
       id_paciente: paciente,
       id_atendimento: atendimento,
-      categoria: item.categoria,
-      componente: item.componente,
-      codigo_item: item.codigo_item,
-      nome_item: item.nome_item,
-      qtde_item: item.qtde_item,
-      via: item.via,
-      freq: item.freq,
-      agora: item.agora,
-      acm: item.acm,
-      sn: item.sn,
-      obs: item.obs,
       data: moment(),
-      id_pai: pai
+      status: 0 // 0 = não salva; 1 = salva (não pode excluir).
     }
     axios.post(html + 'insert_prescricao', obj).then(() => {
+      console.log(JSON.stringify(obj));
       loadPrescricao();
     })
       .catch(function () {
@@ -260,27 +242,13 @@ function Prescricao() {
         }, 5000);
       });
   }
-  
-
   // atualizando um registro de prescrição.
-  const updateItemPrescricao = (item, qtde, via, freq, agora, acm, sn, obs) => {
+  const updatePrescricao = (item, status) => {
     var obj = {
-      id_unidade: unidade,
-      id_paciente: paciente,
-      id_atendimento: atendimento,
-      categoria: item.categoria,
-      componente: item.componente,
-      codigo_item: item.codigo_item,
-      nome_item: item.nome_item,
-      qtde_item: qtde,
-      via: via,
-      freq: freq,
-      agora: agora,
-      acm: acm,
-      sn: sn,
-      obs: obs,
+      id_paciente: item.id_paciente,
+      id_atendimento: item.id_atendimento,
       data: item.data,
-      id_item: item.id_item
+      status: status
     }
     axios.post(html + 'update_prescricao/' + item.id, obj).then(() => {
       loadPrescricao();
@@ -293,9 +261,8 @@ function Prescricao() {
         }, 5000);
       });
   }
-
-  // excluir um item de prescricao.
-  const deleteItemPrescricao = (id) => {
+  // excluindo um registro de prescricao.
+  const deletePrescricao = (id) => {
     axios.get(html + 'delete_prescricao/' + id).then(() => {
       loadPrescricao();
     })
@@ -308,50 +275,218 @@ function Prescricao() {
       });
   }
 
+  // ## ITENS DE PRESCRIÇÃO ## //
+  // recuperando registros de itens de prescrição.
+  const [arrayitensprescricao, setarrayitensprescricao] = useState([]);
+  const loadItensPrescricao = () => {
+    axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+      setprescricao(response.data.rows);
+      setarrayitensprescricao(response.data.rows);
+      if (expand == 1) {
+        setarrayitensprescricao(prescricao.filter(valor => valor.id == selectitemprescricao.id))
+        setexpand(1);
+      }
+    })
+      .catch(function (error) {
+        if (error.response == undefined) {
+          toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 3000);
+          setTimeout(() => {
+            setpagina(0);
+            history.push('/');
+          }, 3000);
+        } else {
+          toast(settoast, error.response.data.message + ' REINICIANDO APLICAÇÃO.', 'black', 3000);
+          setTimeout(() => {
+            setpagina(0);
+            history.push('/');
+          }, 3000);
+        }
+      });
+  }
+  // registrando um novo item de prescrição.
+  const insertItemPrescricao = (item) => {
+    var obj = {
+      id_unidade: unidade,
+      id_paciente: paciente,
+      id_atendimento: atendimento,
+      categoria: item.categoria,
+      codigo_item: item.codigo_item,
+      nome_item: item.nome_item,
+      qtde_item: item.qtde_item,
+      via: item.via,
+      freq: item.freq,
+      agora: item.agora,
+      acm: item.acm,
+      sn: item.sn,
+      obs: item.obs,
+      data: moment(),
+      id_componente_pai: item.id_componente_pai,
+      id_componente_filho: item.id_componente_filho,
+      id_prescricao: idprescricao,
+      id_pai: null,
+    }
+    axios.post(html + 'insert_item_prescricao', obj).then(() => {
+      // pegar a id do item recém-registrado.
+      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+        let x = response.data.rows;
+        setprescricao(response.data.rows);
+        setarrayitensprescricao(response.data.rows);
+        let lastIdItemPrescricao = x.filter(item => item.id_prescricao == idprescricao).slice(-1).map(item => item.id);
+        console.log(lastIdItemPrescricao);
+        // inserir componentes predefinidos para o item prescrito.
+        opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(valor, lastIdItemPrescricao, 0));
+        loadItensPrescricao();
+      }, 2000);
+    })
+      .catch(function () {
+        toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+        setTimeout(() => {
+          setpagina(0);
+          history.push('/');
+        }, 5000);
+      });
+  }
+
+  const insertComponentePrescricao = (componente, id_pai, carrega) => {
+    var obj = {
+      id_unidade: unidade,
+      id_paciente: paciente,
+      id_atendimento: atendimento,
+      categoria: componente.categoria,
+      codigo_item: componente.codigo_item,
+      nome_item: componente.nome_item,
+      qtde_item: componente.qtde_item,
+      via: null,
+      freq: null,
+      agora: null,
+      acm: null,
+      sn: null,
+      obs: null,
+      data: moment(),
+      id_componente_filho: componente.id_componente_filho,
+      id_componente_pai: componente.id_componente_pai,
+      id_prescricao: idprescricao,
+      id_pai: parseInt(id_pai),
+    }
+    axios.post(html + 'insert_item_prescricao', obj).then(() => {
+      console.log('COMPONENTE INSERIDO:');
+      console.log(obj);
+      if (carrega == 1) {
+        loadItensPrescricao();
+      }
+    })
+  }
+
+  // atualizando um registro de prescrição.
+  const updateItemPrescricao = (item, qtde, via, freq, agora, acm, sn, obs) => {
+    var obj = {
+      id_unidade: parseInt(unidade),
+      id_paciente: parseInt(paciente),
+      id_atendimento: atendimento,
+      categoria: item.categoria,
+      codigo_item: parseInt(item.codigo_item),
+      nome_item: item.nome_item,
+      qtde_item: parseInt(qtde),
+      via: via,
+      freq: freq,
+      agora: agora,
+      acm: acm,
+      sn: sn,
+      obs: obs,
+      data: item.data,
+      id_componente_pai: item.id_componente_pai,
+      id_componente_filho: item.id_componente_filho,
+      id_prescricao: idprescricao,
+      id_pai: 0,
+    }
+    axios.post(html + 'update_item_prescricao/' + item.id, obj).then(() => {
+      console.log(item.id);
+      console.log(obj);
+      // loadItensPrescricao();
+    })
+      .catch(function () {
+        toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+        setTimeout(() => {
+          setpagina(0);
+          history.push('/');
+        }, 5000);
+      });
+  }
+  // excluir um item de prescricao.
+  const deleteItemPrescricao = (item) => {
+    axios.get(html + 'delete_item_prescricao/' + item.id).then(() => {
+      // deletar também todos os registros de componentes associados ao item recém-deletado.
+      prescricao.filter(valor => valor.id_pai == item.id).map(valor => {
+        axios.get(html + 'delete_item_prescricao/' + valor.id).then(() => {
+          console.log('DELETANDO COMPONENTE.');
+        });
+        return null;
+      })
+      loadItensPrescricao();
+    })
+      .catch(function () {
+        toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+        setTimeout(() => {
+          setpagina(0);
+          history.push('/');
+        }, 5000);
+      });
+  }
+  const deleteComponentePrescricao = (id) => {
+    axios.get(html + 'delete_item_prescricao/' + id).then(() => {
+      console.log('DELETANDO COMPONENTE.');
+      loadItensPrescricao();
+    });
+  }
+
   const [filterprescricao, setfilterprescricao] = useState('');
   var searchprescricao = '';
-  const filterItemPrescricao = () => {
+  const filterItemPrescricao = (input) => {
+    console.log(input);
     clearTimeout(timeout);
-    document.getElementById("inputprescricao").focus();
-    searchprescricao = document.getElementById("inputprescricao").value.toUpperCase();
+    document.getElementById(input).focus();
+    searchprescricao = document.getElementById(input).value.toUpperCase();
     timeout = setTimeout(() => {
       if (searchprescricao == '') {
+        setviewopcoesitensprescricao(0);
         setfilterprescricao('');
-        setarrayprescricao(prescricao);
-        document.getElementById("inputprescricao").value = '';
+        setarrayopcoesprescricao(opcoesprescricao);
+        setarrayitensprescricao(prescricao);
+        document.getElementById(input).value = '';
         setTimeout(() => {
-          document.getElementById("inputprescricao").focus();
+          document.getElementById(input).focus();
         }, 100);
       } else {
-        setfilterprescricao(document.getElementById("inputprescricao").value.toUpperCase());
-        setarrayprescricao(prescricao.filter(item => item.nome_item.includes(searchprescricao)));
-        document.getElementById("inputprescricao").value = searchprescricao;
+        setviewopcoesitensprescricao(1);
+        setfilterprescricao(document.getElementById(input).value.toUpperCase());
+        setarrayopcoesprescricao(opcoesprescricao.filter(item => item.nome_item.includes(searchprescricao)));
+        setarrayitensprescricao(prescricao.filter(item => item.nome_item.includes(searchprescricao)));
+        document.getElementById(input).value = searchprescricao;
         setTimeout(() => {
-          document.getElementById("inputprescricao").focus();
+          document.getElementById(input).focus();
         }, 100);
       }
     }, 1000);
   }
-
   // filtro de prescricao por nome.
   function FilterItemPrescricao() {
     return (
       <input
-        className="input cor2"
+        id="inputItemPrescricao"
+        className="input"
         autoComplete="off"
         placeholder="BUSCAR ITEM..."
         onFocus={(e) => (e.target.placeholder = '')}
         onBlur={(e) => (e.target.placeholder = 'BUSCAR ITEM...')}
-        onKeyUp={() => filterprescricao()}
+        onKeyUp={() => filterItemPrescricao("inputItemPrescricao")}
         type="text"
-        id="inputprescricao"
         defaultValue={filterprescricao}
         maxLength={100}
-        style={{ margin: 0, width: window.innerWidth < 426 ? '100%' : '30vw' }}
+        style={{ margin: 0, width: 'calc(100% - 10px)', alignSelf: 'center' }}
       ></input>
     )
   }
-  */
+
   const [filteropcoesprescricao, setfilteropcoesprescricao] = useState('');
   var searchopcoesprescricao = '';
   const filterOpcoesItemPrescricao = () => {
@@ -361,7 +496,7 @@ function Prescricao() {
     timeout = setTimeout(() => {
       if (searchopcoesprescricao == '') {
         setfilteropcoesprescricao('');
-        setarrayopcoesprescricao(opcoesprescricao);
+        setarrayopcoesprescricao('');
         document.getElementById("inputopcoesprescricao").value = '';
         setTimeout(() => {
           document.getElementById("inputopcoesprescricao").focus();
@@ -376,14 +511,12 @@ function Prescricao() {
       }
     }, 1000);
   }
-
   // filtro de prescricao por nome.
   function FilterOpcoesItemPrescricao() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
         <div className='button-red'
           style={{ margin: 0, marginRight: 10, width: 50, height: 50 }}
-          title={'FECHAR SETUP DE ITENS DE PRESCRIÇÃO'}
           onClick={() => { setopcoesitensmenu(0) }}>
           <img
             alt=""
@@ -412,40 +545,6 @@ function Prescricao() {
     )
   }
 
-  function HeaderPrescricao() {
-    return (
-      <div
-        style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          alignSelf: 'center',
-          width: window.innerWidth < 426 ? '90vw' : 'calc(100vw - 40px)',
-          maxWidth: window.innerWidth < 426 ? '90vw' : 'calc(100vw - 40px)',
-          marginBottom: 10,
-        }}>
-        <div className='header-row'>
-          <div className='header'
-            style={{
-              flex: window.innerWidth < 426 ? 6 : 2,
-            }}>
-            ITEM
-          </div>
-          <div className='header'
-            style={{ flex: 1 }}>
-            QTDE
-          </div>
-          <div className='header'
-            style={{ flex: 1 }}>
-            VIA
-          </div>
-          <div className='header'
-            style={{ flex: 1 }}>
-            FREQ
-          </div>
-        </div>
-      </div >
-    )
-  }
-
   // modificadores dos itens de prescrição.
   const [nome, setnome] = useState(null);
 
@@ -460,7 +559,6 @@ function Prescricao() {
   const [via, setvia] = useState('VIA');
   const [freq, setfreq] = useState(null);
   const [obs, setobs] = useState(null);
-
   const [id, setid] = useState(null);
 
   /*
@@ -504,7 +602,6 @@ function Prescricao() {
       </div>
     )
   }
-
   function Categoria() {
     return (
       <div id="categoriamenu"
@@ -537,192 +634,523 @@ function Prescricao() {
       </div >
     )
   }
-
   // função para permitir apenas a inserção de números no input (obedecendo a valores de referência).
-  const checkNumberInput = (input, setstate, min, max) => {
+  const checkInputAndUpdateItemPrescricao = (input, min, max, item) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
       var valor = document.getElementById(input).value;
-      if (id != null) {
-        if (isNaN(valor) == true || valor < min || valor > max) {
-          // setstate(null);
-          document.getElementById(input).value = '';
-          document.getElementById(input).focus();
-        } else {
-          // setstate(valor);
+      if (isNaN(valor) == true || valor < min || valor > max) {
+        // setstate(null);
+        document.getElementById(input).value = '';
+        document.getElementById(input).focus();
+      } else {
+        var obj = {
+          id_unidade: item.id_unidade,
+          id_paciente: item.id_paciente,
+          id_atendimento: item.id_atendimento,
+          categoria: item.categoria,
+          codigo_item: item.codigo_item,
+          nome_item: item.nome_item,
+          qtde_item: parseInt(document.getElementById(input).value),
+          via: item.via,
+          freq: item.freq,
+          agora: item.agora,
+          acm: item.acm,
+          sn: item.sn,
+          obs: item.obs,
+          data: item.data,
+          id_componente_pai: item.id_componente_pai,
+          id_componente_filho: item.id_componente_filho,
+          id_prescricao: item.id_prescricao,
+          id_pai: item.id_pai,
         }
+        axios.post(html + 'update_item_prescricao/' + item.id, obj).then(() => {
+          console.log(item.id);
+          console.log(obj);
+          // loadItensPrescricao();
+        })
+          .catch(function () {
+            toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+            setTimeout(() => {
+              setpagina(0);
+              history.push('/');
+            }, 5000);
+          });
       }
     }, 1000);
   }
 
-  // const [selectitemprescricao, setselectitemprescricao] = useState([]);
+  // LISTA LATERAL DE PRESCRIÇÕES.
+  const [idprescricao, setidprescricao] = useState(0);
   const ListaPrescricoes = useCallback(() => {
+    return (
+      <div id="scroll lista de prescrições"
+        className='scroll'
+        style={{
+          height: window.innerHeight - 130,
+          width: '20vw',
+          margin: 0,
+          marginLeft: 5,
+        }}>
+        <div id="botão para nova prescrição."
+          className='button-green'
+          onClick={() => insertPrescricao()}
+        >
+          <img
+            alt=""
+            src={novo}
+            style={{ width: 30, height: 30 }}
+          ></img>
+        </div>
+        {arraylistaprescricao.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
+          <div id={"item de prescrição " + item.id}
+            className='button'
+            style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
+              minHeight: item.status == 0 ? 100 : 75,
+            }}
+            onClick={() => {
+              setidprescricao(item.id);
+              console.log(item.id);
+              setTimeout(() => {
+                var botoes = document
+                  .getElementById("scroll lista de prescrições")
+                  .getElementsByClassName("button-red");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "button";
+                }
+                document.getElementById("item de prescrição " + item.id).className = "button-red";
+              }, 300);
+            }}
+          >
+            <div
+              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+              <div id="botão para excluir prescrição."
+                className='button-red'
+                style={{
+                  display: item.status == 0 ? 'flex' : 'none',
+                  maxWidth: 30, width: 30, minWidth: 30,
+                  maxHeight: 30, height: 30, minHeight: 30
+                }}
+                onClick={() => deletePrescricao(item.id)}
+              >
+                <img
+                  alt=""
+                  src={deletar}
+                  style={{ width: 25, height: 25 }}
+                ></img>
+              </div>
+              <div id="botão para salvar prescrição."
+                style={{
+                  display: item.status == 0 ? 'flex' : 'none',
+                  maxWidth: 30, width: 30, minWidth: 30,
+                  maxHeight: 30, height: 30, minHeight: 30
+                }}
+                className='button-green'
+                onClick={() => updatePrescricao(item, 1)}
+              >
+                <img
+                  alt=""
+                  src={salvar}
+                  style={{ width: 20, height: 20 }}
+                ></img>
+              </div>
+            </div>
+            <div style={{ padding: 10 }}>
+              {moment(item.data).format('DD/MM/YY')}
+              {moment(item.data).format('HH:mm')}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+    // eslint-disable-next-line
+  }, [arraylistaprescricao])
+
+  // componente para selecionar a via de administração de um item de prescrição.
+  const [viewviaitemprescricao, setviewviaitemprescricao] = useState(0);
+  const vias = ['VO', 'IV', 'SC', 'IM', 'HIPODERMÓCLISE', 'SNE', 'GGT']
+  function ViewItemVia() {
+    return (
+      <div
+        className='fundo'
+        onClick={() => setviewviaitemprescricao(0)}
+        style={{ display: viewviaitemprescricao == 1 ? 'flex' : 'none' }}
+      >
+        <div className='janela'>
+          <div className='scroll' style={{ height: '70vh' }}>
+            {vias.map(item => (
+              <div
+                key={'via: ' + item}
+                onClick={() => {
+                  updateItemPrescricao(selectitemprescricao, selectitemprescricao.qtde_item, item, selectitemprescricao.freq, selectitemprescricao.agora, selectitemprescricao.acm, selectitemprescricao.sn, selectitemprescricao.obs);
+                  console.log(selectitemprescricao.id);
+                  document.getElementById("inputVia " + selectitemprescricao.id).innerHTML = item;
+                }}
+                className='button'
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // componente para selecionar a frequência de administração de um item de prescrição.
+  const [viewfreqitemprescricao, setviewfreqitemprescricao] = useState(0);
+  const arrayfreq = ['1/1H', '2/2H', '3/3H', '4/4H', '5/5H', '6/6H', '8/8H', '12/12H', '24/24H', '8H', '10H', '12H', '17H', '20H', '22H']
+  function ViewItemFreq() {
+    return (
+      <div
+        className='fundo'
+        onClick={() => setviewfreqitemprescricao(0)}
+        style={{ display: viewfreqitemprescricao == 1 ? 'flex' : 'none' }}
+      >
+        <div className='janela'>
+          <div className='scroll' style={{ height: '60vh' }}>
+            {arrayfreq.map(item => (
+              <div
+                key={'freq: ' + item}
+                onClick={() => {
+                  updateItemPrescricao(selectitemprescricao, selectitemprescricao.qtde_item, selectitemprescricao.via, item, selectitemprescricao.agora, selectitemprescricao.acm, selectitemprescricao.sn, selectitemprescricao.obs);
+                  document.getElementById("inputFreq " + selectitemprescricao.id).innerHTML = item;
+                }}
+                className='button'
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // componente para selecionar se um item de prescrição tem a condição se necessário (SN), a critério médico (ACM) ou agora.
+  const [viewcondicaoitemprescricao, setviewcondicaoitemprescricao] = useState(0);
+  function ViewItemCondicao() {
+    return (
+      <div
+        className='fundo'
+        onClick={() => setviewcondicaoitemprescricao(0)}
+        style={{ display: viewcondicaoitemprescricao == 1 ? 'flex' : 'none' }}
+      >
+        <div className='janela'>
+          <div
+            onClick={() => {
+              updateItemPrescricao(selectitemprescricao, selectitemprescricao.qtde_item, selectitemprescricao.via, selectitemprescricao.freq, true, false, false, selectitemprescricao.obs);
+              document.getElementById("condição " + selectitemprescricao.id).innerHTML = 'AGORA';
+            }}
+            className='button'
+          >
+            AGORA
+          </div>
+          <div
+            onClick={() => {
+              updateItemPrescricao(selectitemprescricao, selectitemprescricao.qtde, selectitemprescricao.via, selectitemprescricao.freq, false, true, false, selectitemprescricao.obs);
+              document.getElementById("condição " + selectitemprescricao.id).innerHTML = 'ACM';
+            }}
+            className='button'
+          >
+            ACM
+          </div>
+          <div
+            onClick={() => {
+              updateItemPrescricao(selectitemprescricao, selectitemprescricao.qtde, selectitemprescricao.via, selectitemprescricao.freq, false, false, true, selectitemprescricao.obs);
+              document.getElementById("condição " + selectitemprescricao.id).innerHTML = 'SN';
+            }}
+            className='button'
+          >
+            SN
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const [selectitemprescricao, setselectitemprescricao] = useState([]);
+  const [viewopcoesitensprescricao, setviewopcoesitensprescricao] = useState(0);
+  const [expand, setexpand] = useState(0);
+  const ListaItensPrescricoes = useCallback(() => {
     var timeout = null;
     return (
-      <div className='scroll cor0'
+      <div className='scroll'
         style={{
-          width: window.innerWidth < 426 ? '90vw' : 'calc(100vw - 30px)',
-          height: window.innerWidth < 426 ? window.innerHeight - 130 : window.innerHeight - 130,
+          width: '75vw',
+          margin: 0,
+          height: window.innerHeight - 130,
         }}>
-        {arrayprescricao.map(item => (
+        <FilterItemPrescricao></FilterItemPrescricao>
+        <div style={{
+          display: viewopcoesitensprescricao == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
+          flexWrap: 'wrap', marginTop: 10, marginBottom: 0,
+          borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)'
+        }}>
+          {arrayopcoesprescricao.map(item => (
+            <div
+              className="button-green"
+              style={{ display: 'flex', flexDirection: 'row', paddingLeft: 15, paddingRight: 15 }}
+              onClick={() => { insertItemPrescricao(item) }}
+            >
+              {item.nome_item}
+            </div>
+          ))}
+        </div>
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item => (
           <div
             key={"prescricao " + item.id}
             style={{
-              display: arrayprescricao.length > 0 ? 'flex' : 'none',
+              display: arrayitensprescricao.length > 0 ? 'flex' : 'none',
               flexDirection: 'column', justifyContent: 'center',
             }}>
             <div className='row'
               style={{
-                justifyContent: window.innerWidth > 425 ? 'space-between' : 'center',
-                flex: 6, margin: 0,
-              }}
-              onClick={() => {
-                // setselectitemprescricao(item);
-                setTimeout(() => {
-                  document.getElementById('expansivel ' + item.id).classList.toggle("expand");
-                  document.getElementById('informações ' + item.id).classList.toggle("show");
-                }, 100);
+                justifyContent: 'space-between',
+                display: 'flex', flexDirection: 'column',
+                margin: 0,
               }}
             >
-              <div className='button'
-                style={{
-                  flex: window.innerWidth < 426 ? 6 : 2
-                }}>
-                {item.nome_item}
-              </div>
-              <input id={"inputQtde " + item.id}
-                className="input"
-                autoComplete="off"
-                placeholder="QTDE"
-                inputMode='numeric'
-                onKeyUp={() => checkNumberInput("inputQtde " + item.id, setqtde, 1, 100)}
-                onFocus={(e) => (e.target.placeholder = '')}
-                onBlur={(e) => (e.target.placeholder = 'QTDE')}
-                style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
-                  margin: 5,
-                }}
-                type="text"
-                defaultValue={qtde}
-                maxLength={3}
-              ></input>
-              <div id={"inputVia " + item.id}
-                className='button'
-                style={{
-                  display: window.innerWidth > 425 ? 'flex' : 'none',
-                  flex: 2,
-                }}>
-                {item.via}
-              </div>
-              <input id={"inputFreq " + item.id}
-                className="input"
-                autoComplete="off"
-                placeholder="FREQ"
-                inputMode='numeric'
-                onKeyUp={() => checkNumberInput("inputFreq " + item.id, setfreq, 1, 24)}
-                onFocus={(e) => (e.target.placeholder = '')}
-                onBlur={(e) => (e.target.placeholder = 'FREQ')}
-                style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
-                  margin: 5,
-                }}
-                type="text"
-                defaultValue={freq}
-                maxLength={2}
-              ></input>
-              <div id={"inputAgora " + item.id}
-                className='button'
-                style={{
-                  display: window.innerWidth > 425 ? 'flex' : 'none',
-                  flex: 2,
-                }}>
-                {item.agora}
-              </div>
-              <div id={"inputAcm " + item.id}
-                className='button'
-                style={{
-                  display: window.innerWidth > 425 ? 'flex' : 'none',
-                  flex: 2,
-                }}>
-                {item.acm}
-              </div>
-              <div id={"inputSn " + item.id}
-                className='button'
-                style={{
-                  display: window.innerWidth > 425 ? 'flex' : 'none',
-                  flex: 2,
-                }}>
-                {item.sn}
-              </div>
-              <div id={"expansivel " + item.id}
-                className="hide"
-              >
-                <textarea id={"inputObs " + item.id}
-                  className="textarea"
-                  autoComplete="off"
-                  placeholder="OBSERVAÇÕES"
-                  inputMode='text'
-                  onKeyUp={() => {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => {
-                      setobs(document.getElementById('inputObs ' + item.id).value.toUpperCase());
-                    }, 1000);
-                  }}
-                  onFocus={(e) => (e.target.placeholder = '')}
-                  onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+              <div id='linha principal' style={{ display: 'flex', flexDirection: 'row', position: 'relative' }}>
+                <div id={"botão para expandir" + item.id}
+                  className='button'
                   style={{
-                    width: window.innerWidth < 426 ? '70vw' : '20vw',
+                    display: expand == 0 ? 'flex' : 'none',
+                    width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
+                    position: 'absolute', bottom: -18, right: -10,
+                    backgroundColor: 'rgba(82, 190, 128, 1)',
+                    borderColor: '#f2f2f2',
+                    borderStyle: 'solid',
+                    borderWidth: 5,
+                  }}
+                  onClick={() => {
+                    setselectitemprescricao(item);
+                    setarrayitensprescricao(prescricao.filter(valor => valor.id == item.id))
+                    setexpand(1);
+                  }}
+                >
+                </div>
+
+                <div id={"botão para expandir" + item.id}
+                  className='button'
+                  style={{
+                    display: expand == 1 ? 'flex' : 'none',
+                    width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
+                    position: 'absolute', bottom: -18, right: -10,
+                    backgroundColor: 'orange',
+                    borderColor: '#f2f2f2',
+                    borderStyle: 'solid',
+                    borderWidth: 5,
+                  }}
+                  onClick={() => {
+                    setarrayitensprescricao(prescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
+                    setexpand(0);
+                  }}
+                >
+                </div>
+
+
+                <div className='button'
+                  style={{
+                    flex: window.innerWidth < 426 ? 6 : 2
+                  }}>
+                  {item.nome_item}
+                </div>
+                <input id={"inputQtde " + item.id}
+                  className="input"
+                  autoComplete="off"
+                  placeholder="QTDE"
+                  inputMode='numeric'
+                  onKeyUp={() => checkInputAndUpdateItemPrescricao("inputQtde " + item.id, 1, 100, item)}
+                  onFocus={(e) => (e.target.placeholder = '')}
+                  onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                  style={{
+                    width: 100, minWidth: 100, maxWidth: 100,
                     margin: 5,
                   }}
                   type="text"
-                  defaultValue={item.obs}
-                  maxLength={1000}
-                ></textarea>
-                {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
-                  <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                    <div className='button'
-                      style={{
-                        flex: window.innerWidth < 426 ? 6 : 2
-                      }}>
-                      {valor.nome_item}
-                    </div>
-                    <input id="inputQtdeComponent"
-                      className="input"
-                      autoComplete="off"
-                      placeholder="QTDE"
-                      inputMode='numeric'
-                      onKeyUp={() => checkNumberInput("inputQtdeComponent", setqtde, 1, 100)}
-                      onFocus={(e) => (e.target.placeholder = '')}
-                      onBlur={(e) => (e.target.placeholder = 'QTDE')}
-                      style={{
-                        width: window.innerWidth < 426 ? '70vw' : '10vw',
-                        margin: 5,
-                      }}
-                      type="text"
-                      defaultValue={qtde}
-                      maxLength={3}
-                    ></input>
-                  </div>
-                ))}
-                <div className='button-green'>
+                  defaultValue={item.qtde_item}
+                  maxLength={3}
+                ></input>
+                <div id={"inputVia " + item.id}
+                  className='button'
+                  onClick={() => {
+                    setselectitemprescricao(item);
+                    setviewviaitemprescricao(1);
+                  }}
+                  style={{
+                    display: window.innerWidth > 425 ? 'flex' : 'none',
+                    flex: 2,
+                    width: 100, minWidth: 100, maxWidth: 100
+                  }}>
+                  {item.via}
+                </div>
+                <div id={"inputFreq " + item.id}
+                  className="button"
+                  onClick={() => {
+                    setselectitemprescricao(item);
+                    setviewfreqitemprescricao(1);
+                  }}
+                  style={{
+                    width: 100, minWidth: 100, maxWidth: 100,
+                    margin: 5,
+                  }}
+                  type="text"
+                >
+                  {item.freq}
+                </div>
+                <div id={"condição " + item.id}
+                  className='button'
+                  onClick={() => {
+                    setselectitemprescricao(item);
+                    setviewcondicaoitemprescricao(1);
+                  }}
+                  style={{
+                    display: window.innerWidth > 425 ? 'flex' : 'none',
+                    flex: 2,
+                    width: 30, minWidth: 30, maxWidth: 30
+                  }}>
+                  {item.agora == true ? 'AGORA' : item.acm == true ? 'ACM' : item.sn == true ? 'SN' : ''}
+                </div>
+                <div className={'button-red'}
+                  title={'EXCLUIR ITEM DE PRESCRIÇÃO.'}
+                  onClick={(e) => { deleteItemPrescricao(item) }}>
                   <img
                     alt=""
-                    src={novo}
-                    style={{ width: 30, height: 30 }}
+                    src={deletar}
+                    style={{
+                      margin: 0,
+                      height: 30,
+                      width: 30,
+                    }}
                   ></img>
+                </div>
+              </div>
+              <div id={"expansivel " + item.id}
+                className={expand == 1 ? 'expand' : 'retract'}
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', marginTop: 0 }}>
+                <div id={"informações " + item.id}
+                  className={expand == 1 ? 'show' : 'hide'}
+                  style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}
+                >
+                  <textarea id={"inputObs " + item.id}
+                    className="textarea"
+                    autoComplete="off"
+                    placeholder="OBSERVAÇÕES"
+                    inputMode='text'
+                    onKeyUp={() => {
+                      clearTimeout(timeout);
+                      timeout = setTimeout(() => {
+                        setobs(document.getElementById('inputObs ' + item.id).value.toUpperCase());
+                      }, 1000);
+                    }}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+                    style={{
+                      width: 250, height: 270,
+                      margin: 0, marginRight: 10,
+                    }}
+                    type="text"
+                    defaultValue={item.obs}
+                    maxLength={1000}
+                  ></textarea>
+                  <div className='scroll' style={{ width: '100%', height: 290, margin: 0 }}>
+                    {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
+                      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                        <div className='button'
+                          style={{
+                            flex: window.innerWidth < 426 ? 6 : 2
+                          }}>
+                          {valor.nome_item}
+                        </div>
+                        <input id={"inputQtdeComponent " + valor.id}
+                          className="input"
+                          autoComplete="off"
+                          placeholder="QTDE"
+                          inputMode='numeric'
+                          onKeyUp={() => checkInputAndUpdateItemPrescricao("inputQtdeComponent " + valor.id, 1, 100, valor)}
+                          onFocus={(e) => (e.target.placeholder = '')}
+                          onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                          style={{
+                            width: window.innerWidth < 426 ? '70vw' : '10vw',
+                            margin: 5,
+                          }}
+                          type="text"
+                          defaultValue={valor.qtde_item}
+                          maxLength={3}
+                        ></input>
+                      </div>
+                    ))}
+                    {ViewInsertComponentePrescricao(item)}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        ))}
+        ))
+        }
         <div className='text1'
-          style={{ display: arrayprescricao.length == 0 ? 'flex' : 'none', width: '90vw', opacity: 0.5 }}>
+          style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', width: '90vw', opacity: 0.5 }}>
           SEM ITENS PRESCRITOS.
         </div>
+      </div >
+    )
+    // eslint-disable-next-line
+  }, [arrayitensprescricao, atendimentos, idprescricao,
+    // arrayopcoesprescricao
+  ]);
+
+  const ViewInsertComponentePrescricao = (item) => {
+    const [localarray, setlocalarray] = useState([]);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <input id={"inputNovoComplemento" + item.id}
+          className='input' style={{ width: '90%', alignSelf: 'center' }}
+          autoComplete="off"
+          placeholder="COMPONENTE..."
+          inputMode='text'
+          onFocus={(e) => (e.target.placeholder = '')}
+          onBlur={(e) => (e.target.placeholder = 'COMPONENTE...')}
+          onKeyUp={() => {
+            clearTimeout(timeout);
+            document.getElementById("inputNovoComplemento" + item.id).focus();
+            let searchprescricao = document.getElementById("inputNovoComplemento" + item.id).value.toUpperCase();
+            console.log('HA: ' + searchprescricao);
+            timeout = setTimeout(() => {
+              if (searchprescricao == '') {
+                setlocalarray([]);
+                document.getElementById("inputNovoComplemento" + item.id).value = '';
+                setTimeout(() => {
+                  document.getElementById("inputNovoComplemento" + item.id).focus();
+                }, 100);
+              } else {
+                console.log('AÍ SIM: ' + searchprescricao);
+                setlocalarray(opcoesprescricao.filter(item => item.nome_item.includes(searchprescricao)));
+                document.getElementById("inputNovoComplemento" + item.id).value = searchprescricao;
+                setTimeout(() => {
+                  document.getElementById("inputNovoComplemento" + item.id).focus();
+                }, 100);
+              }
+            }, 1000);
+          }}
+        >
+        </input>
+        {localarray.map(valor => (
+          <div
+            className="button-green"
+            style={{ display: 'flex', flexDirection: 'row', paddingLeft: 15, paddingRight: 15 }}
+            onClick={() => {
+              insertComponentePrescricao(valor, item.id, 1);
+            }}
+          >
+            {valor.nome_item}
+          </div>
+        ))}
       </div>
     )
     // eslint-disable-next-line
-  }, [arrayprescricao, atendimentos]);
+  };
 
   function ScrollOpcoesItens() {
     return (
@@ -759,13 +1187,12 @@ function Prescricao() {
                     document.getElementById("inputFreq").value = item.freq;
                     document.getElementById("inputObs").value = item.obs;
 
-
                     var botoes = document.getElementById("scrollOpcoesItens").getElementsByClassName("button-red");
                     for (var i = 0; i < botoes.length; i++) {
                       botoes.item(i).className = "button";
                     }
                     document.getElementById("optionItem " + item.id).className = "button-red";
-                  }, 100);
+                  }, 200);
                 }}
               >
                 <div style={{ marginLeft: 5 }}>
@@ -897,7 +1324,7 @@ function Prescricao() {
             autoComplete="off"
             placeholder="QTDE"
             inputMode='numeric'
-            onKeyUp={() => checkNumberInput("inputQtde", setqtde, 1, 100)}
+            // onKeyUp={() => check("inputQtde", 1, 100)}
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'QTDE')}
             style={{
@@ -920,7 +1347,7 @@ function Prescricao() {
             autoComplete="off"
             placeholder="FREQ"
             inputMode='numeric'
-            onKeyUp={() => checkNumberInput("inputFreq", setfreq, 1, 24)}
+            // onKeyUp={() => checkNumberInput("inputFreq", 1, 24)}
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'FREQ')}
             style={{
@@ -1082,7 +1509,6 @@ function Prescricao() {
           }}
           onClick={(e) => e.stopPropagation()}>
           <FilterOpcoesItemPrescricao></FilterOpcoesItemPrescricao>
-          <ScrollOpcoesItens></ScrollOpcoesItens>
         </div>
       </div>
     )
@@ -1091,23 +1517,21 @@ function Prescricao() {
   return (
     <div className='main'
       style={{ display: pagina == 10 ? 'flex' : 'none' }}>
-      <div id="cadastro de prescricaos e de atendimentos"
+      <div id="cadastro de prescrições e de atendimentos"
         style={{
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          width: 'calc(100vw - 20px)',
-          // height: window.innerWidth < 426 ? '' : window.innerHeight,
         }}>
         <div id="botões e pesquisa"
           style={{
-            display: 'flex', flexDirection: 'row', justifyContent: 'center',
-            alignSelf: 'center',
+            display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+            alignSelf: 'center', width: '95vw',
           }}>
           <div className='button-red'
-            style={{ margin: 0, marginRight: 10, width: 50, height: 50 }}
+            style={{ margin: 0, width: 50, height: 50 }}
             title={'VOLTAR PARA O PASSÔMETRO'}
-            onClick={() => { setpagina(1); history.push('/passometro') }}>
+            onClick={() => { setpagina(1); history.push('/prontuario') }}>
             <img
               alt=""
               src={back}
@@ -1118,9 +1542,8 @@ function Prescricao() {
               }}
             ></img>
           </div>
-          
           <div className='button-green'
-            style={{ margin: 0, marginLeft: 10, width: 50, height: 50 }}
+            style={{ margin: 0, marginLeft: 5, width: 50, height: 50 }}
             title={'GERENCIADOR DE ITENS DE PRESCRIÇÃO'}
             onClick={() => { setopcoesitensmenu(1); setid(null) }}>
             <img
@@ -1133,9 +1556,35 @@ function Prescricao() {
               }}
             ></img>
           </div>
+          <div className='button-yellow'
+            style={{
+              margin: 0, marginLeft: 5, marginRight: 0,
+              width: 100, height: 50,
+              borderTopRightRadius: 0, borderBottomRightRadius: 0,
+            }}>
+            {'LEITO ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
+          </div>
+          <div className='button'
+            style={{
+              margin: 0, marginLeft: 0, width: '100%', height: 50,
+              borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+            }}>
+            {pacientes.filter(valor => valor.id_paciente == paciente).map(valor => valor.nome_paciente)}
+          </div>
         </div>
-        <HeaderPrescricao></HeaderPrescricao>
-        <ListaPrescricoes></ListaPrescricoes>
+
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+          width: '95vw',
+          alignSelf: 'center',
+          marginTop: 5,
+        }}>
+          <ListaItensPrescricoes></ListaItensPrescricoes>
+          <ListaPrescricoes></ListaPrescricoes>
+        </div>
+        <ViewItemVia></ViewItemVia>
+        <ViewItemFreq></ViewItemFreq>
+        <ViewItemCondicao></ViewItemCondicao>
         <ManageOpcoesItensPrescricao></ManageOpcoesItensPrescricao>
         <Via></Via>
         <Categoria></Categoria>

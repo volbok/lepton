@@ -240,7 +240,6 @@ function Login() {
   };
 
   const loadUsuarios = () => {
-    console.log('VAI PORRA')
     axios
       .get(html + "list_usuarios")
       .then((response) => {

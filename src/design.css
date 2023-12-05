@@ -901,8 +901,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   flex-direction: row;
   justify-content: space-evenly;
   opacity: 1;
-  height: 1000px;
   margin: 5px;
+  height: 300px;
   padding: 10px;
   border-radius: 5px;
   transition: 100ms, 300ms ease-in-out;
@@ -910,6 +910,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .hide {
   display: none;
+  transition: 300ms, 500ms ease-in-out;
 }
 
 .show {
