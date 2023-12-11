@@ -22,12 +22,20 @@
   --doc-height: "100%";
 }
 
+.print {
+  display: none !important
+}
+
 /* OCULTANDO CABEÇALHO E RODAPÉ PARA IMPRESSÃO */
 @media print {
 
   #Header,
   #Footer {
     display: none !important;
+  }
+
+  .print {
+    display: flex !important
   }
 
 }

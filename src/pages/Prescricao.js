@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 // funções.
 import toast from '../functions/toast';
 // imagens.
+import logo from '../images/logo.svg';
 import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
@@ -23,10 +24,12 @@ function Prescricao() {
     html,
     pagina, setpagina,
     settoast,
+    usuario,
     prescricao, setprescricao,
     atendimentos,
     atendimento,
     unidade,
+    unidades,
     paciente, pacientes,
   } = useContext(Context);
 
@@ -228,7 +231,10 @@ function Prescricao() {
       id_paciente: paciente,
       id_atendimento: atendimento,
       data: moment(),
-      status: 0 // 0 = não salva; 1 = salva (não pode excluir).
+      status: 0, // 0 = não salva; 1 = salva (não pode excluir).
+      id_profissional: usuario.id,
+      nome_profissional: usuario.nome,
+      registro_profissional: usuario.n_conselho,
     }
     axios.post(html + 'insert_prescricao', obj).then(() => {
       console.log(JSON.stringify(obj));
@@ -248,7 +254,10 @@ function Prescricao() {
       id_paciente: item.id_paciente,
       id_atendimento: item.id_atendimento,
       data: item.data,
-      status: status
+      status: status,
+      id_profissional: item.id_profissional,
+      nome_profissional: item.nome_profissional,
+      registro_profissional: item.n_conselho,
     }
     axios.post(html + 'update_prescricao/' + item.id, obj).then(() => {
       loadPrescricao();
@@ -760,6 +769,20 @@ function Prescricao() {
                   alt=""
                   src={salvar}
                   style={{ width: 20, height: 20 }}
+                ></img>
+              </div>
+              <div className='button-green'
+                style={{ margin: 0, width: 50, height: 50 }}
+                title={'IMPRIMIR PRESCRIÇÃO'}
+                onClick={() => printDiv()}>
+                <img
+                  alt=""
+                  src={back}
+                  style={{
+                    margin: 0,
+                    height: 30,
+                    width: 30,
+                  }}
                 ></img>
               </div>
             </div>
@@ -1310,7 +1333,6 @@ function Prescricao() {
                 </div>
               </div>
             ))}
-
           </div>
         </div>
       </div>
@@ -1322,148 +1344,150 @@ function Prescricao() {
     var timeout = null;
     return (
       <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        display: 'flex', flexDirection: 'row', justifyContent: 'center',
         width: '100%', alignSelf: 'center',
       }}>
-        <div id="inputs para nome e categoria do item."
-          style={{
-            display: 'flex',
-            flexDirection: 'row', justifyContent: 'center',
-            width: '100%',
-            alignSelf: 'center',
-            alignContent: 'center',
-          }}>
-          <input id={"inputNome"}
-            className="input"
-            autoComplete="off"
-            placeholder="NOME DO ITEM"
-            inputMode='text'
-            onFocus={(e) => (e.target.placeholder = '')}
-            onBlur={(e) => (e.target.placeholder = 'NOME')}
+        <div>
+          <div id="inputs para nome e categoria do item."
             style={{
-              margin: 5, width: '100%'
-            }}
-            type="text"
-            defaultValue={nome}
-            maxLength={200}
-          ></input>
-          <input id={"inputCategoria"}
-            className='button'
-            onClick={() => document.getElementById('categoriamenu').className = 'show'}
-            style={{ margin: 5, paddingLeft: 10, paddingRight: 10, width: 150, caretColor: 'transparent' }}
-            defaultValue={categoria}
-          >
-          </input>
-        </div>
-        <div id="inputs para quantidade, via, frequência e observações."
-          style={{
-            display: 'flex', flexDirection: 'row', justifyContent: 'center',
-            width: '100%'
-          }}
-        >
-          <input id={"inputQtde"}
-            className="input"
-            autoComplete="off"
-            placeholder="QTDE"
-            inputMode='numeric'
-            // onKeyUp={() => check("inputQtde", 1, 100)}
-            onFocus={(e) => (e.target.placeholder = '')}
-            onBlur={(e) => (e.target.placeholder = 'QTDE')}
-            style={{
-              width: 50,
-              margin: 5,
-            }}
-            type="text"
-            defaultValue={qtde}
-            maxLength={3}
-          ></input>
-          <input id={"inputVia"}
-            className='button'
-            onClick={() => document.getElementById('viamenu').className = 'show'}
-            style={{ height: 50, width: 50, margin: 5, caretColor: 'transparent' }}
-            defaultValue={via}
-          >
-          </input>
-          <input id={"inputFreq"}
-            className="input"
-            autoComplete="off"
-            placeholder="FREQ"
-            inputMode='numeric'
-            // onKeyUp={() => checkNumberInput("inputFreq", 1, 24)}
-            onFocus={(e) => (e.target.placeholder = '')}
-            onBlur={(e) => (e.target.placeholder = 'FREQ')}
-            style={{
-              width: 50,
-              margin: 5,
-            }}
-            type="text"
-            defaultValue={freq}
-            maxLength={2}
-          ></input>
-          <textarea id={"inputObs"}
-            className="textarea"
-            autoComplete="off"
-            placeholder="OBSERVAÇÕES"
-            inputMode='text'
-            onFocus={(e) => (e.target.placeholder = '')}
-            onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
-            style={{
+              display: 'flex',
+              flexDirection: 'row', justifyContent: 'center',
               width: '100%',
-              height: 52, maxHeight: 52, minHeight: 52,
-              margin: 5,
-            }}
-            type="text"
-            defaultValue={obs}
-            maxLength={200}
-          ></textarea>
-
-          <div className='button-green'
-            style={{ display: id == null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
-            title={'SALVAR ITEM'}
-            onClick={() => {
-              insertOpcaoItemPrescricao();
-              setTimeout(() => {
-                setid(null);
-                setnome(null);
-                setcategoria(null);
-                setqtde(null);
-                setvia(null);
-                setfreq(null);
-                setobs(null);
-                document.getElementById("inputNome").value = '';
-                document.getElementById("inputCategoria").value = '';
-                document.getElementById("inputQtde").value = '';
-                document.getElementById("inputVia").value = '';
-                document.getElementById("inputFreq").value = '';
-                document.getElementById("inputObs").value = '';
-              }, 1000)
+              alignSelf: 'center',
+              alignContent: 'center',
             }}>
-            <img
-              alt=""
-              src={salvar}
+            <input id={"inputNome"}
+              className="input"
+              autoComplete="off"
+              placeholder="NOME DO ITEM"
+              inputMode='text'
+              onFocus={(e) => (e.target.placeholder = '')}
+              onBlur={(e) => (e.target.placeholder = 'NOME')}
               style={{
-                margin: 0,
-                height: 30,
-                width: 30,
+                margin: 5, width: '100%'
               }}
-            ></img>
+              type="text"
+              defaultValue={nome}
+              maxLength={200}
+            ></input>
+            <input id={"inputCategoria"}
+              className='button'
+              onClick={() => document.getElementById('categoriamenu').className = 'show'}
+              style={{ margin: 5, paddingLeft: 10, paddingRight: 10, width: 150, caretColor: 'transparent' }}
+              defaultValue={categoria}
+            >
+            </input>
           </div>
-          <div className='button-green'
-            style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
-            title={'ATUALIZAR ITEM'}
-            onClick={() => { console.log('ID, PORRA: ' + id); updateOpcaoItemPrescricao(id) }}>
-            <img
-              alt=""
-              src={refresh}
+          <div id="inputs para quantidade, via, frequência e observações."
+            style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'center',
+              width: '100%'
+            }}
+          >
+            <input id={"inputQtde"}
+              className="input"
+              autoComplete="off"
+              placeholder="QTDE"
+              inputMode='numeric'
+              // onKeyUp={() => check("inputQtde", 1, 100)}
+              onFocus={(e) => (e.target.placeholder = '')}
+              onBlur={(e) => (e.target.placeholder = 'QTDE')}
               style={{
-                margin: 0,
-                height: 30,
-                width: 30,
+                width: 50,
+                margin: 5,
               }}
-            ></img>
+              type="text"
+              defaultValue={qtde}
+              maxLength={3}
+            ></input>
+            <input id={"inputVia"}
+              className='button'
+              onClick={() => document.getElementById('viamenu').className = 'show'}
+              style={{ height: 50, width: 50, margin: 5, caretColor: 'transparent' }}
+              defaultValue={via}
+            >
+            </input>
+            <input id={"inputFreq"}
+              className="input"
+              autoComplete="off"
+              placeholder="FREQ"
+              inputMode='numeric'
+              // onKeyUp={() => checkNumberInput("inputFreq", 1, 24)}
+              onFocus={(e) => (e.target.placeholder = '')}
+              onBlur={(e) => (e.target.placeholder = 'FREQ')}
+              style={{
+                width: 50,
+                margin: 5,
+              }}
+              type="text"
+              defaultValue={freq}
+              maxLength={2}
+            ></input>
+            <textarea id={"inputObs"}
+              className="textarea"
+              autoComplete="off"
+              placeholder="OBSERVAÇÕES"
+              inputMode='text'
+              onFocus={(e) => (e.target.placeholder = '')}
+              onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+              style={{
+                width: '100%',
+                height: 52, maxHeight: 52, minHeight: 52,
+                margin: 5,
+              }}
+              type="text"
+              defaultValue={obs}
+              maxLength={200}
+            ></textarea>
+
+            <div className='button-green'
+              style={{ display: id == null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+              title={'SALVAR ITEM'}
+              onClick={() => {
+                insertOpcaoItemPrescricao();
+                setTimeout(() => {
+                  setid(null);
+                  setnome(null);
+                  setcategoria(null);
+                  setqtde(null);
+                  setvia(null);
+                  setfreq(null);
+                  setobs(null);
+                  document.getElementById("inputNome").value = '';
+                  document.getElementById("inputCategoria").value = '';
+                  document.getElementById("inputQtde").value = '';
+                  document.getElementById("inputVia").value = '';
+                  document.getElementById("inputFreq").value = '';
+                  document.getElementById("inputObs").value = '';
+                }, 1000)
+              }}>
+              <img
+                alt=""
+                src={salvar}
+                style={{
+                  margin: 0,
+                  height: 30,
+                  width: 30,
+                }}
+              ></img>
+            </div>
+            <div className='button-green'
+              style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+              title={'ATUALIZAR ITEM'}
+              onClick={() => { console.log('ID, PORRA: ' + id); updateOpcaoItemPrescricao(id) }}>
+              <img
+                alt=""
+                src={refresh}
+                style={{
+                  margin: 0,
+                  height: 30,
+                  width: 30,
+                }}
+              ></img>
+            </div>
           </div>
         </div>
-        <div style={{ display: id != null ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div className='text1'>COMPONENTES REGISTRADOS PARA O ITEM SELECIONADO</div>
           <div id="lista de componentes para o item pescrito"
             className='scroll cor0'
@@ -1529,8 +1553,7 @@ function Prescricao() {
             ))}
           </div>
         </div>
-
-      </div >
+      </div>
     )
     // eslint-disable-next-line
   }, [opcoesprescricao, arrayopcoesprescricao, id]);
@@ -1551,10 +1574,175 @@ function Prescricao() {
           }}
           onClick={(e) => e.stopPropagation()}>
           <FilterOpcoesItemPrescricao></FilterOpcoesItemPrescricao>
+          <ScrollOpcoesItens></ScrollOpcoesItens>
         </div>
       </div>
     )
   };
+
+  // impressão da prescrição.
+  function PrintPrescricao() {
+    return (
+      <div id="IMPRESSÃO - PRESCRIÇÃO" className="print">
+        <table style={{ width: '100%' }}>
+          <thead style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Header></Header>
+              </td>
+            </tr>
+          </thead>
+          <tbody style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <div id="campos"
+                  style={{
+                    display: 'flex', flexDirection: 'column',
+                    breakInside: 'auto', alignSelf: 'center', width: '100%'
+                  }}>
+                  <Conteudo></Conteudo>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Footer></Footer>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    )
+  };
+
+  function Header() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+          height: 100, width: '100%',
+          fontFamily: 'Helvetica',
+          breakInside: 'avoid',
+        }}>
+          <img
+            alt=""
+            src={logo}
+            style={{
+              margin: 0,
+              height: 100,
+              width: 100,
+            }}
+          ></img>
+          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
+            PRESCRIÇÃO MÉDICA
+          </div>
+          <div style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            borderRadius: 5, backgroundColor: 'gray', color: 'white',
+            padding: 10
+          }}>
+            <div>
+              {moment(selectitemprescricao.data).format('DD/MM/YY - HH:mm')}
+            </div>
+            <div style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+              fontSize: 20,
+              fontFamily: 'Helvetica',
+              breakInside: 'avoid',
+            }}>{'LEITO ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}</div>
+            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
+            <div>{'ATENDIMENTO: ' + atendimento}</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', fontFamily: 'Helvetica', marginTop: 20 }}>
+          <div style={{ margin: 5, width: 60 }}>{''}</div>
+          <div style={{ margin: 5, width: 400 }}>{'ITEM'}</div>
+          <div style={{ margin: 5, width: 60 }}>{'QTDE'}</div>
+          <div style={{ margin: 5, width: 60 }}>{'VIA'}</div>
+          <div style={{ margin: 5, width: 60 }}>{'FREQ'}</div>
+          <div style={{ margin: 5, width: 200 }}>{'CONDIÇÃO'}</div>
+        </div>
+      </div>
+    )
+  }
+  function Footer() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        height: 100, width: '100%',
+        fontFamily: 'Helvetica',
+        breakInside: 'avoid',
+      }}>
+        <div className="text1">
+          _______________________________________________
+        </div>
+        <div className="text1">
+          {'PROFISSIONAL: ' + prescricao.filter(valor => valor.id == idprescricao).map(valor => valor.nome_profissional)}
+        </div>
+        <div className="text1">
+          {'REGISTRO PROFISSIONAL: ' + prescricao.filter(valor => valor.id == idprescricao).map(valor => valor.registro_profissional)}
+        </div>
+      </div>
+    )
+  }
+  function Conteudo() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        fontFamily: 'Helvetica',
+        breakInside: 'avoid',
+      }}>
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item => (
+          <div style={{
+            display: 'flex', flexDirection: 'column', width: '100%',
+            backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent',
+            borderRadius: 5,
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <div style={{ margin: 5, width: 60 }}>{arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1}</div>
+              <div style={{ margin: 5, width: 400 }}>{item.nome_item}</div>
+              <div style={{ margin: 5, width: 60 }}>{item.qtde_item}</div>
+              <div style={{ margin: 5, width: 60 }}>{item.via}</div>
+              <div style={{ margin: 5, width: 60 }}>{item.freq}</div>
+              <div style={{ margin: 5, width: 200 }}>{item.agora != null ? 'AGORA' : item.acm != null ? 'ACM' : item.sn != null ? 'SN' : '-'}</div>
+            </div>
+            <div style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
+              margin: 5, PADDING: 10, borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.3)', borderRadius: 5
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5 }}>
+                <div style={{ marginTop: 5, marginBottom: 5, fontWeight: 'bold' }}>OBSERVAÇÕES:</div>
+                <div style={{ width: '100%' }}>{item.obs}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', margin: 5 }}>
+                <div style={{ marginTop: 5, marginLeft: 5, marginBottom: 5, fontWeight: 'bold' }}>COMPONENTES:</div>
+                <div id="LISTA DE COMPONENTES PARA IMPRESSÃO" style={{ width: '100%' }}>
+                  {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                      <div style={{ margin: 5, width: 200 }}>{valor.nome_item}</div>
+                      <div style={{ margin: 5, width: 60 }}>{valor.qtde_item}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  function printDiv() {
+    console.log('PREPARANDO PRESCRIÇÃO PARA IMPRESSÃO');
+    let printdocument = document.getElementById("IMPRESSÃO - PRESCRIÇÃO").innerHTML;
+    var a = window.open('  ', '  ', 'width=1024px, height=800px');
+    a.document.write('<html>');
+    a.document.write(printdocument);
+    a.document.write('</html>');
+    a.print();
+  }
 
   return (
     <div className='main'
@@ -1630,6 +1818,7 @@ function Prescricao() {
         <ManageOpcoesItensPrescricao></ManageOpcoesItensPrescricao>
         <Via></Via>
         <Categoria></Categoria>
+        <PrintPrescricao></PrintPrescricao>
       </div>
     </div>
   );

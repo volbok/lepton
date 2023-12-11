@@ -232,7 +232,7 @@ function Login() {
       .get(html + "list_unidades")
       .then((response) => {
         setunidades(response.data.rows);
-        console.log(unidades);
+        // console.log(unidades);
       })
       .catch(function (error) {
         console.log(error);
@@ -244,7 +244,7 @@ function Login() {
       .get(html + "list_usuarios")
       .then((response) => {
         setusuarios(response.data.rows);
-        console.log(response.data.rows);
+        // console.log(response.data.rows);
       })
       .catch(function (error) {
         console.log(error);
