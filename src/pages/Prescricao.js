@@ -15,6 +15,8 @@ import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
 import novo from '../images/novo.svg';
 import refresh from '../images/refresh.svg';
+import print from '../images/imprimir.svg';
+import copiar from '../images/copiar.svg';
 import preferencias from '../images/preferencias.svg';
 
 function Prescricao() {
@@ -248,6 +250,93 @@ function Prescricao() {
         }, 5000);
       });
   }
+
+  // copiar prescrição.
+  const copiarPrescricao = (item) => {
+    loadPrescricao();
+    let last_id_prescricao = null;
+    // registrando nova prescrição.
+    var obj = {
+      id_paciente: paciente,
+      id_atendimento: atendimento,
+      data: moment(),
+      status: 0, // 0 = não salva; 1 = salva (não pode excluir).
+      id_profissional: usuario.id,
+      nome_profissional: usuario.nome,
+      registro_profissional: usuario.n_conselho,
+    }
+    axios.post(html + 'insert_prescricao', obj).then(() => {
+      // recuperando o id da prescrição recém-criada.
+      axios.get(html + 'list_prescricoes/' + atendimento).then((response) => {
+        var x = response.data.rows;
+        last_id_prescricao = x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
+        console.log('ID DA PRESCRIÇÃO CRIADA: ' + last_id_prescricao);
+        // registrando os itens da prescrição copiada.
+        prescricao.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).map(valor => {
+          let id_pai_a_copiar = valor.id;
+          console.log('ID DA PRESCRIÇÃO SELECIONADA: ' + valor.id_prescricao);
+          var obj = {
+            id_unidade: unidade,
+            id_paciente: paciente,
+            id_atendimento: atendimento,
+            categoria: valor.categoria,
+            codigo_item: valor.codigo_item,
+            nome_item: valor.nome_item,
+            qtde_item: valor.qtde_item,
+            via: valor.via,
+            freq: valor.freq,
+            agora: valor.agora,
+            acm: valor.acm,
+            sn: valor.sn,
+            obs: valor.obs,
+            data: moment(),
+            id_componente_pai: valor.id_componente_pai,
+            id_componente_filho: valor.id_componente_filho,
+            id_prescricao: last_id_prescricao,
+            id_pai: null
+          }
+          axios.post(html + 'insert_item_prescricao', obj).then(() => {
+            console.log('ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
+            console.log(obj);
+            // recuperando id do item de prescrição recém-copiado.
+            axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+              let x = response.data.rows;
+              let last_id_item = x.filter(item => item.id_prescricao == last_id_prescricao && item.id_pai == null).sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
+              console.log('ID DO ITEM DE PRESCRIÇÃO CRIADO: ' + last_id_item);
+              // copiando os componentes do item de prescrição recém-criado.
+              x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).map(valor => {
+                var obj = {
+                  id_unidade: unidade,
+                  id_paciente: paciente,
+                  id_atendimento: atendimento,
+                  categoria: valor.categoria,
+                  codigo_item: valor.codigo_item,
+                  nome_item: valor.nome_item,
+                  qtde_item: valor.qtde_item,
+                  via: valor.via,
+                  freq: valor.freq,
+                  agora: valor.agora,
+                  acm: valor.acm,
+                  sn: valor.sn,
+                  obs: valor.obs,
+                  data: moment(),
+                  id_componente_pai: valor.id_componente_pai,
+                  id_componente_filho: valor.id_componente_filho,
+                  id_prescricao: last_id_prescricao,
+                  id_pai: last_id_item,
+                }
+                axios.post(html + 'insert_item_prescricao', obj).then(() => {
+                  console.log('COMPONENTE DE ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
+                });
+                return null;
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
   // atualizando um registro de prescrição.
   const updatePrescricao = (item, status) => {
     var obj = {
@@ -771,17 +860,39 @@ function Prescricao() {
                   style={{ width: 20, height: 20 }}
                 ></img>
               </div>
-              <div className='button-green'
-                style={{ margin: 0, width: 50, height: 50 }}
+              <div
+                id="botão para imprimir prescrição"
+                className='button-green'
+                style={{
+                  maxWidth: 30, width: 30, minWidth: 30,
+                  maxHeight: 30, height: 30, minHeight: 30
+                }}
                 title={'IMPRIMIR PRESCRIÇÃO'}
                 onClick={() => printDiv()}>
                 <img
                   alt=""
-                  src={back}
+                  src={print}
                   style={{
-                    margin: 0,
-                    height: 30,
-                    width: 30,
+                    height: 20,
+                    width: 20,
+                  }}
+                ></img>
+              </div>
+              <div
+                id="botão para imprimir prescrição"
+                className='button-green'
+                style={{
+                  maxWidth: 30, width: 30, minWidth: 30,
+                  maxHeight: 30, height: 30, minHeight: 30
+                }}
+                title={'COPIAR PRESCRIÇÃO'}
+                onClick={() => copiarPrescricao(item)}>
+                <img
+                  alt=""
+                  src={copiar}
+                  style={{
+                    height: 20,
+                    width: 20,
                   }}
                 ></img>
               </div>
@@ -1651,10 +1762,21 @@ function Prescricao() {
               fontSize: 20,
               fontFamily: 'Helvetica',
               breakInside: 'avoid',
-            }}>{'LEITO ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}</div>
+            }}>
+              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
+            </div>
             <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
             <div>{'ATENDIMENTO: ' + atendimento}</div>
           </div>
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
+          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
+          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
+          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', fontFamily: 'Helvetica', marginTop: 20 }}>
           <div style={{ margin: 5, width: 60 }}>{''}</div>
