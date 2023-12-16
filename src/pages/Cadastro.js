@@ -257,42 +257,44 @@ function Cadastro() {
 
   // atualizando um atendimento (mudando de leito).
   const updateAtendimento = (leito, atendimento) => {
-    atendimento.map((item) => {
+    axios.get(html + "list_all_leitos").then((response) => {
+      var x = response.data.rows;
+      // recuperando a id do leito a ter seu status alterado para livre.
+      let id_leito = x.filter((valor) => valor.leito == atendimento.map(item => parseInt(item.leito)).pop() && valor.id_unidade == atendimento.map(item => parseInt(item.id_unidade)).pop()).map(item => parseInt(item.id_leito)).pop();
+      console.log('ID LEITO ANTIGO: ' + id_leito);
+      // liberando o leito.
       var obj = {
-        data_inicio: item.data_inicio,
-        data_termino: null,
-        problemas: item.problemas,
-        id_paciente: item.id_paciente,
-        id_unidade: item.id_unidade,
-        nome_paciente: item.nome_paciente,
-        leito: leito,
-        situacao: 1,
-        id_cliente: hospital,
+        id_unidade: atendimento.map(item => parseInt(item.id_unidade)).pop(),
+        leito: atendimento.map(item => parseInt(item.leito)).pop(),
+        status: 'LIVRE',
       };
-      axios
-        .post(html + "update_atendimento/" + item.id_atendimento, obj)
-        .then(() => {
-          loadAtendimentos();
-          toast(
-            settoast,
-            "ATENDIMENTO ATUALIZADO COM SUCESSO NA BASE PULSAR",
-            "rgb(82, 190, 128, 1)",
-            3000
-          );
-        })
-        .catch(function () {
-          toast(
-            settoast,
-            "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-            "black",
-            5000
-          );
-          setTimeout(() => {
-            setpagina(0);
-            history.push("/");
-          }, 5000);
+      axios.post(html + "update_leito/" + id_leito, obj).then(() => {
+        // atualizando o atendimento no novo leito.
+        atendimento.map((item) => {
+          var obj = {
+            data_inicio: item.data_inicio,
+            data_termino: null,
+            problemas: item.problemas,
+            id_paciente: item.id_paciente,
+            id_unidade: unidade,
+            nome_paciente: item.nome_paciente,
+            leito: leito,
+            situacao: 1,
+            id_cliente: hospital,
+          };
+          axios
+            .post(html + "update_atendimento/" + item.id_atendimento, obj)
+            .then(() => {
+              axios
+                .get(html + "allatendimentos/" + hospital)
+                .then((response) => {
+                  setatendimentos(response.data.rows);
+                  loadLeitos(unidade);
+                })
+            })
+          return null;
         });
-      return null;
+      });
     });
   };
 
@@ -313,6 +315,16 @@ function Cadastro() {
       axios
         .post(html + "update_atendimento/" + item.id_atendimento, obj)
         .then(() => {
+          // rcuperando a id do leito a ter seu status alterado para livre.
+          let id_leito = statusleitos.filter((valor) => valor.leito == item.leito && valor.id_unidade == unidade).map(item => item.id_leito);
+          // liberando o leito.
+          var obj = {
+            id_unidade: unidade,
+            leito: item.leito,
+            status: 'LIVRE',
+          };
+          axios.post(html + "update_leito/" + id_leito, obj);
+          loadLeitos();
           loadAtendimentos();
           toast(
             settoast,
@@ -981,7 +993,7 @@ function Cadastro() {
                   setTimeout(() => {
                     document
                       .getElementById("expandlist " + item.id_paciente)
-                      .classList.toggle("expand");
+                      .classList.toggle("expandpaciente");
                     document
                       .getElementById(
                         "informações do paciente " + item.id_paciente
@@ -1315,9 +1327,9 @@ function Cadastro() {
                 id={"inputDn " + paciente.id_paciente}
                 title="FORMATO: DD/MM/YYYY"
                 onClick={() =>
-                  (document.getElementById(
-                    "inputDn " + paciente.id_paciente
-                  ).value = "")
+                (document.getElementById(
+                  "inputDn " + paciente.id_paciente
+                ).value = "")
                 }
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "DN")}
@@ -1812,7 +1824,10 @@ function Cadastro() {
                 alignSelf: "center",
               }}
             >
-              <div className="text1">
+              <div className="text1"
+                style={{
+                  display: atendimento.map(item => item.id_unidade) == 4 ? 'none' : 'flex',
+                }}>
                 {"PACIENTE ATUALMENTE EM ATENDIMENTO: UNIDADE " +
                   unidades
                     .filter(
@@ -1823,6 +1838,12 @@ function Cadastro() {
                     .map((item) => item.nome_unidade) +
                   " - LEITO " +
                   atendimento.map((item) => item.leito)}
+              </div>
+              <div className="text1"
+                style={{
+                  display: atendimento.map(item => item.id_unidade) == 4 ? 'flex' : 'none',
+                }}>
+                {"PACIENTE AGUARDANDO TRIAGEM PARA ATENDIMENTO"}
               </div>
               <div className="button" onClick={() => setviewseletorunidades(1)}>
                 ALTERAR LEITO
@@ -1918,21 +1939,53 @@ function Cadastro() {
                   justifyContent: "center",
                 }}
                 onClick={() => {
-                  setselectedunidade(item.id_unidade);
-                  setunidade(item.id_unidade);
-                  geraLeitos(item.total_leitos);
-                  loadLeitos(item.id_unidade);
+                  console.log(item.id_unidade);
+                  if (item.nome_unidade != 'TRIAGEM') {
+                    setselectedunidade(item.id_unidade);
+                    setunidade(item.id_unidade);
+                    geraLeitos(item.total_leitos);
+                    loadAtendimentos();
+                    loadLeitos(item.id_unidade);
+                  } else {
+                    if (atendimentos.filter(valor => valor.id_paciente == paciente.id_paciente && valor.situacao == 1).length > 0) {
+                      toast(settoast, 'PACIENTE JÁ ESTÁ EM ATENDIMENTO', 'red', 2000);
+                    } else {
+                      setselectedunidade(item.id_unidade);
+                      setunidade(item.id_unidade);
+                      var obj = {
+                        data_inicio: moment(),
+                        data_termino: null,
+                        historia_atual: null,
+                        id_paciente: paciente.id_paciente,
+                        id_unidade: item.id_unidade,
+                        nome_paciente: paciente.nome_paciente,
+                        leito: null,
+                        situacao: 1, // 1 = atendimento ativo; 0 = atendimento encerrado.
+                        id_cliente: hospital,
+                      };
+                      console.log(obj);
+                      axios
+                        .post(html + "insert_atendimento", obj)
+                        .then(() => {
+                          loadAtendimentos();
+                          loadLeitos();
+                          setviewseletorunidades(0);
+                        });
+                    }
+                  }
                 }}
               >
                 <div>{item.nome_unidade}</div>
-                <div>
+                <div style={{
+                  display: item.nome_unidade == 'TRIAGEM' ? 'none' : 'flex'
+                }}>
                   {parseInt(item.total_leitos) -
                     parseInt(
                       atendimentos.filter(
                         (check) => check.id_unidade == item.id_unidade
                       ).length +
-                        " / " +
-                        item.total_leitos
+                      " / " +
+                      item.total_leitos
                     )}
                 </div>
               </div>
@@ -1977,7 +2030,6 @@ function Cadastro() {
 
   function SeletorDeLeitos() {
     const insertLeito = (status) => {
-      console.log(localStorage.getItem("leito"));
       var obj = {
         id_unidade: unidade,
         leito: localStorage.getItem("leito"),
@@ -2036,7 +2088,6 @@ function Cadastro() {
     function ViewStatusLeito() {
       let arraystatusleitos = [
         "LIVRE",
-        "OCUPADO",
         "LIMPEZA",
         "MANUTENÇÃO",
         "DESATIVADO",
@@ -2101,6 +2152,8 @@ function Cadastro() {
                 display: "flex",
                 flexDirection: "column",
                 justifyItems: "center",
+                maxWidth: 100,
+                maxHeight: 100,
                 opacity:
                   atendimentos.filter(
                     (valor) =>
@@ -2176,7 +2229,6 @@ function Cadastro() {
                     atendimentos.filter(
                       (valor) =>
                         valor.id_cliente == hospital &&
-                        valor.id_unidade == unidade &&
                         valor.data_termino == null &&
                         valor.id_paciente == paciente.id_paciente
                     )
@@ -2311,7 +2363,7 @@ function Cadastro() {
                 }
               }}
             >
-              <div style={{ fontSize: 20, margin: 10 }}>{item}</div>
+              <div style={{ position: 'absolute', top: 2.5, left: 5, fontSize: 20, margin: 10 }}>{item}</div>
               <div
                 style={{
                   display:
@@ -2320,10 +2372,16 @@ function Cadastro() {
                         valor.id_cliente == hospital &&
                         valor.id_unidade == unidade &&
                         valor.data_termino == null &&
-                        valor.leito == item
+                        valor.leito == item,
                     ).length > 0
                       ? "flex"
                       : "none",
+                  fontSize: 12,
+                  position: 'absolute',
+                  top: 50,
+                  padding: 5,
+                  alignContent: 'center',
+                  alignSelf: 'center',
                 }}
               >
                 {atendimentos
@@ -2337,7 +2395,7 @@ function Cadastro() {
                   .map((valor) => valor.nome_paciente.substring(0, 20) + "...")}
               </div>
               <div
-                className="button"
+                className="button-yellow"
                 style={{
                   height: 25,
                   width: 25,
@@ -2354,18 +2412,23 @@ function Cadastro() {
                       valor.status == "LIVRE"
                         ? "green"
                         : valor.status == "OCUPADO"
-                        ? "orange"
-                        : valor.status == "MANUTENÇÃO"
-                        ? "gray"
-                        : valor.status == "DESATIVADO"
-                        ? "red"
-                        : valor.status == "LIMPEZA"
-                        ? "blue"
-                        : "rgba(82, 190, 128, 0.7)"
+                          ? "orange"
+                          : valor.status == "MANUTENÇÃO"
+                            ? "gray"
+                            : valor.status == "DESATIVADO"
+                              ? "red"
+                              : valor.status == "LIMPEZA"
+                                ? "blue"
+                                : "rgb(0, 0, 0, 0.5)"
                     ),
                 }}
                 onClick={(e) => {
-                  setviewstatusleito(1);
+                  console.log(statusleitos.filter((valor) => valor.leito == item && valor.id_unidade == unidade).map((valor) => valor.status).pop());
+                  if (statusleitos.filter((valor) => valor.leito == item && valor.id_unidade == unidade).map((valor) => valor.status).pop() == 'OCUPADO') {
+                    toast(settoast, 'NÃO É POSSÍVEL ALTERAR O STATUS DE UM LEITO OCUPADO', 'rgb(231, 76, 60, 1', 3000);
+                  } else {
+                    setviewstatusleito(1);
+                  }
                   e.stopPropagation();
                 }}
               >
@@ -2375,14 +2438,14 @@ function Cadastro() {
                     valor.status == "LIVRE"
                       ? "L"
                       : valor.status == "OCUPADO"
-                      ? "O"
-                      : valor.status == "MANUTENÇÃO"
-                      ? "M"
-                      : valor.status == "LIMPEZA"
-                      ? "H"
-                      : valor.status == "DESATIVADO"
-                      ? "D"
-                      : ""
+                        ? "O"
+                        : valor.status == "MANUTENÇÃO"
+                          ? "M"
+                          : valor.status == "LIMPEZA"
+                            ? "H"
+                            : valor.status == "DESATIVADO"
+                              ? "D"
+                              : ""
                   )}
               </div>
             </div>

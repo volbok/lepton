@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import Usuarios from "./pages/Usuarios";
 import Pdf from "./pages/Pdf";
 import Prescricao from "./pages/Prescricao";
+import Triagem from "./pages/Triagem";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -276,6 +277,9 @@ function App() {
             </Route>
             <Route path="/prescricao">
               <Prescricao></Prescricao>
+            </Route>
+            <Route path="/triagem">
+              <Triagem></Triagem>
             </Route>
           </Switch>
         </Router>

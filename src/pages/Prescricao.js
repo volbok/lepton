@@ -272,6 +272,7 @@ function Prescricao() {
         last_id_prescricao = x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
         console.log('ID DA PRESCRIÇÃO CRIADA: ' + last_id_prescricao);
         // registrando os itens da prescrição copiada.
+        // eslint-disable-next-line
         prescricao.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).map(valor => {
           let id_pai_a_copiar = valor.id;
           console.log('ID DA PRESCRIÇÃO SELECIONADA: ' + valor.id_prescricao);
@@ -1062,7 +1063,8 @@ function Prescricao() {
                 <div id={"botão para expandir" + item.id}
                   className='button'
                   style={{
-                    display: expand == 0 ? 'flex' : 'none',
+                    // display: expand == 0 ? 'flex' : 'none',
+                    display: 'none',
                     width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
                     position: 'absolute', bottom: -18, right: -10,
                     backgroundColor: 'rgba(82, 190, 128, 1)',
@@ -1086,7 +1088,8 @@ function Prescricao() {
                 <div id={"botão para retrair" + item.id}
                   className='button'
                   style={{
-                    display: expand == 1 ? 'flex' : 'none',
+                    // display: expand == 1 ? 'flex' : 'none',
+                    display: 'none',
                     width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
                     position: 'absolute', bottom: -18, right: -10,
                     backgroundColor: 'orange',
@@ -1107,6 +1110,28 @@ function Prescricao() {
                 >
                 </div>
                 <div className='button'
+                  onClick={() => {
+                    if (expand == 1) {
+                      setexpand(0);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
+                        document.getElementById("trava mouse").style.pointerEvents = "auto";
+                        document.getElementById("trava mouse").style.opacity = 1;
+                      });
+                    } else {
+                      setselectitemprescricao(item);
+                      setexpand(1);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.filter(valor => valor.id == item.id));
+                        document.getElementById("trava mouse").style.pointerEvents = "none";
+                        document.getElementById("trava mouse").style.opacity = 0.5;
+                      });
+                    }
+                  }}
                   style={{
                     flex: window.innerWidth < 426 ? 6 : 2
                   }}>
@@ -1779,8 +1804,8 @@ function Prescricao() {
           {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', fontFamily: 'Helvetica', marginTop: 20 }}>
-          <div style={{ margin: 5, width: 60 }}>{''}</div>
-          <div style={{ margin: 5, width: 400 }}>{'ITEM'}</div>
+          <div style={{ margin: 5, width: 20 }}>{''}</div>
+          <div style={{ margin: 5, width: 440 }}>{'ITEM'}</div>
           <div style={{ margin: 5, width: 60 }}>{'QTDE'}</div>
           <div style={{ margin: 5, width: 60 }}>{'VIA'}</div>
           <div style={{ margin: 5, width: 60 }}>{'FREQ'}</div>
@@ -1821,10 +1846,11 @@ function Prescricao() {
             display: 'flex', flexDirection: 'column', width: '100%',
             backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent',
             borderRadius: 5,
+            breakInside: 'avoid',
           }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div style={{ margin: 5, width: 60 }}>{arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1}</div>
-              <div style={{ margin: 5, width: 400 }}>{item.nome_item}</div>
+              <div style={{ margin: 5, width: 20 }}>{arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1}</div>
+              <div style={{ margin: 5, width: 440 }}>{item.nome_item}</div>
               <div style={{ margin: 5, width: 60 }}>{item.qtde_item}</div>
               <div style={{ margin: 5, width: 60 }}>{item.via}</div>
               <div style={{ margin: 5, width: 60 }}>{item.freq}</div>
@@ -1832,19 +1858,19 @@ function Prescricao() {
             </div>
             <div style={{
               display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
-              margin: 5, PADDING: 10, borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.3)', borderRadius: 5
+              margin: 1.5, padding: 1.5, borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.3)', borderRadius: 5
             }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5 }}>
-                <div style={{ marginTop: 5, marginBottom: 5, fontWeight: 'bold' }}>OBSERVAÇÕES:</div>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5, fontSize: 8 }}>
+                <div style={{ margin: 1.5, fontWeight: 'bold' }}>OBSERVAÇÕES:</div>
                 <div style={{ width: '100%' }}>{item.obs}</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', margin: 5 }}>
-                <div style={{ marginTop: 5, marginLeft: 5, marginBottom: 5, fontWeight: 'bold' }}>COMPONENTES:</div>
-                <div id="LISTA DE COMPONENTES PARA IMPRESSÃO" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', margin: 5, fontSize: 8 }}>
+                <div style={{ margin: 1.5, fontWeight: 'bold' }}>COMPONENTES:</div>
+                <div id="LISTA DE COMPONENTES PARA IMPRESSÃO" style={{ width: '100%', fontSize: 8 }}>
                   {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                      <div style={{ margin: 5, width: 200 }}>{valor.nome_item}</div>
-                      <div style={{ margin: 5, width: 60 }}>{valor.qtde_item}</div>
+                      <div style={{ margin: 1.5, width: 200 }}>{valor.nome_item}</div>
+                      <div style={{ margin: 1.5, width: 60 }}>{valor.qtde_item}</div>
                     </div>
                   ))}
                 </div>

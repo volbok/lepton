@@ -30,12 +30,13 @@ function Toast() {
           padding: 10,
           minHeight: 50,
           maxHeight: 300,
-          minWidth: 100,
-          maxWidth: 300,
+          // minWidth: 100,
+          // maxWidth: 300,
           color: '#ffffff',
           fontWeight: 'bold',
           fontSize: 14,
           borderRadius: 5,
+          paddingLeft: 20, paddingRight: 20
         }}>
         {toast.mensagem}
       </div>

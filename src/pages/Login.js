@@ -245,6 +245,20 @@ function Login() {
       .then((response) => {
         setusuarios(response.data.rows);
         // console.log(response.data.rows);
+        /*
+        ACESSOS AOS MÓDULOS DE USUÁRIO (tabela usuarios):
+        10 - MÉDICO(A)
+        11 - ENFERMEIRO(A)
+        12 - TÉCNICO(A) DE ENFERMAGEM
+        13 - FISIOTERAPEUTA
+        14 - FONOAUDIOLOGO(A)
+        15 - TERAPEUTA OCUPACIONAL
+        16 - ASSISTENTE SOCIAL
+        17 - PSICOLOGO(A)
+        18 - RADIOLOGIA
+        20 - GERENTE
+        21 - ADMINISTRATIVO
+        */
       })
       .catch(function (error) {
         console.log(error);
@@ -262,13 +276,13 @@ function Login() {
         html + "getunidades",
         obj
         /*
-      Forma de passar o token pelo header (deve ser repetida em toda endpoint).
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
+        Forma de passar o token pelo header (deve ser repetida em toda endpoint).
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         }
-      }
-      */
+        */
       )
       .then((response) => {
         setacessos(response.data.rows);
@@ -432,7 +446,7 @@ function Login() {
           alignSelf: "center",
         }}
       >
-        <div className="text2" style={{ fontSize: 16 }}>
+        <div className="text2" style={{ fontSize: 16, display: usuario.prontuario == 1 ? 'flex' : 'none' }}>
           UNIDADES ASSISTENCIAIS
         </div>
         <div
@@ -462,11 +476,16 @@ function Login() {
               }}
               onClick={() => {
                 setunidade(item.id_unidade);
-                setpagina(1);
-                history.push("/prontuario");
-                localStorage.setItem("viewlistaunidades", 1);
-                localStorage.setItem("viewlistamodulos", 1);
-                console.log("HOSPITAL: " + item.id_unidade);
+                if (item.id_unidade == 4) { // card para acesso à tela de triagem.
+                  setpagina(30);
+                  history.push("/triagem");
+                } else {
+                  setpagina(1);
+                  history.push("/prontuario");
+                  localStorage.setItem("viewlistaunidades", 1);
+                  localStorage.setItem("viewlistamodulos", 1);
+                  console.log("HOSPITAL: " + item.id_unidade);
+                }
               }}
             >
               {unidades
@@ -514,7 +533,11 @@ function Login() {
           marginTop: 20,
         }}
       >
-        <div className="text2" style={{ fontSize: 16 }}>
+        <div className="text2"
+          style={{
+            fontSize: 16,
+            display: usuario.paciente == 1 || usuario.laboratorio == 1 || usuario.farmacia == 1 || usuario.faturamento == 1 || usuario.usuarios == 1 ? 'flex' : 'none',
+          }}>
           UNIDADES DE APOIO
         </div>
         <div
