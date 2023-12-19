@@ -5,6 +5,7 @@ import Context from "./Context";
 import moment from "moment";
 // imagens.
 import power from "../images/power.svg";
+import call from "../images/call.svg";
 import people from "../images/people.svg";
 // funções.
 import toast from "../functions/toast";
@@ -15,18 +16,16 @@ function Triagem() {
   // context.
   const {
     html,
+    altura,
+    hospital,
     unidade,
     unidades,
     setusuario,
-
     settoast,
     pagina,
     setpagina,
-
-    altura,
-
-    setpacientes,
     pacientes,
+    setpacientes,
     setpaciente,
     atendimentos,
     setatendimentos,
@@ -129,6 +128,8 @@ function Triagem() {
       setpaciente([]);
       setatendimento(null);
       loadPacientes();
+      loadChamadas();
+      localStorage.setItem("sala", "null");
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -253,33 +254,42 @@ function Triagem() {
         document.getElementById(input).value = '';
         document.getElementById(input).focus();
       } else {
-        classificaVermelho();
+        classificaAutomatico();
       }
     }, 1000);
   }
 
-  const classificaVermelho = () => {
-    if (document.getElementById("inputPas").value < 90) {
+  const classificaAutomatico = () => {
+    if (document.getElementById("inputPas").value != '' && (document.getElementById("inputPas").value < 80 || document.getElementById("inputPas").value > 230)) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
-    if (document.getElementById("inputFc").value < 60 || document.getElementById("inputFc").value > 150) {
+    } else if (document.getElementById("inputFc").value != '' && (document.getElementById("inputFc").value < 60 || document.getElementById("inputFc").value > 220)) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
-    if (document.getElementById("inputFr").value < 10 || document.getElementById("inputFr").value > 30) {
+    } else if (document.getElementById("inputFr").value != '' && (document.getElementById("inputFr").value < 10 || document.getElementById("inputFr").value > 30)) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
-    if (document.getElementById("inputSao2").value < 88) {
+    } else if (document.getElementById("inputSao2").value != '' && document.getElementById("inputSao2").value < 85) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
-    if (document.getElementById("inputGlicemia").value < 60) {
+    } else if (document.getElementById("inputGlicemia").value != '' && document.getElementById("inputGlicemia").value < 60) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
-    if (document.getElementById("inputGlasgow").value < 13) {
+    } else if (document.getElementById("inputGlasgow").value != '' && document.getElementById("inputGlasgow").value < 10) {
       classificaAtendimento(atendimento, 'VERMELHO')
-    };
+    } else if (document.getElementById("inputPas").value != '' && document.getElementById("inputPas").value > 180 && document.getElementById("inputPas").value < 231) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else if (document.getElementById("inputFc").value != '' && document.getElementById("inputFc").value > 150 && document.getElementById("inputFc").value < 221) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else if (document.getElementById("inputFr").value != '' && document.getElementById("inputFr").value > 25) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else if (document.getElementById("inputSao2").value != '' && document.getElementById("inputSao2").value < 91 && document.getElementById("inputSao2").value > 84) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else if (document.getElementById("inputGlicemia").value != '' && document.getElementById("inputGlicemia").value > 350) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else if (document.getElementById("inputGlasgow").value != '' && document.getElementById("inputGlasgow").value < 14 && document.getElementById("inputGlasgow").value > 9) {
+      classificaAtendimento(atendimento, 'LARANJA')
+    } else {
+      classificaAtendimento(atendimento, null);
+    }
   }
 
-  const [classificacao, setclassificacao] = useState();
+  const [classificacao, setclassificacao] = useState(null);
   const classificaAtendimento = (item, classificacao) => {
     console.log(item.id_atendimento);
     var obj = {
@@ -298,34 +308,14 @@ function Triagem() {
     axios.post(html + "update_atendimento/" + item.id_atendimento, obj).then(() => {
       console.log('ATENDIMENTO CLASSIFICADO COM SUCESSO');
       setclassificacao(classificacao);
-      // loadAtendimentos();
-    });
-  }
-
-  const encaminhaParaAtendimento = (item) => {
-    console.log(item.id_atendimento);
-    var obj = {
-      data_inicio: item.data_inicio,
-      data_termino: null,
-      problemas: item.problemas,
-      id_paciente: item.id_paciente,
-      id_unidade: 3, // 3 = PRONTO ATENDIMENTO.
-      nome_paciente: item.nome_paciente,
-      leito: 'F',
-      situacao: 0,
-      id_cliente: item.id_cliente,
-      classificacao: classificacao
-    };
-    axios.post(html + "update_atendimento/" + item.id_atendimento, obj).then(() => {
-      loadAtendimentos();
-      setatendimento(null);
+      document.getElementById(localStorage.getItem("botao")).className = "button-red";
     });
   }
 
   const arrayclassificacao = ['AZUL', 'VERDE', 'AMARELO', 'LARANJA', 'VERMELHO'];
   function BotoesClassificacao() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="text1">OU SELECIONE MANUALMENTE A CLASSIFICAÇÃO</div>
         <div id="classificação" style={{
           display: 'flex', flexDirection: 'row',
@@ -365,31 +355,128 @@ function Triagem() {
     )
   }
 
+  const updateAtendimento = (item, classificacao) => {
+    var obj = {
+      data_inicio: atendimento.data_inicio,
+      data_termino: null,
+      problemas: atendimento.problemas,
+      id_paciente: parseInt(atendimento.id_paciente),
+      id_unidade: item,
+      nome_paciente: atendimento.nome_paciente,
+      leito: 'F',
+      situacao: 1,
+      id_cliente: hospital,
+      classificacao: classificacao,
+    };
+    console.log(obj);
+    axios.post(html + "update_atendimento/" + atendimento.id_atendimento, obj).then(() => {
+      toast(settoast, 'PACIENTE ENCAMINHADO COM SUCESSO', 'green', 3000);
+      loadAtendimentos();
+      setatendimento(null);
+    });
+  };
+
   function ClassificacaoAtual() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: classificacao != null ? 'flex' : 'none',
+          flexDirection: 'column', justifyContent: 'center'
+        }}
+      >
         <div className="text1">CLASSIFICAÇÃO INDICADA</div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          <div className="button"
-            style={{
-              backgroundColor:
-                classificacao == 'AZUL' ? 'blue' : classificacao == 'VERDE' ? 'green' : classificacao == 'AMARELO' ? 'yellow' : classificacao == 'LARANJA' ? 'orange' : classificacao == 'VERMELHO' ? 'red' : 'grey',
-              padding: 10, paddingLeft: 20, paddingRight: 20,
-              width: 100,
-              alignSelf: 'center',
-            }}
-          >
-            {classificacao}
-          </div>
-          <div className="button"
-            style={{ paddingLeft: 20, paddingRight: 20 }}
-            onClick={() => encaminhaParaAtendimento(atendimento)}
-          >
-            CONFIRMAR
-          </div>
+        <div className="button"
+          style={{
+            backgroundColor:
+              classificacao == 'AZUL' ? 'blue' : classificacao == 'VERDE' ? 'green' : classificacao == 'AMARELO' ? 'yellow' : classificacao == 'LARANJA' ? 'orange' : classificacao == 'VERMELHO' ? 'red' : 'grey',
+            padding: 10, paddingLeft: 20, paddingRight: 20,
+            width: 100,
+            alignSelf: 'center',
+          }}
+        >
+          {classificacao}
+        </div>
+        <div className="text1">SELECIONE O SETOR DE DESTINO DO PACIENTE</div>
+        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {unidades.map(item => (
+            <div
+              className="button"
+              style={{ paddingLeft: 20, paddingRight: 20, width: 150 }}
+              onClick={() => updateAtendimento(item.id_unidade, classificacao)}
+            >
+              {item.nome_unidade}
+            </div>
+          ))}
         </div>
       </div>
     )
+  }
+
+  let salas = ['TRIAGEM 01', 'TRIAGEM 02']
+  function SalaSelector() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="text1">SELECIONE A SALA PARA ACOLHIMENTO DO PACIENTE</div>
+        <div id="salas para chamada"
+          style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          {salas.map(item => (
+            <div
+              id={"btnsala " + item}
+              className="button"
+              onClick={() => {
+                localStorage.setItem("sala", item);
+                var botoes = document
+                  .getElementById("salas para chamada")
+                  .getElementsByClassName("button-red");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "button";
+                }
+                localStorage.setItem("botao", "btnsala " + item);
+                document.getElementById("btnsala " + item).className = "button-red";
+              }}
+              style={{ paddingLeft: 20, paddingRight: 20 }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // recuperando o total de chamadas para a unidade de atendimento.
+  const [chamadas, setchamadas] = useState([]);
+  const loadChamadas = () => {
+    axios.get(html + 'list_chamada/' + unidade).then((response) => {
+      setchamadas(response.data.rows);
+    })
+  }
+
+  // inserindo registro de chamada para triagem.
+  const callPaciente = (item) => {
+    console.log(localStorage.getItem("sala"));
+    if (localStorage.getItem("sala") != "null") {
+      var obj = {
+        id_unidade: unidade,
+        id_paciente: item.id_paciente,
+        nome_paciente: item.nome_paciente,
+        id_atendimento: item.id_atendimento,
+        id_sala: localStorage.getItem("sala"),
+        data: moment()
+      }
+      console.log(obj);
+      axios.post(html + 'insert_chamada/', obj).then(() => {
+        axios.get(html + 'list_chamada/' + unidade).then((response) => {
+          let x = response.data.rows;
+          let y = x.filter(valor => valor.id_atendimento == item.id_atendimento);
+          setchamadas(response.data.rows);
+          document.getElementById(localStorage.getItem("botao")).className = "button-red";
+          document.getElementById('contagem de chamadas' + item.id_atendimento).innerHTML = y.length;
+        });
+      });
+    } else {
+      toast(settoast, 'SELECIONE UMA SALA PARA ACOLHIMENTO PRIMEIRO', 'red', 2000);
+    }
   }
 
   // lista de atendimentos.
@@ -418,13 +505,13 @@ function Triagem() {
           className="scroll"
           id="scroll atendimentos"
           style={{
-            display: arrayatendimentos.length > 0 ? "flex" : "none",
+            display: arrayatendimentos.filter(item => item.id_unidade == unidade).length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 140,
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
           }}
         >
-          {arrayatendimentos
+          {arrayatendimentos.filter(item => item.id_unidade == unidade)
             .sort((a, b) => (moment(a.datainicio) > moment(b.datainicio) ? 1 : -1))
             .map((item) => (
               <div key={"pacientes" + item.id_atendimento}>
@@ -456,17 +543,24 @@ function Triagem() {
                     <div>
                       {moment(item.data_inicio).format('HH:mm:ss')}
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', margin: 5, marginBottom: 0 }}>
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'row', margin: 5, marginBottom: 0
+                    }}>
                       <div
-                        className="button-red"
-                        style={{ margin: 5, minHeight: 35, maxHeight: 35, minWidth: 35, maxWidth: 35 }}
+                        className="button-opaque"
+                        style={{
+                          display: 'flex',
+                          margin: 5, minHeight: 35, maxHeight: 35, minWidth: 35, maxWidth: 35,
+                          backgroundColor: 'rgba(231, 76, 60, 0.8)'
+                        }}
                         onClick={() => {
-                          // callPaciente();
+                          callPaciente(item);
                         }}
                       >
                         <img
                           alt=""
-                          src={power}
+                          src={call}
                           style={{
                             margin: 0,
                             height: 25,
@@ -474,10 +568,12 @@ function Triagem() {
                           }}
                         ></img>
                       </div>
-                      <div id='contagem de chamadas'
+                      <div id={'contagem de chamadas' + item.id_atendimento}
                         title="TOTAL DE CHAMADAS"
                         className="text1"
-                        style={{ margin: 5, marginLeft: 0, borderRadius: 5, backgroundColor: 'white', height: 30, width: 30 }}>?</div>
+                        style={{ margin: 5, marginLeft: 0, borderRadius: 5, backgroundColor: 'white', height: 30, width: 30 }}>
+                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                      </div>
                     </div>
                   </div>
                   <div
@@ -495,7 +591,7 @@ function Triagem() {
                     onClick={() => {
                       setatendimento(item);
                       setpaciente(item.id_paciente);
-                      if (pagina == 1) {
+                      if (pagina == 30) {
                         setTimeout(() => {
                           var botoes = document
                             .getElementById("scroll atendimentos")
@@ -592,8 +688,7 @@ function Triagem() {
         <Usuario></Usuario>
         <ListaDeAtendimentos></ListaDeAtendimentos>
       </div>
-      <div
-        id="conteúdo cheio"
+      <div id="conteúdo cheio"
         className="scroll"
         style={{
           display:
@@ -615,6 +710,7 @@ function Triagem() {
           scrollBehavior: "smooth",
         }}
       >
+        <SalaSelector></SalaSelector>
         <div className='text1'>INFORME OS DADOS VITAIS PARA CLASSIFICAÇÃO AUTOMÁTICA</div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -780,9 +876,7 @@ function Triagem() {
         <BotoesClassificacao></BotoesClassificacao>
         <ClassificacaoAtual></ClassificacaoAtual>
       </div>
-
-      <div
-        id="conteúdo vazio"
+      <div id="conteúdo vazio"
         className="scroll"
         style={{
           display:

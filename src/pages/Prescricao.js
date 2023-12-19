@@ -24,7 +24,7 @@ function Prescricao() {
   // context.
   const {
     html,
-    pagina, setpagina,
+    setpagina,
     settoast,
     usuario,
     prescricao, setprescricao,
@@ -33,19 +33,20 @@ function Prescricao() {
     unidade,
     unidades,
     paciente, pacientes,
+    card, setcard,
   } = useContext(Context);
 
   // history (router).
   let history = useHistory();
 
   useEffect(() => {
-    if (pagina == 10) {
+    if (card == 'card-prescricao') {
       loadOpcoesPrescricao();
       loadItensPrescricao();
       loadPrescricao();
     }
     // eslint-disable-next-line
-  }, [pagina]);
+  }, [card, atendimento]);
 
   var timeout = null;
 
@@ -235,7 +236,7 @@ function Prescricao() {
       data: moment(),
       status: 0, // 0 = não salva; 1 = salva (não pode excluir).
       id_profissional: usuario.id,
-      nome_profissional: usuario.nome,
+      nome_profissional: usuario.nome_usuario,
       registro_profissional: usuario.n_conselho,
     }
     axios.post(html + 'insert_prescricao', obj).then(() => {
@@ -253,7 +254,7 @@ function Prescricao() {
 
   // copiar prescrição.
   const copiarPrescricao = (item) => {
-    loadPrescricao();
+    // loadItensPrescricao();
     let last_id_prescricao = null;
     // registrando nova prescrição.
     var obj = {
@@ -262,7 +263,7 @@ function Prescricao() {
       data: moment(),
       status: 0, // 0 = não salva; 1 = salva (não pode excluir).
       id_profissional: usuario.id,
-      nome_profissional: usuario.nome,
+      nome_profissional: usuario.nome_usuario,
       registro_profissional: usuario.n_conselho,
     }
     axios.post(html + 'insert_prescricao', obj).then(() => {
@@ -273,63 +274,78 @@ function Prescricao() {
         console.log('ID DA PRESCRIÇÃO CRIADA: ' + last_id_prescricao);
         // registrando os itens da prescrição copiada.
         // eslint-disable-next-line
-        prescricao.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).map(valor => {
-          let id_pai_a_copiar = valor.id;
-          console.log('ID DA PRESCRIÇÃO SELECIONADA: ' + valor.id_prescricao);
-          var obj = {
-            id_unidade: unidade,
-            id_paciente: paciente,
-            id_atendimento: atendimento,
-            categoria: valor.categoria,
-            codigo_item: valor.codigo_item,
-            nome_item: valor.nome_item,
-            qtde_item: valor.qtde_item,
-            via: valor.via,
-            freq: valor.freq,
-            agora: valor.agora,
-            acm: valor.acm,
-            sn: valor.sn,
-            obs: valor.obs,
-            data: moment(),
-            id_componente_pai: valor.id_componente_pai,
-            id_componente_filho: valor.id_componente_filho,
-            id_prescricao: last_id_prescricao,
-            id_pai: null
-          }
-          axios.post(html + 'insert_item_prescricao', obj).then(() => {
-            console.log('ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
-            console.log(obj);
-            // recuperando id do item de prescrição recém-copiado.
-            axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
-              let x = response.data.rows;
-              let last_id_item = x.filter(item => item.id_prescricao == last_id_prescricao && item.id_pai == null).sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
-              console.log('ID DO ITEM DE PRESCRIÇÃO CRIADO: ' + last_id_item);
-              // copiando os componentes do item de prescrição recém-criado.
-              x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).map(valor => {
-                var obj = {
-                  id_unidade: unidade,
-                  id_paciente: paciente,
-                  id_atendimento: atendimento,
-                  categoria: valor.categoria,
-                  codigo_item: valor.codigo_item,
-                  nome_item: valor.nome_item,
-                  qtde_item: valor.qtde_item,
-                  via: valor.via,
-                  freq: valor.freq,
-                  agora: valor.agora,
-                  acm: valor.acm,
-                  sn: valor.sn,
-                  obs: valor.obs,
-                  data: moment(),
-                  id_componente_pai: valor.id_componente_pai,
-                  id_componente_filho: valor.id_componente_filho,
-                  id_prescricao: last_id_prescricao,
-                  id_pai: last_id_item,
-                }
-                axios.post(html + 'insert_item_prescricao', obj).then(() => {
-                  console.log('COMPONENTE DE ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
+        axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+          let x = response.data.rows;
+          console.log(x.length);
+          console.log('ITENS COPIÁVEIS:')
+          console.log(x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).length);
+          // eslint-disable-next-line
+          x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).map(valor => {
+            let id_pai_a_copiar = valor.id;
+            console.log('ID DA PRESCRIÇÃO SELECIONADA: ' + valor.id_prescricao);
+            var obj = {
+              id_unidade: parseInt(unidade),
+              id_paciente: parseInt(paciente),
+              id_atendimento: parseInt(atendimento),
+              categoria: valor.categoria,
+              codigo_item: valor.codigo_item,
+              nome_item: valor.nome_item,
+              qtde_item: parseInt(valor.qtde_item),
+              via: valor.via,
+              freq: valor.freq,
+              agora: valor.agora,
+              acm: valor.acm,
+              sn: valor.sn,
+              obs: valor.obs,
+              data: moment(),
+              id_componente_pai: parseInt(valor.id_componente_pai),
+              id_componente_filho: parseInt(valor.id_componente_filho),
+              id_prescricao: parseInt(last_id_prescricao),
+              id_pai: null
+            }
+            axios.post(html + 'insert_item_prescricao', obj).then(() => {
+              console.log('ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
+              console.log(obj);
+              // recuperando id do item de prescrição recém-copiado.
+              axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                let x = response.data.rows;
+                let last_id_item = x.filter(item => item.id_prescricao == last_id_prescricao && item.id_pai == null).sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
+                console.log('ID DO ITEM DE PRESCRIÇÃO CRIADO: ' + last_id_item);
+                // copiando os componentes do item de prescrição recém-criado.
+                let count = x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).length;
+                x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).map(valor => {
+                  count = count - 1;
+                  console.log(count);
+                  var obj = {
+                    id_unidade: unidade,
+                    id_paciente: paciente,
+                    id_atendimento: atendimento,
+                    categoria: valor.categoria,
+                    codigo_item: valor.codigo_item,
+                    nome_item: valor.nome_item,
+                    qtde_item: valor.qtde_item,
+                    via: valor.via,
+                    freq: valor.freq,
+                    agora: valor.agora,
+                    acm: valor.acm,
+                    sn: valor.sn,
+                    obs: valor.obs,
+                    data: moment(),
+                    id_componente_pai: valor.id_componente_pai,
+                    id_componente_filho: valor.id_componente_filho,
+                    id_prescricao: last_id_prescricao,
+                    id_pai: last_id_item,
+                  }
+                  axios.post(html + 'insert_item_prescricao', obj).then(() => {
+                    console.log('COMPONENTE DE ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
+                  });
+                  if (count == 0) {
+                    loadPrescricao();
+                    loadItensPrescricao();
+                    setidprescricao(0);
+                  }
+                  return null;
                 });
-                return null;
               });
             });
           });
@@ -345,12 +361,14 @@ function Prescricao() {
       id_atendimento: item.id_atendimento,
       data: item.data,
       status: status,
-      id_profissional: item.id_profissional,
+      id_profissional: item.id,
       nome_profissional: item.nome_profissional,
-      registro_profissional: item.n_conselho,
+      registro_profissional: item.registro_profissional,
     }
     axios.post(html + 'update_prescricao/' + item.id, obj).then(() => {
       loadPrescricao();
+      loadItensPrescricao();
+      setidprescricao(0);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -362,8 +380,14 @@ function Prescricao() {
   }
   // excluindo um registro de prescricao.
   const deletePrescricao = (id) => {
+    loadPrescricao();
+    loadItensPrescricao();
     axios.get(html + 'delete_prescricao/' + id).then(() => {
+      // deletando itens de prescrição correlatos.
+      prescricao.filter(item => item.id_prescricao == id).map(item => deleteItemPrescricao(item));
       loadPrescricao();
+      loadItensPrescricao();
+      setidprescricao(0);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -435,7 +459,7 @@ function Prescricao() {
         let lastIdItemPrescricao = x.filter(item => item.id_prescricao == idprescricao).slice(-1).map(item => item.id);
         console.log(lastIdItemPrescricao);
         // inserir componentes predefinidos para o item prescrito.
-        opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(valor, lastIdItemPrescricao, 0));
+        opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(valor, lastIdItemPrescricao));
         loadItensPrescricao();
       }, 2000);
     })
@@ -448,7 +472,7 @@ function Prescricao() {
       });
   }
 
-  const insertComponentePrescricao = (componente, id_pai, carrega) => {
+  const insertComponentePrescricao = (componente, id_pai) => {
     var obj = {
       id_unidade: unidade,
       id_paciente: paciente,
@@ -473,8 +497,7 @@ function Prescricao() {
       console.log('COMPONENTE INSERIDO:');
       console.log(obj);
       if (expand == 1) {
-        document.getElementById("trava mouse").style.pointerEvents = "none";
-        document.getElementById("trava mouse").style.opacity = 0.5;
+        setexpand(0);
       }
     })
   }
@@ -643,7 +666,7 @@ function Prescricao() {
           id="inputopcoesprescricao"
           defaultValue={filteropcoesprescricao}
           maxLength={100}
-          style={{ margin: 0, width: window.innerWidth < 426 ? '100%' : '30vw' }}
+          style={{ margin: 0, width: '30vw' }}
         ></input>
       </div>
     )
@@ -788,15 +811,21 @@ function Prescricao() {
 
   // LISTA LATERAL DE PRESCRIÇÕES.
   const [idprescricao, setidprescricao] = useState(0);
+  const [statusprescricao, setstatusprescricao] = useState(0);
   const ListaPrescricoes = useCallback(() => {
     return (
       <div id="scroll lista de prescrições"
         className='scroll'
         style={{
-          height: window.innerHeight - 130,
-          width: '20vw',
-          margin: 0,
+          position: 'sticky',
+          top: 0,
+          width: '12vw', minWidth: '12vw', maxWidth: '12vw',
+          height: 'calc(100vh - 105px)',
+          margin: 0, marginTop: 5,
           marginLeft: 5,
+          backgroundColor: 'white',
+          borderColor: 'white',
+          alignSelf: 'flex-start',
         }}>
         <div id="botão para nova prescrição."
           className='button-green'
@@ -813,11 +842,14 @@ function Prescricao() {
             className='button'
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              minHeight: item.status == 0 ? 100 : 75,
+              minHeight: 120
             }}
             onClick={() => {
+              loadItensPrescricao();
               setidprescricao(item.id);
+              setstatusprescricao(item.status);
               console.log(item.id);
+              console.log(item.status);
               setTimeout(() => {
                 var botoes = document
                   .getElementById("scroll lista de prescrições")
@@ -830,9 +862,9 @@ function Prescricao() {
             }}
           >
             <div
-              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+              style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
               <div id="botão para excluir prescrição."
-                className='button-red'
+                className='button-yellow'
                 style={{
                   display: item.status == 0 ? 'flex' : 'none',
                   maxWidth: 30, width: 30, minWidth: 30,
@@ -865,6 +897,7 @@ function Prescricao() {
                 id="botão para imprimir prescrição"
                 className='button-green'
                 style={{
+                  display: item.status == 1 ? 'flex' : 'none',
                   maxWidth: 30, width: 30, minWidth: 30,
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
@@ -880,9 +913,10 @@ function Prescricao() {
                 ></img>
               </div>
               <div
-                id="botão para imprimir prescrição"
+                id="botão para copiar prescrição"
                 className='button-green'
                 style={{
+                  display: item.status == 1 ? 'flex' : 'none',
                   maxWidth: 30, width: 30, minWidth: 30,
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
@@ -898,16 +932,20 @@ function Prescricao() {
                 ></img>
               </div>
             </div>
-            <div style={{ padding: 10 }}>
-              {moment(item.data).format('DD/MM/YY')}
-              {moment(item.data).format('HH:mm')}
+            <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
+              <div>
+                {moment(item.data).format('DD/MM/YY')}
+              </div>
+              <div>
+                {moment(item.data).format('HH:mm')}
+              </div>
             </div>
           </div>
         ))}
       </div>
     )
     // eslint-disable-next-line
-  }, [arraylistaprescricao])
+  }, [arraylistaprescricao, atendimento])
 
   // componente para selecionar a via de administração de um item de prescrição.
   const [viewviaitemprescricao, setviewviaitemprescricao] = useState(0);
@@ -1023,22 +1061,25 @@ function Prescricao() {
   const ListaItensPrescricoes = useCallback(() => {
     var timeout = null;
     return (
-      <div className='scroll'
-        style={{
-          width: '75vw',
-          margin: 0,
-          height: window.innerHeight - 130,
-        }}>
-        <FilterItemPrescricao></FilterItemPrescricao>
+      <div style={{
+        margin: 5, width: '70vw',
+      }}>
+        <div style={{ pointerEvents: statusprescricao == 1 ? 'none' : 'auto' }}>
+          <FilterItemPrescricao></FilterItemPrescricao>
+        </div>
         <div style={{
           display: viewopcoesitensprescricao == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
-          flexWrap: 'wrap', marginTop: 10, marginBottom: 0,
-          borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)'
+          flexWrap: 'wrap',
+          marginTop: 10, marginBottom: 0,
+          borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)',
         }}>
-          {arrayopcoesprescricao.map(item => (
+          {arrayopcoesprescricao.filter(item => item.id_componente_filho == null).map(item => (
             <div
               className="button-green"
-              style={{ display: 'flex', flexDirection: 'row', paddingLeft: 15, paddingRight: 15 }}
+              style={{
+                display: idprescricao != 0 ? 'flex' : 'none',
+                flexDirection: 'row', paddingLeft: 15, paddingRight: 15
+              }}
               onClick={() => { insertItemPrescricao(item) }}
             >
               {item.nome_item}
@@ -1051,6 +1092,7 @@ function Prescricao() {
             style={{
               display: arrayitensprescricao.length > 0 ? 'flex' : 'none',
               flexDirection: 'column', justifyContent: 'center',
+              pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto'
             }}>
             <div className='row'
               style={{
@@ -1060,55 +1102,6 @@ function Prescricao() {
               }}
             >
               <div id='linha principal' style={{ display: 'flex', flexDirection: 'row', position: 'relative' }}>
-                <div id={"botão para expandir" + item.id}
-                  className='button'
-                  style={{
-                    // display: expand == 0 ? 'flex' : 'none',
-                    display: 'none',
-                    width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
-                    position: 'absolute', bottom: -18, right: -10,
-                    backgroundColor: 'rgba(82, 190, 128, 1)',
-                    borderColor: '#f2f2f2',
-                    borderStyle: 'solid',
-                    borderWidth: 5,
-                  }}
-                  onClick={() => {
-                    setselectitemprescricao(item);
-                    setexpand(1);
-                    axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
-                      let x = response.data.rows;
-                      setprescricao(response.data.rows);
-                      setarrayitensprescricao(x.filter(valor => valor.id == item.id));
-                      document.getElementById("trava mouse").style.pointerEvents = "none";
-                      document.getElementById("trava mouse").style.opacity = 0.5;
-                    });
-                  }}
-                >
-                </div>
-                <div id={"botão para retrair" + item.id}
-                  className='button'
-                  style={{
-                    // display: expand == 1 ? 'flex' : 'none',
-                    display: 'none',
-                    width: 15, minWidth: 15, height: 15, minHeight: 15, borderRadius: 50,
-                    position: 'absolute', bottom: -18, right: -10,
-                    backgroundColor: 'orange',
-                    borderColor: '#f2f2f2',
-                    borderStyle: 'solid',
-                    borderWidth: 5,
-                  }}
-                  onClick={() => {
-                    setexpand(0);
-                    axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
-                      let x = response.data.rows;
-                      setprescricao(response.data.rows);
-                      setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
-                      document.getElementById("trava mouse").style.pointerEvents = "auto";
-                      document.getElementById("trava mouse").style.opacity = 1;
-                    });
-                  }}
-                >
-                </div>
                 <div className='button'
                   onClick={() => {
                     if (expand == 1) {
@@ -1133,7 +1126,7 @@ function Prescricao() {
                     }
                   }}
                   style={{
-                    flex: window.innerWidth < 426 ? 6 : 2
+                    display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%'
                   }}>
                   {item.nome_item}
                 </div>
@@ -1149,7 +1142,7 @@ function Prescricao() {
                     onFocus={(e) => (e.target.placeholder = '')}
                     onBlur={(e) => (e.target.placeholder = 'QTDE')}
                     style={{
-                      width: 100, minWidth: 100, maxWidth: 100,
+                      width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5,
                     }}
                     type="text"
@@ -1164,8 +1157,8 @@ function Prescricao() {
                     }}
                     style={{
                       display: window.innerWidth > 425 ? 'flex' : 'none',
-                      flex: 2,
-                      width: 100, minWidth: 100, maxWidth: 100
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
                     }}>
                     {item.via}
                   </div>
@@ -1176,7 +1169,7 @@ function Prescricao() {
                       setviewfreqitemprescricao(1);
                     }}
                     style={{
-                      width: 100, minWidth: 100, maxWidth: 100,
+                      width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5,
                     }}
                     type="text"
@@ -1191,8 +1184,8 @@ function Prescricao() {
                     }}
                     style={{
                       display: window.innerWidth > 425 ? 'flex' : 'none',
-                      flex: 2,
-                      width: 30, minWidth: 30, maxWidth: 30
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
                     }}>
                     {item.agora == true ? 'AGORA' : item.acm == true ? 'ACM' : item.sn == true ? 'SN' : ''}
                   </div>
@@ -1216,7 +1209,7 @@ function Prescricao() {
                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', marginTop: 0 }}>
                 <div id={"informações " + item.id}
                   className={expand == 1 ? 'show' : 'hide'}
-                  style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}
+                  style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}
                 >
                   <textarea id={"inputObs " + item.id}
                     className="textarea"
@@ -1232,19 +1225,29 @@ function Prescricao() {
                     onFocus={(e) => (e.target.placeholder = '')}
                     onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
                     style={{
-                      width: 250, height: 270,
+                      width: '15vw', minWidth: '15vw', maxWidth: '15vw',
+                      height: 'calc(100% - 30px)',
                       margin: 0, marginRight: 10,
                     }}
                     type="text"
                     defaultValue={item.obs}
                     maxLength={1000}
                   ></textarea>
-                  <div id="LISTA DE COMPONENTES" className='scroll' style={{ width: '100%', height: 290, margin: 0 }}>
+                  <div id="LISTA DE COMPONENTES" className='scroll'
+                    style={{
+                      width: 'calc(100% - 10px)',
+                      height: 'calc(100% - 10px)',
+                      margin: 0
+                    }}>
                     {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
-                      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                      <div style={{
+                        display: 'flex', flexDirection: 'row',
+                        justifyContent: 'space-between', width: '100%'
+                      }}>
                         <div className='button'
                           style={{
-                            flex: window.innerWidth < 426 ? 6 : 2
+                            display: 'flex',
+                            width: '100%',
                           }}>
                           {valor.nome_item}
                         </div>
@@ -1257,7 +1260,7 @@ function Prescricao() {
                           onFocus={(e) => (e.target.placeholder = '')}
                           onBlur={(e) => (e.target.placeholder = 'QTDE')}
                           style={{
-                            width: window.innerWidth < 426 ? '70vw' : '10vw',
+                            width: 50,
                             margin: 5,
                           }}
                           type="text"
@@ -1292,15 +1295,13 @@ function Prescricao() {
         ))
         }
         <div className='text1'
-          style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', width: '90vw', opacity: 0.5 }}>
+          style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', width: '100%', opacity: 0.5 }}>
           SEM ITENS PRESCRITOS.
         </div>
       </div >
     )
     // eslint-disable-next-line
-  }, [arrayitensprescricao, atendimentos, idprescricao, prescricao
-    // arrayopcoesprescricao
-  ]);
+  }, [prescricao, statusprescricao, arrayitensprescricao, atendimentos, idprescricao, arraylistaprescricao]);
 
   const ViewInsertComponentePrescricao = (item) => {
     const [localarray, setlocalarray] = useState([]);
@@ -1341,7 +1342,7 @@ function Prescricao() {
             className="button-green"
             style={{ display: 'flex', flexDirection: 'row', paddingLeft: 15, paddingRight: 15 }}
             onClick={() => {
-              insertComponentePrescricao(valor, item.id, 1);
+              insertComponentePrescricao(valor, item.id);
               loadItensPrescricao();
             }}
           >
@@ -1752,7 +1753,6 @@ function Prescricao() {
       </div>
     )
   };
-
   function Header() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -1893,23 +1893,29 @@ function Prescricao() {
   }
 
   return (
-    <div className='main'
-      style={{ display: pagina == 10 ? 'flex' : 'none' }}>
+    <div className='card-aberto'
+      style={{
+        display: card == 'card-prescricao' ? 'flex' : 'none',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        margin: 0, padding: 0,
+      }}>
       <div id="cadastro de prescrições e de atendimentos"
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
+          margin: 0, padding: 0,
         }}>
         <div id="botões e pesquisa"
           style={{
             display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
-            alignSelf: 'center', width: '95vw',
+            alignSelf: 'center', width: '100%'
           }}>
           <div className='button-red'
             style={{ margin: 0, width: 50, height: 50 }}
             title={'VOLTAR PARA O PASSÔMETRO'}
-            onClick={() => { setpagina(1); history.push('/prontuario') }}>
+            onClick={() => setcard('')}>
             <img
               alt=""
               src={back}
@@ -1950,12 +1956,8 @@ function Prescricao() {
             {pacientes.filter(valor => valor.id_paciente == paciente).map(valor => valor.nome_paciente)}
           </div>
         </div>
-
         <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-          width: '95vw',
-          alignSelf: 'center',
-          marginTop: 5,
+          display: 'flex', flexDirection: 'row', justifyContent: 'center'
         }}>
           <ListaItensPrescricoes></ListaItensPrescricoes>
           <ListaPrescricoes></ListaPrescricoes>

@@ -937,6 +937,7 @@ function Usuarios() {
           <div
             className="button-green"
             style={{
+              display: todosacessos.filter(valor => valor.id_usuario == selectedusuario.id_usuario).length == unidades.length ? 'none' : 'flex',
               marginTop: 10,
             }}
             onClick={() => {
@@ -1122,7 +1123,10 @@ function Usuarios() {
             {unidades.map((item) => (
               <div
                 className="button"
-                style={{ width: 100, height: 100 }}
+                style={{
+                  display: todosacessos.filter(valor => valor.id_usuario == selectedusuario.id_usuario && valor.id_unidade == item.id_unidade).length > 0 ? 'none' : 'flex',
+                  width: 100, height: 100
+                }}
                 onClick={() => {
                   console.log(
                     JSON.parse(window.localStorage.getItem("selecteduser"))

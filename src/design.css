@@ -371,8 +371,8 @@ body {
   margin-top: 0px;
   margin-bottom: 0px;
   padding: 0px;
-  padding-left: 5px;
-  padding-right: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
   border-color: transparent;
@@ -773,7 +773,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .button:hover {
-  background-color: var(--cor1hover);
+  background-color: var(--cor1);
   transition: 200ms ease-in-out;
 }
 
@@ -828,7 +828,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor5);
+  background-color: var(--cor5hover);
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -853,7 +853,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor4);
+  background-color: var(--cor4hover);
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -878,7 +878,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor6);
+  background-color: var(--cor6hover);
   border: none;
   border-color: transparent;
   border-radius: 5px;

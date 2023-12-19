@@ -229,6 +229,7 @@ function Cadastro() {
       leito: leito,
       situacao: 1, // 1 = atendimento ativo; 0 = atendimento encerrado.
       id_cliente: hospital,
+      classificacao: null,
     };
     axios
       .post(html + "insert_atendimento", obj)
@@ -281,6 +282,7 @@ function Cadastro() {
             leito: leito,
             situacao: 1,
             id_cliente: hospital,
+            classificacao: item.classificacao,
           };
           axios
             .post(html + "update_atendimento/" + item.id_atendimento, obj)
@@ -311,6 +313,7 @@ function Cadastro() {
         leito: item.leito,
         situacao: 0, // 1 = atendimento ativo; 0 = atendimento encerrado.
         id_cliente: hospital,
+        classificacao: item.classificacao,
       };
       axios
         .post(html + "update_atendimento/" + item.id_atendimento, obj)
@@ -911,10 +914,9 @@ function Cadastro() {
           flexDirection: "row",
           justifyContent: "center",
           alignSelf: "center",
-          width: window.innerWidth < 426 ? "90vw" : "calc(100vw - 40px)",
-          maxWidth: window.innerWidth < 426 ? "90vw" : "calc(100vw - 40px)",
           marginBottom: 0,
           marginTop: 10,
+          width: "calc(100vw + 50px)",
         }}
       >
         <div className="header-row">
@@ -962,7 +964,7 @@ function Cadastro() {
     return (
       <div
         style={{
-          width: window.innerWidth < 426 ? "90vw" : "calc(100vw - 30px)",
+          width: "calc(100vw - 40px)",
           height:
             window.innerWidth < 426
               ? window.innerHeight - 130
@@ -1962,6 +1964,7 @@ function Cadastro() {
                         leito: null,
                         situacao: 1, // 1 = atendimento ativo; 0 = atendimento encerrado.
                         id_cliente: hospital,
+                        classificacao: null,
                       };
                       console.log(obj);
                       axios
@@ -2208,6 +2211,7 @@ function Cadastro() {
                   console.log(
                     "NÃO É POSSÍVEL ALOCAR O PACIENTE NESTE LEITO, QUE JÁ ESTÁ OCUPADO POR OUTRO PACIENTE."
                   );
+                  toast(settoast, "LEITO JÁ OCUPADO POR OUTRO PACIENTE.", 'red', 3000);
                 } else if (
                   // não existe um atendimento alocado no leito selecionado.
                   atendimentos.filter(

@@ -5,6 +5,7 @@ import Context from "./Context";
 import moment from "moment";
 // imagens.
 import power from "../images/power.svg";
+import call from "../images/call.svg";
 import back from "../images/back.svg";
 import people from "../images/people.svg";
 import body from "../images/body.svg";
@@ -12,9 +13,6 @@ import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
 import prec_respiratorio from "../images/prec_respiratorio.svg";
 import esteto from "../images/esteto.svg";
-import preferencias from "../images/preferencias.svg";
-import imprimir from "../images/imprimir.svg";
-import clipimage from "../images/clipboard.svg";
 // funções.
 import toast from "../functions/toast";
 // router.
@@ -23,7 +21,7 @@ import { useHistory } from "react-router-dom";
 import Logo from "../components/Logo";
 // cards.
 import Alergias from "../cards/Alergias";
-import Anamnese from "../cards/Anamnese";
+import Documentos from "../cards/Documentos";
 import Boneco from "../cards/Boneco";
 import Evolucoes from "../cards/Evolucoes";
 import Infusoes from "../cards/Infusoes";
@@ -54,44 +52,6 @@ function Prontuario() {
 
     altura,
 
-    settings,
-    // tema, settema,
-    carddiasinternacao,
-    setcarddiasinternacao,
-    cardalergias,
-    setcardalergias,
-    cardanamnese,
-    setcardanamnese,
-    cardevolucoes,
-    setcardevolucoes,
-    cardpropostas,
-    setcardpropostas,
-    cardprecaucoes,
-    setcardprecaucoes,
-    cardriscos,
-    setcardriscos,
-    cardalertas,
-    setcardalertas,
-    cardsinaisvitais,
-    setcardsinaisvitais,
-    cardbody,
-    setcardbody,
-    cardvm,
-    setcardvm,
-    cardinfusoes,
-    setcardinfusoes,
-    carddieta,
-    setcarddieta,
-    cardculturas,
-    setcardculturas,
-    cardatb,
-    setcardatb,
-    cardinterconsultas,
-    setcardinterconsultas,
-
-    card,
-    setcard,
-
     setpacientes,
     pacientes,
     setpaciente,
@@ -106,7 +66,6 @@ function Prontuario() {
     setantibioticos,
     antibioticos,
     setinvasoes,
-    invasoes,
     setlesoes,
     setprecaucoes,
     precaucoes,
@@ -117,7 +76,6 @@ function Prontuario() {
     setdietas,
     dietas,
     setevolucoes,
-    evolucoes,
     setarrayevolucoes,
     setinfusoes,
     infusoes,
@@ -129,6 +87,10 @@ function Prontuario() {
     vm,
     setinterconsultas,
     interconsultas,
+
+    card, setcard,
+
+    consultorio, setconsultorio,
   } = useContext(Context);
 
   // history (router).
@@ -262,292 +224,16 @@ function Prontuario() {
       setpaciente([]);
       setatendimento(null);
       loadPacientes();
+      loadChamadas();
 
-      setcarddiasinternacao(
-        settings.map((item) => item.card_diasinternacao).pop()
-      );
-      setcardalergias(settings.map((item) => item.card_alergias).pop());
-      setcardanamnese(settings.map((item) => item.card_anamnese).pop());
-      setcardevolucoes(settings.map((item) => item.card_evolucoes).pop());
-      setcardpropostas(settings.map((item) => item.card_propostas).pop());
-      setcardprecaucoes(settings.map((item) => item.card_precaucoes).pop());
-      setcardriscos(settings.map((item) => item.card_riscos).pop());
-      setcardalertas(settings.map((item) => item.card_alertas).pop());
-      setcardsinaisvitais(settings.map((item) => item.card_sinaisvitais).pop());
-      setcarddiasinternacao(
-        settings.map((item) => item.card_diasinternacao).pop()
-      );
-      setcardbody(settings.map((item) => item.card_body).pop());
-      setcardvm(settings.map((item) => item.card_vm).pop());
-      setcardinfusoes(settings.map((item) => item.card_infusoes).pop());
-      setcarddieta(settings.map((item) => item.card_dieta).pop());
-      setcardculturas(settings.map((item) => item.card_culturas).pop());
-      setcardatb(settings.map((item) => item.card_antibioticos).pop());
-      setcardinterconsultas(
-        settings.map((item) => item.card_interconsultas).pop()
-      );
-      // setcardexames(settings.map(item => item.card_exames).pop());
+      if (consultorio == null) {
+        setviewsalaselector(1);
+      }
+
+
     }
     // eslint-disable-next-line
   }, [pagina]);
-
-  // botão de configurações / settings.
-  function BtnOptions() {
-    return (
-      <div
-        style={{
-          position: window.innerWidth > 425 ? "absolute" : "",
-          top: window.innerWidth < 426 ? 65 : 10,
-          right: window.innerWidth < 426 ? 0 : 25,
-          width: window.innerWidth < 426 ? "90vw" : "",
-          display: window.innerWidth < 426 ? "none" : "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          className="button cor1hover"
-          style={{
-            minWidth: 25,
-            maxWidth: 25,
-            minHeight: 25,
-            maxHeight: 25,
-          }}
-          title={"CONFIGURAÇÕES"}
-          onClick={() => {
-            setpagina(4);
-            history.push("/settings");
-          }}
-        >
-          <img
-            alt=""
-            src={preferencias}
-            style={{
-              margin: 0,
-              height: 20,
-              width: 20,
-            }}
-          ></img>
-        </div>
-        <div
-          className="button cor1hover"
-          style={{
-            display:
-              window.innerWidth < 426 || atendimento == null ? "none" : "flex",
-            minWidth: 25,
-            maxWidth: 25,
-            minHeight: 25,
-            maxHeight: 25,
-            marginLeft: 0,
-          }}
-          title={"COPIAR PARA A CLIPBOARD"}
-          onClick={() => {
-            let alergia =
-              alergias.map((item) => item.alergia).length > 0
-                ? "ALERGIAS: " + alergias.map((item) => item.alergia) + "\n\n"
-                : "";
-            let problemas =
-              atendimentos
-                .filter((item) => item.id_atendimento == atendimento)
-                .map((item) => item.problemas).length > 0
-                ? "PROBLEMAS: " +
-                atendimentos
-                  .filter((item) => item.id_atendimento == atendimento)
-                  .map((item) => item.problemas) +
-                "\n\n"
-                : "";
-            let evolucao =
-              evolucoes.filter((item) => item.id_atendimento == atendimento)
-                .length > 0
-                ? "EVOLUÇÃO: " +
-                evolucoes
-                  .sort((a, b) =>
-                    moment(a.data_evolucao) < moment(b.data_evolucao) ? -1 : 1
-                  )
-                  .filter((item) => item.id_atendimento == atendimento)
-                  .slice(-1)
-                  .map((item) => item.evolucao) +
-                "\n\n"
-                : "";
-            let invasao =
-              invasoes.filter((item) => item.data_retirada == null).length > 0
-                ? "INVASÕES:\n" +
-                invasoes
-                  .filter((item) => item.data_retirada == null)
-                  .map(
-                    (item) =>
-                      "\n" +
-                      item.dispositivo +
-                      " - " +
-                      item.local +
-                      " - " +
-                      moment(item.data_implante).format("DD/MM/YY")
-                  ) +
-                "\n\n"
-                : "";
-            let ventilacao =
-              vm.length > 0
-                ? "VM:" +
-                vm
-                  .sort((a, b) =>
-                    moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                  )
-                  .slice(-1)
-                  .map(
-                    (item) =>
-                      "\nMODO: " +
-                      item.modo +
-                      "\nPRESSÃO: " +
-                      item.pressao +
-                      "\nVOLUME: " +
-                      item.volume +
-                      "\nPEEP: " +
-                      item.peep +
-                      "\nFI: " +
-                      item.fi
-                  ) +
-                "\n\n"
-                : "";
-            let infusao =
-              infusoes.filter((item) => item.data_termino == null).length > 0
-                ? "INFUSÕES:" +
-                infusoes
-                  .filter((item) => item.data_termino == null)
-                  .map(
-                    (item) =>
-                      "\n" + item.droga + " - " + item.velocidade + "ml/h"
-                  ) +
-                "\n\n"
-                : "";
-            let cultura =
-              culturas.length > 0
-                ? "CULTURAS:" +
-                culturas.map(
-                  (item) =>
-                    "\n" +
-                    item.material +
-                    " (" +
-                    moment(item.data_pedido).format("DD/MM/YY") +
-                    "): " +
-                    item.resultado
-                ) +
-                "\n\n"
-                : "";
-            let antibiotico =
-              antibioticos.length > 0
-                ? "ANTIBIÓTICOS:" +
-                antibioticos.map(
-                  (item) =>
-                    "\n" +
-                    item.antibiotico +
-                    " - " +
-                    moment(item.data_inicio).format("DD/MM/YY")
-                ) +
-                "\n\n"
-                : "";
-            let controle =
-              sinaisvitais.length > 0
-                ? "CONTROLES: " +
-                sinaisvitais
-                  .slice(-1)
-                  .map(
-                    (item) => "PA: " + item.pas + " x " + item.pad + "\n"
-                  ) +
-                sinaisvitais
-                  .slice(-1)
-                  .map((item) => "FC: " + item.fc + "\n") +
-                sinaisvitais
-                  .slice(-1)
-                  .map((item) => "FR: " + item.fr + "\n") +
-                sinaisvitais
-                  .slice(-1)
-                  .map((item) => "SAO2: " + item.sao2 + "\n") +
-                sinaisvitais
-                  .slice(-1)
-                  .map((item) => "TAX: " + item.tax + "\n") +
-                sinaisvitais
-                  .slice(-1)
-                  .map((item) => "BALANÇO: " + item.balanco) +
-                "\n\n"
-                : "";
-            let proposta =
-              propostas.length > 0
-                ? "PROPOSTAS:" +
-                propostas
-                  .filter((item) => item.status == 0)
-                  .map((item) => "\n" + item.proposta)
-                : "";
-
-            var clipboard =
-              "## " +
-              plantao +
-              " ##\n\n" +
-              alergia +
-              problemas +
-              evolucao +
-              invasao +
-              ventilacao +
-              infusao +
-              cultura +
-              antibiotico +
-              controle +
-              proposta;
-
-            console.log(clipboard);
-            setclipboard(clipboard);
-            setTimeout(() => {
-              setviewclipboard(1);
-              document.getElementById("clipboardTextarea").value = clipboard;
-              if (
-                navigator &&
-                navigator.clipboard &&
-                navigator.clipboard.writeText
-              )
-                return navigator.clipboard.writeText(clipboard);
-              return Promise.reject("The Clipboard API is not available.");
-            }, 1000);
-          }}
-        >
-          <img
-            alt=""
-            src={clipimage}
-            style={{
-              margin: 0,
-              height: 20,
-              width: 20,
-            }}
-          ></img>
-        </div>
-        <div
-          className="button cor1hover"
-          style={{
-            display:
-              window.innerWidth < 426 || atendimento == null ? "none" : "flex",
-            minWidth: 25,
-            maxWidth: 25,
-            minHeight: 25,
-            maxHeight: 25,
-            marginLeft: 0,
-          }}
-          title={"IMPRIMIR"}
-          onClick={() => {
-            setpagina(6);
-            history.push("/pdf");
-          }}
-        >
-          <img
-            alt=""
-            src={imprimir}
-            style={{
-              margin: 0,
-              height: 20,
-              width: 20,
-            }}
-          ></img>
-        </div>
-      </div>
-    );
-  }
 
   // identificação do usuário.
   function Usuario() {
@@ -659,6 +345,71 @@ function Prontuario() {
     );
   }
 
+  // inserindo registro de chamada para triagem.
+  const callPaciente = (item) => {
+    console.log(localStorage.getItem("sala"));
+    if (consultorio != 'SELECIONAR SALA') {
+      var obj = {
+        id_unidade: unidade,
+        id_paciente: item.id_paciente,
+        nome_paciente: item.nome_paciente,
+        id_atendimento: item.id_atendimento,
+        id_sala: consultorio,
+        data: moment()
+      }
+      console.log(obj);
+      axios.post(html + 'insert_chamada/', obj).then(() => {
+        axios.get(html + 'list_chamada/' + unidade).then((response) => {
+          let x = response.data.rows;
+          let y = x.filter(valor => valor.id_atendimento == item.id_atendimento);
+          setchamadas(response.data.rows);
+          document.getElementById('contagem de chamadas do PA' + item.id_atendimento).innerHTML = y.length;
+        });
+      });
+    } else {
+      toast(settoast, 'SELECIONE UMA SALA PARA ATENDIMENTO PRIMEIRO', 'red', 2000);
+    }
+  }
+
+  // recuperando o total de chamadas para a unidade de atendimento.
+  const [chamadas, setchamadas] = useState([]);
+  const loadChamadas = () => {
+    axios.get(html + 'list_chamada/' + unidade).then((response) => {
+      setchamadas(response.data.rows);
+    })
+  }
+
+  // seleção de consultório para chamada de pacientes (aplicável ao PA).
+  let salas = ['SALA 01', 'SALA 02', 'SALA 03', 'SALA 04', 'SALA 05']
+  const [viewsalaselector, setviewsalaselector] = useState(0);
+  function SalaSelector() {
+    return (
+      <div className="fundo"
+        style={{ display: unidade == 3 && viewsalaselector == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="janela">
+          <div className="text1">SELECIONE A SALA PARA ATENDIMENTO DO PACIENTE</div>
+          <div id="salas para chamada"
+            style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {salas.map(item => (
+              <div
+                id={"btnsala " + item}
+                className="button"
+                onClick={() => {
+                  setconsultorio(item);
+                  setviewsalaselector(0);
+                  setatendimento(null);
+                }}
+                style={{ paddingLeft: 20, paddingRight: 20 }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // lista de atendimentos.
   const ListaDeAtendimentos = useCallback(() => {
     return (
@@ -681,17 +432,23 @@ function Prontuario() {
               .filter((item) => item.id_unidade == unidade)
               .map((item) => item.nome_unidade)}
         </div>
+        <div className="button" style={{ margin: 5, marginTop: 0 }}
+          onClick={() => setviewsalaselector(1)}
+        >
+          {consultorio}
+        </div>
         <div
           className="scroll"
           id="scroll atendimentos"
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerHeight - 140,
+            height: window.innerHeight - 210,
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
           }}
         >
           {arrayatendimentos
+            .filter(item => item.leito != 'F')
             .sort((a, b) => (a.leito > b.leito ? 1 : -1))
             .map((item) => (
               <div key={"pacientes" + item.id_atendimento}>
@@ -707,15 +464,62 @@ function Prontuario() {
                   <div
                     className="button-yellow"
                     style={{
-                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
                       marginRight: 0,
                       borderTopRightRadius: 0,
                       borderBottomRightRadius: 0,
                       minHeight: 100,
                       height: 100,
+                      backgroundColor:
+                        item.classificacao == 'AZUL' ? 'blue' :
+                          item.classificacao == 'VERDE' ? 'green' :
+                            item.classificacao == 'AMARELO' ? 'yellow' :
+                              item.classificacao == 'LARANJA' ? 'orange' :
+                                item.classificacao == 'VERMELHO' ? 'red' : ''
                     }}
                   >
-                    {item.leito}
+                    <div
+                      className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                      style={{ margin: 5, padding: 0, fontSize: 24 }}
+                    >
+                      {item.leito}
+                    </div>
+                    <div style={{
+                      display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
+                      flexDirection: 'row', flexWrap: 'wrap',
+                      alignSelf: 'center',
+                      margin: 5, marginBottom: 0
+                    }}>
+                      <div
+                        className="button-opaque"
+                        style={{
+                          display: 'flex',
+                          margin: 2.5, minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                          backgroundColor: 'rgba(231, 76, 60, 0.8)'
+                        }}
+                        onClick={() => {
+                          callPaciente(item);
+                        }}
+                      >
+                        <img
+                          alt=""
+                          src={call}
+                          style={{
+                            margin: 0,
+                            height: 20,
+                            width: 20,
+                          }}
+                        ></img>
+                      </div>
+                      <div id={'contagem de chamadas do PA' + item.id_atendimento}
+                        title="TOTAL DE CHAMADAS"
+                        className="text1"
+                        style={{ margin: 2.5, borderRadius: 5, backgroundColor: 'white', height: 20, width: 20 }}>
+                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                      </div>
+                    </div>
                   </div>
                   <div
                     id={"atendimento " + item.id_atendimento}
@@ -816,7 +620,7 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
-            height: window.innerHeight - 150,
+            height: window.innerHeight - 210,
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
           }}
         >
@@ -827,7 +631,7 @@ function Prontuario() {
       </div>
     );
     // eslint-disable-next-line
-  }, [arrayatendimentos, allinterconsultas, allprecaucoes]);
+  }, [arrayatendimentos, allinterconsultas, allprecaucoes, consultorio]);
 
   const tagsDosPacientes = (titulo, item, lista, imagem) => {
     return (
@@ -1006,252 +810,195 @@ function Prontuario() {
   const getAllData = (paciente, atendimento) => {
     // Dados relacionados ao paciente.
     // alergias.
-    if (cardalergias == 1) {
-      setbusyalergias(1);
-      axios
-        .get(html + "paciente_alergias/" + paciente)
-        .then((response) => {
-          setalergias(response.data.rows);
-          setbusyalergias(0);
-        })
-        .catch(function (error) {
-          if (error.response == undefined) {
-            toast(
-              settoast,
-              "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-              "black",
-              3000
-            );
-            setTimeout(() => {
-              setpagina(0);
-              history.push("/");
-            }, 3000);
-          } else {
-            toast(
-              settoast,
-              error.response.data.message + " REINICIANDO APLICAÇÃO.",
-              "black",
-              3000
-            );
-            setTimeout(() => {
-              setpagina(0);
-              history.push("/");
-            }, 3000);
-          }
-        });
-    }
+    setbusyalergias(1);
+    axios
+      .get(html + "paciente_alergias/" + paciente)
+      .then((response) => {
+        setalergias(response.data.rows);
+        setbusyalergias(0);
+      })
+      .catch(function (error) {
+        if (error.response == undefined) {
+          toast(
+            settoast,
+            "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
+            "black",
+            3000
+          );
+          setTimeout(() => {
+            setpagina(0);
+            history.push("/");
+          }, 3000);
+        } else {
+          toast(
+            settoast,
+            error.response.data.message + " REINICIANDO APLICAÇÃO.",
+            "black",
+            3000
+          );
+          setTimeout(() => {
+            setpagina(0);
+            history.push("/");
+          }, 3000);
+        }
+      });
     // lesões.
-    if (cardbody == 1) {
-      axios
-        .get(html + "paciente_lesoes/" + paciente)
-        .then((response) => {
-          setlesoes(response.data.rows);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    axios
+      .get(html + "paciente_lesoes/" + paciente)
+      .then((response) => {
+        setlesoes(response.data.rows);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // precauções.
-    if (cardprecaucoes == 1) {
-      axios
-        .get(html + "paciente_precaucoes/" + paciente)
-        .then((response) => {
-          setprecaucoes(response.data.rows);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    axios
+      .get(html + "paciente_precaucoes/" + paciente)
+      .then((response) => {
+        setprecaucoes(response.data.rows);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
     // riscos.
-    if (cardriscos == 1) {
-      setbusyriscos(1);
-      axios
-        .get(html + "paciente_riscos/" + paciente)
-        .then((response) => {
-          setriscos(response.data.rows);
-          setbusyriscos(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyriscos(1);
+    axios
+      .get(html + "paciente_riscos/" + paciente)
+      .then((response) => {
+        setriscos(response.data.rows);
+        setbusyriscos(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // Dados relacionados ao atendimento.
     // antibióticos.
-    if (cardatb == 1) {
-      setbusyatb(1);
-      axios
-        .get(html + "list_antibioticos/" + atendimento)
-        .then((response) => {
-          setantibioticos(response.data.rows);
-          setbusyatb(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyatb(1);
+    axios
+      .get(html + "list_antibioticos/" + atendimento)
+      .then((response) => {
+        setantibioticos(response.data.rows);
+        setbusyatb(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // culturas.
-    if (cardculturas == 1) {
-      setbusyculturas(1);
-      axios
-        .get(html + "list_culturas/" + atendimento)
-        .then((response) => {
-          setculturas(response.data.rows);
-          setbusyculturas(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyculturas(1);
+    axios
+      .get(html + "list_culturas/" + atendimento)
+      .then((response) => {
+        setculturas(response.data.rows);
+        setbusyculturas(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // dietas.
-    if (carddieta == 1) {
-      setbusydieta(1);
-      axios
-        .get(html + "list_dietas/" + atendimento)
-        .then((response) => {
-          setdietas(response.data.rows);
-          setbusydieta(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusydieta(1);
+    axios
+      .get(html + "list_dietas/" + atendimento)
+      .then((response) => {
+        setdietas(response.data.rows);
+        setbusydieta(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // evoluções.
-    if (cardevolucoes == 1) {
-      axios
-        .get(html + "list_evolucoes/" + atendimento)
-        .then((response) => {
-          setevolucoes(response.data.rows);
-          setarrayevolucoes(response.data.rows);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    axios
+      .get(html + "list_evolucoes/" + atendimento)
+      .then((response) => {
+        setevolucoes(response.data.rows);
+        setarrayevolucoes(response.data.rows);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // infusões.
-    if (cardinfusoes == 1) {
-      setbusyinfusoes(1);
-      axios
-        .get(html + "list_infusoes/" + atendimento)
-        .then((response) => {
-          setinfusoes(response.data.rows);
-          setbusyinfusoes(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyinfusoes(1);
+    axios
+      .get(html + "list_infusoes/" + atendimento)
+      .then((response) => {
+        setinfusoes(response.data.rows);
+        setbusyinfusoes(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // invasões.
-    if (cardbody == 1) {
-      axios
-        .get(html + "list_invasoes/" + atendimento)
-        .then((response) => {
-          setinvasoes(response.data.rows);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    axios
+      .get(html + "list_invasoes/" + atendimento)
+      .then((response) => {
+        setinvasoes(response.data.rows);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // propostas.
-    if (cardpropostas == 1) {
-      setbusypropostas(1);
-      axios
-        .get(html + "list_propostas/" + atendimento)
-        .then((response) => {
-          setpropostas(response.data.rows);
-          setbusypropostas(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusypropostas(1);
+    axios
+      .get(html + "list_propostas/" + atendimento)
+      .then((response) => {
+        setpropostas(response.data.rows);
+        setbusypropostas(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // sinais vitais.
-    if (cardsinaisvitais == 1) {
-      setbusysinaisvitais(0);
-      axios
-        .get(html + "list_sinais_vitais/" + atendimento)
-        .then((response) => {
-          var x = response.data.rows;
-          var arraybalancos = [];
-          setbusysinaisvitais(0);
-          setsinaisvitais(response.data.rows);
-          // cálculo do balanço acumulado.
-          x.map((item) => {
-            if (isNaN(parseFloat(item.balanco.replace(" ", ""))) == true) {
-              console.log(
-                "VALOR INVÁLIDO PARA CÁLCULO DO BALANÇO ACUMULADO: " +
-                item.balanco
-              );
-            } else {
-              arraybalancos.push(parseFloat(item.balanco.replace(" ", "")));
-            }
-            return null;
-          });
-          function soma(total, num) {
-            return total + num;
+    setbusysinaisvitais(0);
+    axios
+      .get(html + "list_sinais_vitais/" + atendimento)
+      .then((response) => {
+        var x = response.data.rows;
+        var arraybalancos = [];
+        setbusysinaisvitais(0);
+        setsinaisvitais(response.data.rows);
+        // cálculo do balanço acumulado.
+        x.map((item) => {
+          if (isNaN(parseFloat(item.balanco.replace(" ", ""))) == true) {
+            console.log(
+              "VALOR INVÁLIDO PARA CÁLCULO DO BALANÇO ACUMULADO: " +
+              item.balanco
+            );
+          } else {
+            arraybalancos.push(parseFloat(item.balanco.replace(" ", "")));
           }
-          setbalancoacumulado(arraybalancos.reduce(soma, 0));
-        })
-        .catch(function (error) {
-          console.log(error);
+          return null;
         });
-    }
+        function soma(total, num) {
+          return total + num;
+        }
+        setbalancoacumulado(arraybalancos.reduce(soma, 0));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // vm.
-    if (cardvm == 1) {
-      setbusyvm(1);
-      axios
-        .get(html + "list_vm/" + atendimento)
-        .then((response) => {
-          setbusyvm(0);
-          setvm(response.data.rows);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyvm(1);
+    axios
+      .get(html + "list_vm/" + atendimento)
+      .then((response) => {
+        setbusyvm(0);
+        setvm(response.data.rows);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     // interconsultas.
-    if (cardinterconsultas == 1) {
-      setbusyinterconsultas(1);
-      axios
-        .get(html + "list_interconsultas/" + atendimento)
-        .then((response) => {
-          setinterconsultas(response.data.rows);
-          setbusyinterconsultas(0);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    setbusyinterconsultas(1);
+    axios
+      .get(html + "list_interconsultas/" + atendimento)
+      .then((response) => {
+        setinterconsultas(response.data.rows);
+        setbusyinterconsultas(0);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-
-  // ## CLIPBOARD ## //
-  // Copia para a área de transferência todas as informações do atendimento, montando uma evolução completa a ser "colada" no PEP.
-  let plantao =
-    parseInt(moment().format("HH")) < 19 ? "PLANTÃO DIURNO" : "PLANTÃO NOTURNO";
-  const [clipboard, setclipboard] = useState("");
-  const [viewclipboard, setviewclipboard] = useState(0);
-  const ViewClipboard = useCallback(() => {
-    return (
-      <div
-        className="fundo"
-        onClick={() => setviewclipboard(0)}
-        style={{ display: viewclipboard == 1 ? "flex" : "none" }}
-      >
-        <textarea
-          id="clipboardTextarea"
-          className="textarea"
-          onClick={(e) => e.stopPropagation()}
-          defaultValue={clipboard}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            width: window.innerWidth < 426 ? "80vw" : "30vw",
-            height: "60vh",
-          }}
-        ></textarea>
-      </div>
-    );
-  }, [clipboard, viewclipboard]);
 
   // estado para alternância entre lista de pacientes e conteúdo do passômetro para versão mobile.
   const [viewlista, setviewlista] = useState(1);
@@ -1268,11 +1015,11 @@ function Prontuario() {
   const [busyatb, setbusyatb] = useState(0);
   const [busyinterconsultas, setbusyinterconsultas] = useState(0);
 
-  const loading = (chave) => {
+  const loading = () => {
     return (
       <div
         className="destaque"
-        style={{ marginTop: 20, display: chave == 1 ? "flex" : "none" }}
+        style={{ marginTop: 20 }}
       >
         <Logo height={20} width={20}></Logo>
       </div>
@@ -1879,7 +1626,7 @@ function Prontuario() {
             alignSelf: "center",
           }}
         >
-          {loading(busy)}
+          {loading()}
         </div>
       </div>
     );
@@ -1889,7 +1636,7 @@ function Prontuario() {
     "DIAS DE INTERNAÇÃO",
     "ALERGIAS",
     "PRECAUÇÕES",
-    "ANAMNESE",
+    "ADMISSÃO",
     "EVOLUÇÃO",
     "RISCOS",
     "PROPOSTAS",
@@ -1911,7 +1658,7 @@ function Prontuario() {
     "DIAS DE INTERNAÇÃO",
     "ALERGIAS",
     "PRECAUÇÕES",
-    "ANAMNESE",
+    "ADMISSÃO",
     "EVOLUÇÕES",
     "RISCOS",
     "PROPOSTAS",
@@ -2035,7 +1782,6 @@ function Prontuario() {
       >
         <ViewPaciente></ViewPaciente>
         <FilterCartoes></FilterCartoes>
-
         <div
           style={{
             display:
@@ -2063,7 +1809,6 @@ function Prontuario() {
                 .filter((item) => item.id_atendimento == atendimento)
                 .map((item) => moment().diff(item.data_inicio, "days")),
               null,
-              carddiasinternacao,
               0
             )}
           </div>
@@ -2071,26 +1816,23 @@ function Prontuario() {
             alergias,
             "ALERGIAS",
             "card-alergias",
-            cardalergias,
             busyalergias
           )}
-          {cartao(null, "ANAMNESE", "card-anamnese", cardanamnese)}
-          {cartao(null, "EVOLUÇÕES", "card-evolucoes", cardevolucoes)}
+          {cartao(null, "ADMISSÃO", "card-documento-admissao")}
+          {cartao(null, "EVOLUÇÕES", "card-evolucoes")}
           {cartao(
             propostas.filter((item) => item.status == 0),
             "PROPOSTAS",
             "card-propostas",
-            cardpropostas,
             busypropostas
           )}
-          {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes", cardprecaucoes)}
-          {cartao(riscos, "RISCOS", "card-riscos", cardriscos, busyriscos)}
-          {cartao(null, "ALERTAS", "card-alertas", cardalertas)}
+          {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes")}
+          {cartao(riscos, "RISCOS", "card-riscos", busyriscos)}
+          {cartao(null, "ALERTAS", "card-alertas")}
           {cartao(
             null,
             "SINAIS VITAIS",
             "card-sinaisvitais",
-            cardsinaisvitais,
             busysinaisvitais
           )}
           <div
@@ -2099,7 +1841,6 @@ function Prontuario() {
             style={{
               display:
                 card == "" &&
-                  cardbody == 1 &&
                   arraycartoes.filter(
                     (item) =>
                       item.includes("INVASÕES") ||
@@ -2143,14 +1884,13 @@ function Prontuario() {
               }}
             ></img>
           </div>
-          {cartao(null, "VENTILAÇÃO MECÂNICA", "card-vm", cardvm, busyvm)}
-          {cartao(null, "INFUSÕES", "card-infusoes", cardinfusoes, busyinfusoes)}
-          {cartao(null, "DIETA", "card-dietas", carddieta, busydieta)}
+          {cartao(null, "VENTILAÇÃO MECÂNICA", "card-vm", busyvm)}
+          {cartao(null, "INFUSÕES", "card-infusoes", busyinfusoes)}
+          {cartao(null, "DIETA", "card-dietas", busydieta)}
           {cartao(
             culturas.filter((item) => item.data_resultado == null),
             "CULTURAS",
             "card-culturas",
-            cardculturas,
             busyculturas
           )}
           {cartao(
@@ -2160,14 +1900,12 @@ function Prontuario() {
             ),
             "ANTIBIÓTICOS",
             "card-antibioticos",
-            cardatb,
             busyatb
           )}
           {cartao(
             interconsultas,
             "INTERCONSULTAS",
             "card-interconsultas",
-            cardinterconsultas,
             busyinterconsultas
           )}
           <div
@@ -2221,8 +1959,7 @@ function Prontuario() {
                     : "",
             }}
             onClick={() => {
-              setpagina(10);
-              history.push("/prescricao");
+              setcard('card-prescricao');
             }}
           >
             <div className="text3">PRESCRIÇÃO</div>
@@ -2230,7 +1967,7 @@ function Prontuario() {
         </div>
 
         <Alergias></Alergias>
-        <Anamnese></Anamnese>
+        <Documentos></Documentos>
         <Boneco></Boneco>
         <Evolucoes></Evolucoes>
         <Propostas></Propostas>
@@ -2270,13 +2007,11 @@ function Prontuario() {
           scrollBehavior: "smooth",
         }}
       >
-        <BtnOptions></BtnOptions>
         <div className="text1" style={{ opacity: 0.5 }}>
           {"SELECIONE UM PACIENTE DA LISTA PRIMEIRO"}
         </div>
       </div>
-      <BtnOptions></BtnOptions>
-      <ViewClipboard></ViewClipboard>
+      <SalaSelector></SalaSelector>
     </div>
   );
 }

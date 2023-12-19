@@ -747,6 +747,35 @@ function Login() {
     );
   }
 
+  function BtnPainel() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <div
+          className="button"
+          style={{ padding: 10, width: 100, alignSelf: 'center' }}
+          onClick={() => {
+            setunidade(4);
+            setpagina(40);
+            history.push("/painel");
+          }}
+        >
+          PAINEL TRIAGEM
+        </div>
+        <div
+          className="button"
+          style={{ padding: 10, width: 100, alignSelf: 'center' }}
+          onClick={() => {
+            setunidade(3);
+            setpagina(40);
+            history.push("/painel");
+          }}
+        >
+          PAINEL PA
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={tema != 3 ? "main cor1" : "main"}
@@ -833,6 +862,7 @@ function Login() {
         <ListaDeUnidadesAssistenciais></ListaDeUnidadesAssistenciais>
         <ListaDeUnidadesDeApoio></ListaDeUnidadesDeApoio>
         <AlterarSenha></AlterarSenha>
+        <BtnPainel></BtnPainel>
         <div
           className="button-red"
           style={{

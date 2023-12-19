@@ -10,8 +10,8 @@ import Prontuario from "./pages/Prontuario";
 import Settings from "./pages/Settings";
 import Usuarios from "./pages/Usuarios";
 import Pdf from "./pages/Pdf";
-import Prescricao from "./pages/Prescricao";
 import Triagem from "./pages/Triagem";
+import Painel from "./pages/Painel";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -110,6 +110,11 @@ function App() {
   const [interconsultas, setinterconsultas] = useState([]);
 
   const [prescricao, setprescricao] = useState([]);
+
+  const [consultorio, setconsultorio] = useState('SELECIONAR SALA');
+
+  const [tipodocumento, settipodocumento] = useState(null);
+  const [documentos, setdocumentos] = useState([]);
 
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
@@ -252,6 +257,10 @@ function App() {
         setprescricao,
         altura,
         setaltura,
+        consultorio,
+        setconsultorio,
+        tipodocumento, settipodocumento,
+        documentos, setdocumentos,
       }}
     >
       <div>
@@ -275,11 +284,11 @@ function App() {
             <Route path="/usuarios">
               <Usuarios></Usuarios>
             </Route>
-            <Route path="/prescricao">
-              <Prescricao></Prescricao>
-            </Route>
             <Route path="/triagem">
               <Triagem></Triagem>
+            </Route>
+            <Route path="/painel">
+              <Painel></Painel>
             </Route>
           </Switch>
         </Router>
