@@ -302,6 +302,7 @@ function Prescricao() {
           arrayobjitens.push(objitem);
 
           // registrando os componentes relacionados ao itens de prescrição.
+          // eslint-disable-next-line
           arrayitensprescricao.filter(item => item.id_pai == valor.id && valor.id_prescricao == old_id_prescricao).map(valor => {
             var objcomponente = {
               id_unidade: parseInt(unidade),
@@ -335,6 +336,9 @@ function Prescricao() {
         arrayobjcomponentes.map(item => {
           axios.post(html + 'insert_item_prescricao', item);
         });
+        loadPrescricao();
+        loadItensPrescricao();
+        setidprescricao(0);
       });
 
     });

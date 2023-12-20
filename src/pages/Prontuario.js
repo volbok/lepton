@@ -7,7 +7,6 @@ import moment from "moment";
 import power from "../images/power.svg";
 import call from "../images/call.svg";
 import back from "../images/back.svg";
-import people from "../images/people.svg";
 import body from "../images/body.svg";
 import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
@@ -265,25 +264,6 @@ function Prontuario() {
           ></img>
         </div>
         <FilterPaciente></FilterPaciente>
-        <div
-          className="button"
-          style={{ margin: 0, marginLeft: 10 }}
-          title={"PACIENTES"}
-          onClick={() => {
-            history.push("/cadastro");
-            setpagina(2);
-          }}
-        >
-          <img
-            alt=""
-            src={people}
-            style={{
-              margin: 0,
-              height: 35,
-              width: 35,
-            }}
-          ></img>
-        </div>
       </div>
     );
   }

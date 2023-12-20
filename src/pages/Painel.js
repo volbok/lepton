@@ -3,6 +3,10 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Context from "./Context";
 import moment from "moment";
+// som.
+import ding from "../sounds/ding.mp3";
+// text-to-speech.
+import Speech from 'react-text-to-speech'
 // router.
 import { useHistory } from "react-router-dom";
 
@@ -34,31 +38,36 @@ function Painel() {
   window.addEventListener("load", refreshApp);
 
   // recuperando o total de chamadas para a unidade de atendimento.
-  const [chamadas, setchamadas] = useState([]);
   let qtde = 0;
+  const [chamadas, setchamadas] = useState([]);
   const loadChamadas = () => {
     axios.get(html + 'list_chamada/' + unidade).then((response) => {
       var x = response.data.rows;
-      setchamadas(x);
-      if (x.length > qtde) {
-        qtde = x.length
-      }
+      setchamadas(x.sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1));
+      qtde = x.length;
+      console.log('TOTAL INICIAL DE CHAMADAS: ' + qtde);
     })
   }
   const checkChamadas = () => {
+    console.log('CHECANDO CHAMADAS');
     axios.get(html + 'list_chamada/' + unidade).then((response) => {
       var x = response.data.rows;
       setchamadas(x);
       if (x.length > qtde) {
-        qtde = qtde + 1
+        qtde = qtde + 1;
+        console.log('NOVO TOTAL DE CHAMADAS: ' + x.length);
+        console.log('NOVA CHAMADA DISPARADA: ' + qtde);
         // dispara o som e a chamada de voz.
+        var audio = document.getElementById("ding");
+        audio.play();
+        <Speech text={x.map(item => item.nome_paciente)} />
       }
     })
   }
 
-  var timeout = null;
   useEffect(() => {
     if (pagina == 40) {
+      console.log(unidade);
       loadChamadas();
       setInterval(() => {
         checkChamadas();
@@ -71,14 +80,58 @@ function Painel() {
   function UltimaChamada() {
     return (
       <div
-        style={{ width: '100%' }}>
-        {chamadas.filter(item => item.id_unidade == unidade).sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).slice(-1).map(item => {
+        style={{
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          width: 'calc(100vw - 40px)',
+          fontSize: 40,
+          borderRadius: 5, backgroundColor: 'white',
+          padding: 10, margin: 10,
+        }}>
+        {chamadas.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: 24 }}>
-            <div className="button">{moment(item.data).format('HH:mm')}</div>
-            <div className="button">{moment.id_sala}</div>
-            <div className="button">{moment.nome_paciente}</div>
+            <div
+              className="text1"
+              style={{ fontSize: 30, marginTop: -5, marginBottom: -20 }}
+            >
+              {'PACIENTE:'}
+            </div>
+            <div
+              className="text1"
+              style={{ fontSize: 50, color: 'black' }}
+            >
+              {item.nome_paciente}
+            </div>
+            <div
+              className="text1"
+              style={{ fontSize: 30, marginTop: -5, marginBottom: -20 }}
+            >
+              {'SALA:'}
+            </div>
+            <div
+              className="text1"
+              style={{ fontSize: 50, color: 'black' }}
+            >
+              {item.id_sala}
+            </div>
+            <div
+              className="text1"
+              style={{ fontSize: 20, margin: 0 }}
+            >
+              {'HORA DA CHAMADA:'}
+            </div>
+            <div
+              className="button"
+              style={{
+                display: 'flex', flexDirection: 'column',
+                minWidth: 400, width: 400, fontSize: 40,
+                alignSelf: 'center'
+              }}>
+              <div>
+                {moment(item.data).format('DD/mm/YY') + ' - ' + moment(item.data).format('HH:mm')}
+              </div>
+            </div>
           </div>
-        })}
+        ))}
       </div>
     )
   }
@@ -86,15 +139,24 @@ function Painel() {
   function ListaDeChamadas() {
     return (
       <div
-        className="scroll"
-        style={{ width: '100%' }}>
-        {chamadas.filter(item => item.id_unidade == unidade).sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).slice(-5).map(item => {
+        style={{ width: 'calc(80vw - 40px)', height: '35vh' }}>
+        <div className="text1" style={{ margin: 0, marginBottom: -10, fontSize: 20 }}>ÚLTIMAS CHAMADAS</div>
+        <div
+          style={{
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            fontSize: 20, margin: 0, marginBottom: -5
+          }}>
+          <div className="text1" style={{ width: 300, fontSize: 16 }}>{'HORA'}</div>
+          <div className="text1" style={{ width: 300, fontSize: 16 }}>{'SALA'}</div>
+          <div className="text1" style={{ width: '100%', fontSize: 16 }}>{'NOME'}</div>
+        </div>
+        {chamadas.slice(-3).sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map(item => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div className="button">{moment(item.data).format('HH:mm')}</div>
-            <div className="button">{moment.id_sala}</div>
-            <div className="button">{moment.nome_paciente}</div>
+            <div className="button" style={{ width: 300, fontSize: 20 }}>{moment(item.data).format('HH:mm')}</div>
+            <div className="button" style={{ width: 300, fontSize: 20 }}>{item.id_sala}</div>
+            <div className="button" style={{ width: '100%', fontSize: 20 }}>{item.nome_paciente}</div>
           </div>
-        })}
+        ))}
       </div>
     )
   }
@@ -103,14 +165,18 @@ function Painel() {
     <div
       className="main fadein"
       style={{
-        display: pagina == 30 ? "flex" : "none",
-        flexDirection: window.innerWidth > 425 ? "row" : "column",
-        justifyContent: window.innerWidth > 425 ? "space-evenly" : "center",
+        display: pagina == 40 ? "flex" : "none",
+        flexDirection: "column",
+        justifyContent: "center",
         width: "100vw",
         height: altura,
       }}
     >
+      <UltimaChamada></UltimaChamada>
       <ListaDeChamadas></ListaDeChamadas>
+      <audio id="ding">
+        <source src={ding} type="audio/mpeg"></source>
+      </audio>
     </div>
   );
 }
