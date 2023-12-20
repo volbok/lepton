@@ -252,11 +252,10 @@ function Prescricao() {
       });
   }
 
-  // copiar prescrição.
   const copiarPrescricao = (item) => {
-    // loadItensPrescricao();
-    let last_id_prescricao = null;
     // registrando nova prescrição.
+    let old_id_prescricao = item.id;
+    let nova_id_prescricao = null;
     var obj = {
       id_paciente: paciente,
       id_atendimento: atendimento,
@@ -267,23 +266,44 @@ function Prescricao() {
       registro_profissional: usuario.n_conselho,
     }
     axios.post(html + 'insert_prescricao', obj).then(() => {
-      // recuperando o id da prescrição recém-criada.
       axios.get(html + 'list_prescricoes/' + atendimento).then((response) => {
         var x = response.data.rows;
-        last_id_prescricao = x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
-        console.log('ID DA PRESCRIÇÃO CRIADA: ' + last_id_prescricao);
-        // registrando os itens da prescrição copiada.
-        // eslint-disable-next-line
-        axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
-          let x = response.data.rows;
-          console.log(x.length);
-          console.log('ITENS COPIÁVEIS:')
-          console.log(x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).length);
-          // eslint-disable-next-line
-          x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == null).map(valor => {
-            let id_pai_a_copiar = valor.id;
-            console.log('ID DA PRESCRIÇÃO SELECIONADA: ' + valor.id_prescricao);
-            var obj = {
+        nova_id_prescricao = x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
+        console.log('ID DA PRESCRIÇÃO CRIADA: ' + nova_id_prescricao);
+        // até aqui tudo bem...
+
+        let arrayobjitens = [];
+        let arrayobjcomponentes = [];
+
+        // registrando itens de prescrição.
+        //eslint-disable-next-line
+        arrayitensprescricao.filter(valor => valor.id_pai == null && valor.id_prescricao == old_id_prescricao).map(valor => {
+          let random = Math.random();
+          var objitem = {
+            id_unidade: parseInt(unidade),
+            id_paciente: parseInt(paciente),
+            id_atendimento: parseInt(atendimento),
+            categoria: valor.categoria,
+            codigo_item: valor.codigo_item,
+            nome_item: valor.nome_item,
+            qtde_item: parseInt(valor.qtde_item),
+            via: valor.via,
+            freq: valor.freq,
+            agora: valor.agora,
+            acm: valor.acm,
+            sn: valor.sn,
+            obs: valor.obs,
+            data: moment(),
+            id_componente_pai: random,
+            id_componente_filho: null,
+            id_prescricao: parseInt(nova_id_prescricao),
+            id_pai: null
+          }
+          arrayobjitens.push(objitem);
+
+          // registrando os componentes relacionados ao itens de prescrição.
+          arrayitensprescricao.filter(item => item.id_pai == valor.id && valor.id_prescricao == old_id_prescricao).map(valor => {
+            var objcomponente = {
               id_unidade: parseInt(unidade),
               id_paciente: parseInt(paciente),
               id_atendimento: parseInt(atendimento),
@@ -298,60 +318,27 @@ function Prescricao() {
               sn: valor.sn,
               obs: valor.obs,
               data: moment(),
-              id_componente_pai: parseInt(valor.id_componente_pai),
-              id_componente_filho: parseInt(valor.id_componente_filho),
-              id_prescricao: parseInt(last_id_prescricao),
-              id_pai: null
+              id_componente_pai: null,
+              id_componente_filho: random,
+              id_prescricao: parseInt(nova_id_prescricao),
+              id_pai: parseInt(valor.id_pai)
             }
-            axios.post(html + 'insert_item_prescricao', obj).then(() => {
-              console.log('ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
-              console.log(obj);
-              // recuperando id do item de prescrição recém-copiado.
-              axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
-                let x = response.data.rows;
-                let last_id_item = x.filter(item => item.id_prescricao == last_id_prescricao && item.id_pai == null).sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
-                console.log('ID DO ITEM DE PRESCRIÇÃO CRIADO: ' + last_id_item);
-                // copiando os componentes do item de prescrição recém-criado.
-                let count = x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).length;
-                x.filter(valor => valor.id_prescricao == item.id && valor.id_pai == id_pai_a_copiar).map(valor => {
-                  count = count - 1;
-                  console.log(count);
-                  var obj = {
-                    id_unidade: unidade,
-                    id_paciente: paciente,
-                    id_atendimento: atendimento,
-                    categoria: valor.categoria,
-                    codigo_item: valor.codigo_item,
-                    nome_item: valor.nome_item,
-                    qtde_item: valor.qtde_item,
-                    via: valor.via,
-                    freq: valor.freq,
-                    agora: valor.agora,
-                    acm: valor.acm,
-                    sn: valor.sn,
-                    obs: valor.obs,
-                    data: moment(),
-                    id_componente_pai: valor.id_componente_pai,
-                    id_componente_filho: valor.id_componente_filho,
-                    id_prescricao: last_id_prescricao,
-                    id_pai: last_id_item,
-                  }
-                  axios.post(html + 'insert_item_prescricao', obj).then(() => {
-                    console.log('COMPONENTE DE ITEM DE PRESCRIÇÃO COPIADO COM SUCESSO:');
-                  });
-                  if (count == 0) {
-                    loadPrescricao();
-                    loadItensPrescricao();
-                    setidprescricao(0);
-                  }
-                  return null;
-                });
-              });
-            });
+            arrayobjcomponentes.push(objcomponente);
           });
         });
+
+        //eslint-disable-next-line
+        arrayobjitens.map(item => {
+          axios.post(html + 'insert_item_prescricao', item);
+        });
+        //eslint-disable-next-line
+        arrayobjcomponentes.map(item => {
+          axios.post(html + 'insert_item_prescricao', item);
+        });
       });
+
     });
+
   }
 
   // atualizando um registro de prescrição.
@@ -430,6 +417,7 @@ function Prescricao() {
   }
   // registrando um novo item de prescrição.
   const insertItemPrescricao = (item) => {
+    let random = Math.random();
     var obj = {
       id_unidade: unidade,
       id_paciente: paciente,
@@ -445,8 +433,8 @@ function Prescricao() {
       sn: item.sn,
       obs: item.obs,
       data: moment(),
-      id_componente_pai: item.id_componente_pai,
-      id_componente_filho: item.id_componente_filho,
+      id_componente_pai: random,
+      id_componente_filho: null,
       id_prescricao: idprescricao,
       id_pai: null,
     }
@@ -457,9 +445,8 @@ function Prescricao() {
         setprescricao(response.data.rows);
         setarrayitensprescricao(response.data.rows);
         let lastIdItemPrescricao = x.filter(item => item.id_prescricao == idprescricao).slice(-1).map(item => item.id);
-        console.log(lastIdItemPrescricao);
         // inserir componentes predefinidos para o item prescrito.
-        opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(valor, lastIdItemPrescricao));
+        opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(random, valor, lastIdItemPrescricao));
         loadItensPrescricao();
       }, 2000);
     })
@@ -472,7 +459,7 @@ function Prescricao() {
       });
   }
 
-  const insertComponentePrescricao = (componente, id_pai) => {
+  const insertComponentePrescricao = (random, componente, id_pai) => {
     var obj = {
       id_unidade: unidade,
       id_paciente: paciente,
@@ -488,8 +475,8 @@ function Prescricao() {
       sn: null,
       obs: null,
       data: moment(),
-      id_componente_filho: componente.id_componente_filho,
-      id_componente_pai: componente.id_componente_pai,
+      id_componente_filho: random,
+      id_componente_pai: null,
       id_prescricao: idprescricao,
       id_pai: parseInt(id_pai),
     }
@@ -525,6 +512,7 @@ function Prescricao() {
       id_pai: 0,
     }
     axios.post(html + 'update_item_prescricao/' + item.id, obj).then(() => {
+      console.log('ITEM ATUALIZADO')
       console.log(item.id);
       console.log(obj);
       if (expand == 1) {
@@ -569,7 +557,6 @@ function Prescricao() {
   const [filterprescricao, setfilterprescricao] = useState('');
   var searchprescricao = '';
   const filterItemPrescricao = (input) => {
-    console.log(input);
     clearTimeout(timeout);
     document.getElementById(input).focus();
     searchprescricao = document.getElementById(input).value.toUpperCase();
@@ -792,7 +779,6 @@ function Prescricao() {
           id_pai: item.id_pai,
         }
         axios.post(html + 'update_item_prescricao/' + item.id, obj).then(() => {
-          console.log(obj);
           if (expand == 1) {
             document.getElementById("trava mouse").style.pointerEvents = "none";
             document.getElementById("trava mouse").style.opacity = 0.5;
@@ -848,8 +834,7 @@ function Prescricao() {
               loadItensPrescricao();
               setidprescricao(item.id);
               setstatusprescricao(item.status);
-              console.log(item.id);
-              console.log(item.status);
+
               setTimeout(() => {
                 var botoes = document
                   .getElementById("scroll lista de prescrições")
@@ -964,7 +949,6 @@ function Prescricao() {
                 key={'via: ' + item}
                 onClick={() => {
                   updateItemPrescricao(selectitemprescricao, document.getElementById("inputQtde " + selectitemprescricao.id).value, item, selectitemprescricao.freq, selectitemprescricao.agora, selectitemprescricao.acm, selectitemprescricao.sn, selectitemprescricao.obs);
-                  console.log(selectitemprescricao.id);
                   document.getElementById("inputVia " + selectitemprescricao.id).innerHTML = item;
                   // document.getElementById("inputQtde " + selectitemprescricao.id).value = selectitemprescricao.qtde_item;
                 }}
@@ -1239,7 +1223,7 @@ function Prescricao() {
                       height: 'calc(100% - 10px)',
                       margin: 0
                     }}>
-                    {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
+                    {prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => (
                       <div style={{
                         display: 'flex', flexDirection: 'row',
                         justifyContent: 'space-between', width: '100%'
@@ -1318,7 +1302,7 @@ function Prescricao() {
             clearTimeout(timeout);
             document.getElementById("inputNovoComplemento" + item.id).focus();
             let searchprescricao = document.getElementById("inputNovoComplemento" + item.id).value.toUpperCase();
-            console.log('HA: ' + searchprescricao);
+
             timeout = setTimeout(() => {
               if (searchprescricao == '') {
                 setlocalarray([]);
@@ -1374,7 +1358,7 @@ function Prescricao() {
                 onClick={() => {
                   setid(item.id);
                   setTimeout(() => {
-                    console.log(id);
+
                     setnome(item.nome_item);
                     setcategoria(item.categoria);
                     setqtde(item.qtde_item);
@@ -1611,7 +1595,7 @@ function Prescricao() {
             <div className='button-green'
               style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
               title={'ATUALIZAR ITEM'}
-              onClick={() => { console.log('ID, PORRA: ' + id); updateOpcaoItemPrescricao(id) }}>
+              onClick={() => { updateOpcaoItemPrescricao(id) }}>
               <img
                 alt=""
                 src={refresh}
