@@ -21,6 +21,13 @@ import preferencias from '../images/preferencias.svg';
 
 function Prescricao() {
 
+  /*
+  RELEMBRANDO AS TABELAS:
+  atendimento_lista_prescricoes: registros de prescrições (que contêm os itens e prescrição).
+  atendimento_prescricoes: registros dos itens e dos componentes das prescrições.
+  prescricoes: registros dos itens disponíveis na farmácia para prescrição.
+  */
+
   // context.
   const {
     html,

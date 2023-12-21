@@ -11,8 +11,11 @@ import logo from '../images/logo.svg';
 import print from '../images/imprimir.svg';
 import back from '../images/back.svg';
 import copiar from '../images/copiar.svg';
+import clipboard from '../images/clipboard.svg';
 import salvar from '../images/salvar.svg';
+import novo from '../images/novo.svg';
 import deletar from '../images/deletar.svg';
+import checkinput from '../functions/checkinput';
 
 function Documentos() {
 
@@ -29,6 +32,7 @@ function Documentos() {
     card, setcard,
     tipodocumento, settipodocumento,
     documentos, setdocumentos,
+    settoast,
   } = useContext(Context);
 
   const loadDocumentos = () => {
@@ -39,17 +43,15 @@ function Documentos() {
   }
 
   useEffect(() => {
+    loadModelos();
     loadDocumentos();
+    setselecteddocumento([]);
     if (card == 'card-documento-admissao') {
-      console.log(card.toString().substring(0, 14));
-      settipodocumento('ADMISSÃO')
-      // setanamnese(pacientes.filter(item => item.id_paciente == paciente));
-      // setselectedatendimento(atendimentos.filter(item => item.id_atendimento == atendimento));
-      // document.getElementById("inputProblemas").value = atendimentos.filter(item => item.id_atendimento == atendimento).map(item => item.problemas);
-      // document.getElementById("inputSituacao").value = atendimentos.filter(item => item.id_atendimento == atendimento).map(item => item.situacao);
-      // document.getElementById("inputAntecedentesPessoais").value = pacientes.filter(item => item.id_paciente == paciente).map(item => item.antecedentes_pessoais);
-      // document.getElementById("inputMedicacoesPrevias").value = pacientes.filter(item => item.id_paciente == paciente).map(item => item.medicacoes_previas);
-      // document.getElementById("inputExamesPrevios").value = pacientes.filter(item => item.id_paciente == paciente).map(item => item.exames_previos);
+      settipodocumento('ADMISSÃO');
+    } else if (card == 'card-documento-evolucao') {
+      settipodocumento('EVOLUÇÃO');
+    } else if (card == 'card-documento-receita') {
+      settipodocumento('RECEITA MÉDICA');
     }
     // eslint-disable-next-line
   }, [card, paciente, atendimentos, atendimento]);
@@ -80,18 +82,55 @@ function Documentos() {
   }
 
   // inserindo um documento.
-  const insertDocumento = () => {
-    let texto = '-x-'
+  const montaTexto = () => {
+    console.log(tipodocumento);
     if (tipodocumento == 'ADMISSÃO') {
-      texto =
+      let texto =
         'LISTA DE PROBLEMAS: \n\n' +
         'HISTÓRIA DA DOENÇA ATUAL: \n\n' +
         'ANTECEDENTES PESSOAIS: \n\n' +
         'MEDICAÇÕES DE USO CONTÍNUO: \n\n' +
         'EXAMES COMPLEMENTARES PRÉVIOS RELEVANTES: \n\n' +
         'CONDUTA:'
+      insertDocumento(texto);
+    } else if (tipodocumento == 'EVOLUÇÃO') {
+      // recuperando dados vitais registrados pela enfermagem.
+      let dadosvitais = null;
+      let tag_dadosvitais = null;
+      axios.get(html + "list_sinais_vitais/" + atendimento).then((response) => {
+        let x = response.data.rows
+        dadosvitais = x.sort((a, b) => moment(a.data_sinais_vitais) > moment(b.data_sinais_vitais) ? -1 : 1).pop();
+        tag_dadosvitais = 'PAS: ' + dadosvitais.pas + ', PAD: ' + dadosvitais.pad + ', FC: ' + dadosvitais.fc + ' FR: ' + dadosvitais.fr + ' SAO2: ' + dadosvitais.sao2 + ' TAX: ' + dadosvitais.tax + ' GLICEMIA: ' + dadosvitais.glicemia;
+        if (usuario.conselho == 'CRM') {
+          let texto =
+            'HD: \n\n' +
+            'EVOLUÇÃO: \n\n' +
+            'DADOS VITAIS: \n' +
+            tag_dadosvitais + '\n\n' +
+            'AO EXAME: \n\n' +
+            '\n\n' +
+            'CONDUTA:'
+          insertDocumento(texto);
+        } else {
+          let texto =
+            'EVOLUÇÃO: \n' +
+            tag_dadosvitais + '\n\n' +
+            'AO EXAME:'
+          insertDocumento(texto);
+        }
+      });
+    } else if (tipodocumento == 'RECEITA MÉDICA') {
+      let texto =
+        'USO ORAL: \n\n' +
+        '1. AMOXICILINA 500MG .................... 21 CP. \n' +
+        'TOMAR 1CP VO 8;8H, POR 7 DIAS. \n\n' +
+        '2. PARACETAMOL GOTAS (500MG/ML) ......... 01 FR. \n' +
+        'TOMAR 1CP VO 8;8H, POR 7 DIAS. \n\n'
+      insertDocumento(texto);
     }
+  }
 
+  const insertDocumento = (texto) => {
     var obj = {
       id_paciente: paciente,
       nome_paciente: pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop(),
@@ -106,6 +145,7 @@ function Documentos() {
     console.log(usuario);
     axios.post(html + 'insert_documento', obj).then(() => {
       loadDocumentos();
+      setselecteddocumento([]);
     })
   }
 
@@ -124,6 +164,7 @@ function Documentos() {
     console.log(obj);
     axios.post(html + 'insert_documento', obj).then(() => {
       loadDocumentos();
+      setselecteddocumento([]);
     })
   }
 
@@ -153,9 +194,20 @@ function Documentos() {
           </div>
           <div className='button-green'
             style={{ width: '100%', marginLeft: 0 }}
-            onClick={() => insertDocumento()}
+            onClick={() => montaTexto()}
           >
             NOVO...
+          </div>
+          <div className='button-green'
+            title="MEUS MODELOS"
+            style={{ width: 50, marginLeft: 0 }}
+            onClick={() => setviewselectmodelos(1)}
+          >
+            <img
+              alt=""
+              src={clipboard}
+              style={{ width: 20, height: 20 }}
+            ></img>
           </div>
         </div>
         <div
@@ -173,7 +225,12 @@ function Documentos() {
               onClick={() => {
                 setselecteddocumento(item);
                 setTimeout(() => {
-                  document.getElementById("inputFieldDocumento").value = item.texto;
+                  // artifício para preservar o texto de um documento atualizado, sem precisar chamar a função loadDocumentos().
+                  if (item.id == localStorage.getItem("id")) {
+                    document.getElementById("inputFieldDocumento").value = localStorage.getItem("texto");
+                  } else {
+                    document.getElementById("inputFieldDocumento").value = item.texto;
+                  }
                   var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
                   for (var i = 0; i < botoes.length; i++) {
                     botoes.item(i).className = "button";
@@ -258,6 +315,184 @@ function Documentos() {
     // eslint-disable-next-line
   }, [documentos]);
 
+  const [arraymodelos, setarraymodelos] = useState([]);
+  const loadModelos = () => {
+    console.log('ID DO USUÁRIO: ' + usuario.id);
+    axios.get(html + 'list_model_documentos/' + usuario.id).then((response) => {
+      var x = response.data.rows;
+      setarraymodelos(x);
+    });
+  }
+
+  // MODELOS DE DOCUMENTOS
+  // modelos personalizados de receita médica e demais documentos, criados pelos usuários, que podem ser resgatados para edição de novos documentos.
+  // selecionando modelos cadastrados e criando documentos a partir dos mesmos.
+  const insertModeloDocumento = (item) => {
+    var obj = {
+      id_paciente: paciente,
+      nome_paciente: pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop(),
+      id_atendimento: atendimento,
+      data: moment(),
+      texto: item,
+      status: 0,
+      tipo_documento: tipodocumento,
+      profissional: usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho
+    }
+    axios.post(html + 'insert_documento', obj).then(() => {
+      setviewselectmodelos(0);
+      loadDocumentos();
+      setselecteddocumento([]);
+    })
+  }
+  const [viewselectmodelos, setviewselectmodelos] = useState(0);
+  function ViewSelectModelos() {
+    return (
+      <div
+        style={{ display: viewselectmodelos == 1 ? 'flex' : 'none' }}
+        className='fundo' onClick={() => setviewselectmodelos(0)}>
+        <div
+          className='janela scroll'
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            maxHeight: '80vh', width: '50vw'
+          }}
+        >
+          <div className='text1'>{'MODELOS DE DOCUMENTO PERSONALIZADOS - ' + tipodocumento}</div>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {arraymodelos.filter(item => item.tipo_documento == tipodocumento).map(item => (
+              <div className='button'
+                style={{ width: 150, height: 150, position: 'relative' }}
+                onClick={() => insertModeloDocumento(item.texto)}
+              >
+                <div>
+                  {item.nome_modelo}
+                </div>
+                <div id="botão para acessar a janela de criação de modelo de documento."
+                  className="button-red"
+                  onClick={(e) => {deletarModeloDocumento(item); e.stopPropagation()}}
+                  style={{
+                    position: 'absolute', top: 10, right: 10,
+                    display: 'flex',
+                    alignSelf: 'center',
+                    minHeight: 30, maxHeight: 30, minWidth: 30, maxWidth: 30
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{ width: 20, height: 20 }}
+                  ></img>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div id="botão para acessar a janela de criação de modelo de documento."
+            className="button-green"
+            onClick={() => setviewcreatemodelo(1)}
+            style={{
+              display: 'flex',
+              alignSelf: 'center',
+            }}>
+            <img
+              alt=""
+              src={novo}
+              style={{ width: 20, height: 20 }}
+            ></img>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // criando um modelo de documento.
+  const criarModeloDocumento = () => {
+    var obj = {
+      id_usuario: usuario.id,
+      tipo_documento: tipodocumento,
+      nome_modelo: document.getElementById("inputNomeModeloDocumento").value.toUpperCase(),
+      texto: document.getElementById("inputTextoModeloDocumento").value.toUpperCase(),
+    }
+    axios.post(html + 'insert_model_documento', obj).then(() => {
+      setviewcreatemodelo(0);
+      loadModelos();
+      loadDocumentos();
+      setselecteddocumento([]);
+    })
+  }
+  const deletarModeloDocumento = (item) => {
+    axios.get(html + 'delete_model_documento/' + item.id).then(() => {
+      loadModelos();
+    });
+  }
+
+  const [viewcreatemodelo, setviewcreatemodelo] = useState(0);
+  function ViewCreateModelo() {
+    return (
+      <div
+        style={{ display: viewcreatemodelo == 1 ? 'flex' : 'none' }}
+        className='fundo' onClick={() => setviewcreatemodelo(0)}>
+        <div
+          className='janela scroll'
+          onClick={(e) => e.stopPropagation()}
+        >
+          <input
+            autoComplete="off"
+            placeholder="NOME DO MODELO"
+            title="PROCURE USAR NOMES DE FÁCIL ASSOCIAÇÃO AO DOCUMENTO."
+            className="input destacaborda"
+            type="text"
+            id="inputNomeModeloDocumento"
+            onFocus={(e) => (e.target.placeholder = "")}
+            onBlur={(e) => (e.target.placeholder = "NOME DO MODELO")}
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignSelf: "center",
+              width: window.innerWidth > 425 ? "30vw" : "70vw",
+              alignContent: "center",
+              height: 40,
+              minHeight: 40,
+              maxHeight: 40,
+              borderStyle: "none",
+              textAlign: "center",
+            }}
+          ></input>
+          <textarea
+            className="textarea"
+            type="text"
+            id="inputTextoModeloDocumento"
+            placeholder="EDITE AQUI O CONTEÚDO DO MODELO DE DOCUMENTO."
+            onFocus={(e) => (e.target.placeholder = "")}
+            onBlur={(e) => (e.target.placeholder = "EDITE AQUI O CONTEÚDO DO MODELO DE DOCUMENTO.")}
+            style={{
+              flexDirection: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              width: window.innerWidth > 425 ? "50vw" : "70vw",
+              padding: 15,
+              height: 75,
+              minHeight: 75,
+              maxHeight: 75,
+            }}
+          ></textarea>
+          <div id="inputSalvarModelo"
+            className="button-green"
+            onClick={() => checkinput("textarea", settoast, ["inputNomeModeloDocumento", "inputTextoModeloDocumento"], "inputSalvarModelo", criarModeloDocumento, [])}
+            style={{
+              display: 'flex',
+              alignSelf: 'center',
+            }}>
+            <img
+              alt=""
+              src={salvar}
+              style={{ width: 20, height: 20 }}
+            ></img>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   function FieldDocumento() {
     return (
       <textarea
@@ -270,10 +505,14 @@ function Documentos() {
           clearTimeout(timeout);
           timeout = setTimeout(() => {
             if (document.getElementById("inputFieldDocumento").value != '') {
+              let texto = document.getElementById("inputFieldDocumento").value;
+              localStorage.setItem("id", selecteddocumento.id);
+              localStorage.setItem("texto", texto);
+              console.log('ID:' + localStorage.getItem("id"));
               updateDocumento(selecteddocumento, 0);
             }
             e.stopPropagation();
-          }, 3000);
+          }, 2000);
         }}
         style={{
           display: 'flex',
@@ -282,7 +521,7 @@ function Documentos() {
           width: '100%',
           height: 'calc(100% - 20px)',
           margin: 0, marginLeft: 5,
-          pointerEvents: selecteddocumento != [] && selecteddocumento.status == 1 ? 'none' : 'auto'
+          pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
         }}
         id="inputFieldDocumento"
       ></textarea>
@@ -426,7 +665,7 @@ function Documentos() {
 
   var timeout = null;
   return (
-    <div id="scroll-anamnese"
+    <div id="scroll-documentos"
       className='card-aberto'
       style={{
         display: card.toString().substring(0, 14) == 'card-documento' ? 'flex' : 'none',
@@ -438,6 +677,8 @@ function Documentos() {
       <FieldDocumento></FieldDocumento>
       <ListaDeDocumentos></ListaDeDocumentos>
       <PrintDocumento></PrintDocumento>
+      <ViewSelectModelos></ViewSelectModelos>
+      <ViewCreateModelo></ViewCreateModelo>
     </div>
   )
 }

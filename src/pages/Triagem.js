@@ -535,6 +535,7 @@ function Triagem() {
                       borderBottomRightRadius: 0,
                       minHeight: 100,
                       height: 100,
+                      width: 100, minWidth: 100, maxWidth: 100
                     }}
                   >
                     <div>
@@ -551,7 +552,9 @@ function Triagem() {
                         className="button-opaque"
                         style={{
                           display: 'flex',
-                          margin: 5, minHeight: 35, maxHeight: 35, minWidth: 35, maxWidth: 35,
+                          margin: 5, marginRight: 0,
+                          minHeight: 35, maxHeight: 35, minWidth: 35, maxWidth: 35,
+                          borderTopRightRadius: 0, borderBottomRightRadius: 0,
                           backgroundColor: 'rgba(231, 76, 60, 0.8)'
                         }}
                         onClick={() => {
@@ -571,7 +574,11 @@ function Triagem() {
                       <div id={'contagem de chamadas' + item.id_atendimento}
                         title="TOTAL DE CHAMADAS"
                         className="text1"
-                        style={{ margin: 5, marginLeft: 0, borderRadius: 5, backgroundColor: 'white', height: 30, width: 30 }}>
+                        style={{
+                          margin: 5, marginLeft: 0,
+                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                          backgroundColor: 'white', width: 35, height: 35
+                        }}>
                         {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
                       </div>
                     </div>
@@ -586,7 +593,6 @@ function Triagem() {
                       borderBottomLeftRadius: 0,
                       minHeight: 100,
                       height: 100,
-                      width: 170, minWidth: 170, maxWidth: 170
                     }}
                     onClick={() => {
                       setatendimento(item);

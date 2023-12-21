@@ -4,9 +4,8 @@ import axios from "axios";
 import Context from "./Context";
 import moment from "moment";
 // som.
-import ding from "../sounds/ding.mp3";
-// text-to-speech.
-import Speech from 'react-text-to-speech'
+import ding from "../sounds/ding2.mp3";
+
 // router.
 import { useHistory } from "react-router-dom";
 
@@ -18,7 +17,6 @@ function Painel() {
     pagina,
     setpagina,
     setusuario,
-    altura
   } = useContext(Context);
 
   // history (router).
@@ -60,7 +58,16 @@ function Painel() {
         // dispara o som e a chamada de voz.
         var audio = document.getElementById("ding");
         audio.play();
-        <Speech text={x.map(item => item.nome_paciente)} />
+        setTimeout(() => {
+          let utterance = new SpeechSynthesisUtterance(x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.nome_paciente).pop());
+          utterance.lang = "pt-BR";
+          speechSynthesis.speak(utterance);
+          setTimeout(() => {
+            let utterance = new SpeechSynthesisUtterance(x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id_sala).pop());
+            utterance.lang = "pt-BR";
+            speechSynthesis.speak(utterance);
+          }, 2000);
+        }, 3500);
       }
     })
   }
@@ -127,7 +134,7 @@ function Painel() {
                 alignSelf: 'center'
               }}>
               <div>
-                {moment(item.data).format('DD/mm/YY') + ' - ' + moment(item.data).format('HH:mm')}
+                {moment(item.data).format('DD/MM/YY') + ' - ' + moment(item.data).format('HH:mm')}
               </div>
             </div>
           </div>
@@ -169,7 +176,7 @@ function Painel() {
         flexDirection: "column",
         justifyContent: "center",
         width: "100vw",
-        height: altura,
+        height: "100vh",
       }}
     >
       <UltimaChamada></UltimaChamada>

@@ -476,8 +476,11 @@ function Prontuario() {
                         className="button-opaque"
                         style={{
                           display: 'flex',
-                          margin: 2.5, minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
-                          backgroundColor: 'rgba(231, 76, 60, 0.8)'
+                          margin: 2.5, marginRight: 0,
+                          minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                          backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
                         }}
                         onClick={() => {
                           callPaciente(item);
@@ -496,7 +499,11 @@ function Prontuario() {
                       <div id={'contagem de chamadas do PA' + item.id_atendimento}
                         title="TOTAL DE CHAMADAS"
                         className="text1"
-                        style={{ margin: 2.5, borderRadius: 5, backgroundColor: 'white', height: 20, width: 20 }}>
+                        style={{
+                          margin: 2.5, marginLeft: 0,
+                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                          backgroundColor: 'white', height: 20, width: 20
+                        }}>
                         {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
                       </div>
                     </div>
@@ -1618,6 +1625,8 @@ function Prontuario() {
     "PRECAUÇÕES",
     "ADMISSÃO",
     "EVOLUÇÃO",
+    "RECEITA",
+    "ATESTADO MÉDICO",
     "RISCOS",
     "PROPOSTAS",
     "SINAIS VITAIS",
@@ -1639,7 +1648,9 @@ function Prontuario() {
     "ALERGIAS",
     "PRECAUÇÕES",
     "ADMISSÃO",
-    "EVOLUÇÕES",
+    "EVOLUÇÃO",
+    "RECEITA",
+    "ATESTADO MÉDICO",
     "RISCOS",
     "PROPOSTAS",
     "SINAIS VITAIS",
@@ -1799,7 +1810,8 @@ function Prontuario() {
             busyalergias
           )}
           {cartao(null, "ADMISSÃO", "card-documento-admissao")}
-          {cartao(null, "EVOLUÇÕES", "card-evolucoes")}
+          {cartao(null, "EVOLUÇÃO", "card-documento-evolucao")}
+          {cartao(null, "RECEITA MÉDICA", "card-documento-receita")}
           {cartao(
             propostas.filter((item) => item.status == 0),
             "PROPOSTAS",

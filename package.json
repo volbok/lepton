@@ -18,8 +18,7 @@
     "react-hook-speech-to-text": "^0.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
-    "react-speech-recognition": "^3.10.0",
-    "react-text-to-speech": "^0.6.5"
+    "react-speech-recognition": "^3.10.0"
   },
   "scripts": {
     "predeploy": "npm run build",
