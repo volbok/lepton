@@ -14,10 +14,12 @@ import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
 import novo from '../images/novo.svg';
+import clipboard from '../images/clipboard.svg';
 import refresh from '../images/refresh.svg';
 import print from '../images/imprimir.svg';
 import copiar from '../images/copiar.svg';
 import preferencias from '../images/preferencias.svg';
+import check from '../images/clipboard.svg';
 
 function Prescricao() {
 
@@ -48,6 +50,7 @@ function Prescricao() {
 
   useEffect(() => {
     if (card == 'card-prescricao') {
+      loadModelosPrescricao();
       loadOpcoesPrescricao();
       loadItensPrescricao();
       loadPrescricao();
@@ -237,6 +240,7 @@ function Prescricao() {
   }
   // inserir registro de prescrição.
   const insertPrescricao = () => {
+    console.log(usuario);
     var obj = {
       id_paciente: paciente,
       id_atendimento: atendimento,
@@ -258,7 +262,6 @@ function Prescricao() {
         }, 5000);
       });
   }
-
   const copiarPrescricao = (item) => {
     // registrando nova prescrição.
     let old_id_prescricao = item.id;
@@ -351,7 +354,6 @@ function Prescricao() {
     });
 
   }
-
   // atualizando um registro de prescrição.
   const updatePrescricao = (item, status) => {
     var obj = {
@@ -359,7 +361,7 @@ function Prescricao() {
       id_atendimento: item.id_atendimento,
       data: item.data,
       status: status,
-      id_profissional: item.id,
+      id_profissional: item.id_profissional,
       nome_profissional: item.nome_profissional,
       registro_profissional: item.registro_profissional,
     }
@@ -469,7 +471,6 @@ function Prescricao() {
         }, 5000);
       });
   }
-
   const insertComponentePrescricao = (random, componente, id_pai) => {
     var obj = {
       id_unidade: unidade,
@@ -499,7 +500,6 @@ function Prescricao() {
       }
     })
   }
-
   // atualizando um registro de prescrição.
   const updateItemPrescricao = (item, qtde, via, freq, agora, acm, sn, obs) => {
     var obj = {
@@ -611,7 +611,6 @@ function Prescricao() {
       ></input>
     )
   }
-
   const [filteropcoesprescricao, setfilteropcoesprescricao] = useState('');
   var searchopcoesprescricao = '';
   const filterOpcoesItemPrescricao = () => {
@@ -824,15 +823,27 @@ function Prescricao() {
           borderColor: 'white',
           alignSelf: 'flex-start',
         }}>
-        <div id="botão para nova prescrição."
-          className='button-green'
-          onClick={() => insertPrescricao()}
-        >
-          <img
-            alt=""
-            src={novo}
-            style={{ width: 30, height: 30 }}
-          ></img>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <div id="botão para nova prescrição."
+            className='button-green'
+            onClick={() => insertPrescricao()}
+          >
+            <img
+              alt=""
+              src={novo}
+              style={{ width: 30, height: 30 }}
+            ></img>
+          </div>
+          <div id="botão para acessar modelos de prescrição."
+            className='button-green'
+            onClick={() => setviewselectmodelosprescricao(1)}
+          >
+            <img
+              alt=""
+              src={clipboard}
+              style={{ width: 30, height: 30 }}
+            ></img>
+          </div>
         </div>
         {arraylistaprescricao.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
           <div id={"item de prescrição " + item.id}
@@ -921,6 +932,28 @@ function Prescricao() {
                 <img
                   alt=""
                   src={copiar}
+                  style={{
+                    height: 20,
+                    width: 20,
+                  }}
+                ></img>
+              </div>
+              <div
+                id="botão para salvar modelo da prescrição"
+                className='button-green'
+                style={{
+                  display: item.status == 1 ? 'flex' : 'none',
+                  maxWidth: 30, width: 30, minWidth: 30,
+                  maxHeight: 30, height: 30, minHeight: 30
+                }}
+                title={'SALVAR COMO MODELO'}
+                onClick={() => {
+                  setidprescricao(item.id_prescricao);
+                  setviewnomeprescricao(1);
+                }}>
+                <img
+                  alt=""
+                  src={check}
                   style={{
                     height: 20,
                     width: 20,
@@ -1887,6 +1920,254 @@ function Prescricao() {
     a.print();
   }
 
+  // MODELOS DE PRESCRIÇÃO.
+  const [modelosprescricao, setmodelosprescricao] = useState([]);
+  const loadModelosPrescricao = () => {
+    axios.get(html + 'list_model_prescricao/' + usuario.id).then((response) => {
+      var x = response.data.rows;
+      setmodelosprescricao(x);
+    })
+  };
+
+  const copiaModeloPrescricao = (id_modelo_prescricao, key_modelo) => {
+    
+    console.log('ID: ' + id_modelo_prescricao);
+    console.log('KEY MODELO: ' + key_modelo);
+    
+    // 1. inserindo o registro de prescrição.
+    let nova_id_prescricao = null;
+    var obj = {
+      id_paciente: paciente,
+      id_atendimento: atendimento,
+      data: moment(),
+      status: 0, // 0 = não salva; 1 = salva (não pode excluir).
+      id_profissional: usuario.id,
+      nome_profissional: usuario.nome_usuario,
+      registro_profissional: usuario.n_conselho,
+    }
+    axios.post(html + 'insert_prescricao', obj).then(() => {
+      axios.get(html + 'list_prescricoes/' + atendimento).then((response) => {
+        var x = response.data.rows;
+        nova_id_prescricao = x.sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).slice(-1).map(item => item.id).pop();
+        console.log('ID DA PRESCRIÇÃO CRIADA: ' + nova_id_prescricao);
+        // 2. inserindo os itens de prescrição.
+        // eslint-disable-next-line
+        axios.get(html + 'list_itens_model_prescricao/' + key_modelo).then((response) => {
+          var y = response.data.rows;
+          console.log('MODELOS DE ITENS COMPATÍVEIS: ' + y.length);
+          console.log('NOVA ID PRESCRIÇÃO REVIEW: ' + nova_id_prescricao);
+          // eslint-disable-next-line
+          y.map(item => {
+            var obj = {
+              id_unidade: unidade,
+              id_paciente: paciente,
+              id_atendimento: atendimento,
+              categoria: item.categoria,
+              codigo_item: item.codigo_item,
+              nome_item: item.nome_item,
+              qtde_item: item.qtde_item,
+              via: item.via,
+              freq: item.freq,
+              agora: item.agora,
+              acm: item.acm,
+              sn: item.sn,
+              obs: item.obs,
+              data: moment(),
+              id_componente_pai: item.id_componente_pai,
+              id_componente_filho: item.id_componente_filho,
+              id_prescricao: nova_id_prescricao,
+              id_pai: null,
+            }
+            console.log(obj);
+            axios.post(html + 'insert_item_prescricao', obj);
+          });
+        });
+        loadPrescricao();
+        loadItensPrescricao();
+      });
+    });
+  }
+
+  const [viewselectmodelosprescricao, setviewselectmodelosprescricao] = useState(0);
+  function ViewSelectModeloPrescricao() {
+    return (
+      <div
+        style={{ display: viewselectmodelosprescricao == 1 ? 'flex' : 'none' }}
+        className='fundo'
+        onClick={() => setviewselectmodelosprescricao(0)}
+      >
+        <div
+          className='janela scroll'
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            maxHeight: '80vh', maxWwidth: '70vw'
+          }}
+        >
+          <div className='text1'>{'MODELOS DE PRESCRIÇÃO PERSONALIZADAS'}</div>
+          {modelosprescricao.map(item => (
+            <div className='button'
+              style={{ width: 150, height: 150, position: 'relative' }}
+              onClick={() => copiaModeloPrescricao(item.id_modelo_prescricao, item.key_modelo)}
+            >
+              <div>
+                {item.nome_prescricao}
+              </div>
+              <div id="botão para deletar modelo de prescrição."
+                className="button-red"
+                onClick={(e) => { deleteModeloPrescricao(item.id_modelo_prescricao); e.stopPropagation() }}
+                style={{
+                  position: 'absolute', top: 10, right: 10,
+                  display: 'flex',
+                  alignSelf: 'center',
+                  minHeight: 30, maxHeight: 30, minWidth: 30, maxWidth: 30
+                }}>
+                <img
+                  alt=""
+                  src={deletar}
+                  style={{ width: 20, height: 20 }}
+                ></img>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const [viewnomeprescricao, setviewnomeprescricao] = useState(0);
+  function ViewNomePrescricao() {
+    return (
+      <div
+        className="fundo"
+        onClick={() => setviewnomeprescricao(0)}
+        style={{ display: viewnomeprescricao == 1 ? 'flex' : 'none' }}
+      >
+        <div
+          className="janela"
+          onClick={(e) => e.stopPropagation()}>
+          <input id={"inputNomeModeloPrescricao"}
+            className="input"
+            autoComplete="off"
+            placeholder="NOME DO MODELO DE PRESCRIÇÃO..."
+            inputMode='text'
+            onFocus={(e) => (e.target.placeholder = '')}
+            onBlur={(e) => (e.target.placeholder = 'QTDE')}
+            style={{
+              margin: 5,
+              width: '40vw', maxWidth: '40vw'
+            }}
+            type="text"
+            maxLength={50}
+          ></input>
+          <div id="botão para salvar modelo de prescrição."
+            className='button-green'
+            onClick={(e) => {
+              if (document.getElementById("inputNomeModeloPrescricao").value != '') {
+                createModeloPrescricao(idprescricao, document.getElementById("inputNomeModeloPrescricao").value);
+                setviewnomeprescricao(0);
+              }
+              e.stopPropagation();
+            }}
+          >
+            <img
+              alt=""
+              src={salvar}
+              style={{ width: 20, height: 20 }}
+            ></img>
+          </div>
+        </div>
+      </div >
+    )
+  }
+
+  const createModeloPrescricao = (id_prescricao, titulo) => {
+    // criando chave para o modelo de prescrição, que será repassado para os itens de prescrição a ele relacionados.
+    let randommodel = Math.random();
+    // criando registro de identificação do modelo de prescrição.
+    var objmodelo = {
+      id_usuario: usuario.id,
+      nome_prescricao: titulo.toUpperCase(),
+      key_modelo: randommodel
+    }
+    axios.post(html + 'insert_model_prescricao', objmodelo);
+    // copiando os itens da prescrição selecionada que vão popular o modelo de prescrição.
+    let arrayobjitens = [];
+    let arrayobjcomponentes = [];
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(valor => valor.id_pai == null && valor.id_prescricao == id_prescricao).map(valor => {
+      let random = Math.random();
+      var objitem = {
+        id_modelo_prescricao: randommodel,
+        id_unidade: parseInt(unidade),
+        id_paciente: parseInt(paciente),
+        id_atendimento: parseInt(atendimento),
+        categoria: valor.categoria,
+        codigo_item: valor.codigo_item,
+        nome_item: valor.nome_item,
+        qtde_item: parseInt(valor.qtde_item),
+        via: valor.via,
+        freq: valor.freq,
+        agora: valor.agora,
+        acm: valor.acm,
+        sn: valor.sn,
+        obs: valor.obs,
+        data: moment(),
+        id_componente_pai: random,
+        id_componente_filho: null,
+        id_prescricao: null,
+        id_pai: null
+      }
+      arrayobjitens.push(objitem);
+      // registrando os componentes relacionados aos itens de prescrição.
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(item => item.id_pai == valor.id && valor.id_prescricao == id_prescricao).map(valor => {
+        var objcomponente = {
+          id_modelo_prescricao: randommodel,
+          id_unidade: parseInt(unidade),
+          id_paciente: parseInt(paciente),
+          id_atendimento: parseInt(atendimento),
+          categoria: valor.categoria,
+          codigo_item: valor.codigo_item,
+          nome_item: valor.nome_item,
+          qtde_item: parseInt(valor.qtde_item),
+          via: valor.via,
+          freq: valor.freq,
+          agora: valor.agora,
+          acm: valor.acm,
+          sn: valor.sn,
+          obs: valor.obs,
+          data: moment(),
+          id_componente_pai: null,
+          id_componente_filho: random,
+          id_prescricao: null,
+          id_pai: parseInt(valor.id_pai)
+        }
+        arrayobjcomponentes.push(objcomponente);
+      });
+      //eslint-disable-next-line
+      arrayobjitens.map(item => {
+        axios.post(html + 'insert_item_model_prescricao', item);
+      });
+      //eslint-disable-next-line
+      arrayobjcomponentes.map(item => {
+        axios.post(html + 'insert_item_model_prescricao', item);
+      });
+      loadModelosPrescricao();
+      setidprescricao(0);
+    })
+  }
+
+  const deleteModeloPrescricao = (id_modelo_prescricao) => {
+    console.log('DELETA: ' + id_modelo_prescricao);
+    axios.get(html + 'delete_model_prescricao/' + id_modelo_prescricao).then(() => {
+      // deletando itens relacionaod ao model de prescrição excluído.
+      axios.get(html + 'delete_item_model_prescricao/' + id_modelo_prescricao).then(() => {
+        loadModelosPrescricao();
+      })
+    })
+  }
+
   return (
     <div className='card-aberto'
       style={{
@@ -1963,7 +2244,9 @@ function Prescricao() {
         <ManageOpcoesItensPrescricao></ManageOpcoesItensPrescricao>
         <Via></Via>
         <Categoria></Categoria>
+        <ViewSelectModeloPrescricao></ViewSelectModeloPrescricao>
         <PrintPrescricao></PrintPrescricao>
+        <ViewNomePrescricao></ViewNomePrescricao>
       </div>
     </div>
   );
