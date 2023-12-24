@@ -438,7 +438,7 @@ function Prontuario() {
                     padding: 0,
                     flex: 4,
                     position: "relative",
-                    marginBottom: 10,
+                    margin: 2.5
                   }}
                 >
                   <div
@@ -544,6 +544,7 @@ function Prontuario() {
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "flex-start",
+                        padding: 5
                       }}
                     >
                       {window.innerWidth < 768
@@ -578,8 +579,8 @@ function Prontuario() {
                     id="informações do paciente"
                     style={{
                       position: "absolute",
-                      right: -10,
-                      top: 90,
+                      right: -5,
+                      bottom: -5,
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "center",
@@ -637,8 +638,11 @@ function Prontuario() {
             display: "flex",
             flexDirection: "column",
             alignContent: "center",
-            backgroundColor: "white",
+            backgroundColor: "rgba(242, 242, 242)",
+            borderColor: "rgba(242, 242, 242)",
             borderRadius: 5,
+            borderStyle: 'solid',
+            borderWidth: 3,
             padding: 2,
             margin: 2,
           }}

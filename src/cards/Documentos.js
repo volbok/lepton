@@ -11,7 +11,8 @@ import logo from '../images/logo.svg';
 import print from '../images/imprimir.svg';
 import back from '../images/back.svg';
 import copiar from '../images/copiar.svg';
-import clipboard from '../images/clipboard.svg';
+import favorito_usar from '../images/favorito_usar.svg';
+import favorito_salvar from '../images/favorito_salvar.svg';
 import salvar from '../images/salvar.svg';
 import novo from '../images/novo.svg';
 import deletar from '../images/deletar.svg';
@@ -189,14 +190,18 @@ function Documentos() {
             <img
               alt=""
               src={back}
-              style={{ width: 20, height: 20 }}
+              style={{ width: 30, height: 30 }}
             ></img>
           </div>
           <div className='button-green'
             style={{ width: '100%', marginLeft: 0 }}
             onClick={() => montaTexto()}
           >
-            NOVO...
+            <img
+              alt=""
+              src={novo}
+              style={{ width: 30, height: 30 }}
+            ></img>
           </div>
           <div className='button-green'
             title="MEUS MODELOS"
@@ -205,8 +210,8 @@ function Documentos() {
           >
             <img
               alt=""
-              src={clipboard}
-              style={{ width: 20, height: 20 }}
+              src={favorito_usar}
+              style={{ width: 30, height: 30 }}
             ></img>
           </div>
         </div>
@@ -317,7 +322,6 @@ function Documentos() {
 
   const [arraymodelos, setarraymodelos] = useState([]);
   const loadModelos = () => {
-    console.log('ID DO USUÁRIO: ' + usuario.id);
     axios.get(html + 'list_model_documentos/' + usuario.id).then((response) => {
       var x = response.data.rows;
       setarraymodelos(x);
@@ -355,7 +359,7 @@ function Documentos() {
           onClick={(e) => e.stopPropagation()}
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            maxHeight: '80vh', width: '50vw'
+            maxHeight: '80vh', maxWidth: '50vw'
           }}
         >
           <div className='text1'>{'MODELOS DE DOCUMENTO PERSONALIZADOS - ' + tipodocumento}</div>
@@ -370,7 +374,7 @@ function Documentos() {
                 </div>
                 <div id="botão para acessar a janela de criação de modelo de documento."
                   className="button-red"
-                  onClick={(e) => {deletarModeloDocumento(item); e.stopPropagation()}}
+                  onClick={(e) => { deletarModeloDocumento(item); e.stopPropagation() }}
                   style={{
                     position: 'absolute', top: 10, right: 10,
                     display: 'flex',
@@ -396,7 +400,7 @@ function Documentos() {
             <img
               alt=""
               src={novo}
-              style={{ width: 20, height: 20 }}
+              style={{ width: 30, height: 30 }}
             ></img>
           </div>
         </div>
@@ -432,7 +436,7 @@ function Documentos() {
         style={{ display: viewcreatemodelo == 1 ? 'flex' : 'none' }}
         className='fundo' onClick={() => setviewcreatemodelo(0)}>
         <div
-          className='janela scroll'
+          className='janela'
           onClick={(e) => e.stopPropagation()}
         >
           <input
@@ -468,11 +472,9 @@ function Documentos() {
               flexDirection: "center",
               justifyContent: "center",
               alignSelf: "center",
-              width: window.innerWidth > 425 ? "50vw" : "70vw",
+              width: "50vw",
               padding: 15,
-              height: 75,
-              minHeight: 75,
-              maxHeight: 75,
+              height: '40vh'
             }}
           ></textarea>
           <div id="inputSalvarModelo"
@@ -484,7 +486,7 @@ function Documentos() {
             }}>
             <img
               alt=""
-              src={salvar}
+              src={favorito_salvar}
               style={{ width: 20, height: 20 }}
             ></img>
           </div>

@@ -14,12 +14,12 @@ import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
 import novo from '../images/novo.svg';
-import clipboard from '../images/clipboard.svg';
+import favorito_usar from '../images/favorito_usar.svg';
+import favorito_salvar from '../images/favorito_salvar.svg';
 import refresh from '../images/refresh.svg';
 import print from '../images/imprimir.svg';
 import copiar from '../images/copiar.svg';
 import preferencias from '../images/preferencias.svg';
-import check from '../images/clipboard.svg';
 
 function Prescricao() {
 
@@ -67,7 +67,7 @@ function Prescricao() {
   const loadOpcoesPrescricao = () => {
     axios.get(html + 'opcoes_prescricoes').then((response) => {
       setopcoesprescricao(response.data.rows);
-      // setarrayopcoesprescricao(response.data.rows);
+      setarrayopcoesprescricao(response.data.rows);
     })
       .catch(function (error) {
         if (error.response == undefined) {
@@ -86,19 +86,20 @@ function Prescricao() {
       });
   }
   // registrando uma nova opção de item de prescrição.
+  const [random, setrandom] = useState(0);
   const insertOpcaoItemPrescricao = () => {
-    var categoria = document.getElementById("inputCategoria").value.toUpperCase();
-    var via = document.getElementById("inputVia").value.toUpperCase();
-
+    let localrandom = Math.random();
+    setrandom(localrandom);
     if (categoria != 'CATEGORIA' && via != 'VIA') {
       var obj = {
-        nome_item: document.getElementById("inputNome").value.toUpperCase(),
-        categoria: document.getElementById("inputCategoria").value.toUpperCase(),
-        qtde_item: document.getElementById("inputQtde").value.toUpperCase(),
-        via: document.getElementById("inputVia").value.toUpperCase(),
-        freq: document.getElementById("inputFreq").value.toUpperCase(),
-        obs: document.getElementById("inputObs").value.toUpperCase(),
-        id_pai: null,
+        nome_item: nome.toUpperCase(),
+        categoria: categoria.toUpperCase(),
+        qtde_item: qtde.toUpperCase(),
+        via: via.toUpperCase(),
+        freq: freq.toUpperCase(),
+        obs: obs.toUpperCase(),
+        id_componente_filho: null, // item de prescrição.
+        id_componente_pai: localrandom,
       }
       axios.post(html + 'insert_opcoes_prescricao', obj).then(() => {
         console.log(JSON.stringify(obj));
@@ -115,6 +116,31 @@ function Prescricao() {
       toast(settoast, 'PREENCHER TODOS OS CAMPOS', 'red', 1000);
     }
   }
+  const saveAsComponent = () => {
+    let localrandom = Math.random();
+    setrandom(localrandom);
+    var obj = {
+      nome_item: nome.toUpperCase(),
+      categoria: categoria.toUpperCase(),
+      qtde_item: qtde.toUpperCase(),
+      via: null,
+      freq: null,
+      obs: null,
+      id_componente_filho: null,
+      id_componente_pai: null,
+    }
+    axios.post(html + 'insert_opcoes_prescricao', obj).then(() => {
+      console.log(JSON.stringify(obj));
+      loadOpcoesPrescricao();
+    })
+      .catch(function () {
+        toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+        setTimeout(() => {
+          setpagina(0);
+          history.push('/');
+        }, 5000);
+      });
+  }
   const insertOpcaoComponentePrescricao = (item) => {
     var obj = {
       nome_item: item.nome_item,
@@ -123,7 +149,8 @@ function Prescricao() {
       via: null,
       freq: null,
       obs: null,
-      id_pai: id,
+      id_componente_filho: random,
+      id_componente_pai: null,
     }
     axios.post(html + 'insert_opcoes_prescricao', obj).then(() => {
       console.log(JSON.stringify(obj));
@@ -139,44 +166,34 @@ function Prescricao() {
   }
   // atualizando um registro de opção de item de prescrição.
   const updateOpcaoItemPrescricao = (id) => {
-    setid(id);
-    setnome(document.getElementById("inputNome").value.toUpperCase());
-    setcategoria(document.getElementById("inputCategoria").value.toUpperCase());
-    setqtde(document.getElementById("inputQtde").value.toUpperCase());
-    setvia(document.getElementById("inputVia").value.toUpperCase());
-    setfreq(document.getElementById("inputFreq").value.toUpperCase());
-    setobs(document.getElementById("inputObs").value.toUpperCase());
-
-    setTimeout(() => {
-      var obj = {
-        /*
-        nome_item: document.getElementById("inputNome").value.toUpperCase(),
-        categoria: document.getElementById("inputCategoria").value.toUpperCase(),
-        qtde_item: document.getElementById("inputQtde").value.toUpperCase(),
-        via: document.getElementById("inputVia").value.toUpperCase(),
-        freq: document.getElementById("inputFreq").value.toUpperCase(),
-        obs: document.getElementById("inputObs").value.toUpperCase(),
-        id_pai: null,
-        */
-        nome_item: nome,
-        categoria: categoria,
-        qtde_item: qtde,
-        via: via,
-        freq: freq,
-        obs: obs,
-        id_pai: null,
-      }
-      axios.post(html + 'update_opcoes_prescricao/' + id, obj).then(() => {
-        loadOpcoesPrescricao();
-      })
-        .catch(function () {
-          toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
-          setTimeout(() => {
-            setpagina(0);
-            history.push('/');
-          }, 5000);
-        });
-    }, 1000);
+    var obj = {
+      /*
+      nome_item: document.getElementById("inputNome").value.toUpperCase(),
+      categoria: document.getElementById("inputCategoria").value.toUpperCase(),
+      qtde_item: document.getElementById("inputQtde").value.toUpperCase(),
+      via: document.getElementById("inputVia").value.toUpperCase(),
+      freq: document.getElementById("inputFreq").value.toUpperCase(),
+      obs: document.getElementById("inputObs").value.toUpperCase(),
+      id_pai: null,
+      */
+      nome_item: nome,
+      categoria: categoria,
+      qtde_item: qtde,
+      via: via,
+      freq: freq,
+      obs: obs,
+      id_pai: null,
+    }
+    axios.post(html + 'update_opcoes_prescricao/' + id, obj).then(() => {
+      loadOpcoesPrescricao();
+    })
+      .catch(function () {
+        toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
+        setTimeout(() => {
+          setpagina(0);
+          history.push('/');
+        }, 5000);
+      });
   }
   // atualizando um registro de opção de item de prescrição.
   const updateOpcaoComplementoPrescricao = (item, qtde) => {
@@ -287,7 +304,7 @@ function Prescricao() {
 
         // registrando itens de prescrição.
         //eslint-disable-next-line
-        arrayitensprescricao.filter(valor => valor.id_pai == null && valor.id_prescricao == old_id_prescricao).map(valor => {
+        arrayitensprescricao.filter(valor => valor.id_componente_filho == null && valor.id_prescricao == old_id_prescricao).map(valor => {
           let random = Math.random();
           var objitem = {
             id_unidade: parseInt(unidade),
@@ -313,7 +330,7 @@ function Prescricao() {
 
           // registrando os componentes relacionados ao itens de prescrição.
           // eslint-disable-next-line
-          arrayitensprescricao.filter(item => item.id_pai == valor.id && valor.id_prescricao == old_id_prescricao).map(valor => {
+          arrayitensprescricao.filter(item => item.id_componente_filho == valor.id_componente_pai && valor.id_prescricao == old_id_prescricao).map(valor => {
             var objcomponente = {
               id_unidade: parseInt(unidade),
               id_paciente: parseInt(paciente),
@@ -332,7 +349,7 @@ function Prescricao() {
               id_componente_pai: null,
               id_componente_filho: random,
               id_prescricao: parseInt(nova_id_prescricao),
-              id_pai: parseInt(valor.id_pai)
+              id_pai: null
             }
             arrayobjcomponentes.push(objcomponente);
           });
@@ -619,8 +636,8 @@ function Prescricao() {
     searchopcoesprescricao = document.getElementById("inputopcoesprescricao").value.toUpperCase();
     timeout = setTimeout(() => {
       if (searchopcoesprescricao == '') {
-        setfilteropcoesprescricao('');
-        setarrayopcoesprescricao('');
+        setfilteropcoesprescricao([]);
+        setarrayopcoesprescricao(opcoesprescricao);
         document.getElementById("inputopcoesprescricao").value = '';
         setTimeout(() => {
           document.getElementById("inputopcoesprescricao").focus();
@@ -658,7 +675,13 @@ function Prescricao() {
           placeholder="BUSCAR ITEM..."
           onFocus={(e) => (e.target.placeholder = '')}
           onBlur={(e) => (e.target.placeholder = 'BUSCAR ITEM...')}
-          onKeyUp={() => filterOpcoesItemPrescricao()}
+          onClick={() => setid(null)}
+          onKeyUp={() => {
+            filterOpcoesItemPrescricao();
+            setTimeout(() => {
+              document.getElementById("inputopcoesprescricao").focus();
+            }, 500);
+          }}
           type="text"
           id="inputopcoesprescricao"
           defaultValue={filteropcoesprescricao}
@@ -678,11 +701,10 @@ function Prescricao() {
   const [qtde, setqtde] = useState(null);
 
   // via de administração do item prescrito.
-  let arrayvias = ['VO', 'SNE', 'GGT', 'IV', 'IM', 'SC']
-
   const [via, setvia] = useState('VIA');
   const [freq, setfreq] = useState(null);
   const [obs, setobs] = useState(null);
+  const [id_componente_pai, setid_componente_pai] = useState(null);
   const [id, setid] = useState(null);
 
   /*
@@ -694,38 +716,6 @@ function Prescricao() {
   let obs = null;
   */
 
-  function Via() {
-    return (
-      <div id="viamenu"
-        className="hide"
-        onClick={() => document.getElementById('viamenu').className = "hide"}
-      >
-        <div
-          className='fundo'
-        >
-          <div
-            className="janela">
-            {arrayvias.map(valor => (
-              < div
-                key={valor}
-                className="button"
-                style={{ width: 100 }}
-                onClick={() => {
-                  if (id != null) {
-                    // setvia(valor);
-                  }
-                  document.getElementById('inputVia').value = valor;
-                  document.getElementById('viamenu').className = "hide";
-                }}
-              >
-                {valor}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }
   function Categoria() {
     return (
       <div id="categoriamenu"
@@ -741,12 +731,9 @@ function Prescricao() {
               < div
                 key={valor}
                 className="button"
-                style={{ width: 100 }}
+                style={{ width: 200 }}
                 onClick={() => {
-                  if (id != null) {
-                    // setcategoria(valor);
-                  }
-                  document.getElementById('inputCategoria').value = valor;
+                  setcategoria(valor);
                   document.getElementById('categoriamenu').className = "hide";
                 }}
               >
@@ -808,6 +795,14 @@ function Prescricao() {
   // LISTA LATERAL DE PRESCRIÇÕES.
   const [idprescricao, setidprescricao] = useState(0);
   const [statusprescricao, setstatusprescricao] = useState(0);
+  // MODELOS DE PRESCRIÇÃO.
+  const [modelosprescricao, setmodelosprescricao] = useState([]);
+  const loadModelosPrescricao = () => {
+    axios.get(html + 'list_model_prescricao/' + usuario.id).then((response) => {
+      var x = response.data.rows;
+      setmodelosprescricao(x);
+    })
+  };
   const ListaPrescricoes = useCallback(() => {
     return (
       <div id="scroll lista de prescrições"
@@ -837,11 +832,15 @@ function Prescricao() {
           <div id="botão para acessar modelos de prescrição."
             className='button-green'
             onClick={() => setviewselectmodelosprescricao(1)}
+            style={{
+              pointerEvents: modelosprescricao.length > 0 ? 'auto' : 'none',
+              opacity: modelosprescricao.length > 0 ? 1 : 0.3
+            }}
           >
             <img
               alt=""
-              src={clipboard}
-              style={{ width: 30, height: 30 }}
+              src={favorito_usar}
+              style={{ width: 25, height: 25 }}
             ></img>
           </div>
         </div>
@@ -850,7 +849,7 @@ function Prescricao() {
             className='button'
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              minHeight: 120
+              minHeight: 180
             }}
             onClick={() => {
               loadItensPrescricao();
@@ -953,7 +952,7 @@ function Prescricao() {
                 }}>
                 <img
                   alt=""
-                  src={check}
+                  src={favorito_salvar}
                   style={{
                     height: 20,
                     width: 20,
@@ -974,7 +973,7 @@ function Prescricao() {
       </div>
     )
     // eslint-disable-next-line
-  }, [arraylistaprescricao, atendimento])
+  }, [arraylistaprescricao, atendimento, modelosprescricao])
 
   // componente para selecionar a via de administração de um item de prescrição.
   const [viewviaitemprescricao, setviewviaitemprescricao] = useState(0);
@@ -1384,39 +1383,32 @@ function Prescricao() {
 
   function ScrollOpcoesItens() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', height: '80vh' }}>
-        <div id="coluna1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '80vh' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
           <div className='text1' style={{ display: id == null ? 'flex' : 'none' }}>ITENS DISPONÍVEIS PARA PRESCRIÇÃO</div>
           <div id="scrollOpcoesItens" className='scroll cor0'
             style={{
               display: id == null ? 'flex' : 'none',
-              height: '100%',
+              height: 200, minHeight: 200,
               width: 'calc(50vw - 20px)'
             }}>
-            {arrayopcoesprescricao.filter(item => item.id_pai == null).map(item => (
+            {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
               <div
                 id={"optionItem " + item.id}
                 className={'button'}
                 style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
                 key={item.id}
                 onClick={() => {
+                  console.log(item.nome_item);
                   setid(item.id);
+                  setid_componente_pai(item.id_componente_pai);
                   setTimeout(() => {
-
                     setnome(item.nome_item);
                     setcategoria(item.categoria);
                     setqtde(item.qtde_item);
                     setvia(item.via);
                     setfreq(item.freq);
                     setobs(item.obs);
-
-                    document.getElementById("inputNome").value = item.nome_item;
-                    document.getElementById("inputCategoria").value = item.categoria;
-                    document.getElementById("inputQtde").value = item.qtde_item;
-                    document.getElementById("inputVia").value = item.via;
-                    document.getElementById("inputFreq").value = item.freq;
-                    document.getElementById("inputObs").value = item.obs;
-
                     var botoes = document.getElementById("scrollOpcoesItens").getElementsByClassName("button-red");
                     for (var i = 0; i < botoes.length; i++) {
                       botoes.item(i).className = "button";
@@ -1429,7 +1421,7 @@ function Prescricao() {
                   {item.nome_item}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                  <div className={'button-red'}
+                  <div className={'button-yellow'}
                     style={{
                       display: 'flex',
                       margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40,
@@ -1452,277 +1444,382 @@ function Prescricao() {
             ))}
           </div>
           <div className="button-red"
-            style={{ display: id != null ? 'flex' : 'none', width: '80%', alignSelf: 'center' }}
+            style={{ display: id != null ? 'flex' : 'none', width: '80%', alignSelf: 'center', margin: 20 }}
             onClick={() => setid(null)}
           >
-            {opcoesprescricao.filter(item => item.id == id).map(item => item.nome_item)}
+            {opcoesprescricao.filter(item => item.id_componente_pai == id_componente_pai).map(item => item.nome_item)}
           </div>
           <div className='text1'>{id != null ? 'EDITAR ITEM SELECIONADO' : 'INSERIR NOVO ITEM'}</div>
           <InputsAndComponentes></InputsAndComponentes>
-        </div>
-        <div id="coluna2" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginLeft: 10, height: '80vh' }}>
-          <div style={{ display: id != null ? 'flex' : 'none' }} className='text1'>COMPONENTES DISPONÍVEIS PARA O ITEM SELECIONADO</div>
-          <div id="scrollOpcoesComponentes" className='scroll cor0'
-            style={{
-              display: id != null ? 'flex' : 'none',
-              height: '100%', minHeight: 400, width: 'calc(50vw - 20px)'
-            }}>
-            {arrayopcoesprescricao.filter(item => item.id_pai == null && item.id != id).map(item => (
-              <div
-                id={"optionItem " + item.id}
-                className={'button'}
-                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-                key={item.id}
-              >
-                <div style={{ marginLeft: 5 }}>
-                  {item.nome_item}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                  <div className={'button-green'}
-                    style={{
-                      display: item.id == id ? 'none' : 'flex',
-                      margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40,
-                    }}
-                    title={'INSERIR COMO COMPONENTE DO ITEM SELECIONADO.'}
-                    onClick={(e) => { insertOpcaoComponentePrescricao(item); e.stopPropagation() }}>
-                    <img
-                      alt=""
-                      src={salvar}
-                      style={{
-                        margin: 0,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     )
   };
 
+  function ComponentesRegistrados() {
+    return (
+      <div id="lista de componentes para o item pescrito">
+        <div className='text1'>COMPONENTES REGISTRADOS PARA O ITEM SELECIONADO</div>
+        <div
+          className='scroll cor0'
+          style={{
+            display: 'flex',
+            height: 230, width: '40vw'
+          }}
+        >
+          {opcoesprescricao.filter(valor => id_componente_pai != null && valor.id_componente_filho == id_componente_pai).map(item => (
+            <div
+              className='button'
+              key={item.id}
+              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <div style={{ marginLeft: 5 }}>
+                {item.nome_item}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <input id={"inputQtdeComplemento " + item.id}
+                  className="input"
+                  autoComplete="off"
+                  placeholder="QTDE"
+                  inputMode='numeric'
+                  onKeyUp={() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                      var valor = document.getElementById("inputQtdeComplemento " + item.id).value;
+                      if (isNaN(valor) == true) {
+                        document.getElementById("inputQtdeComplemento " + item.id).value = '';
+                        document.getElementById("inputQtdeComplemento " + item.id).focus();
+                      } else {
+                        updateOpcaoComplementoPrescricao(item, valor);
+                      }
+                    }, 1000);
+                  }}
+                  onFocus={(e) => (e.target.placeholder = '')}
+                  onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    minWidth: 40,
+                    minHeight: 40,
+                    margin: 0,
+                    marginRight: 5
+                  }}
+                  type="text"
+                  defaultValue={item.qtde_item}
+                  maxLength={3}
+                ></input>
+                <div className='button-red'
+                  style={{ margin: 0, width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+                  title={'EXCLUIR COMPLEMENTO.'}
+                  onClick={() => { deleteOpcaoItemPrescricao(item.id) }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 0,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  function ComponentesDisponiveis() {
+    return (
+      <div>
+        <div style={{ display: 'flex', marginTop: 20 }} className='text1'>COMPONENTES DISPONÍVEIS PARA O ITEM SELECIONADO</div>
+        <div id="scrollOpcoesComponentes" className='scroll cor0'
+          style={{
+            display: 'flex',
+            height: 230, width: '40vw'
+          }}>
+          {arrayopcoesprescricao.filter(item => item.id_componente_pai == null && item.id_componente_filho == null).map(item => (
+            <div
+              id={"optionItem " + item.id}
+              className={'button'}
+              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+              key={item.id}
+            >
+              <div style={{ marginLeft: 5 }}>
+                {item.nome_item}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <div className={'button-green'}
+                  style={{
+                    display: item.id == id ? 'none' : 'flex',
+                    margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40,
+                  }}
+                  title={'INSERIR COMO COMPONENTE DO ITEM SELECIONADO.'}
+                  onClick={(e) => { insertOpcaoComponentePrescricao(item); e.stopPropagation() }}>
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 0,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const [arrayselector, setarrayselector] = useState([]);
+  const [inputselector, setinputselector] = useState("");
   const [opcoesitensmenu, setopcoesitensmenu] = useState(0);
   const InputsAndComponentes = useCallback(() => {
     var timeout = null;
     return (
       <div style={{
-        display: 'flex', flexDirection: 'row', justifyContent: 'center',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
         width: '100%', alignSelf: 'center',
       }}>
-        <div>
-          <div id="inputs para nome e categoria do item."
+        <div id="inputs para nome e categoria do item."
+          style={{
+            display: 'flex',
+            flexDirection: 'row', justifyContent: 'center',
+            width: '100%',
+            alignSelf: 'center',
+            alignContent: 'center',
+          }}>
+          <input id="inputNome"
+            className="input"
+            autoComplete="off"
+            placeholder="NOME DO ITEM"
+            inputMode='text'
+            onFocus={(e) => (e.target.placeholder = '')}
+            onBlur={(e) => (e.target.placeholder = 'NOME DO ITEM...')}
             style={{
-              display: 'flex',
-              flexDirection: 'row', justifyContent: 'center',
-              width: '100%',
-              alignSelf: 'center',
-              alignContent: 'center',
-            }}>
-            <input id={"inputNome"}
-              className="input"
-              autoComplete="off"
-              placeholder="NOME DO ITEM"
-              inputMode='text'
-              onFocus={(e) => (e.target.placeholder = '')}
-              onBlur={(e) => (e.target.placeholder = 'NOME')}
-              style={{
-                margin: 5, width: '100%'
-              }}
-              type="text"
-              defaultValue={nome}
-              maxLength={200}
-            ></input>
-            <input id={"inputCategoria"}
-              className='button'
-              onClick={() => document.getElementById('categoriamenu').className = 'show'}
-              style={{ margin: 5, paddingLeft: 10, paddingRight: 10, width: 150, caretColor: 'transparent' }}
-              defaultValue={categoria}
-            >
-            </input>
-          </div>
-          <div id="inputs para quantidade, via, frequência e observações."
-            style={{
-              display: 'flex', flexDirection: 'row', justifyContent: 'center',
-              width: '100%'
+              margin: 5, width: '100%'
             }}
+            onKeyUp={() => {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => {
+                setnome(document.getElementById("inputNome").value);
+              }, 1000);
+            }}
+            type="text"
+            defaultValue={nome}
+            maxLength={200}
+          ></input>
+          <input id={"inputCategoria"}
+            className='button'
+            onClick={() => document.getElementById('categoriamenu').className = 'show'}
+            style={{ margin: 5, paddingLeft: 10, paddingRight: 10, width: 300, caretColor: 'transparent' }}
+            defaultValue={categoria}
           >
+          </input>
+        </div>
+        <div id="inputs para quantidade, via e frequência."
+          style={{
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            width: '100%'
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className='text1'>QTDE</div>
             <input id={"inputQtde"}
               className="input"
               autoComplete="off"
               placeholder="QTDE"
               inputMode='numeric'
-              // onKeyUp={() => check("inputQtde", 1, 100)}
+              onKeyUp={() => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                  setqtde(document.getElementById("inputQtde").value);
+                }, 1000);
+              }}
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'QTDE')}
               style={{
-                width: 50,
+                width: 50, minWidth: 50, maxWidth: 50,
                 margin: 5,
               }}
               type="text"
-              defaultValue={qtde}
               maxLength={3}
+              defaultValue={qtde}
             ></input>
-            <input id={"inputVia"}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className='text1'>VIA</div>
+            <div id="inputVia"
               className='button'
-              onClick={() => document.getElementById('viamenu').className = 'show'}
-              style={{ height: 50, width: 50, margin: 5, caretColor: 'transparent' }}
-              defaultValue={via}
-            >
-            </input>
-            <input id={"inputFreq"}
-              className="input"
-              autoComplete="off"
-              placeholder="FREQ"
-              inputMode='numeric'
-              // onKeyUp={() => checkNumberInput("inputFreq", 1, 24)}
-              onFocus={(e) => (e.target.placeholder = '')}
-              onBlur={(e) => (e.target.placeholder = 'FREQ')}
+              onClick={() => {
+                setviewoptionsselector(1);
+                setinputselector("inputVia");
+                setarrayselector(vias);
+              }}
               style={{
-                width: 50,
+                display: window.innerWidth > 425 ? 'flex' : 'none',
+                width: 50, minWidth: 50, maxWidth: 50,
+                margin: 5
+              }}>
+              {via}
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className='text1'>FREQ</div>
+            <div id="inputFreq"
+              className="button"
+              onClick={() => {
+                setviewoptionsselector(1);
+                setinputselector("inputFreq");
+                setarrayselector(arrayfreq);
+              }}
+              style={{
+                width: 50, minWidth: 50, maxWidth: 50,
                 margin: 5,
               }}
               type="text"
-              defaultValue={freq}
-              maxLength={2}
-            ></input>
-            <textarea id={"inputObs"}
+            >
+              {freq}
+            </div>
+          </div>
+          <div id="input para observações."
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className='text1'>OBSERVAÇÕES</div>
+            <textarea id={"inputObservacoes"}
               className="textarea"
               autoComplete="off"
               placeholder="OBSERVAÇÕES"
               inputMode='text'
+              onKeyUp={() => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                  setobs(document.getElementById("inputObservacoes").value);
+                }, 1000);
+              }}
               onFocus={(e) => (e.target.placeholder = '')}
-              onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+              onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES...')}
               style={{
-                width: '100%',
-                height: 52, maxHeight: 52, minHeight: 52,
+                width: 400,
                 margin: 5,
+                alignSelf: 'center'
               }}
               type="text"
+              maxLength={2000}
               defaultValue={obs}
-              maxLength={200}
             ></textarea>
-
-            <div className='button-green'
-              style={{ display: id == null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
-              title={'SALVAR ITEM'}
-              onClick={() => {
-                insertOpcaoItemPrescricao();
-                setTimeout(() => {
-                  setid(null);
-                  setnome(null);
-                  setcategoria(null);
-                  setqtde(null);
-                  setvia(null);
-                  setfreq(null);
-                  setobs(null);
-                  document.getElementById("inputNome").value = '';
-                  document.getElementById("inputCategoria").value = '';
-                  document.getElementById("inputQtde").value = '';
-                  document.getElementById("inputVia").value = '';
-                  document.getElementById("inputFreq").value = '';
-                  document.getElementById("inputObs").value = '';
-                }, 1000)
-              }}>
-              <img
-                alt=""
-                src={salvar}
-                style={{
-                  margin: 0,
-                  height: 30,
-                  width: 30,
-                }}
-              ></img>
-            </div>
-            <div className='button-green'
-              style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
-              title={'ATUALIZAR ITEM'}
-              onClick={() => { updateOpcaoItemPrescricao(id) }}>
-              <img
-                alt=""
-                src={refresh}
-                style={{
-                  margin: 0,
-                  height: 30,
-                  width: 30,
-                }}
-              ></img>
-            </div>
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div className='text1'>COMPONENTES REGISTRADOS PARA O ITEM SELECIONADO</div>
-          <div id="lista de componentes para o item pescrito"
-            className='scroll cor0'
-            style={{ width: 'calc(100% - 20px)', height: '100%', minHeight: 200 }}
-          >
-            {opcoesprescricao.filter(valor => valor.id_pai == id).map(item => (
-              <div
-                className='button'
-                key={item.id}
-                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-              >
-                <div style={{ marginLeft: 5 }}>
-                  {item.nome_item}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                  <input id={"inputQtdeComplemento " + item.id}
-                    className="input"
-                    autoComplete="off"
-                    placeholder="QTDE"
-                    inputMode='numeric'
-                    onKeyUp={() => {
-                      clearTimeout(timeout);
-                      timeout = setTimeout(() => {
-                        var valor = document.getElementById("inputQtdeComplemento " + item.id).value;
-                        if (isNaN(valor) == true) {
-                          document.getElementById("inputQtdeComplemento " + item.id).value = '';
-                          document.getElementById("inputQtdeComplemento " + item.id).focus();
-                        } else {
-                          updateOpcaoComplementoPrescricao(item, valor);
-                        }
-                      }, 1000);
-                    }}
-                    onFocus={(e) => (e.target.placeholder = '')}
-                    onBlur={(e) => (e.target.placeholder = 'QTDE')}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      minWidth: 40,
-                      minHeight: 40,
-                      margin: 0,
-                      marginRight: 5
-                    }}
-                    type="text"
-                    defaultValue={item.qtde_item}
-                    maxLength={3}
-                  ></input>
-                  <div className='button-red'
-                    style={{ margin: 0, width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-                    title={'EXCLUIR COMPLEMENTO.'}
-                    onClick={() => { deleteOpcaoItemPrescricao(item.id) }}>
-                    <img
-                      alt=""
-                      src={deletar}
-                      style={{
-                        margin: 0,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
-                  </div>
-                </div>
-              </div>
-            ))}
+        <div id="botões para salvar ou atualizar o item de prescrição"
+          style={{
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            alignContent: 'center', alignItems: 'center', alignSelf: 'center'
+          }}>
+          <div className='button-green'
+            style={{ display: id == null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+            title={'SALVAR ITEM'}
+            onClick={() => {
+              insertOpcaoItemPrescricao();
+              setTimeout(() => {
+                setid(null);
+                setnome(null);
+                setcategoria(null);
+                setqtde(null);
+                setvia(null);
+                setfreq(null);
+                setobs(null);
+              }, 1000)
+            }}>
+            <img
+              alt=""
+              src={salvar}
+              style={{
+                margin: 0,
+                height: 30,
+                width: 30,
+              }}
+            ></img>
+          </div>
+          <div className='button-green'
+            style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+            title={'ATUALIZAR ITEM'}
+            onClick={() => {
+              saveAsComponent();
+              setTimeout(() => {
+                setid(null);
+                setnome(null);
+                setcategoria(null);
+                setqtde(null);
+                setvia(null);
+                setfreq(null);
+                setobs(null);
+              }, 1000)
+            }}>
+            <img
+              alt=""
+              src={refresh}
+              style={{
+                margin: 0,
+                height: 30,
+                width: 30,
+              }}
+            ></img>
+          </div>
+          <div className='button'
+            style={{ display: 'flex', margin: 5, width: 50, height: 50 }}
+            title={'SALVAR COMO COMPONENTE'}
+            onClick={() => { saveAsComponent(id) }}>
+            <img
+              alt=""
+              src={salvar}
+              style={{
+                margin: 0,
+                height: 30,
+                width: 30,
+              }}
+            ></img>
           </div>
         </div>
       </div>
     )
     // eslint-disable-next-line
-  }, [opcoesprescricao, arrayopcoesprescricao, id]);
-
+  }, [opcoesprescricao, arrayopcoesprescricao, id, inputselector, arrayselector, via, freq, obs, categoria, qtde, id, nome]);
+  // seletor para as opções de via e frequência de administração do item de prescrição na tela de configurações.
+  const [viewoptionsselector, setviewoptionsselector] = useState(0)
+  function OptionsSelector() {
+    return (
+      <div
+        className='fundo'
+        onClick={() => setviewoptionsselector(0)}
+        style={{ display: viewoptionsselector == 1 ? 'flex' : 'none' }}
+      >
+        <div className="janela scroll"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {arrayselector.map(item => (
+            <div
+              onClick={() => {
+                console.log(inputselector);
+                setviewoptionsselector(0);
+                if (inputselector == "inputFreq") {
+                  setfreq(item);
+                }
+                if (inputselector == "inputVia") {
+                  setvia(item);
+                }
+              }}
+              className='button'
+              style={{ width: 200 }}>
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   function ManageOpcoesItensPrescricao() {
     return (
       <div
@@ -1731,7 +1828,7 @@ function Prescricao() {
         style={{ display: opcoesitensmenu == 1 ? 'flex' : 'none' }}
       >
         <div
-          className="scroll"
+          className="janela scroll"
           style={{
             height: '100vh', width: '100vw',
             padding: 20,
@@ -1739,7 +1836,14 @@ function Prescricao() {
           }}
           onClick={(e) => e.stopPropagation()}>
           <FilterOpcoesItemPrescricao></FilterOpcoesItemPrescricao>
-          <ScrollOpcoesItens></ScrollOpcoesItens>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <ScrollOpcoesItens></ScrollOpcoesItens>
+            <div style={{ display: id == null ? 'none' : 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginLeft: 10 }}>
+              <ComponentesRegistrados></ComponentesRegistrados>
+              <ComponentesDisponiveis></ComponentesDisponiveis>
+            </div>
+          </div>
+          <OptionsSelector></OptionsSelector>
         </div>
       </div>
     )
@@ -1909,7 +2013,6 @@ function Prescricao() {
       </div>
     )
   }
-
   function printDiv() {
     console.log('PREPARANDO PRESCRIÇÃO PARA IMPRESSÃO');
     let printdocument = document.getElementById("IMPRESSÃO - PRESCRIÇÃO").innerHTML;
@@ -1920,20 +2023,9 @@ function Prescricao() {
     a.print();
   }
 
-  // MODELOS DE PRESCRIÇÃO.
-  const [modelosprescricao, setmodelosprescricao] = useState([]);
-  const loadModelosPrescricao = () => {
-    axios.get(html + 'list_model_prescricao/' + usuario.id).then((response) => {
-      var x = response.data.rows;
-      setmodelosprescricao(x);
-    })
-  };
-
   const copiaModeloPrescricao = (id_modelo_prescricao, key_modelo) => {
-    
     console.log('ID: ' + id_modelo_prescricao);
     console.log('KEY MODELO: ' + key_modelo);
-    
     // 1. inserindo o registro de prescrição.
     let nova_id_prescricao = null;
     var obj = {
@@ -1978,12 +2070,12 @@ function Prescricao() {
               id_prescricao: nova_id_prescricao,
               id_pai: null,
             }
-            console.log(obj);
             axios.post(html + 'insert_item_prescricao', obj);
           });
         });
         loadPrescricao();
         loadItensPrescricao();
+        setviewselectmodelosprescricao(0);
       });
     });
   }
@@ -2015,7 +2107,7 @@ function Prescricao() {
               </div>
               <div id="botão para deletar modelo de prescrição."
                 className="button-red"
-                onClick={(e) => { deleteModeloPrescricao(item.id_modelo_prescricao); e.stopPropagation() }}
+                onClick={(e) => { deleteModeloPrescricao(item.id_modelo_prescricao, item.key_modelo); e.stopPropagation() }}
                 style={{
                   position: 'absolute', top: 10, right: 10,
                   display: 'flex',
@@ -2066,6 +2158,7 @@ function Prescricao() {
               if (document.getElementById("inputNomeModeloPrescricao").value != '') {
                 createModeloPrescricao(idprescricao, document.getElementById("inputNomeModeloPrescricao").value);
                 setviewnomeprescricao(0);
+                loadModelosPrescricao();
               }
               e.stopPropagation();
             }}
@@ -2083,6 +2176,9 @@ function Prescricao() {
 
   const createModeloPrescricao = (id_prescricao, titulo) => {
     // criando chave para o modelo de prescrição, que será repassado para os itens de prescrição a ele relacionados.
+    let objetos = [];
+    let arrayobjitens = [];
+    let arrayobjcomponentes = [];
     let randommodel = Math.random();
     // criando registro de identificação do modelo de prescrição.
     var objmodelo = {
@@ -2092,10 +2188,8 @@ function Prescricao() {
     }
     axios.post(html + 'insert_model_prescricao', objmodelo);
     // copiando os itens da prescrição selecionada que vão popular o modelo de prescrição.
-    let arrayobjitens = [];
-    let arrayobjcomponentes = [];
     // eslint-disable-next-line
-    arrayitensprescricao.filter(valor => valor.id_pai == null && valor.id_prescricao == id_prescricao).map(valor => {
+    arrayitensprescricao.filter(valor => valor.id_componente_pai != null && valor.id_prescricao == id_prescricao).map(valor => {
       let random = Math.random();
       var objitem = {
         id_modelo_prescricao: randommodel,
@@ -2121,7 +2215,7 @@ function Prescricao() {
       arrayobjitens.push(objitem);
       // registrando os componentes relacionados aos itens de prescrição.
       // eslint-disable-next-line
-      arrayitensprescricao.filter(item => item.id_pai == valor.id && valor.id_prescricao == id_prescricao).map(valor => {
+      arrayitensprescricao.filter(item => item.id_componente_filho == valor.id_componente_pai && item.id_prescricao == id_prescricao).map(valor => {
         var objcomponente = {
           id_modelo_prescricao: randommodel,
           id_unidade: parseInt(unidade),
@@ -2145,27 +2239,34 @@ function Prescricao() {
         }
         arrayobjcomponentes.push(objcomponente);
       });
-      //eslint-disable-next-line
-      arrayobjitens.map(item => {
-        axios.post(html + 'insert_item_model_prescricao', item);
-      });
-      //eslint-disable-next-line
-      arrayobjcomponentes.map(item => {
-        axios.post(html + 'insert_item_model_prescricao', item);
-      });
-      loadModelosPrescricao();
-      setidprescricao(0);
     })
+    objetos = arrayobjitens.concat(arrayobjcomponentes);
+    console.log(objetos);
+    //eslint-disable-next-line
+    objetos.map(item => {
+      console.log('PACK OBJETOS')
+      axios.post(html + 'insert_item_model_prescricao', item);
+    });
+    loadModelosPrescricao();
+    setidprescricao(0);
   }
 
-  const deleteModeloPrescricao = (id_modelo_prescricao) => {
-    console.log('DELETA: ' + id_modelo_prescricao);
-    axios.get(html + 'delete_model_prescricao/' + id_modelo_prescricao).then(() => {
-      // deletando itens relacionaod ao model de prescrição excluído.
-      axios.get(html + 'delete_item_model_prescricao/' + id_modelo_prescricao).then(() => {
-        loadModelosPrescricao();
-      })
-    })
+  const deleteItemModeloPrescricao = (id) => {
+    axios.get(html + 'delete_item_model_prescricao/' + id);
+  }
+
+  const deleteModeloPrescricao = (id_modelo_prescricao, key_modelo) => {
+    console.log('ID_MODELO_PRESCRIÇÃO: ' + id_modelo_prescricao);
+    console.log('KEY-MODELO: ' + key_modelo);
+
+    axios.get(html + 'delete_model_prescricao/' + id_modelo_prescricao);
+    axios.get(html + 'list_itens_model_prescricao/' + key_modelo).then((response) => {
+      var x = response.data.rows;
+      console.log(x);
+      x.map(item => deleteItemModeloPrescricao(item.id));
+      setviewselectmodelosprescricao(0);
+      loadModelosPrescricao();
+    });
   }
 
   return (
@@ -2242,7 +2343,6 @@ function Prescricao() {
         <ViewItemFreq></ViewItemFreq>
         <ViewItemCondicao></ViewItemCondicao>
         <ManageOpcoesItensPrescricao></ManageOpcoesItensPrescricao>
-        <Via></Via>
         <Categoria></Categoria>
         <ViewSelectModeloPrescricao></ViewSelectModeloPrescricao>
         <PrintPrescricao></PrintPrescricao>
