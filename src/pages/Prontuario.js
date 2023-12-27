@@ -437,7 +437,7 @@ function Prontuario() {
               .filter((item) => item.id_unidade == unidade)
               .map((item) => item.nome_unidade)}
         </div>
-        <div className="button" style={{ margin: 5, marginTop: 0 }}
+        <div className="button" style={{ margin: 5, marginTop: 0, width: '60%', alignSelf: 'center' }}
           onClick={() => setviewsalaselector(1)}
         >
           {consultorio}
@@ -446,7 +446,7 @@ function Prontuario() {
           className="scroll"
           id="scroll atendimentos"
           style={{
-            display: arrayatendimentos.length > 0 ? "none" : "none",
+            display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
           }}
@@ -805,7 +805,7 @@ function Prontuario() {
         <div
           className="scroll"
           style={{
-            display: arrayatendimentos.length > 0 ? "flex" : "flex",
+            display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
             height: window.innerHeight - 240,
           }}
