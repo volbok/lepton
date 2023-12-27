@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "16.20.2"
+  },
   "name": "pulsar",
   "version": "0.1.0",
   "private": false,
@@ -24,7 +27,6 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "serve -s build",
-    
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
