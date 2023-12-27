@@ -446,10 +446,9 @@ function Prontuario() {
           className="scroll"
           id="scroll atendimentos"
           style={{
-            display: arrayatendimentos.length > 0 ? "flex" : "none",
+            display: arrayatendimentos.length > 0 ? "none" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
-            width: 'calc(100% - 10px)',
           }}
         >
           {arrayatendimentos
@@ -806,10 +805,9 @@ function Prontuario() {
         <div
           className="scroll"
           style={{
-            display: arrayatendimentos.length > 0 ? "none" : "flex",
+            display: arrayatendimentos.length > 0 ? "flex" : "flex",
             justifyContent: "center",
             height: window.innerHeight - 240,
-            width: 'calc(100% - 10px)',
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
@@ -1922,16 +1920,15 @@ function Prontuario() {
           display: window.innerWidth < 426 && viewlista == 0 ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "27vw",
           height: window.innerHeight - 20,
           margin: 0,
+          marginRight: 10, marginLeft: 10,
         }}
       >
         <Usuario></Usuario>
         <ListaDeAtendimentos></ListaDeAtendimentos>
       </div>
-      <div
-        id="conteúdo cheio"
+      <div id="conteúdo cheio"
         className="scroll"
         style={{
           display:
@@ -1948,7 +1945,8 @@ function Prontuario() {
           height: window.innerHeight - 30,
           minHeight: window.innerHeight - 30,
           width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
-          margin: 0,
+          minWidth: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
+          margin: 0, marginRight: 10,
           position: "relative",
           scrollBehavior: "smooth",
         }}
@@ -2140,13 +2138,9 @@ function Prontuario() {
           flexDirection: "column",
           justifyContent: "center",
           height: window.innerHeight - 30,
-          width:
-            window.innerWidth < 426
-              ? "calc(95vw - 15px)"
-              : window.innerWidth > 425 && window.innerWidth < 769
-                ? "calc(70vw - 20px)"
-                : "70vw",
-          margin: 0,
+          width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
+          minWidth: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
+          margin: 0,  marginRight: 10,
           scrollBehavior: "smooth",
         }}
       >
