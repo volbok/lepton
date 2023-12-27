@@ -1909,7 +1909,7 @@ function Prontuario() {
       style={{
         display: pagina == 1 ? "flex" : "none",
         flexDirection: window.innerWidth > 425 ? "row" : "column",
-        justifyContent: window.innerWidth > 425 ? "space-evenly" : "center",
+        justifyContent: window.innerWidth > 425 ? "center" : "center",
         width: "100vw",
         height: altura,
       }}
