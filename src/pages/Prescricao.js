@@ -2265,6 +2265,20 @@ function Prescricao() {
       arrayPrazos(arrayprazos, 14, 12, 2);
     } else if (freq == '2/2H') {
       arrayPrazos(arrayprazos, 14, 12, 2);
+    } else if (freq == '1/1H') {
+      arrayPrazos(arrayprazos, 14, 24, 1);
+    } else if (freq == '8H') {
+      arrayprazos.push(inicio.add(1, 'day').add(8, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '10H') {
+      arrayprazos.push(inicio.add(1, 'day').add(10, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '12H') {
+      arrayprazos.push(inicio.add(1, 'day').add(12, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '17H') {
+      arrayprazos.push(inicio.add(17, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '20H') {
+      arrayprazos.push(inicio.add(20, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '8H') {
+      arrayprazos.push(inicio.add(22, 'hours').format('DD/MM/YYHH:mm'));
     }
     return (
       <div style={{
