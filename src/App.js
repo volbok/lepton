@@ -32,7 +32,8 @@ function App() {
   // const html = 'https://pulsarapi.herokuapp.com/'
 
   // var html = 'https://pulsar-api-hsf.up.railway.app/'
-  var html = "http://localhost:3333/";
+  // var html = "http://localhost:3333/";
+  var html = "https://lepton-server.up.railway.app/";
 
   // estados do context.
   const [toast, settoast] = useState({
