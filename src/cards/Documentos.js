@@ -53,7 +53,12 @@ function Documentos() {
       settipodocumento('EVOLUÇÃO');
     } else if (card == 'card-documento-receita') {
       settipodocumento('RECEITA MÉDICA');
+    } else if (card == 'card-documento-atestado') {
+      settipodocumento('ATESTADO');
+    } else if (card == 'card-documento-alta') {
+      settipodocumento('ALTA HOSPITALAR');
     }
+
     // eslint-disable-next-line
   }, [card, paciente, atendimentos, atendimento]);
 
@@ -101,16 +106,28 @@ function Documentos() {
       axios.get(html + "list_sinais_vitais/" + atendimento).then((response) => {
         let x = response.data.rows
         dadosvitais = x.sort((a, b) => moment(a.data_sinais_vitais) > moment(b.data_sinais_vitais) ? -1 : 1).pop();
-        tag_dadosvitais = 'PAS: ' + dadosvitais.pas + ', PAD: ' + dadosvitais.pad + ', FC: ' + dadosvitais.fc + ' FR: ' + dadosvitais.fr + ' SAO2: ' + dadosvitais.sao2 + ' TAX: ' + dadosvitais.tax + ' GLICEMIA: ' + dadosvitais.glicemia;
+        if (dadosvitais != null) {
+          tag_dadosvitais = 'PAS: ' + dadosvitais.pas + ', PAD: ' + dadosvitais.pad + ', FC: ' + dadosvitais.fc + ' FR: ' + dadosvitais.fr + ' SAO2: ' + dadosvitais.sao2 + ' TAX: ' + dadosvitais.tax + ' GLICEMIA: ' + dadosvitais.glicemia;
+        }
         if (usuario.conselho == 'CRM') {
-          let texto =
-            'HD: \n\n' +
-            'EVOLUÇÃO: \n\n' +
-            'DADOS VITAIS: \n' +
-            tag_dadosvitais + '\n\n' +
-            'AO EXAME: \n\n' +
-            '\n\n' +
-            'CONDUTA:'
+          let texto = null;
+          if (dadosvitais != null) {
+            texto =
+              'HD: \n\n' +
+              'EVOLUÇÃO: \n\n' +
+              'DADOS VITAIS: \n' +
+              tag_dadosvitais + '\n\n' +
+              'AO EXAME: \n\n' +
+              '\n\n' +
+              'CONDUTA:'
+          } else {
+            texto =
+              'HD: \n\n' +
+              'EVOLUÇÃO: \n\n' +
+              'AO EXAME: \n\n' +
+              '\n\n' +
+              'CONDUTA:'
+          }
           insertDocumento(texto);
         } else {
           let texto =
@@ -128,7 +145,19 @@ function Documentos() {
         '2. PARACETAMOL GOTAS (500MG/ML) ......... 01 FR. \n' +
         'TOMAR 1CP VO 8;8H, POR 7 DIAS. \n\n'
       insertDocumento(texto);
+    } else if (tipodocumento == 'ATESTADO MÉDICO') {
+      let texto =
+        'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE XX DIAS, POR MOTIVO DE DOENÇA CID 10 XXX.'
+      insertDocumento(texto);
+    } else if (tipodocumento == 'ALTA HOSPITALAR') {
+      let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').slice(-1).map(item => item.texto).pop();
+      let evolucao = documentos.filter(item => item.tipo_documento == 'EVOLUÇÃO').slice(-1).map(item => item.texto).pop();
+      let texto =
+        anamnese + '\n\n' +
+        evolucao
+      insertDocumento(texto);
     }
+
   }
 
   const insertDocumento = (texto) => {

@@ -67,7 +67,7 @@ function Prescricao() {
   const loadOpcoesPrescricao = () => {
     axios.get(html + 'opcoes_prescricoes').then((response) => {
       setopcoesprescricao(response.data.rows);
-      setarrayopcoesprescricao(response.data.rows);
+      setarrayopcoesprescricao([]);
     })
       .catch(function (error) {
         if (error.response == undefined) {
@@ -86,10 +86,8 @@ function Prescricao() {
       });
   }
   // registrando uma nova opção de item de prescrição.
-  const [random, setrandom] = useState(0);
   const insertOpcaoItemPrescricao = () => {
     let localrandom = Math.random();
-    setrandom(localrandom);
     if (categoria != 'CATEGORIA' && via != 'VIA') {
       var obj = {
         nome_item: nome.toUpperCase(),
@@ -117,11 +115,9 @@ function Prescricao() {
     }
   }
   const saveAsComponent = () => {
-    let localrandom = Math.random();
-    setrandom(localrandom);
     var obj = {
       nome_item: nome.toUpperCase(),
-      categoria: categoria.toUpperCase(),
+      categoria: 'COMPONENTE',
       qtde_item: qtde.toUpperCase(),
       via: null,
       freq: null,
@@ -132,6 +128,8 @@ function Prescricao() {
     axios.post(html + 'insert_opcoes_prescricao', obj).then(() => {
       console.log(JSON.stringify(obj));
       loadOpcoesPrescricao();
+      limpaCampos()
+      toast(settoast, 'COMPOENENTE DE PRESCRIÇÃO REGISTRADO COM SUCESSO.', 'green', 2000);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -141,7 +139,7 @@ function Prescricao() {
         }, 5000);
       });
   }
-  const insertOpcaoComponentePrescricao = (item) => {
+  const insertOpcaoComponentePrescricao = (item, id_componente_pai) => {
     var obj = {
       nome_item: item.nome_item,
       categoria: item.categoria,
@@ -149,7 +147,7 @@ function Prescricao() {
       via: null,
       freq: null,
       obs: null,
-      id_componente_filho: random,
+      id_componente_filho: id_componente_pai,
       id_componente_pai: null,
     }
     axios.post(html + 'insert_opcoes_prescricao', obj).then(() => {
@@ -167,25 +165,19 @@ function Prescricao() {
   // atualizando um registro de opção de item de prescrição.
   const updateOpcaoItemPrescricao = (id) => {
     var obj = {
-      /*
-      nome_item: document.getElementById("inputNome").value.toUpperCase(),
-      categoria: document.getElementById("inputCategoria").value.toUpperCase(),
-      qtde_item: document.getElementById("inputQtde").value.toUpperCase(),
-      via: document.getElementById("inputVia").value.toUpperCase(),
-      freq: document.getElementById("inputFreq").value.toUpperCase(),
-      obs: document.getElementById("inputObs").value.toUpperCase(),
-      id_pai: null,
-      */
       nome_item: nome,
       categoria: categoria,
       qtde_item: qtde,
       via: via,
       freq: freq,
       obs: obs,
-      id_pai: null,
+      id_componente_filho: null,
+      id_componente_pai: id_componente_pai,
+      codigo_item: null,
     }
     axios.post(html + 'update_opcoes_prescricao/' + id, obj).then(() => {
       loadOpcoesPrescricao();
+      toast(settoast, 'ITEM DE PRESCRIÇÃO ATUALIZADO COM SUCESSO', 'green', 3000);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -592,7 +584,7 @@ function Prescricao() {
       if (searchprescricao == '') {
         setviewopcoesitensprescricao(0);
         setfilterprescricao('');
-        setarrayopcoesprescricao(opcoesprescricao);
+        setarrayopcoesprescricao([]);
         setarrayitensprescricao(prescricao);
         document.getElementById(input).value = '';
         setTimeout(() => {
@@ -675,7 +667,7 @@ function Prescricao() {
           placeholder="BUSCAR ITEM..."
           onFocus={(e) => (e.target.placeholder = '')}
           onBlur={(e) => (e.target.placeholder = 'BUSCAR ITEM...')}
-          onClick={() => setid(null)}
+          onClick={() => limpaCampos()}
           onKeyUp={() => {
             filterOpcoesItemPrescricao();
             setTimeout(() => {
@@ -702,7 +694,7 @@ function Prescricao() {
 
   // via de administração do item prescrito.
   const [via, setvia] = useState('VIA');
-  const [freq, setfreq] = useState(null);
+  const [freq, setfreq] = useState('FREQ');
   const [obs, setobs] = useState(null);
   const [id_componente_pai, setid_componente_pai] = useState(null);
   const [id, setid] = useState(null);
@@ -907,8 +899,11 @@ function Prescricao() {
                   maxWidth: 30, width: 30, minWidth: 30,
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
-                title={'IMPRIMIR PRESCRIÇÃO'}
-                onClick={() => printDiv()}>
+                title={'IMPRIMIR PRESCRIÇÃOs'}
+                onClick={() => {
+                  printDiv();
+                  // montaAprazamentos()
+                }}>
                 <img
                   alt=""
                   src={print}
@@ -1091,21 +1086,24 @@ function Prescricao() {
       <div style={{
         margin: 5, width: '70vw',
       }}>
-        <div style={{ pointerEvents: statusprescricao == 1 ? 'none' : 'auto' }}>
+        <div style={{
+          pointerEvents: statusprescricao == 1 ? 'none' : 'auto',
+          opacity: statusprescricao == 1 ? 0.5 : 1,
+        }}>
           <FilterItemPrescricao></FilterItemPrescricao>
         </div>
         <div style={{
-          display: viewopcoesitensprescricao == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
+          display: viewopcoesitensprescricao == 1 && statusprescricao == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
           flexWrap: 'wrap',
           marginTop: 10, marginBottom: 0,
           borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)',
         }}>
-          {arrayopcoesprescricao.filter(item => item.id_componente_filho == null).map(item => (
+          {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
             <div
               className="button-green"
               style={{
                 display: idprescricao != 0 ? 'flex' : 'none',
-                flexDirection: 'row', paddingLeft: 15, paddingRight: 15
+                flexDirection: 'row', paddingLeft: 15, paddingRight: 15,
               }}
               onClick={() => { insertItemPrescricao(item) }}
             >
@@ -1113,7 +1111,7 @@ function Prescricao() {
             </div>
           ))}
         </div>
-        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item => (
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
           <div
             key={"prescricao " + item.id}
             style={{
@@ -1153,7 +1151,9 @@ function Prescricao() {
                     }
                   }}
                   style={{
-                    display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%'
+                    display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
+                    backgroundColor: item.categoria == '1. ANTIMICROBIANOS' ? '#FFC300' : '',
+                    justifyContent: 'flex-start',
                   }}>
                   {item.nome_item}
                 </div>
@@ -1319,10 +1319,218 @@ function Prescricao() {
               </div>
             </div>
           </div>
-        ))
-        }
+        ))}
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null && item.categoria != '1. ANTIMICROBIANOS').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
+          <div
+            key={"prescricao " + item.id}
+            style={{
+              display: arrayitensprescricao.length > 0 ? 'flex' : 'none',
+              flexDirection: 'column', justifyContent: 'center',
+              pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto'
+            }}>
+            <div className='row'
+              style={{
+                justifyContent: 'space-between',
+                display: 'flex', flexDirection: 'column',
+                margin: 0,
+              }}
+            >
+              <div id='linha principal' style={{ display: 'flex', flexDirection: 'row', position: 'relative' }}>
+                <div className='button'
+                  onClick={() => {
+                    if (expand == 1) {
+                      setexpand(0);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
+                        document.getElementById("trava mouse").style.pointerEvents = "auto";
+                        document.getElementById("trava mouse").style.opacity = 1;
+                      });
+                    } else {
+                      setselectitemprescricao(item);
+                      setexpand(1);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.filter(valor => valor.id == item.id));
+                        document.getElementById("trava mouse").style.pointerEvents = "none";
+                        document.getElementById("trava mouse").style.opacity = 0.5;
+                      });
+                    }
+                  }}
+                  style={{
+                    display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
+                    backgroundColor: item.categoria == '1. ANTIMICROBIANOS' ? '#FFC300' : '',
+                    justifyContent: 'flex-start',
+                  }}>
+                  {item.nome_item}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row' }} id="trava mouse">
+                  <input id={"inputQtde " + item.id}
+                    className="input"
+                    autoComplete="off"
+                    placeholder="QTDE"
+                    inputMode='numeric'
+                    onKeyUp={() => {
+                      checkInputAndUpdateItemPrescricao("inputQtde " + item.id, 1, 100, item);
+                    }}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                    style={{
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5,
+                    }}
+                    type="text"
+                    defaultValue={item.qtde_item}
+                    maxLength={3}
+                  ></input>
+                  <div id={"inputVia " + item.id}
+                    className='button'
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewviaitemprescricao(1);
+                    }}
+                    style={{
+                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
+                    }}>
+                    {item.via}
+                  </div>
+                  <div id={"inputFreq " + item.id}
+                    className="button"
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewfreqitemprescricao(1);
+                    }}
+                    style={{
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5,
+                    }}
+                    type="text"
+                  >
+                    {item.freq}
+                  </div>
+                  <div id={"condição " + item.id}
+                    className='button'
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewcondicaoitemprescricao(1);
+                    }}
+                    style={{
+                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
+                    }}>
+                    {item.agora == true ? 'AGORA' : item.acm == true ? 'ACM' : item.sn == true ? 'SN' : ''}
+                  </div>
+                </div>
+                <div className={'button-red'}
+                  title={'EXCLUIR ITEM DE PRESCRIÇÃO.'}
+                  onClick={(e) => { deleteItemPrescricao(item) }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 0,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </div>
+              </div>
+              <div id={"expansivel " + item.id}
+                className={expand == 1 ? 'expand' : 'retract'}
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', marginTop: 0 }}>
+                <div id={"informações " + item.id}
+                  className={expand == 1 ? 'show' : 'hide'}
+                  style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+                >
+                  <textarea id={"inputObs " + item.id}
+                    className="textarea"
+                    autoComplete="off"
+                    placeholder="OBSERVAÇÕES"
+                    inputMode='text'
+                    onKeyUp={() => {
+                      clearTimeout(timeout);
+                      timeout = setTimeout(() => {
+                        updateItemPrescricao(item, item.qtde_item, item.via, item.freq, item.agora, item.acm, item.sn, document.getElementById("inputObs " + item.id).value.toUpperCase());
+                      }, 1000);
+                    }}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+                    style={{
+                      width: '15vw', minWidth: '15vw', maxWidth: '15vw',
+                      height: 'calc(100% - 30px)',
+                      margin: 0, marginRight: 10,
+                    }}
+                    type="text"
+                    defaultValue={item.obs}
+                    maxLength={1000}
+                  ></textarea>
+                  <div id="LISTA DE COMPONENTES" className='scroll'
+                    style={{
+                      width: 'calc(100% - 10px)',
+                      height: 'calc(100% - 10px)',
+                      margin: 0
+                    }}>
+                    {prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => (
+                      <div style={{
+                        display: 'flex', flexDirection: 'row',
+                        justifyContent: 'space-between', width: '100%'
+                      }}>
+                        <div className='button'
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                          }}>
+                          {valor.nome_item}
+                        </div>
+                        <input id={"inputQtdeComponent " + valor.id}
+                          className="input"
+                          autoComplete="off"
+                          placeholder="QTDE"
+                          inputMode='numeric'
+                          onKeyUp={() => { checkInputAndUpdateItemPrescricao("inputQtdeComponent " + valor.id, 1, 100, valor) }}
+                          onFocus={(e) => (e.target.placeholder = '')}
+                          onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                          style={{
+                            width: 50,
+                            margin: 5,
+                          }}
+                          type="text"
+                          defaultValue={valor.qtde_item}
+                          maxLength={3}
+                        ></input>
+                        <div className={'button-red'}
+                          style={{
+                            display: 'flex',
+                            marginRight: 5,
+                          }}
+                          title={'EXCLUIR ITEM.'}
+                          onClick={(e) => { deleteComponentePrescricao(valor.id); e.stopPropagation() }}>
+                          <img
+                            alt=""
+                            src={deletar}
+                            style={{
+                              margin: 0,
+                              height: 30,
+                              width: 30,
+                            }}
+                          ></img>
+                        </div>
+                      </div>
+                    ))}
+                    {ViewInsertComponentePrescricao(item)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
         <div className='text1'
-          style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', width: '100%', opacity: 0.5 }}>
+          style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', opacity: 0.5, }}>
           SEM ITENS PRESCRITOS.
         </div>
       </div >
@@ -1384,68 +1592,124 @@ function Prescricao() {
   function ScrollOpcoesItens() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-          <div className='text1' style={{ display: id == null ? 'flex' : 'none' }}>ITENS DISPONÍVEIS PARA PRESCRIÇÃO</div>
-          <div id="scrollOpcoesItens" className='scroll cor0'
-            style={{
-              display: id == null ? 'flex' : 'none',
-              height: 200, minHeight: 200,
-              width: 'calc(50vw - 20px)'
-            }}>
-            {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
-              <div
-                id={"optionItem " + item.id}
-                className={'button'}
-                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-                key={item.id}
-                onClick={() => {
-                  console.log(item.nome_item);
-                  setid(item.id);
-                  setid_componente_pai(item.id_componente_pai);
-                  setTimeout(() => {
-                    setnome(item.nome_item);
-                    setcategoria(item.categoria);
-                    setqtde(item.qtde_item);
-                    setvia(item.via);
-                    setfreq(item.freq);
-                    setobs(item.obs);
-                    var botoes = document.getElementById("scrollOpcoesItens").getElementsByClassName("button-red");
-                    for (var i = 0; i < botoes.length; i++) {
-                      botoes.item(i).className = "button";
-                    }
-                    document.getElementById("optionItem " + item.id).className = "button-red";
-                  }, 200);
-                }}
-              >
-                <div style={{ marginLeft: 5 }}>
-                  {item.nome_item}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                  <div className={'button-yellow'}
-                    style={{
-                      display: 'flex',
-                      margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40,
-                      marginRight: 5,
+        <div
+          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+
+            <div id="scroll itens"
+              style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <div className='text1' style={{ display: id == null ? 'flex' : 'none' }}>ITENS DISPONÍVEIS PARA PRESCRIÇÃO</div>
+              <div className='scroll cor0'
+                style={{
+                  display: id == null ? 'flex' : 'none',
+                  flexDirection: 'center',
+                  height: 200, minHeight: 200,
+                  width: '30vw'
+                }}>
+                {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
+                  <div
+                    id={"optionItem " + item.id}
+                    className={'button'}
+                    style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                    key={item.id}
+                    onClick={() => {
+                      console.log(item.nome_item);
+                      setid(item.id);
+                      setid_componente_pai(item.id_componente_pai);
+                      setTimeout(() => {
+                        setnome(item.nome_item);
+                        setcategoria(item.categoria);
+                        setqtde(item.qtde_item);
+                        setvia(item.via);
+                        setfreq(item.freq);
+                        setobs(item.obs);
+                        var botoes = document.getElementById("scroll itens").getElementsByClassName("button-red");
+                        for (var i = 0; i < botoes.length; i++) {
+                          botoes.item(i).className = "button";
+                        }
+                        document.getElementById("optionItem " + item.id).className = "button-red";
+                      }, 200);
                     }}
-                    title={'EXCLUIR ITEM.'}
-                    onClick={(e) => { deleteOpcaoItemPrescricao(item.id); e.stopPropagation() }}>
-                    <img
-                      alt=""
-                      src={deletar}
-                      style={{
-                        margin: 0,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
+                  >
+                    <div style={{ marginLeft: 5 }}>
+                      {item.nome_item}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                      <div className={'button-yellow'}
+                        style={{
+                          display: 'flex',
+                          margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40
+                        }}
+                        title={'EXCLUIR ITEM.'}
+                        onClick={(e) => { deleteOpcaoItemPrescricao(item.id); e.stopPropagation() }}>
+                        <img
+                          alt=""
+                          src={deletar}
+                          style={{
+                            margin: 0,
+                            height: 30,
+                            width: 30,
+                          }}
+                        ></img>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div id="scroll componentes"
+              style={{
+                display: id == null ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'flex-start',
+                marginLeft: 10
+              }}>
+              <div className='text1' style={{ display: 'flex' }}>COMPONENTES DISPONÍVEIS PARA PRESCRIÇÃO</div>
+              <div className='scroll cor0'
+                style={{
+                  display: id == null ? 'flex' : 'none',
+                  flexDirection: 'center',
+                  height: 200, minHeight: 200,
+                  width: '30vw'
+                }}>
+                {arrayopcoesprescricao.filter(item => item.id_componente_pai == null && item.id_componente_filho == null).map(item => (
+                  <div
+                    id={"optionItem " + item.id}
+                    className={'button'}
+                    style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                    key={item.id}
+                    onClick={() => {
+                      console.log(item.nome_item);
+                    }}
+                  >
+                    <div style={{ marginLeft: 5, textAlign: 'left' }}>
+                      {item.nome_item}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                      <div className={'button-yellow'}
+                        style={{
+                          display: 'flex',
+                          margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40
+                        }}
+                        title={'EXCLUIR ITEM.'}
+                        onClick={(e) => { deleteOpcaoItemPrescricao(item.id); e.stopPropagation() }}>
+                        <img
+                          alt=""
+                          src={deletar}
+                          style={{
+                            margin: 0,
+                            height: 30,
+                            width: 30,
+                          }}
+                        ></img>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="button-red"
             style={{ display: id != null ? 'flex' : 'none', width: '80%', alignSelf: 'center', margin: 20 }}
-            onClick={() => setid(null)}
+            onClick={() => limpaCampos()}
           >
             {opcoesprescricao.filter(item => item.id_componente_pai == id_componente_pai).map(item => item.nome_item)}
           </div>
@@ -1556,7 +1820,7 @@ function Prescricao() {
                     margin: 0, width: 40, minWidth: 40, maxWidth: 40, height: 40, minHeight: 40, maxHeight: 40,
                   }}
                   title={'INSERIR COMO COMPONENTE DO ITEM SELECIONADO.'}
-                  onClick={(e) => { insertOpcaoComponentePrescricao(item); e.stopPropagation() }}>
+                  onClick={(e) => { insertOpcaoComponentePrescricao(item, id_componente_pai); e.stopPropagation() }}>
                   <img
                     alt=""
                     src={salvar}
@@ -1578,6 +1842,17 @@ function Prescricao() {
   const [arrayselector, setarrayselector] = useState([]);
   const [inputselector, setinputselector] = useState("");
   const [opcoesitensmenu, setopcoesitensmenu] = useState(0);
+
+  const limpaCampos = () => {
+    setid(null);
+    setnome(null);
+    setcategoria('CATEGORIA');
+    setqtde(null);
+    setvia('VIA');
+    setfreq('FREQ');
+    setobs(null);
+  }
+
   const InputsAndComponentes = useCallback(() => {
     var timeout = null;
     return (
@@ -1719,18 +1994,16 @@ function Prescricao() {
             alignContent: 'center', alignItems: 'center', alignSelf: 'center'
           }}>
           <div className='button-green'
-            style={{ display: id == null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+            style={{
+              display: 'flex',
+              opacity: id == null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 1 : 0.5, flexDirection: 'row', margin: 5, width: 150, height: 50,
+              pointerEvents: id == null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 'auto' : 'none'
+            }}
             title={'SALVAR ITEM'}
             onClick={() => {
               insertOpcaoItemPrescricao();
               setTimeout(() => {
-                setid(null);
-                setnome(null);
-                setcategoria(null);
-                setqtde(null);
-                setvia(null);
-                setfreq(null);
-                setobs(null);
+                limpaCampos();
               }, 1000)
             }}>
             <img
@@ -1742,21 +2015,17 @@ function Prescricao() {
                 width: 30,
               }}
             ></img>
+            <div style={{ margin: 5 }}>ITEM</div>
           </div>
           <div className='button-green'
-            style={{ display: id != null ? 'flex' : 'none', margin: 5, width: 50, height: 50 }}
+            style={{
+              display: 'flex',
+              opacity: id != null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 1 : 0.5, flexDirection: 'row', margin: 5, width: 150, height: 50,
+              pointerEvents: id != null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 'auto' : 'none'
+            }}
             title={'ATUALIZAR ITEM'}
             onClick={() => {
-              saveAsComponent();
-              setTimeout(() => {
-                setid(null);
-                setnome(null);
-                setcategoria(null);
-                setqtde(null);
-                setvia(null);
-                setfreq(null);
-                setobs(null);
-              }, 1000)
+              updateOpcaoItemPrescricao(id);
             }}>
             <img
               alt=""
@@ -1769,7 +2038,11 @@ function Prescricao() {
             ></img>
           </div>
           <div className='button'
-            style={{ display: 'flex', margin: 5, width: 50, height: 50 }}
+            style={{
+              display: 'flex',
+              opacity: id == null && nome != null && qtde != null ? 1 : 0.5, flexDirection: 'row', margin: 5, width: 150, height: 50,
+              pointerEvents: id == null && nome != null && qtde != null ? 'auto' : 'none'
+            }}
             title={'SALVAR COMO COMPONENTE'}
             onClick={() => { saveAsComponent(id) }}>
             <img
@@ -1781,6 +2054,7 @@ function Prescricao() {
                 width: 30,
               }}
             ></img>
+            <div style={{ margin: 5 }}>COMPONENTE</div>
           </div>
         </div>
       </div>
@@ -1838,7 +2112,12 @@ function Prescricao() {
           <FilterOpcoesItemPrescricao></FilterOpcoesItemPrescricao>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <ScrollOpcoesItens></ScrollOpcoesItens>
-            <div style={{ display: id == null ? 'none' : 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginLeft: 10 }}>
+            <div style={{
+              display: id == null ? 'none' : 'flex',
+              flexDirection: 'column', justifyContent: 'flex-start', marginLeft: 10,
+              borderRadius: 5,
+              backgroundColor: 'rgba(0,0,0, 0.2)', padding: 10
+            }}>
               <ComponentesRegistrados></ComponentesRegistrados>
               <ComponentesDisponiveis></ComponentesDisponiveis>
             </div>
@@ -1966,6 +2245,68 @@ function Prescricao() {
       </div>
     )
   }
+
+  function MontaPrazos({ freq }) {
+    let arrayprazos = [];
+    let inicio = moment().startOf('day');
+    if (freq == '24/24H') {
+      arrayprazos.push(inicio.add(1, 'day').add(10, 'hours').format('DD/MM/YYHH:mm'));
+    } else if (freq == '12/12H') {
+      arrayPrazos(arrayprazos, 22, 2, 12);
+    } else if (freq == '8/8H') {
+      arrayPrazos(arrayprazos, 16, 3, 8);
+    } else if (freq == '6/6H') {
+      arrayPrazos(arrayprazos, 18, 4, 6);
+    } else if (freq == '4/4H') {
+      arrayPrazos(arrayprazos, 16, 6, 4);
+    } else if (freq == '3/3H') {
+      arrayPrazos(arrayprazos, 15, 8, 3)
+    } else if (freq == '2/2H') {
+      arrayPrazos(arrayprazos, 14, 12, 2);
+    } else if (freq == '2/2H') {
+      arrayPrazos(arrayprazos, 14, 12, 2);
+    }
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+        alignContent: 'flex-start',
+        alignSelf: 'flex-start',
+        margin: 0, width: 400,
+        fontSize: 8, fontFamily: 'Helvetica',
+      }}>
+        <div style={{ fontWeight: 'bold', width: '100%', textAlign: 'flex-start', margin: 5, marginBottom: 0 }}>APRAZAMENTOS</div>
+        <div className='text1'
+          style={{
+            fontSize: 10,
+            display: 'flex', justifyContent: 'flex-start',
+            flexDirection: 'row', flexWrap: 'wrap',
+          }}>
+          {arrayprazos.map(item => (
+            <div style={{
+              margin: 5, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+              alignContent: 'center', alignItems: 'center'
+            }}>
+              <div>{item.substring(0, 8)}</div>
+              <div>{item.substring(8, 13)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const arrayPrazos = (arrayprazos, horainicial, doses, intervalo) => {
+    let inicio = moment().startOf('day');
+    let i = 1;
+    inicio = moment().startOf('day').add(horainicial, 'hours');
+    arrayprazos.push(inicio.format('DD/MM/YYHH:mm'))
+    while (i < doses) {
+      inicio = inicio.add(intervalo, 'hours');
+      arrayprazos.push(inicio.format('DD/MM/YYHH:mm'));
+      i++;
+    }
+  }
+
   function Conteudo() {
     return (
       <div style={{
@@ -1973,8 +2314,9 @@ function Prescricao() {
         fontFamily: 'Helvetica',
         breakInside: 'avoid',
       }}>
-        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item => (
-          <div style={{
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item =>
+        (
+          < div style={{
             display: 'flex', flexDirection: 'column', width: '100%',
             backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent',
             borderRadius: 5,
@@ -1992,14 +2334,19 @@ function Prescricao() {
               display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
               margin: 1.5, padding: 1.5, borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.3)', borderRadius: 5
             }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5, fontSize: 8 }}>
-                <div style={{ margin: 1.5, fontWeight: 'bold' }}>OBSERVAÇÕES:</div>
+              <div id="observações"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5, fontSize: 8 }}>
+                <div style={{ margin: 1.5, fontWeight: 'bold', marginLeft: 0 }}>OBSERVAÇÕES:</div>
                 <div style={{ width: '100%' }}>{item.obs}</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', margin: 5, fontSize: 8 }}>
+              <div id="componentes"
+                style={{
+                  display: prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).length > 0 ? 'flex' : 'none',
+                  flexDirection: 'column', justifyContent: 'flex-start', margin: 5, fontSize: 8
+                }}>
                 <div style={{ margin: 1.5, fontWeight: 'bold' }}>COMPONENTES:</div>
                 <div id="LISTA DE COMPONENTES PARA IMPRESSÃO" style={{ width: '100%', fontSize: 8 }}>
-                  {prescricao.filter(valor => valor.id_pai == item.id).map(valor => (
+                  {prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => (
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                       <div style={{ margin: 1.5, width: 200 }}>{valor.nome_item}</div>
                       <div style={{ margin: 1.5, width: 60 }}>{valor.qtde_item}</div>
@@ -2007,22 +2354,30 @@ function Prescricao() {
                   ))}
                 </div>
               </div>
+              <div id="aprazamento">
+                <MontaPrazos freq={item.freq}></MontaPrazos>
+              </div>
             </div>
           </div>
-        ))}
+        )
+        )}
       </div>
     )
   }
+
+
   function printDiv() {
     console.log('PREPARANDO PRESCRIÇÃO PARA IMPRESSÃO');
     let printdocument = document.getElementById("IMPRESSÃO - PRESCRIÇÃO").innerHTML;
-    var a = window.open('  ', '  ', 'width=1024px, height=800px');
+    var a = window.open('  ', 'DOCUMENTO PARA IMPRESSÃO');
     a.document.write('<html>');
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
+    // a.close();
   }
 
+  // MODELOS DE PRESCRIÇÃO.
   const copiaModeloPrescricao = (id_modelo_prescricao, key_modelo) => {
     console.log('ID: ' + id_modelo_prescricao);
     console.log('KEY MODELO: ' + key_modelo);
@@ -2079,7 +2434,6 @@ function Prescricao() {
       });
     });
   }
-
   const [viewselectmodelosprescricao, setviewselectmodelosprescricao] = useState(0);
   function ViewSelectModeloPrescricao() {
     return (
@@ -2126,7 +2480,6 @@ function Prescricao() {
       </div>
     )
   }
-
   const [viewnomeprescricao, setviewnomeprescricao] = useState(0);
   function ViewNomePrescricao() {
     return (
@@ -2173,7 +2526,6 @@ function Prescricao() {
       </div >
     )
   }
-
   const createModeloPrescricao = (id_prescricao, titulo) => {
     // criando chave para o modelo de prescrição, que será repassado para os itens de prescrição a ele relacionados.
     let objetos = [];
@@ -2250,11 +2602,9 @@ function Prescricao() {
     loadModelosPrescricao();
     setidprescricao(0);
   }
-
   const deleteItemModeloPrescricao = (id) => {
     axios.get(html + 'delete_item_model_prescricao/' + id);
   }
-
   const deleteModeloPrescricao = (id_modelo_prescricao, key_modelo) => {
     console.log('ID_MODELO_PRESCRIÇÃO: ' + id_modelo_prescricao);
     console.log('KEY-MODELO: ' + key_modelo);
@@ -2268,6 +2618,68 @@ function Prescricao() {
       loadModelosPrescricao();
     });
   }
+
+  // APRAZAMENTOS DE ITENS DA PRESCRIÇÃO PARA FARMÁCIA....
+  /*
+  const loadAprazamentos = () => {
+    axios.get(html + 'list_aprazamentos/' + idprescricao).then((response) => {
+      var x = response.data.rows;
+    })
+  }
+  const montaAprazamentos = () => {
+    console.log('DISPARA APRAZAMENTOS');
+    console.log(arrayitensprescricao.filter(item => item.freq == '4/4H').length);
+    arrayitensprescricao.filter(item => item.freq == '4/4H').map(item => {
+      montaHorarios(item, 6, quatroemquatro);
+      return null;
+    });
+    arrayitensprescricao.filter(item => item.freq == '6/6H').map(item => {
+      montaHorarios(item, 4, seisemseis);
+      return null;
+    });
+    arrayitensprescricao.filter(item => item.freq == '8/8H').map(item => {
+      montaHorarios(item, 3, oitoemoito);
+      return null;
+    });
+    arrayitensprescricao.filter(item => item.freq == '12/12H').map(item => {
+      montaHorarios(item, 2, dozeemdoze);
+      return null;
+    });
+    arrayitensprescricao.filter(item => item.freq == '24/24H').map(item => {
+      montaHorarios(item, 1, diaria);
+      return null;
+    });
+  }
+  // definindo os horários de incício dos aprazamentos, baseado do horário padrão de 13h.
+  const quatroemquatro = moment().startOf('day').add(16, 'hours'); // 16h, 20h, 0h, 4h, 8h, 12h.
+  const seisemseis = moment().startOf('day').add(18, 'hours'); // 18h, 0h, 6h, 12h. 
+  const oitoemoito = moment().startOf('day').add(16, 'hours'); // 16h, 0h, 8h.
+  const dozeemdoze = moment().startOf('day').add(22, 'hours'); // 22h, 10h.
+  const diaria = moment().startOf('day').add(1, 'day').add(10, 'hours'); // 10h (dia seguinte).
+  const montaHorarios = (item, qtde, inicio) => {
+    let arrayprazos = [inicio];
+    let intervalo = 24 / qtde;
+    let count = 0;
+    while (count < intervalo) {
+      arrayprazos.push(inicio.add(intervalo, 'hours'));
+      count = count + 1;
+    }
+    console.log(arrayprazos);
+    arrayprazos.map(valor => {
+      var obj = {
+        id_atendimento: atendimento,
+        id_prescricao: idprescricao,
+        id_componente_pai: item.id_componente_pai,
+        id_componente_filho: item.id_componente_filho,
+        nome: item.nome_item,
+        qtde: item.qtde_item,
+        prazo: valor
+      }
+      axios.post(html + 'insert_aprazamento', obj);
+      return null;
+    })
+  }
+  */
 
   return (
     <div className='card-aberto'
@@ -2306,7 +2718,7 @@ function Prescricao() {
           <div className='button-green'
             style={{ margin: 0, marginLeft: 5, width: 50, height: 50 }}
             title={'GERENCIADOR DE ITENS DE PRESCRIÇÃO'}
-            onClick={() => { setopcoesitensmenu(1); setid(null) }}>
+            onClick={() => { setopcoesitensmenu(1); limpaCampos() }}>
             <img
               alt=""
               src={preferencias}

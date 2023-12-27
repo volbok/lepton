@@ -8,6 +8,7 @@ import power from "../images/power.svg";
 import call from "../images/call.svg";
 import back from "../images/back.svg";
 import body from "../images/body.svg";
+import refresh from "../images/refresh.svg";
 import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
 import prec_respiratorio from "../images/prec_respiratorio.svg";
@@ -43,6 +44,7 @@ function Prontuario() {
     html,
     unidade,
     unidades,
+    usuario,
     setusuario,
 
     settoast,
@@ -62,8 +64,6 @@ function Prontuario() {
     // estados utilizados pela função getAllData (necessária para alimentar os card fechados).
     setalergias,
     alergias,
-    setantibioticos,
-    antibioticos,
     setinvasoes,
     setlesoes,
     setprecaucoes,
@@ -88,6 +88,8 @@ function Prontuario() {
     interconsultas,
 
     card, setcard,
+
+    prescricao, setprescricao,
 
     consultorio, setconsultorio,
   } = useContext(Context);
@@ -217,6 +219,15 @@ function Prontuario() {
   };
   */
 
+  // recuperando lista de prescrições.
+  const loadItensPrescricao = (atendimento) => {
+    axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+      let x = response.data.rows;
+      setprescricao(x);
+      console.log(x.filter(item => item.categoria == '1. ANTIMICROBIANOS'))
+    });
+  }
+
   var timeout = null;
   useEffect(() => {
     if (pagina == 1) {
@@ -224,7 +235,6 @@ function Prontuario() {
       setatendimento(null);
       loadPacientes();
       loadChamadas();
-
       if (consultorio == null) {
         setviewsalaselector(1);
       }
@@ -237,33 +247,33 @@ function Prontuario() {
   // identificação do usuário.
   function Usuario() {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          marginBottom: 10,
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="text1" style={{ alignSelf: 'flex-start', margin: 0 }}>{'USUÁRIO: ' + usuario.nome_usuario.split(' ', 1)}</div>
         <div
-          className="button-red"
-          style={{ margin: 0, marginRight: 10 }}
-          // title={'USUÁRIO: ' + usuario.nome_usuario.split(' ', 1)}
-          onClick={() => {
-            setpagina(0);
-            history.push("/");
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: 10,
           }}
         >
-          <img
-            alt=""
-            src={power}
-            style={{
-              margin: 0,
-              height: 30,
-              width: 30,
+          <div
+            className="button-red"
+            onClick={() => {
+              setpagina(0);
+              history.push("/");
             }}
-          ></img>
+          >
+            <img
+              alt=""
+              src={power}
+              style={{
+                height: 30,
+                width: 30,
+              }}
+            ></img>
+          </div>
+          <FilterPaciente></FilterPaciente>
         </div>
-        <FilterPaciente></FilterPaciente>
       </div>
     );
   }
@@ -303,25 +313,41 @@ function Prontuario() {
   // filtro de paciente por nome.
   function FilterPaciente() {
     return (
-      <input
-        className="input cor2"
-        autoComplete="off"
-        placeholder={
-          window.innerWidth < 426 ? "BUSCAR PACIENTE..." : "BUSCAR..."
-        }
-        onFocus={(e) => (e.target.placeholder = "")}
-        onBlur={(e) =>
-          window.innerWidth < 426
-            ? (e.target.placeholder = "BUSCAR PACIENTE...")
-            : "BUSCAR..."
-        }
-        onKeyUp={() => filterPaciente()}
-        type="text"
-        id="inputPaciente"
-        defaultValue={filterpaciente}
-        maxLength={100}
-        style={{ margin: 0, width: "100%" }}
-      ></input>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+        <input
+          className="input cor2"
+          autoComplete="off"
+          placeholder={
+            window.innerWidth < 426 ? "BUSCAR PACIENTE..." : "BUSCAR..."
+          }
+          onFocus={(e) => (e.target.placeholder = "")}
+          onBlur={(e) =>
+            window.innerWidth < 426
+              ? (e.target.placeholder = "BUSCAR PACIENTE...")
+              : "BUSCAR..."
+          }
+          onKeyUp={() => filterPaciente()}
+          type="text"
+          id="inputPaciente"
+          defaultValue={filterpaciente}
+          maxLength={100}
+          style={{ width: "100%" }}
+        ></input>
+        <div
+          id="botão para atualizar a lista de pacientes."
+          className="button"
+          style={{
+            display: "flex",
+            opacity: 1,
+            alignSelf: "center",
+          }}
+          onClick={() => { loadPacientes(); setatendimento(null); }}
+        >
+          <img
+            alt="" src={refresh}
+            style={{ width: 30, height: 30 }}></img>
+        </div>
+      </div>
     );
   }
 
@@ -398,7 +424,6 @@ function Prontuario() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          width: "calc(100% - 15px)",
           alignSelf: "center",
         }}
       >
@@ -423,8 +448,8 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerHeight - 210,
-            width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
+            height: window.innerHeight - 240,
+            width: 'calc(100% - 10px)',
           }}
         >
           {arrayatendimentos
@@ -457,7 +482,182 @@ function Prontuario() {
                           item.classificacao == 'VERDE' ? 'green' :
                             item.classificacao == 'AMARELO' ? 'yellow' :
                               item.classificacao == 'LARANJA' ? 'orange' :
-                                item.classificacao == 'VERMELHO' ? 'red' : ''
+                                item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                    }}
+                  >
+                    <div
+                      className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                      style={{ margin: 5, padding: 0, fontSize: 24 }}
+                    >
+                      {item.leito}
+                    </div>
+                    <div style={{
+                      display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
+                      flexDirection: 'row', flexWrap: 'wrap',
+                      alignSelf: 'center',
+                      margin: 5, marginBottom: 0
+                    }}>
+                      <div
+                        className="button-opaque"
+                        style={{
+                          display: 'flex',
+                          margin: 2.5, marginRight: 0,
+                          minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                          backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                        onClick={() => {
+                          callPaciente(item);
+                        }}
+                      >
+                        <img
+                          alt=""
+                          src={call}
+                          style={{
+                            margin: 0,
+                            height: 20,
+                            width: 20,
+                          }}
+                        ></img>
+                      </div>
+                      <div id={'contagem de chamadas do PA' + item.id_atendimento}
+                        title="TOTAL DE CHAMADAS"
+                        className="text1"
+                        style={{
+                          margin: 2.5, marginLeft: 0,
+                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                          backgroundColor: 'white', height: 20, width: 20
+                        }}>
+                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    id={"atendimento " + item.id_atendimento}
+                    className="button"
+                    style={{
+                      flex: 3,
+                      marginLeft: 0,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      minHeight: 100,
+                      height: 100,
+                    }}
+                    onClick={() => {
+                      setviewlista(0);
+                      setatendimento(item.id_atendimento);
+                      setpaciente(item.id_paciente);
+                      getAllData(item.id_paciente, item.id_atendimento);
+                      if (pagina == 1) {
+                        setTimeout(() => {
+                          var botoes = document
+                            .getElementById("scroll atendimentos")
+                            .getElementsByClassName("button-red");
+                          for (var i = 0; i < botoes.length; i++) {
+                            botoes.item(i).className = "button";
+                          }
+                          document.getElementById(
+                            "atendimento " + item.id_atendimento
+                          ).className = "button-red";
+                        }, 100);
+                      }
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "flex-start",
+                        padding: 5
+                      }}
+                    >
+                      {window.innerWidth < 768
+                        ? pacientes
+                          .filter(
+                            (valor) => valor.id_paciente == item.id_paciente
+                          )
+                          .map(
+                            (valor) =>
+                              valor.nome_paciente.substring(0, 20) + "..."
+                          )
+                        : pacientes
+                          .filter(
+                            (valor) => valor.id_paciente == item.id_paciente
+                          )
+                          .map((valor) => valor.nome_paciente)}
+                      <div>
+                        {moment().diff(
+                          moment(
+                            pacientes
+                              .filter(
+                                (valor) => valor.id_paciente == item.id_paciente
+                              )
+                              .map((item) => item.dn_paciente)
+                          ),
+                          "years"
+                        ) + " ANOS"}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    id="informações do paciente"
+                    style={{
+                      position: "absolute",
+                      right: -5,
+                      bottom: -5,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {tagsDosPacientes(
+                      "INTERCONSULTAS",
+                      item,
+                      allinterconsultas,
+                      esteto
+                    )}
+                    {tagsDosPacientes(
+                      "PRECAUÇÕES",
+                      item,
+                      allprecaucoes,
+                      prec_padrao
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          {arrayatendimentos
+            .filter(item => item.leito == 'F')
+            .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
+            .map((item) => (
+              <div key={"pacientes" + item.id_atendimento}>
+                <div
+                  className="row"
+                  style={{
+                    padding: 0,
+                    flex: 4,
+                    position: "relative",
+                    margin: 2.5
+                  }}
+                >
+                  <div
+                    className="button-yellow"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      marginRight: 0,
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      minHeight: 100,
+                      height: 100,
+                      backgroundColor:
+                        item.classificacao == 'AZUL' ? 'blue' :
+                          item.classificacao == 'VERDE' ? 'green' :
+                            item.classificacao == 'AMARELO' ? 'yellow' :
+                              item.classificacao == 'LARANJA' ? 'orange' :
+                                item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
                     }}
                   >
                     <div
@@ -608,8 +808,8 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
-            height: window.innerHeight - 210,
-            width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
+            height: window.innerHeight - 240,
+            width: 'calc(100% - 10px)',
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
@@ -865,16 +1065,7 @@ function Prontuario() {
       });
     // Dados relacionados ao atendimento.
     // antibióticos.
-    setbusyatb(1);
-    axios
-      .get(html + "list_antibioticos/" + atendimento)
-      .then((response) => {
-        setantibioticos(response.data.rows);
-        setbusyatb(0);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    loadItensPrescricao(atendimento);
     // culturas.
     setbusyculturas(1);
     axios
@@ -1003,7 +1194,6 @@ function Prontuario() {
   const [busyinfusoes, setbusyinfusoes] = useState(0);
   const [busydieta, setbusydieta] = useState(0);
   const [busyculturas, setbusyculturas] = useState(0);
-  const [busyatb, setbusyatb] = useState(0);
   const [busyinterconsultas, setbusyinterconsultas] = useState(0);
 
   const loading = () => {
@@ -1033,6 +1223,7 @@ function Prontuario() {
               atendimento != null
               ? "flex"
               : "none",
+          pointerEvents: opcao == null ? 'none' : 'auto',
           backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
           borderColor: "transparent",
           width:
@@ -1303,7 +1494,7 @@ function Prontuario() {
           <div
             id="RESUMO ANTIBIÓTICOS"
             style={{
-              display: opcao == "card-antibioticos" ? "flex" : "none",
+              display: opcao == "card-atb" ? 'flex' : 'none',
               flexDirection: "column",
               justifyContent: "center",
             }}
@@ -1315,32 +1506,19 @@ function Prontuario() {
                 justifyContent: "center",
               }}
             >
-              {antibioticos
-                .filter((item) => item.data_termino == null)
+              {prescricao
+                .filter((item) => item.categoria == '1. ANTIMICROBIANOS')
                 .slice(-3)
+                .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1)
                 .map((item) => (
                   <div
-                    key={"atb resumo " + item.id_antibiotico}
+                    key={"atb resumo " + item.id}
                     className="textcard"
                     style={{ margin: 0, padding: 0 }}
                   >
-                    {item.antibiotico}
+                    {item.nome_item + ' - ' + moment(item.data).format('DD/MM/YY')}
                   </div>
                 ))}
-              <div
-                className="textcard"
-                style={{
-                  display:
-                    antibioticos.filter((item) => item.data_termino == null)
-                      .length > 3
-                      ? "flex"
-                      : "none",
-                  alignSelf: "center",
-                  textAlign: "center",
-                }}
-              >
-                ...
-              </div>
             </div>
           </div>
           <div
@@ -1816,6 +1994,8 @@ function Prontuario() {
           {cartao(null, "ADMISSÃO", "card-documento-admissao")}
           {cartao(null, "EVOLUÇÃO", "card-documento-evolucao")}
           {cartao(null, "RECEITA MÉDICA", "card-documento-receita")}
+          {cartao(null, "ATESTADO", "card-documento-atestado")}
+          {cartao(null, "SUMÁRIO DE ALTA", "card-documento-alta")}
           {cartao(
             propostas.filter((item) => item.status == 0),
             "PROPOSTAS",
@@ -1889,21 +2069,14 @@ function Prontuario() {
             "card-culturas",
             busyculturas
           )}
-          {cartao(
-            antibioticos.filter(
-              (item) =>
-                moment().diff(item.prazo, "days") > 0 && item.data_termino == null
-            ),
-            "ANTIBIÓTICOS",
-            "card-antibioticos",
-            busyatb
-          )}
+          {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", "card-atb", null)}
           {cartao(
             interconsultas,
             "INTERCONSULTAS",
             "card-interconsultas",
             busyinterconsultas
           )}
+          {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null)}
           <div
             id="exames"
             className="card-fechado"
@@ -1933,32 +2106,6 @@ function Prontuario() {
             }}
           >
             <div className="text3">EXAMES RELEVANTES</div>
-          </div>
-          <div
-            id="exames"
-            className="card-fechado"
-            style={{
-              display: card == "" ? "flex" : "none",
-              width:
-                window.innerWidth > 425 &&
-                  document.getElementById("conteúdo vazio") != null
-                  ? Math.ceil(
-                    document.getElementById("conteúdo vazio").offsetWidth / 4 -
-                    43
-                  )
-                  : window.innerWidth < 426 &&
-                    document.getElementById("conteúdo vazio") != null
-                    ? Math.ceil(
-                      document.getElementById("conteúdo cheio").offsetWidth / 2 -
-                      48
-                    )
-                    : "",
-            }}
-            onClick={() => {
-              setcard('card-prescricao');
-            }}
-          >
-            <div className="text3">PRESCRIÇÃO</div>
           </div>
         </div>
 
