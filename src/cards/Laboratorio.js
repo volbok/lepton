@@ -13,6 +13,7 @@ import deletar from '../images/deletar.svg';
 import salvar from '../images/salvar.svg';
 import novo from '../images/novo.svg';
 import back from '../images/back.svg';
+import moment from "moment";
 
 function Laboratorio() {
 
@@ -38,6 +39,7 @@ function Laboratorio() {
   // lista de opções de exames laboratoriais disponíveis para o cliente.
   const [opcoeslaboratorio, setopcoeslaboratorio] = useState([]);
   const [arrayopcoeslaboratorio, setarrayopcoeslaboratorio] = useState([]);
+  var timeout = null;
   const loadOpcoesLaboratorio = () => {
     axios.get(html + 'opcoes_laboratorio').then((response) => {
       setopcoeslaboratorio(response.data.rows);
@@ -69,8 +71,8 @@ function Laboratorio() {
       codigo_exame: item.codigo_exame,
       nome_exame: item.nome_exame,
       material: item.material,
-      resultado: item.resultado,
-      status: item.status
+      resultado: null,
+      status: 0
     }
     axios.post(html + 'insert_laboratorio', obj).then(() => {
       loadLaboratorio();
@@ -215,18 +217,24 @@ function Laboratorio() {
   return (
     <div id="scroll-alergias"
       className='card-aberto'
-      style={{ display: card == 'card-alergias' ? 'flex' : 'none' }}
+      style={{ display: card == 'card-laboratorio' ? 'flex' : 'none' }}
     >
       <div className="text3">EXAMES LABORATORIAIS</div>
       <div
         style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          flexWrap: 'wrap', width: '100%'
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%'
         }}>
         {laboratorio.map(item => (
-          <div className='button' key={'laboratorio ' + item.id_alergia}
-            style={{ width: '50vw', maxWidth: '50vw' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 50 }}>
+          <div key={'laboratorio ' + item.id_alergia}
+            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+          >
+            <div className="button-yellow" style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
+              marginRight: 0,
+              borderTopRightRadius: 0, borderBottomRightRadius: 0,
+            }}>
               <div>
                 {moment(item.data_pedido).format('DD/MM/YY')}
               </div>
@@ -234,35 +242,84 @@ function Laboratorio() {
                 {moment(item.data_pedido).format('HH:mm')}
               </div>
             </div>
-            <div style={{ width: 300 }}>
-              {item.nome_exame}
-            </div>
-            <div style={{ width: '100%' }}>
-              {item.resultado}
-            </div>
-            <div className='button-red'
-              style={{
-                width: 25, minWidth: 25, height: 25, minHeight: 25,
-                display: item.status == 0 ? 'flex' : 'none'
+            <div
+              className="button" style={{
+                width: '100%',
+                marginLeft: 0,
+                borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
               }}
-              onClick={(e) => {
-                deleteLaboratorio(item); e.stopPropagation()
+            >
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'flex-start', alignContent: 'flex-start',
+                alignItems: 'flex-start', width: '100%',
               }}>
-              <img
-                alt=""
-                src={deletar}
+                <div style={{
+                  display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+                  width: '100%', margin: 5, textAlign: 'left'
+                }}>
+                  <div>{item.nome_exame}</div>
+                  <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
+                </div>
+                <div
+                  style={{
+                    display: item.resultado == null ? 'none' : 'flex',
+                    flexDirection: 'column', justifyContent: 'center',
+                    textAlign: 'left',
+                    margin: 5, color: 'yellow'
+                  }}>
+                  {item.resultado != null ? item.resultado : 'PENDENTE'}
+                </div>
+              </div>
+              <div className={item.status == 0 ? 'button-red' : 'button-green'}
                 style={{
-                  margin: 10,
-                  height: 25,
-                  width: 25,
+                  width: 100, margin: 5,
+                }}>
+                {item.status == 0 ? 'SOLICITADO' : 'LIBERADO'}
+              </div>
+              <div className='button-red'
+                style={{
+                  width: 25, minWidth: 25, height: 25, minHeight: 25,
+                  display: item.status == 0 ? 'flex' : 'none'
                 }}
-              ></img>
+                onClick={(e) => {
+                  deleteLaboratorio(item); e.stopPropagation()
+                }}>
+                <img
+                  alt=""
+                  src={deletar}
+                  style={{
+                    margin: 10,
+                    height: 25,
+                    width: 25,
+                  }}
+                ></img>
+              </div>
             </div>
           </div>
         ))}
+        <div className='button-green'
+          style={{
+            width: 25, minWidth: 25, height: 25, minHeight: 25,
+            display: 'flex'
+          }}
+          onClick={(e) => {
+            loadOpcoesLaboratorio();
+            setviewinsertlaboratorio(1);
+          }}>
+          <img
+            alt=""
+            src={novo}
+            style={{
+              margin: 10,
+              height: 25,
+              width: 25,
+            }}
+          ></img>
+        </div>
       </div>
       <InsertLaboratorio></InsertLaboratorio>
-    </div>
+    </div >
   )
 }
 

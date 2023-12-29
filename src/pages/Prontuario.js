@@ -37,6 +37,7 @@ import Alertas from "../cards/Alertas";
 import Interconsultas from "../cards/Interconsultas";
 import Exames from "../cards/Exames";
 import Prescricao from "./Prescricao";
+import Laboratorio from "../cards/Laboratorio";
 
 function Prontuario() {
   // context.
@@ -1212,151 +1213,385 @@ function Prontuario() {
   let yellow = "rgb(241, 196, 15, 0.8)";
   const cartao = (sinal, titulo, opcao, busy, oculto) => {
     return (
-      <div
-        className="card-fechado cor3"
-        style={{
-          display:
-            titulo.includes(filtercartoes) == true &&
-              card == "" &&
-              atendimento != null && (window.innerWidth < 426 && oculto == 0 || window.innerWidth > 425)
-              ? "flex"
-              : "none",
-          flex: 1,
-          pointerEvents: opcao == null ? 'none' : 'auto',
-          backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
-          borderColor: "transparent",
-          height: 180,
-          minWidth: 120,
-          maxWidth: 120,
-        }}
-        onClick={() => {
-          if (card == opcao) {
-            setcard("");
-          } else {
-            setcard(opcao);
-          }
-        }}
-      >
-        <div className="text3">{titulo}</div>
+      <div style={{ display: window.innerWidth < 426 && oculto == 1 ? 'none' : 'flex' }}>
         <div
+          className="card-fechado cor3"
           style={{
-            display: busy == 1 ? "none" : "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            flexWrap: "wrap",
+            display:
+              titulo.includes(filtercartoes) == true &&
+                card == "" &&
+                atendimento != null
+                ? "flex"
+                : "none",
+            // flex: 1,
+            pointerEvents: opcao == null ? 'none' : 'auto',
+            backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
+            borderColor: "transparent",
+            height: 180,
+            minWidth: 120,
+            maxWidth: 120,
+          }}
+          onClick={() => {
+            if (card == opcao) {
+              setcard("");
+            } else {
+              setcard(opcao);
+            }
           }}
         >
-          <div id="RESUMO PRECAUÇÕES"
-            style={{ display: opcao == "card-precaucoes" ? "flex" : "none" }}
-          >
-            <img
-              alt=""
-              src={prec_padrao}
-              style={{
-                display:
-                  precaucoes.filter((item) => item.precaucao == "PADRÃO")
-                    .length > 0
-                    ? "flex"
-                    : "none",
-                flexDirection: "column",
-                justifyContent: "center",
-                height: window.innerWidth < 426 ? 20 : 40,
-                width: window.innerWidth < 426 ? 20 : 40,
-                padding: 5,
-              }}
-            ></img>
-            <img
-              alt=""
-              src={prec_contato}
-              style={{
-                display:
-                  precaucoes.filter((item) => item.precaucao == "CONTATO")
-                    .length > 0
-                    ? "flex"
-                    : "none",
-                flexDirection: "column",
-                justifyContent: "center",
-                height: window.innerWidth < 426 ? 30 : 50,
-                width: window.innerWidth < 426 ? 30 : 50,
-              }}
-            ></img>
-            <img
-              alt=""
-              src={prec_respiratorio}
-              style={{
-                display:
-                  precaucoes.filter(
-                    (item) =>
-                      item.precaucao == "AEROSSOL" ||
-                      item.precaucao == "GOTÍCULA"
-                  ).length > 0
-                    ? "flex"
-                    : "none",
-                flexDirection: "column",
-                justifyContent: "center",
-                height: window.innerWidth < 426 ? 30 : 50,
-                width: window.innerWidth < 426 ? 30 : 50,
-              }}
-            ></img>
-          </div>
-          <div id="RESUMO DIETA"
+          <div className="text3">{titulo}</div>
+          <div
             style={{
-              display: opcao == "card-dietas" ? "flex" : "none",
-              flexDirection: "column",
+              display: busy == 1 ? "none" : "flex",
+              flexDirection: "row",
               justifyContent: "center",
+              flexWrap: "wrap",
             }}
           >
-            <div className="textcard" style={{ margin: 0, padding: 0 }}>
-              {dietas.map((item) => item.tipo)}
-            </div>
-            <div
-              className="textcard"
-              style={{
-                display:
-                  dietas.filter(
-                    (item) => item.tipo != "ORAL" && item.tipo != "NÃO DEFINIDA"
-                  ).length > 0
-                    ? "flex"
-                    : "none",
-                margin: 0,
-                padding: 0,
-              }}
+            <div id="RESUMO PRECAUÇÕES"
+              style={{ display: opcao == "card-precaucoes" ? "flex" : "none" }}
             >
-              {dietas.map((item) => item.infusao + " ml/h")}
+              <img
+                alt=""
+                src={prec_padrao}
+                style={{
+                  display:
+                    precaucoes.filter((item) => item.precaucao == "PADRÃO")
+                      .length > 0
+                      ? "flex"
+                      : "none",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  height: window.innerWidth < 426 ? 20 : 40,
+                  width: window.innerWidth < 426 ? 20 : 40,
+                  padding: 5,
+                }}
+              ></img>
+              <img
+                alt=""
+                src={prec_contato}
+                style={{
+                  display:
+                    precaucoes.filter((item) => item.precaucao == "CONTATO")
+                      .length > 0
+                      ? "flex"
+                      : "none",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  height: window.innerWidth < 426 ? 30 : 50,
+                  width: window.innerWidth < 426 ? 30 : 50,
+                }}
+              ></img>
+              <img
+                alt=""
+                src={prec_respiratorio}
+                style={{
+                  display:
+                    precaucoes.filter(
+                      (item) =>
+                        item.precaucao == "AEROSSOL" ||
+                        item.precaucao == "GOTÍCULA"
+                    ).length > 0
+                      ? "flex"
+                      : "none",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  height: window.innerWidth < 426 ? 30 : 50,
+                  width: window.innerWidth < 426 ? 30 : 50,
+                }}
+              ></img>
             </div>
-          </div>
-          <div id="RESUMO VM"
-            style={{
-              display: opcao == "card-vm" && vm.length > 0 ? "flex" : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignSelf: "center",
-            }}
-          >
-            <div
-              id="na vm"
+            <div id="RESUMO DIETA"
               style={{
-                display:
-                  vm
-                    .sort((a, b) =>
-                      moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                    )
-                    .slice(-1)
-                    .map((item) => item.modo) == "OFF"
-                    ? "none"
-                    : "flex",
+                display: opcao == "card-dietas" ? "flex" : "none",
                 flexDirection: "column",
                 justifyContent: "center",
               }}
             >
               <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                {vm
-                  .sort((a, b) =>
-                    moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                  )
-                  .slice(-1)
-                  .map((item) => item.modo)}
+                {dietas.map((item) => item.tipo)}
               </div>
+              <div
+                className="textcard"
+                style={{
+                  display:
+                    dietas.filter(
+                      (item) => item.tipo != "ORAL" && item.tipo != "NÃO DEFINIDA"
+                    ).length > 0
+                      ? "flex"
+                      : "none",
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                {dietas.map((item) => item.infusao + " ml/h")}
+              </div>
+            </div>
+            <div id="RESUMO VM"
+              style={{
+                display: opcao == "card-vm" && vm.length > 0 ? "flex" : "none",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignSelf: "center",
+              }}
+            >
+              <div
+                id="na vm"
+                style={{
+                  display:
+                    vm
+                      .sort((a, b) =>
+                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                      )
+                      .slice(-1)
+                      .map((item) => item.modo) == "OFF"
+                      ? "none"
+                      : "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                  {vm
+                    .sort((a, b) =>
+                      moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                    )
+                    .slice(-1)
+                    .map((item) => item.modo)}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <div
+                      className="textcard"
+                      style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                    >
+                      {"PI"}
+                    </div>
+                    <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                      {vm
+                        .sort((a, b) =>
+                          moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                        )
+                        .slice(-1)
+                        .map((item) => item.pressao)}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: window.innerWidth < 426 ? "none" : "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <div
+                      className="textcard"
+                      style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                    >
+                      {"VC"}
+                    </div>
+                    <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                      {vm
+                        .sort((a, b) =>
+                          moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                        )
+                        .slice(-1)
+                        .map((item) => item.volume)}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <div
+                      className="textcard"
+                      style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                    >
+                      {"PEEP"}
+                    </div>
+                    <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                      {vm
+                        .sort((a, b) =>
+                          moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                        )
+                        .slice(-1)
+                        .map((item) => item.peep)}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <div
+                      className="textcard"
+                      style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                    >
+                      {"FI"}
+                    </div>
+                    <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                      {vm
+                        .sort((a, b) =>
+                          moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                        )
+                        .slice(-1)
+                        .map((item) => item.fio2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                id="fora da vm"
+                className="textcard"
+                style={{
+                  display:
+                    vm
+                      .sort((a, b) =>
+                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                      )
+                      .slice(-1)
+                      .map((item) => item.modo) != "OFF"
+                      ? "none"
+                      : "flex",
+                }}
+              >
+                {"PACIENTE FORA DA VM"}
+              </div>
+            </div>
+            <div id="RESUMO ANTIBIÓTICOS"
+              style={{
+                display: opcao == "card-atb" ? 'flex' : 'none',
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {prescricao
+                  .filter((item) => item.categoria == '1. ANTIMICROBIANOS')
+                  .slice(-2)
+                  .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1)
+                  .map((item) => (
+                    <div
+                      key={"atb resumo " + item.id}
+                      className="textcard"
+                      style={{ margin: 0, padding: 0 }}
+                    >
+                      <div>
+                        {item.nome_item}
+                      </div>
+                      <div>
+                        {moment(item.data).format('DD/MM/YY')}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <div id="RESUMO CULTURAS"
+              style={{
+                display: opcao == "card-culturas" ? "flex" : "none",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                {"PENDENTES: " +
+                  culturas.filter((item) => item.data_resultado == null).length}
+              </div>
+            </div>
+            <div id="RESUMO INFUSÕES"
+              style={{
+                display: opcao == "card-infusoes" ? "flex" : "none",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {infusoes
+                  .filter((item) => item.data_termino == null)
+                  .slice(-2)
+                  .map((item) => (
+                    <div
+                      key={"infusão " + item.id_infusao}
+                      className="textcard"
+                      style={{ margin: 0, padding: 0 }}
+                    >
+                      {item.droga + " - " + item.velocidade + "ml/h"}
+                    </div>
+                  ))}
+                <div
+                  style={{
+                    display:
+                      infusoes.filter((item) => item.data_termino == null)
+                        .length > 2
+                        ? "flex"
+                        : "none",
+                    alignSelf: "center",
+                  }}
+                >
+                  ...
+                </div>
+              </div>
+            </div>
+            <div id="RESUMO PROPOSTAS"
+              style={{
+                display: opcao == "card-propostas" ? "flex" : "none",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                className="textcard"
+                style={{ display: "flex", margin: 0, padding: 0 }}
+              >
+                {"PENDENTES: " +
+                  propostas.filter((item) => item.data_conclusao == null).length}
+              </div>
+            </div>
+            <div id="RESUMO SINAIS VITAIS"
+              style={{
+                display:
+                  opcao == "card-sinaisvitais" && sinaisvitais.length > 0
+                    ? "flex"
+                    : "none",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignSelf: "center",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -1378,15 +1613,57 @@ function Prontuario() {
                     className="textcard"
                     style={{ margin: 0, padding: 0, opacity: 0.5 }}
                   >
-                    {"PI"}
+                    {"PAM"}
                   </div>
                   <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                    {vm
-                      .sort((a, b) =>
-                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
+                    {sinaisvitais.length > 0
+                      ? Math.ceil(
+                        (2 *
+                          parseInt(
+                            sinaisvitais.slice(-1).map((item) => item.pad)
+                          ) +
+                          parseInt(
+                            sinaisvitais.slice(-1).map((item) => item.pas)
+                          )) /
+                        3
                       )
-                      .slice(-1)
-                      .map((item) => item.pressao)}
+                      : null}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    margin: 5,
+                  }}
+                >
+                  <div
+                    className="textcard"
+                    style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                  >
+                    {"FC"}
+                  </div>
+                  <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                    {sinaisvitais.slice(-1).map((item) => item.fc)}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    margin: 5,
+                  }}
+                >
+                  <div
+                    className="textcard"
+                    style={{ margin: 0, padding: 0, opacity: 0.5 }}
+                  >
+                    {"TAX"}
+                  </div>
+                  <div className="textcard" style={{ margin: 0, padding: 0 }}>
+                    {sinaisvitais.slice(-1).map((item) => item.tax)}
                   </div>
                 </div>
                 <div
@@ -1401,20 +1678,15 @@ function Prontuario() {
                     className="textcard"
                     style={{ margin: 0, padding: 0, opacity: 0.5 }}
                   >
-                    {"VC"}
+                    {"DIURESE"}
                   </div>
                   <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                    {vm
-                      .sort((a, b) =>
-                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                      )
-                      .slice(-1)
-                      .map((item) => item.volume)}
+                    {sinaisvitais.slice(-1).map((item) => item.diurese)}
                   </div>
                 </div>
                 <div
                   style={{
-                    display: "flex",
+                    display: window.innerWidth < 426 ? "none" : "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     margin: 5,
@@ -1424,380 +1696,111 @@ function Prontuario() {
                     className="textcard"
                     style={{ margin: 0, padding: 0, opacity: 0.5 }}
                   >
-                    {"PEEP"}
+                    {"BALANÇO ACUMULADO"}
                   </div>
                   <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                    {vm
-                      .sort((a, b) =>
-                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                      )
-                      .slice(-1)
-                      .map((item) => item.peep)}
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    margin: 5,
-                  }}
-                >
-                  <div
-                    className="textcard"
-                    style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                  >
-                    {"FI"}
-                  </div>
-                  <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                    {vm
-                      .sort((a, b) =>
-                        moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                      )
-                      .slice(-1)
-                      .map((item) => item.fio2)}
+                    {balancoacumulado}
                   </div>
                 </div>
               </div>
             </div>
-            <div
-              id="fora da vm"
-              className="textcard"
+            <div id="RESUMO ALERGIA"
               style={{
-                display:
-                  vm
-                    .sort((a, b) =>
-                      moment(a.data_vm) < moment(b.data_vm) ? -1 : 1
-                    )
-                    .slice(-1)
-                    .map((item) => item.modo) != "OFF"
-                    ? "none"
-                    : "flex",
-              }}
-            >
-              {"PACIENTE FORA DA VM"}
-            </div>
-          </div>
-          <div id="RESUMO ANTIBIÓTICOS"
-            style={{
-              display: opcao == "card-atb" ? 'flex' : 'none',
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
+                display: opcao == "card-alergias" ? "flex" : "none",
                 flexDirection: "column",
                 justifyContent: "center",
               }}
             >
-              {prescricao
-                .filter((item) => item.categoria == '1. ANTIMICROBIANOS')
-                .slice(-2)
-                .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1)
-                .map((item) => (
-                  <div
-                    key={"atb resumo " + item.id}
-                    className="textcard"
-                    style={{ margin: 0, padding: 0 }}
-                  >
-                    <div>
-                      {item.nome_item}
-                    </div>
-                    <div>
-                      {moment(item.data).format('DD/MM/YY')}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-          <div id="RESUMO CULTURAS"
-            style={{
-              display: opcao == "card-culturas" ? "flex" : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <div className="textcard" style={{ margin: 0, padding: 0 }}>
-              {"PENDENTES: " +
-                culturas.filter((item) => item.data_resultado == null).length}
-            </div>
-          </div>
-          <div id="RESUMO INFUSÕES"
-            style={{
-              display: opcao == "card-infusoes" ? "flex" : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              {infusoes
-                .filter((item) => item.data_termino == null)
-                .slice(-2)
-                .map((item) => (
-                  <div
-                    key={"infusão " + item.id_infusao}
-                    className="textcard"
-                    style={{ margin: 0, padding: 0 }}
-                  >
-                    {item.droga + " - " + item.velocidade + "ml/h"}
-                  </div>
-                ))}
-              <div
-                style={{
-                  display:
-                    infusoes.filter((item) => item.data_termino == null)
-                      .length > 2
-                      ? "flex"
-                      : "none",
-                  alignSelf: "center",
-                }}
-              >
-                ...
-              </div>
-            </div>
-          </div>
-          <div id="RESUMO PROPOSTAS"
-            style={{
-              display: opcao == "card-propostas" ? "flex" : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              className="textcard"
-              style={{ display: "flex", margin: 0, padding: 0 }}
-            >
-              {"PENDENTES: " +
-                propostas.filter((item) => item.data_conclusao == null).length}
-            </div>
-          </div>
-          <div id="RESUMO SINAIS VITAIS"
-            style={{
-              display:
-                opcao == "card-sinaisvitais" && sinaisvitais.length > 0
-                  ? "flex"
-                  : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignSelf: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignSelf: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  margin: 5,
-                }}
-              >
-                <div
-                  className="textcard"
-                  style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                >
-                  {"PAM"}
-                </div>
-                <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                  {sinaisvitais.length > 0
-                    ? Math.ceil(
-                      (2 *
-                        parseInt(
-                          sinaisvitais.slice(-1).map((item) => item.pad)
-                        ) +
-                        parseInt(
-                          sinaisvitais.slice(-1).map((item) => item.pas)
-                        )) /
-                      3
-                    )
-                    : null}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  margin: 5,
-                }}
-              >
-                <div
-                  className="textcard"
-                  style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                >
-                  {"FC"}
-                </div>
-                <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                  {sinaisvitais.slice(-1).map((item) => item.fc)}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  margin: 5,
-                }}
-              >
-                <div
-                  className="textcard"
-                  style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                >
-                  {"TAX"}
-                </div>
-                <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                  {sinaisvitais.slice(-1).map((item) => item.tax)}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: window.innerWidth < 426 ? "none" : "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  margin: 5,
-                }}
-              >
-                <div
-                  className="textcard"
-                  style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                >
-                  {"DIURESE"}
-                </div>
-                <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                  {sinaisvitais.slice(-1).map((item) => item.diurese)}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: window.innerWidth < 426 ? "none" : "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  margin: 5,
-                }}
-              >
-                <div
-                  className="textcard"
-                  style={{ margin: 0, padding: 0, opacity: 0.5 }}
-                >
-                  {"BALANÇO ACUMULADO"}
-                </div>
-                <div className="textcard" style={{ margin: 0, padding: 0 }}>
-                  {balancoacumulado}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="RESUMO ALERGIA"
-            style={{
-              display: opcao == "card-alergias" ? "flex" : "none",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              className="textcard"
-              style={{
-                display: "flex",
-                flexDirection: 'column',
-                margin: 0,
-                padding: 0,
-                fontSize: 16,
-              }}
-            >
-              {alergias.slice(-3).map(item => (<div className="textcard" style={{ margin: 0, padding: 0 }}>{item.alergia}</div>))}
-            </div>
-          </div>
-          <div id="RESUMO RISCOS"
-            style={{ display: opcao == "card-riscos" ? "flex" : "none" }}
-          >
-            <div>
-              {riscos.slice(-3).map((item) => (
-                <div
-                  key={"atb " + item.id_risco}
-                  className="textcard"
-                  style={{ margin: 0, padding: 0 }}
-                >
-                  {item.risco}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div id="RESUMO INTERCONSULTAS"
-            style={{
-              display: opcao == "card-interconsultas" ? "flex" : "none",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              {interconsultas.map((item) => (
-                <div
-                  key={"interconsultas " + item.id_interconsulta}
-                  className="textcard"
-                  style={{ margin: 0, padding: 0 }}
-                >
-                  {item.especialidade}
-                </div>
-              ))}
               <div
                 className="textcard"
                 style={{
-                  display: interconsultas.length > 3 ? "flex" : "none",
-                  alignSelf: "center",
+                  display: "flex",
+                  flexDirection: 'column',
+                  margin: 0,
+                  padding: 0,
+                  fontSize: 16,
                 }}
               >
-                ...
+                {alergias.slice(-3).map(item => (<div className="textcard" style={{ margin: 0, padding: 0 }}>{item.alergia}</div>))}
               </div>
             </div>
+            <div id="RESUMO RISCOS"
+              style={{ display: opcao == "card-riscos" ? "flex" : "none" }}
+            >
+              <div>
+                {riscos.slice(-3).map((item) => (
+                  <div
+                    key={"atb " + item.id_risco}
+                    className="textcard"
+                    style={{ margin: 0, padding: 0 }}
+                  >
+                    {item.risco}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div id="RESUMO INTERCONSULTAS"
+              style={{
+                display: opcao == "card-interconsultas" ? "flex" : "none",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {interconsultas.map((item) => (
+                  <div
+                    key={"interconsultas " + item.id_interconsulta}
+                    className="textcard"
+                    style={{ margin: 0, padding: 0 }}
+                  >
+                    {item.especialidade}
+                  </div>
+                ))}
+                <div
+                  className="textcard"
+                  style={{
+                    display: interconsultas.length > 3 ? "flex" : "none",
+                    alignSelf: "center",
+                  }}
+                >
+                  ...
+                </div>
+              </div>
+            </div>
+            <div id="RESUMO BONECO"
+              style={{
+                display: opcao == "card-boneco" ? "flex" : "none",
+              }}
+            >
+              <img
+                id="corpo"
+                alt=""
+                src={body}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  height: window.innerWidth < 426 ? "30vw" : "8vw",
+                }}
+              ></img>
+            </div>
           </div>
-          <div id="RESUMO BONECO"
+          <div
             style={{
-              display: opcao == "card-boneco" ? "flex" : "none",
+              display: busy == 1 ? "flex" : "none",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+              alignSelf: "center",
             }}
           >
-            <img
-              id="corpo"
-              alt=""
-              src={body}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                height: window.innerWidth < 426 ? "30vw" : "8vw",
-              }}
-            ></img>
+            {loading()}
           </div>
-        </div>
-        <div
-          style={{
-            display: busy == 1 ? "flex" : "none",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignContent: "center",
-            alignItems: "center",
-            alignSelf: "center",
-          }}
-        >
-          {loading()}
         </div>
       </div>
     );
@@ -1959,10 +1962,8 @@ function Prontuario() {
           alignSelf: "center",
           alignItems: "center",
           scrollBehavior: "smooth",
-          flex: 4,
           height: window.innerWidth < 426 ? '' : window.innerHeight - 30,
           minHeight: window.innerWidth < 426 ? '' : window.innerHeight - 30,
-          scrollBehavior: "smooth",
           backgroundColor: 'rgba(242, 242, 242)'
         }}
       >
@@ -2002,6 +2003,7 @@ function Prontuario() {
         {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
         {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 0, 1)}
         {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
+        {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
         <Alergias></Alergias>
         <Documentos></Documentos>
         <Boneco></Boneco>
@@ -2019,6 +2021,7 @@ function Prontuario() {
         <Interconsultas></Interconsultas>
         <Exames></Exames>
         <Prescricao></Prescricao>
+        <Laboratorio></Laboratorio>
       </div>
       <div id="conteúdo vazio"
         className="scroll"
