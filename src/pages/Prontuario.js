@@ -449,6 +449,8 @@ function Prontuario() {
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
+            width: window.innerWidth < 426 ? '100%' : '',
+            marginBottom: window.innerWidth < 426 ? 20 : ''
           }}
         >
           {arrayatendimentos
@@ -1939,7 +1941,8 @@ function Prontuario() {
               : atendimento == null
                 ? "none"
                 : "flex",
-          flex: 4,
+          flex: window.innerWidth < 426 ? 1 : 4,
+          width: window.innerWidth < 426 ? 'calc(100vw - 40px)' : '',
           flexDirection: "column",
           justifyContent: "flex-start",
           alignContent: "center",
@@ -1947,8 +1950,10 @@ function Prontuario() {
           alignItems: "center",
           height: window.innerHeight - 30,
           minHeight: window.innerHeight - 30,
-          margin: 0, marginRight: 10,
+          margin: window.innerWidth < 426 ? 5 : 0,
           position: "relative",
+          scrollBehavior: "smooth",
+          marginRight: 10,
           scrollBehavior: "smooth",
         }}
       >
@@ -1968,7 +1973,6 @@ function Prontuario() {
             alignContent: "center",
             alignSelf: "center",
             alignItems: "center",
-            width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "",
             position: "relative",
             scrollBehavior: "smooth",
             flex: 4,
@@ -2027,8 +2031,7 @@ function Prontuario() {
         <Exames></Exames>
         <Prescricao></Prescricao>
       </div>
-      <div
-        id="conteúdo vazio"
+      <div id="conteúdo vazio"
         className="scroll"
         style={{
           display:
@@ -2037,11 +2040,13 @@ function Prontuario() {
               : atendimento != null
                 ? "none"
                 : "flex",
-          flex: 4,
+          flex: window.innerWidth < 426 ? 1 : 4,
+          width: window.innerWidth < 426 ? 'calc(100vw - 40px)' : '',
           flexDirection: "column",
           justifyContent: "center",
           height: window.innerHeight - 30,
-          margin: 0, marginRight: 10,
+          margin: window.innerWidth < 426 ? 10 : 0,
+          marginRight: 10,
           scrollBehavior: "smooth",
         }}
       >
