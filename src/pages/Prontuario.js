@@ -422,6 +422,7 @@ function Prontuario() {
       <div
         style={{
           display: "flex",
+          flex: 1,
           flexDirection: "column",
           justifyContent: "space-between",
           alignSelf: "center",
@@ -442,9 +443,8 @@ function Prontuario() {
         >
           {consultorio}
         </div>
-        <div
+        <div id="scroll atendimentos com pacientes"
           className="scroll"
-          id="scroll atendimentos"
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
@@ -551,7 +551,7 @@ function Prontuario() {
                       if (pagina == 1) {
                         setTimeout(() => {
                           var botoes = document
-                            .getElementById("scroll atendimentos")
+                            .getElementById("scroll atendimentos com pacientes")
                             .getElementsByClassName("button-red");
                           for (var i = 0; i < botoes.length; i++) {
                             botoes.item(i).className = "button";
@@ -802,7 +802,7 @@ function Prontuario() {
               </div>
             ))}
         </div>
-        <div
+        <div id="scroll atendimento vazio"
           className="scroll"
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
@@ -1213,29 +1213,17 @@ function Prontuario() {
         className="card-fechado cor3"
         style={{
           display:
-            titulo.includes(filtercartoes) == true
-              // titulo == arraycartoes.pop()
-              // arraycartoes.filter((valor) => valor.includes(titulo)).length > 0
-              &&
+            titulo.includes(filtercartoes) == true &&
               card == "" &&
               atendimento != null
               ? "flex"
               : "none",
+          flex: 1,
           pointerEvents: opcao == null ? 'none' : 'auto',
           backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
           borderColor: "transparent",
-          width:
-            window.innerWidth > 425 &&
-              document.getElementById("conteúdo vazio") != null
-              ? Math.ceil(
-                document.getElementById("conteúdo vazio").offsetWidth / 4 - 43
-              )
-              : window.innerWidth < 426 &&
-                document.getElementById("conteúdo vazio") != null
-                ? Math.ceil(
-                  document.getElementById("conteúdo cheio").offsetWidth / 2 - 48
-                )
-                : "",
+          height: 150,
+          minWidth: 100,
         }}
         onClick={() => {
           if (card == opcao) {
@@ -1254,8 +1242,7 @@ function Prontuario() {
             flexWrap: "wrap",
           }}
         >
-          <div
-            id="RESUMO PRECAUÇÕES"
+          <div id="RESUMO PRECAUÇÕES"
             style={{ display: opcao == "card-precaucoes" ? "flex" : "none" }}
           >
             <img
@@ -1308,8 +1295,7 @@ function Prontuario() {
               }}
             ></img>
           </div>
-          <div
-            id="RESUMO DIETA"
+          <div id="RESUMO DIETA"
             style={{
               display: opcao == "card-dietas" ? "flex" : "none",
               flexDirection: "column",
@@ -1335,8 +1321,7 @@ function Prontuario() {
               {dietas.map((item) => item.infusao + " ml/h")}
             </div>
           </div>
-          <div
-            id="RESUMO VM"
+          <div id="RESUMO VM"
             style={{
               display: opcao == "card-vm" && vm.length > 0 ? "flex" : "none",
               flexDirection: "column",
@@ -1489,8 +1474,7 @@ function Prontuario() {
               {"PACIENTE FORA DA VM"}
             </div>
           </div>
-          <div
-            id="RESUMO ANTIBIÓTICOS"
+          <div id="RESUMO ANTIBIÓTICOS"
             style={{
               display: opcao == "card-atb" ? 'flex' : 'none',
               flexDirection: "column",
@@ -1506,7 +1490,7 @@ function Prontuario() {
             >
               {prescricao
                 .filter((item) => item.categoria == '1. ANTIMICROBIANOS')
-                .slice(-3)
+                .slice(-2)
                 .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1)
                 .map((item) => (
                   <div
@@ -1514,13 +1498,17 @@ function Prontuario() {
                     className="textcard"
                     style={{ margin: 0, padding: 0 }}
                   >
-                    {item.nome_item + ' - ' + moment(item.data).format('DD/MM/YY')}
+                    <div>
+                      {item.nome_item}
+                    </div>
+                    <div>
+                      {moment(item.data).format('DD/MM/YY')}
+                    </div>
                   </div>
                 ))}
             </div>
           </div>
-          <div
-            id="RESUMO CULTURAS"
+          <div id="RESUMO CULTURAS"
             style={{
               display: opcao == "card-culturas" ? "flex" : "none",
               flexDirection: "column",
@@ -1532,8 +1520,7 @@ function Prontuario() {
                 culturas.filter((item) => item.data_resultado == null).length}
             </div>
           </div>
-          <div
-            id="RESUMO INFUSÕES"
+          <div id="RESUMO INFUSÕES"
             style={{
               display: opcao == "card-infusoes" ? "flex" : "none",
               flexDirection: "column",
@@ -1573,8 +1560,7 @@ function Prontuario() {
               </div>
             </div>
           </div>
-          <div
-            id="RESUMO PROPOSTAS"
+          <div id="RESUMO PROPOSTAS"
             style={{
               display: opcao == "card-propostas" ? "flex" : "none",
               flexDirection: "column",
@@ -1589,8 +1575,7 @@ function Prontuario() {
                 propostas.filter((item) => item.data_conclusao == null).length}
             </div>
           </div>
-          <div
-            id="RESUMO SINAIS VITAIS"
+          <div id="RESUMO SINAIS VITAIS"
             style={{
               display:
                 opcao == "card-sinaisvitais" && sinaisvitais.length > 0
@@ -1713,8 +1698,7 @@ function Prontuario() {
               </div>
             </div>
           </div>
-          <div
-            id="RESUMO ALERGIA"
+          <div id="RESUMO ALERGIA"
             style={{
               display: opcao == "card-alergias" ? "flex" : "none",
               flexDirection: "column",
@@ -1725,16 +1709,16 @@ function Prontuario() {
               className="textcard"
               style={{
                 display: "flex",
+                flexDirection: 'column',
                 margin: 0,
                 padding: 0,
                 fontSize: 16,
               }}
             >
-              {alergias.length}
+              {alergias.slice(-3).map(item => (<div className="textcard" style={{ margin: 0, padding: 0 }}>{item.alergia}</div>))}
             </div>
           </div>
-          <div
-            id="RESUMO RISCOS"
+          <div id="RESUMO RISCOS"
             style={{ display: opcao == "card-riscos" ? "flex" : "none" }}
           >
             <div>
@@ -1749,8 +1733,7 @@ function Prontuario() {
               ))}
             </div>
           </div>
-          <div
-            id="RESUMO INTERCONSULTAS"
+          <div id="RESUMO INTERCONSULTAS"
             style={{
               display: opcao == "card-interconsultas" ? "flex" : "none",
             }}
@@ -1781,6 +1764,23 @@ function Prontuario() {
                 ...
               </div>
             </div>
+          </div>
+          <div id="RESUMO BONECO"
+            style={{
+              display: opcao == "card-boneco" ? "flex" : "none",
+            }}
+          >
+            <img
+              id="corpo"
+              alt=""
+              src={body}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                height: window.innerWidth < 426 ? "30vw" : "8vw",
+              }}
+            ></img>
           </div>
         </div>
         <div
@@ -1908,6 +1908,7 @@ function Prontuario() {
       className="main fadein"
       style={{
         display: pagina == 1 ? "flex" : "none",
+        flex: 5,
         flexDirection: window.innerWidth > 425 ? "row" : "column",
         justifyContent: window.innerWidth > 425 ? "center" : "center",
         width: "100vw",
@@ -1923,6 +1924,7 @@ function Prontuario() {
           height: window.innerHeight - 20,
           margin: 0,
           marginRight: 10, marginLeft: 10,
+          flex: 2,
         }}
       >
         <Usuario></Usuario>
@@ -1937,6 +1939,7 @@ function Prontuario() {
               : atendimento == null
                 ? "none"
                 : "flex",
+          flex: 4,
           flexDirection: "column",
           justifyContent: "flex-start",
           alignContent: "center",
@@ -1944,8 +1947,6 @@ function Prontuario() {
           alignItems: "center",
           height: window.innerHeight - 30,
           minHeight: window.innerHeight - 30,
-          width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
-          minWidth: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
           margin: 0, marginRight: 10,
           position: "relative",
           scrollBehavior: "smooth",
@@ -1963,101 +1964,37 @@ function Prontuario() {
                   : "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            justifyContent: "center",
+            justifyContent: "space-evenly",
             alignContent: "center",
             alignSelf: "center",
             alignItems: "center",
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "",
             position: "relative",
             scrollBehavior: "smooth",
+            flex: 4,
           }}
         >
-          <div style={{ pointerEvents: "none" }}>
-            {cartao(
-              null,
-              "DIAS DE INTERNAÇÃO: " +
-              atendimentos
-                .filter((item) => item.id_atendimento == atendimento)
-                .map((item) => moment().diff(item.data_inicio, "days")),
-              null,
-              0
-            )}
-          </div>
           {cartao(
-            alergias,
-            "ALERGIAS",
-            "card-alergias",
-            busyalergias
+            null,
+            "DIAS DE INTERNAÇÃO: " +
+            atendimentos
+              .filter((item) => item.id_atendimento == atendimento)
+              .map((item) => moment().diff(item.data_inicio, "days")),
+            null,
+            0
           )}
+          {cartao(alergias, "ALERGIAS", "card-alergias", busyalergias)}
           {cartao(null, "ADMISSÃO", "card-documento-admissao")}
           {cartao(null, "EVOLUÇÃO", "card-documento-evolucao")}
           {cartao(null, "RECEITA MÉDICA", "card-documento-receita")}
           {cartao(null, "ATESTADO", "card-documento-atestado")}
           {cartao(null, "SUMÁRIO DE ALTA", "card-documento-alta")}
-          {cartao(
-            propostas.filter((item) => item.status == 0),
-            "PROPOSTAS",
-            "card-propostas",
-            busypropostas
-          )}
+          {cartao(propostas.filter((item) => item.status == 0), "PROPOSTAS", "card-propostas", busypropostas)}
           {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes")}
           {cartao(riscos, "RISCOS", "card-riscos", busyriscos)}
           {cartao(null, "ALERTAS", "card-alertas")}
-          {cartao(
-            null,
-            "SINAIS VITAIS",
-            "card-sinaisvitais",
-            busysinaisvitais
-          )}
-          <div
-            id="boneco"
-            className="card-fechado"
-            style={{
-              display:
-                card == "" &&
-                  arraycartoes.filter(
-                    (item) =>
-                      item.includes("INVASÕES") ||
-                      item.includes("LESÕES") ||
-                      item.includes("BONECO")
-                  ).length > 0
-                  ? "flex"
-                  : "none",
-              width:
-                window.innerWidth > 425 &&
-                  document.getElementById("conteúdo vazio") != null
-                  ? Math.ceil(
-                    document.getElementById("conteúdo vazio").offsetWidth / 4 -
-                    43
-                  )
-                  : window.innerWidth < 426 &&
-                    document.getElementById("conteúdo vazio") != null
-                    ? Math.ceil(
-                      document.getElementById("conteúdo cheio").offsetWidth / 2 -
-                      48
-                    )
-                    : "",
-            }}
-            onClick={() => {
-              if (card == "card-boneco") {
-                setcard("");
-              } else {
-                setcard("card-boneco");
-              }
-            }}
-          >
-            <img
-              id="corpo"
-              alt=""
-              src={body}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                height: window.innerWidth < 426 ? "30vw" : "8vw",
-              }}
-            ></img>
-          </div>
+          {cartao(null, "SINAIS VITAIS", "card-sinaisvitais", busysinaisvitais)}
+          {cartao(null, 'INVASÕES E LESÕES', "card-boneco", null)}
           {cartao(null, "VENTILAÇÃO MECÂNICA", "card-vm", busyvm)}
           {cartao(null, "INFUSÕES", "card-infusoes", busyinfusoes)}
           {cartao(null, "DIETA", "card-dietas", busydieta)}
@@ -2068,45 +2005,10 @@ function Prontuario() {
             busyculturas
           )}
           {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", "card-atb", null)}
-          {cartao(
-            interconsultas,
-            "INTERCONSULTAS",
-            "card-interconsultas",
-            busyinterconsultas
-          )}
+          {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas)}
           {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null)}
-          <div
-            id="exames"
-            className="card-fechado"
-            style={{
-              display: card == "" ? "flex" : "none",
-              width:
-                window.innerWidth > 425 &&
-                  document.getElementById("conteúdo vazio") != null
-                  ? Math.ceil(
-                    document.getElementById("conteúdo vazio").offsetWidth / 4 -
-                    43
-                  )
-                  : window.innerWidth < 426 &&
-                    document.getElementById("conteúdo vazio") != null
-                    ? Math.ceil(
-                      document.getElementById("conteúdo cheio").offsetWidth / 2 -
-                      48
-                    )
-                    : "",
-            }}
-            onClick={() => {
-              if (card == "") {
-                setcard("card-exames");
-              } else {
-                setcard("");
-              }
-            }}
-          >
-            <div className="text3">EXAMES RELEVANTES</div>
-          </div>
+          {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null)}
         </div>
-
         <Alergias></Alergias>
         <Documentos></Documentos>
         <Boneco></Boneco>
@@ -2135,12 +2037,11 @@ function Prontuario() {
               : atendimento != null
                 ? "none"
                 : "flex",
+          flex: 4,
           flexDirection: "column",
           justifyContent: "center",
           height: window.innerHeight - 30,
-          width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
-          minWidth: window.innerWidth < 426 ? "calc(95vw - 15px)" : "70vw",
-          margin: 0,  marginRight: 10,
+          margin: 0, marginRight: 10,
           scrollBehavior: "smooth",
         }}
       >

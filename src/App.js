@@ -117,6 +117,8 @@ function App() {
   const [tipodocumento, settipodocumento] = useState(null);
   const [documentos, setdocumentos] = useState([]);
 
+  const [laboratorio, setlaboratorio] = useState([]);
+
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
   const documentHeight = () => {
@@ -262,6 +264,7 @@ function App() {
         setconsultorio,
         tipodocumento, settipodocumento,
         documentos, setdocumentos,
+        laboratorio, setlaboratorio
       }}
     >
       <div>

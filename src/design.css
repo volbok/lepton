@@ -997,8 +997,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: calc(14.65vw);
-  height: calc(14.65vw);
   opacity: 1;
   padding: 10px;
   margin: 5px;

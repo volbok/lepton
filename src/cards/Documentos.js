@@ -34,6 +34,16 @@ function Documentos() {
     tipodocumento, settipodocumento,
     documentos, setdocumentos,
     settoast,
+
+    // dados para importação na evolução.
+    alergias,
+    sinaisvitais,
+    vm,
+    invasoes,
+    lesoes,
+    culturas,
+
+    prescricao
   } = useContext(Context);
 
   const loadDocumentos = () => {
@@ -101,42 +111,82 @@ function Documentos() {
       insertDocumento(texto);
     } else if (tipodocumento == 'EVOLUÇÃO') {
       // recuperando dados vitais registrados pela enfermagem.
-      let dadosvitais = null;
-      let tag_dadosvitais = null;
-      axios.get(html + "list_sinais_vitais/" + atendimento).then((response) => {
-        let x = response.data.rows
-        dadosvitais = x.sort((a, b) => moment(a.data_sinais_vitais) > moment(b.data_sinais_vitais) ? -1 : 1).pop();
-        if (dadosvitais != null) {
-          tag_dadosvitais = 'PAS: ' + dadosvitais.pas + ', PAD: ' + dadosvitais.pad + ', FC: ' + dadosvitais.fc + ' FR: ' + dadosvitais.fr + ' SAO2: ' + dadosvitais.sao2 + ' TAX: ' + dadosvitais.tax + ' GLICEMIA: ' + dadosvitais.glicemia;
-        }
-        if (usuario.conselho == 'CRM') {
-          let texto = null;
-          if (dadosvitais != null) {
-            texto =
-              'HD: \n\n' +
-              'EVOLUÇÃO: \n\n' +
-              'DADOS VITAIS: \n' +
-              tag_dadosvitais + '\n\n' +
-              'AO EXAME: \n\n' +
-              '\n\n' +
-              'CONDUTA:'
-          } else {
-            texto =
-              'HD: \n\n' +
-              'EVOLUÇÃO: \n\n' +
-              'AO EXAME: \n\n' +
-              '\n\n' +
-              'CONDUTA:'
-          }
-          insertDocumento(texto);
-        } else {
-          let texto =
-            'EVOLUÇÃO: \n' +
-            tag_dadosvitais + '\n\n' +
-            'AO EXAME:'
-          insertDocumento(texto);
-        }
-      });
+      let tag_alergias = '';
+      let tag_dadosvitais = '';
+      let tag_invasoes = '';
+      let tag_lesoes = '';
+      let tag_vm = '';
+      let tag_examesatuais = '';
+      let tag_culturas = '';
+      let tag_antibioticos = '';
+
+      // função para montar os dados vindos dos cards.
+      if (alergias.length > 0) {
+        tag_alergias =
+          "ALERGIAS:" + alergias.map(item => '\n' + item.alergia)
+      }
+      if (sinaisvitais.length > 0) {
+        tag_dadosvitais =
+          "\nDADOS VITAIS:\nPA: " + sinaisvitais.slice(-1).map((item) => item.pas) + 'x' + sinaisvitais.slice(-1).map((item) => item.pad) + 'mmHg, FC: ' + sinaisvitais.slice(-1).map((item) => item.fc) + 'bpm, FR: ' + sinaisvitais.slice(-1).map((item) => item.fr) + 'irom, SAO2: ' + sinaisvitais.slice(-1).map((item) => item.sao2) + '%, TAX: ' + sinaisvitais.slice(-1).map((item) => item.tax) + 'ºC';
+      }
+      if (invasoes.length > 0) {
+        let arrayinvasoes = invasoes.map(item => '\n' + item.dispositivo + ' - ' + item.local + ' (' + moment(item.data_implante).format('DD/MM/YY') + ')')
+        tag_invasoes =
+          "\nINVASÕES:" +
+          arrayinvasoes;
+      }
+      if (lesoes.length > 0) {
+        let arraylesoes = lesoes.filter(item => item.data_fechamento == null).map(item => '\nLOCAL: ' + item.local + ' - GRAU: ' + item.grau + ' (' + moment(item.data_abertura).format('DD/MM/YY') + ')')
+        tag_lesoes =
+          "\nLESÕES:" +
+          arraylesoes;
+      }
+      if (vm.length > 0 && vm.slice(-1).map(item => item.modo) != 'OFF') {
+        console.log(vm)
+        tag_vm = "\nVENTILAÇÃO MECÂNICA:\nMODO: " +
+          vm.slice(-1).map(item => item.modo) + ' PRESSÃO: ' + vm.slice(-1).map(item => item.pressao) + ' VOLUME: ' + vm.slice(-1).map(item => item.volume) + ' PEEP: ' + vm.slice(-1).map(item => item.peep) + ' FIO2: ' + vm.slice(-1).map(item => item.fio2);
+      }
+      if (pacientes.filter(item => item.exames_atuais) != null) {
+        tag_examesatuais =
+          "\nEXAMES ATUAIS:\n" +
+          pacientes.filter(item => item.id_paciente == paciente).map(item => item.exames_atuais);
+      }
+      if (culturas.length > 0) {
+        let arrayculturas = culturas.map(item => '\nMATERIAL: ' + item.material + '\nDATA: ' + moment(item.data_pedido).format('DD/MM/YY') + '\nRESULTADO: ' + item.resultado + '\n\n');
+        tag_culturas =
+          "\nCULTURAS:" +
+          arrayculturas;
+      }
+      if (prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS' && moment(item.data).format('DD/MM/YY') == moment().format('DD/MM/YY')).length > 0) {
+        let arrayprescricao = prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS' && moment(item.data).format('DD/MM/YY') == moment().format('DD/MM/YY')).map(item => '\nANTIBIÓTICO: ' + item.nome_item);
+        tag_antibioticos =
+          "\nANTIBIÓTICOS EM USO:\n" +
+          arrayprescricao;
+      }
+
+      let texto = null;
+      if (usuario.conselho == 'CRM') {
+        texto =
+          'HD: \n\n' +
+          tag_alergias + '\n' +
+          tag_antibioticos + '\n' +
+          tag_culturas + '\n' +
+          tag_invasoes + '\n' +
+          tag_vm + '\n' +
+          tag_lesoes + '\n' +
+          tag_examesatuais + '\n' +
+          tag_dadosvitais + '\n\n' +
+          'EVOLUÇÃO: \n\n' +
+          'AO EXAME: \n\n' +
+          'CONDUTA:'
+        insertDocumento(texto);
+      } else {
+        let texto =
+          'EVOLUÇÃO: \n' +
+          tag_dadosvitais + '\n\n' +
+          'AO EXAME:'
+        insertDocumento(texto);
+      }
     } else if (tipodocumento == 'RECEITA MÉDICA') {
       let texto =
         'USO ORAL: \n\n' +
@@ -150,14 +200,15 @@ function Documentos() {
         'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE XX DIAS, POR MOTIVO DE DOENÇA CID 10 XXX.'
       insertDocumento(texto);
     } else if (tipodocumento == 'ALTA HOSPITALAR') {
-      let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').slice(-1).map(item => item.texto).pop();
-      let evolucao = documentos.filter(item => item.tipo_documento == 'EVOLUÇÃO').slice(-1).map(item => item.texto).pop();
+      let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
+      let evolucao = documentos.filter(item => item.tipo_documento == 'EVOLUÇÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
       let texto =
+        'DATA DE ADMISSÃO: ' + atendimentos.filter(item => item.id_atendimento == atendimento).map(item => moment(item.data_inicio).format('DD/MM/YY')) + '\n' +
+        'DATA DA ALTA: ' + moment().format('DD/MM/YY') + '\n\n' +
         anamnese + '\n\n' +
         evolucao
       insertDocumento(texto);
     }
-
   }
 
   const insertDocumento = (texto) => {
@@ -685,7 +736,7 @@ function Documentos() {
       <div style={{
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         fontFamily: 'Helvetica',
-        breakInside: 'avoid',
+        breakInside: 'auto',
         whiteSpace: 'pre-wrap',
         marginTop: 20,
       }}>
