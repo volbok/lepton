@@ -1015,7 +1015,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 100%;
   opacity: 1;
   padding: 10px;
-
 }
 
 /* DISPOSITIVOS INVASIVOS E LESÕES */
@@ -1474,6 +1473,10 @@ ESTILOS VARIÁVEIS CONFORME A RESPONSIVIDADE.
     margin: 0;
     padding: 0;
     z-index: 100;
+  }
+
+  .oculto {
+    display: none;
   }
 }
 
