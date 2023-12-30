@@ -463,7 +463,7 @@ function Login() {
               key={"ACESSO: " + item.id_acesso}
               className="button"
               style={{
-                display: "flex",
+                display: item.id_unidade == 4 ? "none" : "flex",
                 padding: 10,
                 margin: 5,
                 width: 150,
@@ -526,7 +526,7 @@ function Login() {
     return (
       <div
         style={{
-          display: viewlistaunidades == 1 ? "flex" : "none",
+          display: viewlistaunidades == 1 && window.innerWidth > 425 ? "flex" : "none",
           flexDirection: "column",
           justifyContent: "center",
           alignSelf: "center",
@@ -749,28 +749,42 @@ function Login() {
 
   function BtnPainel() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <div
-          className="button"
-          style={{ padding: 10, width: 100, alignSelf: 'center' }}
-          onClick={() => {
-            setunidade(4);
-            setpagina(40);
-            history.push("/painel");
-          }}
-        >
-          PAINEL TRIAGEM
+      <div
+        style={{
+          display: window.innerWidth < 426 || viewlistaunidades == 0 ? 'none' : 'flex',
+          flexDirection: 'column', justifyContent: 'center',
+          marginTop: 20
+        }}
+      >
+        <div className="text2" style={{ fontSize: 16, display: usuario.prontuario == 1 ? 'flex' : 'none' }}>
+          PAINEIS DE CHAMADA PARA ATENDIMENTO
         </div>
-        <div
-          className="button"
-          style={{ padding: 10, width: 100, alignSelf: 'center' }}
-          onClick={() => {
-            setunidade(3);
-            setpagina(40);
-            history.push("/painel");
-          }}
-        >
-          PAINEL PA
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row', justifyContent: 'center'
+        }}>
+          <div
+            className="button"
+            style={{ padding: 10, width: 150, height: 150, alignSelf: 'center' }}
+            onClick={() => {
+              setunidade(4);
+              setpagina(40);
+              history.push("/painel");
+            }}
+          >
+            PAINEL TRIAGEM
+          </div>
+          <div
+            className="button"
+            style={{ padding: 10, width: 150, height: 150, alignSelf: 'center' }}
+            onClick={() => {
+              setunidade(3);
+              setpagina(40);
+              history.push("/painel");
+            }}
+          >
+            PAINEL PA
+          </div>
         </div>
       </div>
     )
@@ -785,8 +799,8 @@ function Login() {
         className="scroll"
         id="conteúdo do login"
         style={{
+          position: 'relative',
           display: "flex",
-          position: "relative",
           flexDirection: "column",
           justifyContent: viewlistaunidades === 1 ? "flex-start" : "center",
           alignSelf: "center",
@@ -796,6 +810,34 @@ function Login() {
           borderColor: "transparent",
         }}
       >
+        <div
+          className="button-red"
+          style={{
+            display: usuario.id != undefined ? "flex" : "none",
+            position: "sticky",
+            top: 10,
+            right: 10,
+            alignSelf: 'flex-end'
+          }}
+          title="FAZER LOGOFF."
+          onMouseOver={() => console.log(usuario.id)}
+          onClick={() => {
+            setusuario({});
+            setacessos([]);
+            setviewlistaunidades(0);
+            setviewalterarsenha(0);
+          }}
+        >
+          <img
+            alt=""
+            src={power}
+            style={{
+              margin: 0,
+              height: 30,
+              width: 30,
+            }}
+          ></img>
+        </div>
         <div
           className="text2 popin"
           style={{
@@ -863,33 +905,6 @@ function Login() {
         <ListaDeUnidadesDeApoio></ListaDeUnidadesDeApoio>
         <AlterarSenha></AlterarSenha>
         <BtnPainel></BtnPainel>
-        <div
-          className="button-red"
-          style={{
-            display: usuario.id != undefined ? "flex" : "none",
-            position: "absolute",
-            top: 10,
-            right: 10,
-          }}
-          title="FAZER LOGOFF."
-          onMouseOver={() => console.log(usuario.id)}
-          onClick={() => {
-            setusuario({});
-            setacessos([]);
-            setviewlistaunidades(0);
-            setviewalterarsenha(0);
-          }}
-        >
-          <img
-            alt=""
-            src={power}
-            style={{
-              margin: 0,
-              height: 30,
-              width: 30,
-            }}
-          ></img>
-        </div>
       </div>
     </div>
   );

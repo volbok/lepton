@@ -254,12 +254,13 @@ function Documentos() {
     return (
       <div
         style={{
+          flex: 1,
           width: '30vw',
           height: '100%',
-          margin: 0, marginLeft: 10, marginRight: 5,
+          margin: 0, marginLeft: 10,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
           <div id="botão para sair da tela de documentos"
             className="button-yellow"
             style={{
@@ -301,7 +302,7 @@ function Documentos() {
           style={{
             backgroundColor: 'white',
             borderColor: 'white',
-            height: 'calc(100% - 75px)'
+            height: 'calc(100% - 85px)'
           }}
         >
           {documentos.filter(item => item.tipo_documento == tipodocumento).map((item) => (
@@ -583,6 +584,12 @@ function Documentos() {
         placeholder='DIGITE AQUI O TEXTO DO DOCUMENTO.'
         onFocus={(e) => (e.target.placeholder = '')}
         onBlur={(e) => (e.target.placeholder = 'DIGITE AQUI O TEXTO DO DOCUMENTO.')}
+        onKeyDown={(e) => {
+          if (selecteddocumento.status == 1) {
+            document.getElementById("inputFieldDocumento").blur();
+            e.stopPropagation();
+          }
+        }}
         onKeyUp={(e) => {
           clearTimeout(timeout);
           timeout = setTimeout(() => {
@@ -598,12 +605,13 @@ function Documentos() {
         }}
         style={{
           display: 'flex',
-          flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
+          flex: 2,
+          flexDirection: 'row', justifyContent: 'center',
+          alignSelf: 'center', alignContent: 'center',
           whiteSpace: 'pre-wrap',
-          width: '100%',
           height: 'calc(100% - 20px)',
-          margin: 0, marginLeft: 5,
-          pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
+          margin: 0, marginLeft: -5,
+          // pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
         }}
         id="inputFieldDocumento"
       ></textarea>
@@ -613,7 +621,7 @@ function Documentos() {
   function printDiv() {
     console.log('PREPARANDO DOCUMENTO PARA IMPRESSÃO');
     let printdocument = document.getElementById("IMPRESSÃO - DOCUMENTO").innerHTML;
-    var a = window.open('  ', '  ', 'width=1024px, height=800px');
+    var a = window.open();
     a.document.write('<html>');
     a.document.write(printdocument);
     a.document.write('</html>');
@@ -751,9 +759,10 @@ function Documentos() {
       className='card-aberto'
       style={{
         display: card.toString().substring(0, 14) == 'card-documento' ? 'flex' : 'none',
+        flex: 3,
         flexDirection: 'row', justifyContent: 'center',
-        overflowY: 'hidden',
-        alignContent: 'center', alignSelf: 'center',
+        alignContent: 'center', alignSelf: 'center', alignItems: 'center',
+        height: 'calc(100% - 20px)',
       }}
     >
       <FieldDocumento></FieldDocumento>

@@ -2332,8 +2332,8 @@ function Prescricao() {
         (
           < div style={{
             display: 'flex', flexDirection: 'column', width: '100%',
-            backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent',
-            borderRadius: 5,
+            backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+            borderRadius: 5, margin: 2.5,
             breakInside: 'avoid',
           }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -2709,6 +2709,7 @@ function Prescricao() {
           flexDirection: 'column',
           justifyContent: 'flex-start',
           margin: 0, padding: 0,
+          width: 'calc(100% - 5px'
         }}>
         <div id="botões e pesquisa"
           style={{
@@ -2760,7 +2761,7 @@ function Prescricao() {
           </div>
         </div>
         <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center'
+          display: 'flex', flexDirection: 'row', justifyContent: 'center',
         }}>
           <ListaItensPrescricoes></ListaItensPrescricoes>
           <ListaPrescricoes></ListaPrescricoes>

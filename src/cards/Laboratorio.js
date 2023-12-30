@@ -2,29 +2,28 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
-// componentes.
-import Gravador from '../components/Gravador';
-// funções.
-import modal from '../functions/modal';
-// import toast from '../functions/toast';
-import checkinput from '../functions/checkinput';
 // imagens.
 import deletar from '../images/deletar.svg';
 import salvar from '../images/salvar.svg';
 import novo from '../images/novo.svg';
 import back from '../images/back.svg';
 import moment from "moment";
+import print from '../images/imprimir.svg';
+import logo from '../images/logo.svg';
 
 function Laboratorio() {
 
   // context.
   const {
     html,
-    settoast,
-    setdialogo,
     laboratorio, setlaboratorio,
-    paciente,
+    unidade,
+    unidades,
     atendimento,
+    atendimentos,
+    paciente,
+    pacientes,
+    usuario,
     card, setcard,
   } = useContext(Context);
 
@@ -72,11 +71,21 @@ function Laboratorio() {
       nome_exame: item.nome_exame,
       material: item.material,
       resultado: null,
-      status: 0
+      status: 0,
+      profissional: usuario.id
     }
     axios.post(html + 'insert_laboratorio', obj).then(() => {
+      console.log(obj);
       loadLaboratorio();
       setviewinsertlaboratorio(0);
+    })
+  }
+
+  const insertPackLaboratorio = (array) => {
+    console.log(array.map(item => item));
+    // eslint-disable-next-line
+    array.map(item => {
+      opcoeslaboratorio.filter(valor => valor.nome_exame == item).map(item => insertLaboratorio(item));
     })
   }
 
@@ -91,12 +100,161 @@ function Laboratorio() {
       nome_exame: item.nome_exame,
       material: item.material,
       resultado: resultado,
-      status: status
+      status: status,
+      profissional: item.profissional,
     }
     axios.post(html + 'update_laboratorio/' + item.id, obj).then(() => {
       loadLaboratorio();
       setviewinsertlaboratorio(0);
     })
+  }
+
+  const assinarPedidos = () => {
+    axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
+      // converte o status dos pedidos de exames laboratoriais de 0 para 1 (solicitados >> assinados). 
+      var x = response.data.rows;
+      x.filter(item => item.status == 0).map(item => updateLaboratorio(item, null, null, 1));
+      setTimeout(() => {
+        loadLaboratorio();
+        printDiv();
+      }, 1000);
+    })
+  }
+
+  // imprimir requisição de exames laboratoriais.
+  function printDiv() {
+    console.log('PREPARANDO DOCUMENTO PARA IMPRESSÃO');
+    let printdocument = document.getElementById("IMPRESSÃO - LABORATORIO").innerHTML;
+    var a = window.open();
+    a.document.write('<html>');
+    a.document.write(printdocument);
+    a.document.write('</html>');
+    a.print();
+  }
+  function PrintLaboratorio() {
+    return (
+      <div id="IMPRESSÃO - LABORATORIO"
+        className="print"
+      >
+        <table style={{ width: '100%' }}>
+          <thead style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Header></Header>
+              </td>
+            </tr>
+          </thead>
+          <tbody style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <div id="campos"
+                  style={{
+                    display: 'flex', flexDirection: 'column',
+                    breakInside: 'auto', alignSelf: 'center', width: '100%'
+                  }}>
+                  <Conteudo></Conteudo>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Footer></Footer>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    )
+  };
+  function Header() {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column', justifyContent: 'center'
+      }}>
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+          height: 100, width: '100%',
+          fontFamily: 'Helvetica',
+          breakInside: 'avoid',
+        }}>
+          <img
+            alt=""
+            src={logo}
+            style={{
+              margin: 0,
+              height: 100,
+              width: 100,
+            }}
+          ></img>
+          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
+            {'SOLICITAÇÃO DE EXAMES LABORATORIAIS'}
+          </div>
+          <div style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            borderRadius: 5, backgroundColor: 'gray', color: 'white',
+            padding: 10
+          }}>
+            <div>
+              {moment().format('DD/MM/YY - HH:mm')}
+            </div>
+            <div style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+              fontSize: 20,
+              fontFamily: 'Helvetica',
+              breakInside: 'avoid',
+            }}>
+              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
+            </div>
+            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
+            <div>{'ATENDIMENTO: ' + atendimento}</div>
+          </div>
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
+          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
+          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
+        </div>
+        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
+          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
+        </div>
+      </div>
+    )
+  }
+  function Footer() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        height: 100, width: '100%',
+        fontFamily: 'Helvetica',
+        breakInside: 'avoid',
+      }}>
+        <div className="text1">
+          _______________________________________________
+        </div>
+        <div className="text1">
+          {'PROFISSIONAL: ' + usuario.nome_usuario + ' - ' + usuario.conselho + '-' + usuario.n_conselho}
+        </div>
+      </div>
+    )
+  }
+  function Conteudo() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        fontFamily: 'Helvetica',
+        breakInside: 'auto',
+        whiteSpace: 'pre-wrap',
+        marginTop: 20,
+      }}>
+        {laboratorio.filter(item => item.status == 1).map(item => (
+          <div>{item.nome_exame}</div>
+        ))}
+      </div>
+    )
   }
 
   // componente para adição do exame laboratorial.
@@ -168,51 +326,78 @@ function Laboratorio() {
         style={{ display: viewinsertlaboratorio == 1 ? 'flex' : 'none' }}>
         <div className="janela"
           onClick={(e) => e.stopPropagation()}
-          style={{ flexDirection: 'column' }}>
-          <div className='text3'>SOLICITAÇÃO DE EXAMES LABORATORIAIS</div>
-          <div id="botão de retorno"
-            className="button-red"
-            style={{
-              position: 'absolute',
-              top: 10, right: 10,
-              display: 'flex',
-              alignSelf: 'center',
-            }}
-            onClick={() => setviewinsertlaboratorio(0)}>
-            <img
-              alt=""
-              src={back}
-              style={{ width: 30, height: 30 }}
-            ></img>
-          </div>
-          <div className='scroll'>
-            {arrayopcoeslaboratorio.map(item => (
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                <div className='button' style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}>
-                  {item.nome_exame}
-                </div>
-                <div id="btnsalvarlaboratorio"
-                  className='button-green'
-                  onClick={() => insertLaboratorio(item)}
+          style={{ flexDirection: 'column', position: 'relative' }}>
+          <div className='text3' style={{ marginBottom: 20 }}>SOLICITAÇÃO DE EXAMES LABORATORIAIS</div>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div id="filtro e lista de opções de exames laboratoriais"
+              style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            >
+              <FilterLaboratorio></FilterLaboratorio>
+              <div id="botão de retorno"
+                className="button-red"
+                style={{
+                  position: 'absolute',
+                  top: 10, right: 10,
+                  display: 'flex',
+                  alignSelf: 'center',
+                }}
+                onClick={() => setviewinsertlaboratorio(0)}>
+                <img
+                  alt=""
+                  src={back}
+                  style={{ width: 30, height: 30 }}
+                ></img>
+              </div>
+              <div className='scroll' style={{ height: 300, width: '40vw' }}>
+                {arrayopcoeslaboratorio.map(item => (
+                  <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                    <div className='button'
+                      style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}
+                    >
+                      {item.nome_exame}
+                    </div>
+                    <div id="btnsalvarlaboratorio"
+                      className='button-green'
+                      onClick={() => insertLaboratorio(item)}
+                    >
+                      <img
+                        alt=""
+                        src={salvar}
+                        style={{
+                          margin: 10,
+                          height: 30,
+                          width: 30,
+                        }}
+                      ></img>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className='text2'>PACOTES DE EXAMES</div>
+              <div id="packs para solicitação de exames"
+                className='scroll'
+                style={{
+                  width: '40vw', marginLeft: 10, height: 300,
+                  display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+                }}
+              >
+                <div className='button'
+                  style={{ height: 50, paddingLeft: 10, paddingRight: 10 }}
+                  onClick={() => insertPackLaboratorio(['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
                 >
-                  <img
-                    alt=""
-                    src={salvar}
-                    style={{
-                      margin: 10,
-                      height: 30,
-                      width: 30,
-                    }}
-                  ></img>
+                  BÁSICO
                 </div>
               </div>
-            ))}
+            </div>
           </div>
+
         </div>
       </div>
     )
     // eslint-disable-next-line
-  }, [viewinsertlaboratorio]);
+  }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio]);
 
   return (
     <div id="scroll-alergias"
@@ -226,7 +411,7 @@ function Laboratorio() {
           alignItems: 'center',
           width: '100%'
         }}>
-        {laboratorio.map(item => (
+        {laboratorio.sort((a, b) => a.status < b.status ? 1 : -1).map(item => (
           <div key={'laboratorio ' + item.id_alergia}
             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
           >
@@ -271,11 +456,11 @@ function Laboratorio() {
                   {item.resultado != null ? item.resultado : 'PENDENTE'}
                 </div>
               </div>
-              <div className={item.status == 0 ? 'button-red' : 'button-green'}
+              <div className={item.status == 0 ? 'button-red' : item.status == 1 ? 'button-yellow' : 'button-green'}
                 style={{
-                  width: 100, margin: 5,
+                  width: 150, margin: 5,
                 }}>
-                {item.status == 0 ? 'SOLICITADO' : 'LIBERADO'}
+                {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
               </div>
               <div className='button-red'
                 style={{
@@ -283,7 +468,7 @@ function Laboratorio() {
                   display: item.status == 0 ? 'flex' : 'none'
                 }}
                 onClick={(e) => {
-                  deleteLaboratorio(item); e.stopPropagation()
+                  deleteLaboratorio(item.id); e.stopPropagation()
                 }}>
                 <img
                   alt=""
@@ -298,27 +483,61 @@ function Laboratorio() {
             </div>
           </div>
         ))}
-        <div className='button-green'
-          style={{
-            width: 25, minWidth: 25, height: 25, minHeight: 25,
-            display: 'flex'
-          }}
-          onClick={(e) => {
-            loadOpcoesLaboratorio();
-            setviewinsertlaboratorio(1);
-          }}>
-          <img
-            alt=""
-            src={novo}
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <div id="botão para inserir exame laboratorial."
+            className='button-green'
             style={{
-              margin: 10,
-              height: 25,
-              width: 25,
+              display: 'flex'
             }}
-          ></img>
+            onClick={(e) => {
+              loadOpcoesLaboratorio();
+              setviewinsertlaboratorio(1);
+            }}>
+            <img
+              alt=""
+              src={novo}
+              style={{
+                margin: 10,
+                height: 25,
+                width: 25,
+              }}
+            ></img>
+          </div>
+          <div id="botão para imprimir exames laboratoriais solicitados."
+            className='button-green'
+            style={{
+              display: 'flex',
+            }}
+            onClick={(e) => {
+              assinarPedidos();
+            }}>
+            <img
+              alt=""
+              src={print}
+              style={{
+                margin: 10,
+                height: 25,
+                width: 25,
+              }}
+            ></img>
+          </div>
+          <div id="botão para sair da tela de exames laboratoriais"
+            className="button-yellow"
+            style={{
+              display: 'flex',
+              alignSelf: 'center',
+            }}
+            onClick={() => setcard('')}>
+            <img
+              alt=""
+              src={back}
+              style={{ width: 30, height: 30 }}
+            ></img>
+          </div>
         </div>
       </div>
       <InsertLaboratorio></InsertLaboratorio>
+      <PrintLaboratorio></PrintLaboratorio>
     </div >
   )
 }

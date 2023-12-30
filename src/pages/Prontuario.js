@@ -423,23 +423,19 @@ function Prontuario() {
       <div
         style={{
           display: "flex",
-          flex: 2,
           flexDirection: "column",
           justifyContent: "space-between",
           alignSelf: "center",
+          marginRight: 10,
+          marginLeft: 10,
+          height: window.innerHeight - 130,
+          // minHeight: window.innerHeight - 25,
         }}
       >
         <div className="text3">
-          {window.innerWidth < 769
-            ? unidades
-              .filter((item) => item.id_unidade == unidade)
-              .map((item) => item.nome_unidade)
-            : "LISTA DE PACIENTES - " +
-            unidades
-              .filter((item) => item.id_unidade == unidade)
-              .map((item) => item.nome_unidade)}
+          {unidades.filter((item) => item.id_unidade == unidade).map((item) => 'UNIDADE: ' + item.nome_unidade)}
         </div>
-        <div className="button" style={{ margin: 5, marginTop: 0, width: '60%', alignSelf: 'center' }}
+        <div className="button" style={{ margin: 10, marginTop: 5, width: '60%', alignSelf: 'center' }}
           onClick={() => setviewsalaselector(1)}
         >
           {consultorio}
@@ -1907,7 +1903,8 @@ function Prontuario() {
         maxLength={100}
         style={{
           width: window.innerWidth < 426 ? '70vw' : 500,
-          margin: 10, display: card == '' ? 'flex' : 'none'
+          margin: 10, display: card == '' ? 'flex' : 'none',
+          alignSelf: 'center'
         }}
       ></input>
     );
@@ -1918,11 +1915,10 @@ function Prontuario() {
       className="main fadein"
       style={{
         display: pagina == 1 ? "flex" : "none",
-        flex: 6,
         flexDirection: window.innerWidth > 425 ? "row" : "column",
-        justifyContent: window.innerWidth > 425 ? "center" : "center",
-        width: "100vw",
+        justifyContent: window.innerWidth > 425 ? "space-between" : "center",
         height: altura,
+        flex: 3,
       }}
     >
       <div
@@ -1931,10 +1927,9 @@ function Prontuario() {
           display: window.innerWidth < 426 && viewlista == 0 ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          height: window.innerHeight - 20,
+          height: window.innerHeight - 15,
           margin: 0,
-          marginLeft: window.innerWidth < 426 ? 0 : 10,
-          flex: 2,
+          flex: 1,
         }}
       >
         <Usuario></Usuario>
@@ -1943,16 +1938,14 @@ function Prontuario() {
       <div id="conteúdo cheio"
         className={"scroll"}
         style={{
+          flex: 2,
           display:
             window.innerWidth < 426 && viewlista == 1
               ? "none"
               : atendimento == null
                 ? "none"
                 : "flex",
-          flex: window.innerWidth < 426 ? 1 : 4,
           margin: 0, padding: 0,
-          paddingRight: 0,
-          marginLeft: window.innerWidth < 426 ? 0 : 10,
           marginRight: window.innerWidth < 426 ? 0 : 10,
           borderRadius: window.innerWidth < 426 ? 0 : 5,
           flexDirection: "row",
@@ -1962,48 +1955,60 @@ function Prontuario() {
           alignSelf: "center",
           alignItems: "center",
           scrollBehavior: "smooth",
-          height: window.innerWidth < 426 ? '' : window.innerHeight - 30,
-          minHeight: window.innerWidth < 426 ? '' : window.innerHeight - 30,
-          backgroundColor: 'rgba(242, 242, 242)'
+          height: window.innerHeight - 25,
+          minHeight: window.innerHeight - 25,
+          backgroundColor: 'rgba(242, 242, 242)',
         }}
       >
         <ViewPaciente></ViewPaciente>
-        <FilterCartoes></FilterCartoes>
-        {cartao(
-          null,
-          "DIAS DE INTERNAÇÃO: " +
-          atendimentos
-            .filter((item) => item.id_atendimento == atendimento)
-            .map((item) => moment().diff(item.data_inicio, "days")),
-          null,
-          0, 0
-        )}
-        {cartao(alergias, "ALERGIAS", "card-alergias", busyalergias, 0)}
-        {cartao(null, "ADMISSÃO", "card-documento-admissao", null, 1)}
-        {cartao(null, "EVOLUÇÃO", "card-documento-evolucao", null, 1)}
-        {cartao(null, "RECEITA MÉDICA", "card-documento-receita", null, 1)}
-        {cartao(null, "ATESTADO", "card-documento-atestado", null, 1)}
-        {cartao(null, "SUMÁRIO DE ALTA", "card-documento-alta", null, 1)}
-        {cartao(propostas.filter((item) => item.status == 0), "PROPOSTAS", "card-propostas", busypropostas, 0)}
-        {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes", null, 0)}
-        {cartao(riscos, "RISCOS", "card-riscos", busyriscos, 0)}
-        {cartao(null, "ALERTAS", "card-alertas", null, 0)}
-        {cartao(null, "SINAIS VITAIS", "card-sinaisvitais", busysinaisvitais, 0)}
-        {cartao(null, 'INVASÕES E LESÕES', "card-boneco", null, 0)}
-        {cartao(null, "VENTILAÇÃO MECÂNICA", "card-vm", busyvm, 0)}
-        {cartao(null, "INFUSÕES", "card-infusoes", busyinfusoes, 0)}
-        {cartao(null, "DIETA", "card-dietas", busydieta, 0)}
-        {cartao(
-          culturas.filter((item) => item.data_resultado == null),
-          "CULTURAS",
-          "card-culturas",
-          busyculturas
-        )}
-        {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", "card-atb", null, 1)}
-        {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
-        {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 0, 1)}
-        {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
-        {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
+        <div style={{ display: 'flex', flexDirection: 'column', alignSelf: 'center', width: 'calc(100% - 20px)' }}>
+          <FilterCartoes></FilterCartoes>
+        </div>
+        <div style={{
+          display: 'flex',
+          paddingRight: 5, flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-evenly",
+          alignContent: "flex-start",
+          alignSelf: "center",
+          alignItems: "center",
+        }}>
+          {cartao(
+            null,
+            "DIAS DE INTERNAÇÃO: " +
+            atendimentos
+              .filter((item) => item.id_atendimento == atendimento)
+              .map((item) => moment().diff(item.data_inicio, "days")),
+            null,
+            0, 0
+          )}
+          {cartao(alergias, "ALERGIAS", "card-alergias", busyalergias, 0)}
+          {cartao(null, "ADMISSÃO", "card-documento-admissao", null, 1)}
+          {cartao(null, "EVOLUÇÃO", "card-documento-evolucao", null, 1)}
+          {cartao(null, "RECEITA MÉDICA", "card-documento-receita", null, 1)}
+          {cartao(null, "ATESTADO", "card-documento-atestado", null, 1)}
+          {cartao(null, "SUMÁRIO DE ALTA", "card-documento-alta", null, 1)}
+          {cartao(propostas.filter((item) => item.status == 0), "PROPOSTAS", "card-propostas", busypropostas, 0)}
+          {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes", null, 0)}
+          {cartao(riscos, "RISCOS", "card-riscos", busyriscos, 0)}
+          {cartao(null, "ALERTAS", "card-alertas", null, 0)}
+          {cartao(null, "SINAIS VITAIS", "card-sinaisvitais", busysinaisvitais, 0)}
+          {cartao(null, 'INVASÕES E LESÕES', "card-boneco", null, 0)}
+          {cartao(null, "VENTILAÇÃO MECÂNICA", "card-vm", busyvm, 0)}
+          {cartao(null, "INFUSÕES", "card-infusoes", busyinfusoes, 0)}
+          {cartao(null, "DIETA", "card-dietas", busydieta, 0)}
+          {cartao(
+            culturas.filter((item) => item.data_resultado == null),
+            "CULTURAS",
+            "card-culturas",
+            busyculturas
+          )}
+          {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", "card-atb", null, 1)}
+          {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
+          {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 0, 1)}
+          {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
+          {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
+        </div>
         <Alergias></Alergias>
         <Documentos></Documentos>
         <Boneco></Boneco>
@@ -2026,16 +2031,14 @@ function Prontuario() {
       <div id="conteúdo vazio"
         className="scroll"
         style={{
+          flex: 2,
           display:
             window.innerWidth < 426 && viewlista == 1
               ? "none"
               : atendimento != null
                 ? "none"
                 : "flex",
-          flex: window.innerWidth < 426 ? 1 : 4,
           margin: 0, padding: 0,
-          paddingRight: 0,
-          marginLeft: window.innerWidth < 426 ? 0 : 10,
           marginRight: window.innerWidth < 426 ? 0 : 10,
           borderRadius: window.innerWidth < 426 ? 0 : 5,
           flexDirection: "column",
@@ -2043,8 +2046,8 @@ function Prontuario() {
           alignContent: "center",
           alignSelf: "center",
           alignItems: "center",
-          height: window.innerHeight - 30,
-          minHeight: window.innerHeight - 30,
+          height: window.innerHeight - 25,
+          minHeight: window.innerHeight - 25,
           position: "relative",
           scrollBehavior: "smooth",
           backgroundColor: 'rgba(242, 242, 242)'
