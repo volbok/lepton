@@ -410,7 +410,7 @@ function Laboratorio() {
           alignItems: 'center',
           width: '100%'
         }}>
-        {laboratorio.sort((a, b) => a.status < b.status ? 1 : -1).map(item => (
+        {laboratorio.sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
           <div key={'laboratorio ' + item.id_alergia}
             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
           >
@@ -463,7 +463,6 @@ function Laboratorio() {
               </div>
               <div className='button-red'
                 style={{
-                  width: 25, minWidth: 25, height: 25, minHeight: 25,
                   display: item.status == 0 ? 'flex' : 'none'
                 }}
                 onClick={(e) => {

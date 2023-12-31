@@ -31,6 +31,7 @@ function Triagem() {
     setatendimentos,
     setatendimento,
     atendimento,
+    salatriagem, setsalatriagem
   } = useContext(Context);
 
   // history (router).
@@ -127,9 +128,9 @@ function Triagem() {
     if (pagina == 30) {
       setpaciente([]);
       setatendimento(null);
+      setsalatriagem(null);
       loadPacientes();
       loadChamadas();
-      localStorage.setItem("sala", "null");
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -308,7 +309,6 @@ function Triagem() {
     axios.post(html + "update_atendimento/" + item.id_atendimento, obj).then(() => {
       console.log('ATENDIMENTO CLASSIFICADO COM SUCESSO');
       setclassificacao(classificacao);
-      document.getElementById(localStorage.getItem("botao")).className = "button-red";
     });
   }
 
@@ -336,7 +336,7 @@ function Triagem() {
                     botoes.item(i).className = "button-classifica-fade";
                   }
                   document.getElementById("clasifica " + item).className = "button-classifica-selected";
-                }, 300);
+                }, 1000);
               }}
               style={{
                 backgroundColor:
@@ -416,23 +416,16 @@ function Triagem() {
   function SalaSelector() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="text1">SELECIONE A SALA PARA ACOLHIMENTO DO PACIENTE</div>
+        <div className="text1">{salatriagem == null ? 'SELECIONE A SALA PARA ACOLHIMENTO' : 'SALA DE ACOLHIMENTO: ' + salatriagem}</div>
         <div id="salas para chamada"
           style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           {salas.map(item => (
             <div
               id={"btnsala " + item}
-              className="button"
+              className={salatriagem == item ? "button-red" : "button"}
               onClick={() => {
-                localStorage.setItem("sala", item);
-                var botoes = document
-                  .getElementById("salas para chamada")
-                  .getElementsByClassName("button-red");
-                for (var i = 0; i < botoes.length; i++) {
-                  botoes.item(i).className = "button";
-                }
-                localStorage.setItem("botao", "btnsala " + item);
-                document.getElementById("btnsala " + item).className = "button-red";
+                setsalatriagem(item);
+                console.log(salatriagem);
               }}
               style={{ paddingLeft: 20, paddingRight: 20 }}
             >
@@ -454,23 +447,20 @@ function Triagem() {
 
   // inserindo registro de chamada para triagem.
   const callPaciente = (item) => {
-    console.log(localStorage.getItem("sala"));
-    if (localStorage.getItem("sala") != "null") {
+    if (salatriagem != null) {
       var obj = {
         id_unidade: unidade,
         id_paciente: item.id_paciente,
         nome_paciente: item.nome_paciente,
         id_atendimento: item.id_atendimento,
-        id_sala: localStorage.getItem("sala"),
+        id_sala: salatriagem,
         data: moment()
       }
-      console.log(obj);
       axios.post(html + 'insert_chamada/', obj).then(() => {
         axios.get(html + 'list_chamada/' + unidade).then((response) => {
           let x = response.data.rows;
           let y = x.filter(valor => valor.id_atendimento == item.id_atendimento);
           setchamadas(response.data.rows);
-          document.getElementById(localStorage.getItem("botao")).className = "button-red";
           document.getElementById('contagem de chamadas' + item.id_atendimento).innerHTML = y.length;
         });
       });
@@ -507,7 +497,7 @@ function Triagem() {
           style={{
             display: arrayatendimentos.filter(item => item.id_unidade == unidade).length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerHeight - 140,
+            height: window.innerHeight - 250,
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
           }}
         >
@@ -597,19 +587,17 @@ function Triagem() {
                     onClick={() => {
                       setatendimento(item);
                       setpaciente(item.id_paciente);
-                      if (pagina == 30) {
-                        setTimeout(() => {
-                          var botoes = document
-                            .getElementById("scroll atendimentos")
-                            .getElementsByClassName("button-red");
-                          for (var i = 0; i < botoes.length; i++) {
-                            botoes.item(i).className = "button";
-                          }
-                          document.getElementById(
-                            "atendimento " + item.id_atendimento
-                          ).className = "button-red";
-                        }, 100);
-                      }
+                      setTimeout(() => {
+                        var botoes = document
+                          .getElementById("scroll atendimentos")
+                          .getElementsByClassName("button-red");
+                        for (var i = 0; i < botoes.length; i++) {
+                          botoes.item(i).className = "button";
+                        }
+                        document.getElementById(
+                          "atendimento " + item.id_atendimento
+                        ).className = "button-red";
+                      }, 100);
                     }}
                   >
                     <div
@@ -656,7 +644,7 @@ function Triagem() {
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
-            height: window.innerHeight - 150,
+            height: window.innerHeight - 250,
             width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
           }}
         >
@@ -667,7 +655,7 @@ function Triagem() {
       </div>
     );
     // eslint-disable-next-line
-  }, [arrayatendimentos]);
+  }, [arrayatendimentos, salatriagem]);
 
   return (
     <div
@@ -692,6 +680,7 @@ function Triagem() {
         }}
       >
         <Usuario></Usuario>
+        <SalaSelector></SalaSelector>
         <ListaDeAtendimentos></ListaDeAtendimentos>
       </div>
       <div id="conteúdo cheio"
@@ -716,7 +705,6 @@ function Triagem() {
           scrollBehavior: "smooth",
         }}
       >
-        <SalaSelector></SalaSelector>
         <div className='text1'>INFORME OS DADOS VITAIS PARA CLASSIFICAÇÃO AUTOMÁTICA</div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

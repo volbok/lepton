@@ -463,7 +463,7 @@ function Login() {
               key={"ACESSO: " + item.id_acesso}
               className="button"
               style={{
-                display: item.id_unidade == 4 ? "none" : "flex",
+                display: "flex",
                 padding: 10,
                 margin: 5,
                 width: 150,

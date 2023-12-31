@@ -113,7 +113,8 @@ function App() {
 
   const [prescricao, setprescricao] = useState([]);
 
-  const [consultorio, setconsultorio] = useState('SELECIONAR SALA');
+  const [consultorio, setconsultorio] = useState('SELECIONAR SALA'); // seletor da sala de atendimento.
+  const [salatriagem, setsalatriagem] = useState(null); // seletor da sala de triagem.
 
   const [tipodocumento, settipodocumento] = useState(null);
   const [documentos, setdocumentos] = useState([]);
@@ -263,6 +264,8 @@ function App() {
         setaltura,
         consultorio,
         setconsultorio,
+        salatriagem,
+        setsalatriagem,
         tipodocumento, settipodocumento,
         documentos, setdocumentos,
         laboratorio, setlaboratorio

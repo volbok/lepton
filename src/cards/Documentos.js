@@ -584,7 +584,13 @@ function Documentos() {
         placeholder='DIGITE AQUI O TEXTO DO DOCUMENTO.'
         onFocus={(e) => (e.target.placeholder = '')}
         onBlur={(e) => (e.target.placeholder = 'DIGITE AQUI O TEXTO DO DOCUMENTO.')}
-        onKeyDown={(e) => {
+        onAuxClick={(e) => {
+          if (selecteddocumento.status == 1) {
+            document.getElementById("inputFieldDocumento").blur();
+            e.stopPropagation();
+          }
+        }}
+        onClick={(e) => {
           if (selecteddocumento.status == 1) {
             document.getElementById("inputFieldDocumento").blur();
             e.stopPropagation();

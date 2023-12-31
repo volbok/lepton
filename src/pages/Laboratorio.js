@@ -8,6 +8,7 @@ import back from '../images/back.svg';
 import moment from "moment";
 // router.
 import { useHistory } from "react-router-dom";
+import toast from '../functions/toast';
 
 
 function Laboratorio() {
@@ -19,6 +20,8 @@ function Laboratorio() {
     laboratorio, setlaboratorio,
     atendimentos, setatendimentos,
     unidades,
+    settoast,
+    pacientes, paciente
   } = useContext(Context);
 
   useEffect(() => {
@@ -70,22 +73,22 @@ function Laboratorio() {
   function TelaResultadoLaboratorio() {
     return (
       <div className='scroll' style={{
-        height: '90vh', flexDirection: 'row', flexWrap: 'wrap',
+        height: '90vh', width: 'calc(100% - 40px)', flexDirection: 'row', flexWrap: 'wrap',
         justifyContent: 'space-evenly', margin: 10,
       }}>
-        {laboratorio.filter(item => item.status = 1).map(item => (
+        {laboratorio.filter(item => item.status == 1).map(item => (
           <div key={'laboratorio ' + item.id_alergia}
             style={{
               display: 'flex', flexDirection: 'row', justifyContent: 'center',
-              width: '45vw',
+              height: 220,
             }}
           >
             <div className="button-yellow" style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 250,
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
               marginRight: 0,
-              borderTopRightRadius: 0, borderBottomRightRadius: 0,
+              borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 200
             }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5 }}>
                 <div>
                   {moment(item.data_pedido).format('DD/MM/YY')}
                 </div>
@@ -98,13 +101,15 @@ function Laboratorio() {
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   margin: 10, padding: 10, borderRadius: 5, backgroundColor: 'rgb(0,0,0, 0.1)'
                 }}>
+                <div id="identificação do paciente" style={{marginBottom: 10 }}>
+                  {pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente)}
+                </div>
                 <div>{'UNIDADE: ' + unidades.filter(zeta => atendimentos.filter(valor => valor.id_atendimento == item.id_atendimento).map(valor => valor.id_unidade) == zeta.id_unidade).map(zeta => zeta.nome_unidade)}</div>
                 <div>{'LEITO: ' + atendimentos.filter(valor => valor.id_atendimento == item.id_atendimento).map(valor => valor.leito)}</div>
               </div>
             </div>
             <div
               className="button" style={{
-                width: '100%',
                 marginLeft: 0,
                 borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
               }}
@@ -132,7 +137,7 @@ function Laboratorio() {
                         document.getElementById("campo para digitar o resultado" + item.id).focus();
                       }
                     }}
-                    style={{ width: 'calc(100% - 10px)', height: 60, minHeight: 60, maxHeight: 60, alignSelf: 'center' }}
+                    style={{ width: 200, height: 60, minHeight: 60, maxHeight: 60, alignSelf: 'center' }}
                   >
                   </textarea>
                 </div>
@@ -144,7 +149,11 @@ function Laboratorio() {
                     maxHeight: 30, minHeight: 30, maxWidth: 30, minWidth: 30,
                   }}
                   onClick={(e) => {
-                    updateLaboratorio(item, document.getElementById("campo para digitar o resultado" + item.id).value.toUpperCase(), moment(), 2); e.stopPropagation()
+                    if (document.getElementById("campo para digitar o resultado" + item.id).value != '') {
+                      updateLaboratorio(item, document.getElementById("campo para digitar o resultado" + item.id).value.toUpperCase(), moment(), 2); e.stopPropagation();
+                    } else {
+                      toast(settoast, 'RESULTADO EM BRANCO!', 'red', 2000);
+                    }
                   }}>
                   <img
                     alt=""

@@ -87,12 +87,10 @@ function Prontuario() {
     vm,
     setinterconsultas,
     interconsultas,
-
     card, setcard,
-
     prescricao, setprescricao,
-
     consultorio, setconsultorio,
+    setlaboratorio,
   } = useContext(Context);
 
   // history (router).
@@ -724,7 +722,7 @@ function Prontuario() {
                       if (pagina == 1) {
                         setTimeout(() => {
                           var botoes = document
-                            .getElementById("scroll atendimentos")
+                            .getElementById("scroll atendimentos com pacientes")
                             .getElementsByClassName("button-red");
                           for (var i = 0; i < botoes.length; i++) {
                             botoes.item(i).className = "button";
@@ -1158,26 +1156,20 @@ function Prontuario() {
       });
     // vm.
     setbusyvm(1);
-    axios
-      .get(html + "list_vm/" + atendimento)
-      .then((response) => {
-        setbusyvm(0);
-        setvm(response.data.rows);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    axios.get(html + "list_vm/" + atendimento).then((response) => {
+      setbusyvm(0);
+      setvm(response.data.rows);
+    })
     // interconsultas.
     setbusyinterconsultas(1);
-    axios
-      .get(html + "list_interconsultas/" + atendimento)
-      .then((response) => {
-        setinterconsultas(response.data.rows);
-        setbusyinterconsultas(0);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    axios.get(html + "list_interconsultas/" + atendimento).then((response) => {
+      setinterconsultas(response.data.rows);
+      setbusyinterconsultas(0);
+    })
+    // laboratorio.
+    axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
+      setlaboratorio(response.data.rows);
+    })
   };
 
   // estado para alternância entre lista de pacientes e conteúdo do passômetro para versão mobile.
