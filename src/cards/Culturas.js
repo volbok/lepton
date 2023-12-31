@@ -27,6 +27,7 @@ function Culturas() {
     culturas, setculturas,
     arrayculturas, setarrayculturas,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -175,7 +176,7 @@ function Culturas() {
                   display: 'flex',
                   flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
                   whiteSpace: 'pre-wrap',
-                  width: window.innerWidth < 426 ? '70vw' : '50vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '50vw',
                 }}
                 id="inputMaterial"
                 title="MATERIAL."
@@ -232,7 +233,7 @@ function Culturas() {
                   display: 'flex',
                   flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
                   whiteSpace: 'pre-wrap',
-                  width: window.innerWidth < 426 ? '70vw' : '50vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '50vw',
                 }}
                 id="inputResultado"
                 title="RESULTADO."
@@ -301,7 +302,7 @@ function Culturas() {
       <div className='input-special'
         style={{
           position: 'sticky',
-          top: window.innerWidth < 426 ? 70 : 10,
+          top: window.innerWidth < mobilewidth ? 70 : 10,
           display: 'flex', alignSelf: 'center',
           zIndex: 20,
         }}>
@@ -317,7 +318,7 @@ function Culturas() {
           id="inputFilterCultura"
           defaultValue={filtercultura}
           maxLength={100}
-          style={{ margin: 5, width: window.innerWidth < 426 ? '65vw' : '30vw' }}
+          style={{ margin: 5, width: window.innerWidth < mobilewidth ? '65vw' : '30vw' }}
         ></input>
       </div>
     )
@@ -346,31 +347,31 @@ function Culturas() {
             style={{
               position: 'relative',
               margin: 5,
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-              width: window.innerWidth < 426 ? '95%' : '',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+              width: window.innerWidth < mobilewidth ? '95%' : '',
             }}
           >
             <div style={{
-              display: 'flex', flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+              display: 'flex', flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center', alignContent: 'center', alignItems: 'center',
             }}>
               <div id="identificador"
                 className={item.resultado != null ? 'button-green' : 'button-red'}
                 style={{
                   flex: 1,
-                  flexDirection: window.innerWidth < 426 ? 'row' : 'column',
-                  justifyContent: window.innerWidth < 426 ? 'space-between' : 'center',
+                  flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
+                  justifyContent: window.innerWidth < mobilewidth ? 'space-between' : 'center',
                   alignSelf: 'center', alignContent: 'center',
                   margin: 5,
                   padding: 5,
-                  height: window.innerWidth < 426 ? 60 : 200,
-                  width: window.innerWidth < 426 ? '95%' : '',
-                  marginBottom: window.innerWidth < 426 ? 0 : 5,
-                  marginRight: window.innerWidth < 426 ? 5 : 0,
-                  borderTopLeftRadius: window.innerWidth < 426 ? 5 : 5,
-                  borderTopRightRadius: window.innerWidth < 426 ? 5 : 0,
-                  borderBottomLeftRadius: window.innerWidth < 426 ? 0 : 5,
-                  borderBottomRightRadius: window.innerWidth < 426 ? 0 : 0,
+                  height: window.innerWidth < mobilewidth ? 60 : 200,
+                  width: window.innerWidth < mobilewidth ? '95%' : '',
+                  marginBottom: window.innerWidth < mobilewidth ? 0 : 5,
+                  marginRight: window.innerWidth < mobilewidth ? 5 : 0,
+                  borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                  borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                  borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                  borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
                 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div className='text2'
@@ -403,15 +404,15 @@ function Culturas() {
                 style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
                   margin: 5, padding: 5,
-                  borderTopLeftRadius: window.innerWidth < 426 ? 0 : 0,
-                  borderTopRightRadius: window.innerWidth < 426 ? 0 : 5,
-                  borderBottomLeftRadius: window.innerWidth < 426 ? 5 : 0,
-                  borderBottomRightRadius: window.innerWidth < 426 ? 5 : 5,
-                  marginTop: window.innerWidth < 426 ? 0 : 5,
-                  marginLeft: window.innerWidth < 426 ? 5 : 0,
+                  borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                  borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                  borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                  borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                  marginTop: window.innerWidth < mobilewidth ? 0 : 5,
+                  marginLeft: window.innerWidth < mobilewidth ? 5 : 0,
                   // backgroundColor: 'white',
                   height: 200,
-                  width: window.innerWidth < 426 ? '95%' : '',
+                  width: window.innerWidth < mobilewidth ? '95%' : '',
                 }}>
                 <input id={"inputMaterial " + item.id_cultura}
                   className="input"

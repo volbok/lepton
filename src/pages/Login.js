@@ -30,6 +30,7 @@ function Login() {
     usuario,
     setusuarios,
     cliente,
+    mobilewidth,
   } = useContext(Context);
 
   // history (router).
@@ -455,7 +456,7 @@ function Login() {
             flexDirection: "row",
             justifyContent: "center",
             flexWrap: "wrap",
-            width: window.innerWidth > 425 ? "45vw" : "80vw",
+            width: window.innerWidth < mobilewidth ? "80vw" : "45vw",
           }}
         >
           {acessos.map((item) => (
@@ -526,7 +527,7 @@ function Login() {
     return (
       <div
         style={{
-          display: viewlistaunidades == 1 && window.innerWidth > 425 ? "flex" : "none",
+          display: viewlistaunidades == 1 && window.innerWidth < mobilewidth ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignSelf: "center",
@@ -751,7 +752,7 @@ function Login() {
     return (
       <div
         style={{
-          display: window.innerWidth < 426 || viewlistaunidades == 0 ? 'none' : 'flex',
+          display: window.innerWidth < mobilewidth || viewlistaunidades == 0 ? 'none' : 'flex',
           flexDirection: 'column', justifyContent: 'center',
           marginTop: 20
         }}
@@ -842,7 +843,7 @@ function Login() {
           className="text2 popin"
           style={{
             display:
-              window.innerWidth < 426 && viewalterarsenha == 1
+              window.innerWidth < mobilewidth && viewalterarsenha == 1
                 ? "none"
                 : "flex",
           }}
@@ -853,7 +854,7 @@ function Login() {
           className="text2"
           style={{
             display:
-              window.innerWidth < 426 && viewalterarsenha == 1
+              window.innerWidth < mobilewidth && viewalterarsenha == 1
                 ? "none"
                 : "flex",
             margin: 20,
@@ -886,7 +887,7 @@ function Login() {
             textDecoration: "underline",
             color: "white",
             marginTop:
-              window.innerWidth < 426 && viewalterarsenha == 1 ? 20 : 0,
+              window.innerWidth < mobilewidth && viewalterarsenha == 1 ? 20 : 0,
           }}
           onClick={() => {
             if (viewalterarsenha == 1) {

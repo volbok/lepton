@@ -9,27 +9,22 @@ function Alertas() {
 
   // context.
   const {
-
     // alerta para invasões antigas.
     // alerta para risco de pavm.
     invasoes,
-
     // alerta para risco de sepse.
     // alerta para redução do débito urinário.
     // alerta para ausência de evacuações.
     // alerta para interrupção da dieta se estase.
     sinaisvitais,
-
     // alerta para culturas pendentes.
     // alerta para solicitar cultura de controle se germe gram-positivo.
     culturas,
-
     // alerta para antibióticos em uso por tempo prolongado.
     antibioticos,
-
     // alerta para início de dieta enteral para o paciente intubado.
     dietas,
-
+    mobilewidth,
     card, setcard,
   } = useContext(Context);
 
@@ -76,8 +71,8 @@ function Alertas() {
         {invasoes.filter(item => item.data_retirada == null && moment().diff(item.data_implante, 'days') > 15).map(item => (
           <div className='button-red' key={'invasoes ' + item.id_invasao}
             style={{
-              height: window.innerWidth < 426 ? heightmobile : height,
-              width: window.innerWidth < 426 ? widthmobile : width,
+              height: window.innerWidth < mobilewidth ? heightmobile : height,
+              width: window.innerWidth < mobilewidth ? widthmobile : width,
               backgroundColor: yellow,
             }}>
             {'TEMPO PROLONGADO DE INVASÃO: ' + item.dispositivo + ' EM ' + item.local + ' - ' + moment().diff(item.data_implante, 'days') + ' DIAS.'}
@@ -92,8 +87,8 @@ function Alertas() {
         {invasoes.filter(item => item.data_retirada == null && (item.dispositivo == 'TOT' || item.dispositivo == 'TQT')).map(item => (
           <div className='button-red'
             style={{
-              height: window.innerWidth < 426 ? heightmobile : height,
-              width: window.innerWidth < 426 ? widthmobile : width,
+              height: window.innerWidth < mobilewidth ? heightmobile : height,
+              width: window.innerWidth < mobilewidth ? widthmobile : width,
               backgroundColor: 'purple',
             }}
           >
@@ -109,8 +104,8 @@ function Alertas() {
         <div id='alerta_sepse'
           className='button-red'
           style={{
-            height: window.innerWidth < 426 ? heightmobile : height,
-            width: window.innerWidth < 426 ? widthmobile : width,
+            height: window.innerWidth < mobilewidth ? heightmobile : height,
+            width: window.innerWidth < mobilewidth ? widthmobile : width,
             backgroundColor: 'red',
             display: 'flex', flexDirection: 'column',
           }}
@@ -137,8 +132,8 @@ function Alertas() {
       <div id='alerta_dados'
         className='button-red'
         style={{
-          height: window.innerWidth < 426 ? heightmobile : height,
-          width: window.innerWidth < 426 ? widthmobile : width,
+          height: window.innerWidth < mobilewidth ? heightmobile : height,
+          width: window.innerWidth < mobilewidth ? widthmobile : width,
           display: sinaisvitais.length > 0 && (
             pam < 70 || pam > 100 || fc < 50 || fc > 130 || fr < 15 || fr > 24 || tax < 35 || tax > 38 || sao2 < 90) ?
             'flex' : 'none',
@@ -168,8 +163,8 @@ function Alertas() {
       <div id='alerta_diurese&balanco'
         className='button-red'
         style={{
-          height: window.innerWidth < 426 ? heightmobile : height,
-          width: window.innerWidth < 426 ? widthmobile : width,
+          height: window.innerWidth < mobilewidth ? heightmobile : height,
+          width: window.innerWidth < mobilewidth ? widthmobile : width,
           display: sinaisvitais.length > 0 && (
             diurese < 500 || diurese > 3000 || balanco < -3000 || balanco > 2000) ?
             'flex' : 'none',
@@ -194,8 +189,8 @@ function Alertas() {
       <div id='alerta_estase&evacuacao'
         className='button-red'
         style={{
-          height: window.innerWidth < 426 ? heightmobile : height,
-          width: window.innerWidth < 426 ? widthmobile : width,
+          height: window.innerWidth < mobilewidth ? heightmobile : height,
+          width: window.innerWidth < mobilewidth ? widthmobile : width,
           display: sinaisvitais.length > 0 && (
             estase > 200 || evacuacao.length == 0) ?
             'flex' : 'none',
@@ -219,8 +214,8 @@ function Alertas() {
       <div id='alerta_vm'
         className='button-red'
         style={{
-          height: window.innerWidth < 426 ? heightmobile : height,
-          width: window.innerWidth < 426 ? widthmobile : width,
+          height: window.innerWidth < mobilewidth ? heightmobile : height,
+          width: window.innerWidth < mobilewidth ? widthmobile : width,
           display:
             dietas.filter(item => item.tipo == 'SUSPENSA' || item.tipo == 'ORAL' || item.tipo == 'NÃO DEFINIDA').length > 0 &&
               (invasoes.filter(item => item.dispositivo == 'TOT' && item.data_retirada == null).length > 0) ?
@@ -239,8 +234,8 @@ function Alertas() {
         className='button-red'
         style={{
           display: culturas.filter(item => item.data_resultado == null).length > 0 ? 'flex' : 'none',
-          height: window.innerWidth < 426 ? heightmobile : height,
-          width: window.innerWidth < 426 ? widthmobile : width,
+          height: window.innerWidth < mobilewidth ? heightmobile : height,
+          width: window.innerWidth < mobilewidth ? widthmobile : width,
           flexDirection: 'column',
           backgroundColor: yellow,
         }}
@@ -262,8 +257,8 @@ function Alertas() {
             <div className='button-red' key={'alertaatb ' + item.id_antibiotico}
               style={{
                 display: 'flex',
-                height: window.innerWidth < 426 ? heightmobile : height,
-                width: window.innerWidth < 426 ? widthmobile : width,
+                height: window.innerWidth < mobilewidth ? heightmobile : height,
+                width: window.innerWidth < mobilewidth ? widthmobile : width,
                 flexDirection: 'column',
                 backgroundColor: yellow,
               }}
@@ -294,8 +289,8 @@ function Alertas() {
               style={{
                 display: 'flex',
                 flexDirection: 'column', justifyContent: 'center',
-                height: window.innerWidth < 426 ? heightmobile : height,
-                width: window.innerWidth < 426 ? widthmobile : width,
+                height: window.innerWidth < mobilewidth ? heightmobile : height,
+                width: window.innerWidth < mobilewidth ? widthmobile : width,
                 backgroundColor: yellow,
               }}>
               <div>{'COCOS GRAM-POSITIVOS ISOLADOS EM:'}</div>

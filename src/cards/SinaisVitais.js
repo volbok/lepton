@@ -25,6 +25,7 @@ function SinaisVitais() {
     sinaisvitais, setsinaisvitais,
     atendimento,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   const [item_sinaisvitais, setitem_sinaisvitais] = useState();
@@ -160,21 +161,21 @@ function SinaisVitais() {
       <div className="fundo"
         onClick={(e) => { setviewinsertsinaisvitais(0); e.stopPropagation() }}
         style={{ display: viewinsertsinaisvitais == 1 || viewinsertsinaisvitais == 2 ? 'flex' : 'none' }}>
-        <div className={window.innerWidth < 426 ? "janela scroll" : "janela"}
+        <div className={window.innerWidth < mobilewidth ? "janela scroll" : "janela"}
           onClick={(e) => e.stopPropagation()}
           style={{
             flexDirection: 'column',
-            width: window.innerWidth < 426 ? '80vw' : '60vw',
-            height: window.innerWidth < 426 ? 0.5 * window.innerHeight : '',
-            justifyContent: window.innerWidth < 426 ? 'flex-start' : 'center',
+            width: window.innerWidth < mobilewidth ? '80vw' : '60vw',
+            height: window.innerWidth < mobilewidth ? 0.5 * window.innerHeight : '',
+            justifyContent: window.innerWidth < mobilewidth ? 'flex-start' : 'center',
             alignContent: 'center',
           }}>
           <div
             style={{
               display: 'flex',
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-              flexWrap: window.innerWidth < 426 ? 'nowrap' : 'wrap',
-              justifyContent: window.innerWidth < 426 ? 'flex-start' : 'center',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+              flexWrap: window.innerWidth < mobilewidth ? 'nowrap' : 'wrap',
+              justifyContent: window.innerWidth < mobilewidth ? 'flex-start' : 'center',
               alignContent: 'center',
             }}>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -188,7 +189,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'PAS')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -208,7 +209,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'PAD')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -228,7 +229,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'FC')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -248,7 +249,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'FR')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -268,7 +269,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'SAO2')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -295,7 +296,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'TAX')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -315,7 +316,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'GLICEMIA')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -334,7 +335,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'DIURESE')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -354,7 +355,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'BH')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -373,7 +374,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'EVACUAÇÃO')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -393,7 +394,7 @@ function SinaisVitais() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'ESTASE')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -514,14 +515,14 @@ function SinaisVitais() {
         style={{
           display: sinaisvitais.length < 1 ? 'none' : 'flex',
           flexDirection: 'column', justifyContent: 'center',
-          width: window.innerWidth < 426 ? '80vw' : '100%', marginTop: 5,
+          width: window.innerWidth < mobilewidth ? '80vw' : '100%', marginTop: 5,
           alignSelf: 'center',
         }}>
         <div id="gráfico" className='scroll'
           style={{
             display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
             overflowX: 'scroll', overflowY: 'hidden',
-            width: window.innerWidth < 426 ? '70vw' : '60vw',
+            width: window.innerWidth < mobilewidth ? '70vw' : '60vw',
           }}>
           {sinaisvitais.slice(-15).map(item => (
             <div
@@ -689,8 +690,8 @@ function SinaisVitais() {
       <Botoes></Botoes>
       <div style={{
         display: 'flex',
-        flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-        justifyContent: window.innerWidth < 426 ? 'center' : 'space-evenly',
+        flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+        justifyContent: window.innerWidth < mobilewidth ? 'center' : 'space-evenly',
         flexWrap: 'wrap'
       }}>
         {sinaisvitais.sort((a, b) => moment(a.data_sinais_vitais) < moment(b.data_sinais_vitais) ? 1 : -1).slice(-4).map(item => (
@@ -699,7 +700,7 @@ function SinaisVitais() {
             onClick={(e) => { setitem_sinaisvitais(item); setviewinsertsinaisvitais(2); e.stopPropagation(); }}
             style={{
               display: 'flex',
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center',
               alignSelf: 'center',
             }}
@@ -708,20 +709,20 @@ function SinaisVitais() {
               className='button-yellow'
               style={{
                 flex: 1,
-                flexDirection: window.innerWidth < 426 ? 'row' : 'column',
+                flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
                 justifyContent: 'center',
                 alignSelf: 'center',
                 margin: 0,
                 padding: 5,
-                height: window.innerWidth < 426 ? '200vh' : window.innerWidth > 425 && window.innerWidth < 769 ? '60vh' : 250,
-                width: window.innerWidth < 426 ? '90%' : 50,
-                borderTopLeftRadius: window.innerWidth < 426 ? 5 : 5,
-                borderTopRightRadius: window.innerWidth < 426 ? 5 : 0,
-                borderBottomLeftRadius: window.innerWidth < 426 ? 0 : 5,
-                borderBottomRightRadius: window.innerWidth < 426 ? 0 : 0,
+                height: window.innerWidth < mobilewidth ? '200vh' : window.innerWidth > parseInt(mobilewidth) + 1 && window.innerWidth < 769 ? '60vh' : 250,
+                width: window.innerWidth < mobilewidth ? '90%' : 50,
+                borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
               }}>
               <div style={{
-                display: window.innerWidth < 426 ? 'none' : 'flex',
+                display: window.innerWidth < mobilewidth ? 'none' : 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center'
               }}>
@@ -745,7 +746,7 @@ function SinaisVitais() {
                 </div>
               </div>
               <div style={{
-                display: window.innerWidth < 426 ? 'flex' : 'none',
+                display: window.innerWidth < mobilewidth ? 'flex' : 'none',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 width: '100%',
@@ -772,17 +773,17 @@ function SinaisVitais() {
             <div id="sinais vitais"
               className='button'
               style={{
-                flex: window.innerWidth < 426 ? 11 : 4,
+                flex: window.innerWidth < mobilewidth ? 11 : 4,
                 display: 'flex', flexDirection: 'row',
                 justifyContent: 'center',
                 alignSelf: 'center',
                 flexWrap: 'wrap',
-                width: window.innerWidth < 426 ? '90%' : '27vw',
-                height: window.innerWidth < 426 ? '200vh' : window.innerWidth > 425 && window.innerWidth < 769 ? '60vh' : 250,
-                borderTopLeftRadius: window.innerWidth < 426 ? 0 : 0,
-                borderTopRightRadius: window.innerWidth < 426 ? 0 : 5,
-                borderBottomLeftRadius: window.innerWidth < 426 ? 5 : 0,
-                borderBottomRightRadius: window.innerWidth < 426 ? 5 : 5,
+                width: window.innerWidth < mobilewidth ? '90%' : '27vw',
+                height: window.innerWidth < mobilewidth ? '200vh' : window.innerWidth > parseInt(mobilewidth) + 1 && window.innerWidth < 769 ? '60vh' : 250,
+                borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
                 margin: 0,
               }}
             >

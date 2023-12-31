@@ -22,6 +22,7 @@ function Dieta() {
     dietas, setdietas,
     atendimento,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -142,7 +143,7 @@ function Dieta() {
             onClick={() => setviewopcoesdieta(1)}
             className="button"
             style={{
-              width: window.innerWidth < 426 ? '50vw' : '15vw',
+              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
               margin: 5,
             }}
             id="inputTipo"
@@ -163,7 +164,7 @@ function Dieta() {
             defaultValue={dieta.infusao}
             style={{
               display: tipodieta == 'ORAL' || tipodieta == 'NÃO DEFINIDA' ? 'none' : 'flex',
-              width: window.innerWidth < 426 ? '70vw' : '10vw',
+              width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
               margin: 5,
             }}
             id="inputInfusao"
@@ -182,7 +183,7 @@ function Dieta() {
             defaultValue={dieta.get}
             style={{
               display: tipodieta == 'ORAL' || tipodieta == 'NÃO DEFINIDA' ? 'none' : 'flex',
-              width: window.innerWidth < 426 ? '70vw' : '10vw',
+              width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
               margin: 5,
             }}
             id="inputGet"
@@ -225,7 +226,7 @@ function Dieta() {
             style={{
               display: 'none',
               flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
-              width: window.innerWidth > 425 ? '10vw' : '70vw',
+              width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
             }}
           ></input>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>

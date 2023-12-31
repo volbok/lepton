@@ -1183,7 +1183,7 @@ function Prescricao() {
                       setviewviaitemprescricao(1);
                     }}
                     style={{
-                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      display: 'flex',
                       width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5
                     }}>
@@ -1210,7 +1210,7 @@ function Prescricao() {
                       setviewcondicaoitemprescricao(1);
                     }}
                     style={{
-                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      display: 'flex',
                       width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5
                     }}>
@@ -1392,7 +1392,7 @@ function Prescricao() {
                       setviewviaitemprescricao(1);
                     }}
                     style={{
-                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      display: 'flex',
                       width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5
                     }}>
@@ -1419,7 +1419,7 @@ function Prescricao() {
                       setviewcondicaoitemprescricao(1);
                     }}
                     style={{
-                      display: window.innerWidth > 425 ? 'flex' : 'none',
+                      display: 'flex',
                       width: 50, minWidth: 50, maxWidth: 50,
                       margin: 5
                     }}>
@@ -1936,7 +1936,7 @@ function Prescricao() {
                 setarrayselector(vias);
               }}
               style={{
-                display: window.innerWidth > 425 ? 'flex' : 'none',
+                display: 'flex',
                 width: 50, minWidth: 50, maxWidth: 50,
                 margin: 5
               }}>

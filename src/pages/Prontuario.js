@@ -23,12 +23,10 @@ import Logo from "../components/Logo";
 import Alergias from "../cards/Alergias";
 import Documentos from "../cards/Documentos";
 import Boneco from "../cards/Boneco";
-import Evolucoes from "../cards/Evolucoes";
 import Infusoes from "../cards/Infusoes";
 import Propostas from "../cards/Propostas";
 import SinaisVitais from "../cards/SinaisVitais";
 import Culturas from "../cards/Culturas";
-import Antibioticos from "../cards/Antibioticos";
 import VentilacaoMecanica from "../cards/VentilacaoMecanica";
 import Dieta from "../cards/Dieta";
 import Precaucoes from "../cards/Precaucoes";
@@ -91,6 +89,8 @@ function Prontuario() {
     prescricao, setprescricao,
     consultorio, setconsultorio,
     setlaboratorio,
+
+    mobilewidth,
   } = useContext(Context);
 
   // history (router).
@@ -317,11 +317,11 @@ function Prontuario() {
           className="input cor2"
           autoComplete="off"
           placeholder={
-            window.innerWidth < 426 ? "BUSCAR PACIENTE..." : "BUSCAR..."
+            window.innerWidth < mobilewidth ? "BUSCAR PACIENTE..." : "BUSCAR..."
           }
           onFocus={(e) => (e.target.placeholder = "")}
           onBlur={(e) =>
-            window.innerWidth < 426
+            window.innerWidth < mobilewidth
               ? (e.target.placeholder = "BUSCAR PACIENTE...")
               : "BUSCAR..."
           }
@@ -444,8 +444,8 @@ function Prontuario() {
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
-            marginBottom: window.innerWidth < 426 ? 10 : '',
-            width: window.innerWidth < 426 ? '90vw' : ''
+            marginBottom: window.innerWidth < mobilewidth ? 10 : '',
+            width: window.innerWidth < mobilewidth ? '90vw' : ''
           }}
         >
           {arrayatendimentos
@@ -567,20 +567,10 @@ function Prontuario() {
                         padding: 5
                       }}
                     >
-                      {window.innerWidth < 768
-                        ? pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map(
-                            (valor) =>
-                              valor.nome_paciente.substring(0, 20) + "..."
-                          )
-                        : pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map((valor) => valor.nome_paciente)}
+                      {pacientes.filter(
+                        (valor) => valor.id_paciente == item.id_paciente
+                      )
+                        .map((valor) => valor.nome_paciente)}
                       <div>
                         {moment().diff(
                           moment(
@@ -742,20 +732,11 @@ function Prontuario() {
                         padding: 5
                       }}
                     >
-                      {window.innerWidth < 768
-                        ? pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map(
-                            (valor) =>
-                              valor.nome_paciente.substring(0, 20) + "..."
-                          )
-                        : pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map((valor) => valor.nome_paciente)}
+                      {pacientes
+                        .filter(
+                          (valor) => valor.id_paciente == item.id_paciente
+                        )
+                        .map((valor) => valor.nome_paciente)}
                       <div>
                         {moment().diff(
                           moment(
@@ -804,8 +785,8 @@ function Prontuario() {
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
             height: window.innerHeight - 240,
-            marginBottom: window.innerWidth < 426 ? 10 : '',
-            width: window.innerWidth < 426 ? '90vw' : ''
+            marginBottom: window.innerWidth < mobilewidth ? 10 : '',
+            width: window.innerWidth < mobilewidth ? '90vw' : ''
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
@@ -907,7 +888,7 @@ function Prontuario() {
           top: 0,
           left: 0,
           right: 0,
-          display: window.innerWidth < 426 ? "flex" : "none",
+          display: window.innerWidth < mobilewidth ? "flex" : "none",
           flexDirection: "row",
           justifyContent: "center",
           flex: 1,
@@ -923,7 +904,7 @@ function Prontuario() {
           id="botão de retorno"
           className="button-red"
           style={{
-            display: window.innerWidth < 426 ? "flex" : "none",
+            display: window.innerWidth < mobilewidth ? "flex" : "none",
             opacity: 1,
             backgroundColor: "#ec7063",
             alignSelf: "center",
@@ -969,20 +950,10 @@ function Prontuario() {
                 }}
               >
                 <div style={{ width: "100%" }}>
-                  {window.innerWidth < 768
-                    ? pacientes
-                      .filter(
-                        (valor) => valor.id_paciente == item.id_paciente
-                      )
-                      .map(
-                        (valor) =>
-                          valor.nome_paciente.substring(0, 20) + "..."
-                      )
-                    : pacientes
-                      .filter(
-                        (valor) => valor.id_paciente == item.id_paciente
-                      )
-                      .map((valor) => valor.nome_paciente)}
+                  {pacientes.filter(
+                    (valor) => valor.id_paciente == item.id_paciente
+                  )
+                    .map((valor) => valor.nome_paciente)}
                 </div>
               </div>
             </div>
@@ -1201,7 +1172,7 @@ function Prontuario() {
   let yellow = "rgb(241, 196, 15, 0.8)";
   const cartao = (sinal, titulo, opcao, busy, oculto) => {
     return (
-      <div style={{ display: window.innerWidth < 426 && oculto == 1 ? 'none' : 'flex' }}>
+      <div style={{ display: window.innerWidth < mobilewidth && oculto == 1 ? 'none' : 'flex' }}>
         <div
           className="card-fechado cor3"
           style={{
@@ -1250,8 +1221,8 @@ function Prontuario() {
                       : "none",
                   flexDirection: "column",
                   justifyContent: "center",
-                  height: window.innerWidth < 426 ? 20 : 40,
-                  width: window.innerWidth < 426 ? 20 : 40,
+                  height: window.innerWidth < mobilewidth ? 20 : 40,
+                  width: window.innerWidth < mobilewidth ? 20 : 40,
                   padding: 5,
                 }}
               ></img>
@@ -1266,8 +1237,8 @@ function Prontuario() {
                       : "none",
                   flexDirection: "column",
                   justifyContent: "center",
-                  height: window.innerWidth < 426 ? 30 : 50,
-                  width: window.innerWidth < 426 ? 30 : 50,
+                  height: window.innerWidth < mobilewidth ? 30 : 50,
+                  width: window.innerWidth < mobilewidth ? 30 : 50,
                 }}
               ></img>
               <img
@@ -1284,8 +1255,8 @@ function Prontuario() {
                       : "none",
                   flexDirection: "column",
                   justifyContent: "center",
-                  height: window.innerWidth < 426 ? 30 : 50,
-                  width: window.innerWidth < 426 ? 30 : 50,
+                  height: window.innerWidth < mobilewidth ? 30 : 50,
+                  width: window.innerWidth < mobilewidth ? 30 : 50,
                 }}
               ></img>
             </div>
@@ -1381,7 +1352,7 @@ function Prontuario() {
                   </div>
                   <div
                     style={{
-                      display: window.innerWidth < 426 ? "none" : "flex",
+                      display: window.innerWidth < mobilewidth ? "none" : "flex",
                       flexDirection: "column",
                       justifyContent: "center",
                       margin: 5,
@@ -1470,7 +1441,7 @@ function Prontuario() {
             </div>
             <div id="RESUMO ANTIBIÓTICOS"
               style={{
-                display: opcao == "card-atb" ? 'flex' : 'none',
+                display: titulo == "ANTIBIÓTICOS" ? 'flex' : 'none',
                 flexDirection: "column",
                 justifyContent: "center",
               }}
@@ -1656,7 +1627,7 @@ function Prontuario() {
                 </div>
                 <div
                   style={{
-                    display: window.innerWidth < 426 ? "none" : "flex",
+                    display: window.innerWidth < mobilewidth ? "none" : "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     margin: 5,
@@ -1674,7 +1645,7 @@ function Prontuario() {
                 </div>
                 <div
                   style={{
-                    display: window.innerWidth < 426 ? "none" : "flex",
+                    display: window.innerWidth < mobilewidth ? "none" : "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     margin: 5,
@@ -1772,7 +1743,7 @@ function Prontuario() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  height: window.innerWidth < 426 ? "30vw" : "8vw",
+                  height: window.innerWidth < mobilewidth ? "30vw" : "8vw",
                 }}
               ></img>
             </div>
@@ -1881,10 +1852,10 @@ function Prontuario() {
       <input
         className="input"
         autoComplete="off"
-        placeholder={window.innerWidth < 426 ? "BUSCAR ATIVIDADE..." : "BUSCAR..."}
+        placeholder={window.innerWidth < mobilewidth ? "BUSCAR ATIVIDADE..." : "BUSCAR..."}
         onFocus={(e) => (e.target.placeholder = "")}
         onBlur={(e) =>
-          window.innerWidth < 426
+          window.innerWidth < mobilewidth
             ? (e.target.placeholder = "BUSCAR TAREFA...")
             : "BUSCAR..."
         }
@@ -1894,7 +1865,7 @@ function Prontuario() {
         defaultValue={filtercartoes}
         maxLength={100}
         style={{
-          width: window.innerWidth < 426 ? '70vw' : 500,
+          width: window.innerWidth < mobilewidth ? '70vw' : 500,
           margin: 10, display: card == '' ? 'flex' : 'none',
           alignSelf: 'center'
         }}
@@ -1907,8 +1878,8 @@ function Prontuario() {
       className="main fadein"
       style={{
         display: pagina == 1 ? "flex" : "none",
-        flexDirection: window.innerWidth > 425 ? "row" : "column",
-        justifyContent: window.innerWidth > 425 ? "space-between" : "center",
+        flexDirection: window.innerWidth < mobilewidth ? "column" : "row",
+        justifyContent: window.innerWidth < mobilewidth ? "center" : "space-between",
         height: altura,
         flex: 3,
       }}
@@ -1916,7 +1887,7 @@ function Prontuario() {
       <div
         id="lista de pacientes"
         style={{
-          display: window.innerWidth < 426 && viewlista == 0 ? "none" : "flex",
+          display: window.innerWidth < mobilewidth && viewlista == 0 ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "space-between",
           height: window.innerHeight - 15,
@@ -1932,14 +1903,14 @@ function Prontuario() {
         style={{
           flex: 2,
           display:
-            window.innerWidth < 426 && viewlista == 1
+            window.innerWidth < mobilewidth && viewlista == 1
               ? "none"
               : atendimento == null
                 ? "none"
                 : "flex",
           margin: 0, padding: 0,
-          marginRight: window.innerWidth < 426 ? 0 : 10,
-          borderRadius: window.innerWidth < 426 ? 0 : 5,
+          marginRight: window.innerWidth < mobilewidth ? 0 : 10,
+          borderRadius: window.innerWidth < mobilewidth ? 0 : 5,
           flexDirection: "row",
           flexWrap: "wrap",
           justifyContent: "space-evenly",
@@ -1965,9 +1936,7 @@ function Prontuario() {
           alignSelf: "center",
           alignItems: "center",
         }}>
-          {cartao(
-            null,
-            "DIAS DE INTERNAÇÃO: " +
+          {cartao(null, "DIAS DE INTERNAÇÃO: " +
             atendimentos
               .filter((item) => item.id_atendimento == atendimento)
               .map((item) => moment().diff(item.data_inicio, "days")),
@@ -1995,21 +1964,19 @@ function Prontuario() {
             "card-culturas",
             busyculturas
           )}
-          {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", "card-atb", null, 1)}
+          {cartao(prescricao.filter(item => item.categoria == '1. ANTIMICROBIANOS'), "ANTIBIÓTICOS", null, null, 0)}
           {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
-          {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 0, 1)}
+          {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 1)}
           {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
           {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
         </div>
         <Alergias></Alergias>
         <Documentos></Documentos>
         <Boneco></Boneco>
-        <Evolucoes></Evolucoes>
         <Propostas></Propostas>
         <SinaisVitais></SinaisVitais>
         <Infusoes></Infusoes>
         <Culturas></Culturas>
-        <Antibioticos></Antibioticos>
         <VentilacaoMecanica></VentilacaoMecanica>
         <Dieta></Dieta>
         <Precaucoes></Precaucoes>
@@ -2025,14 +1992,14 @@ function Prontuario() {
         style={{
           flex: 2,
           display:
-            window.innerWidth < 426 && viewlista == 1
+            window.innerWidth < mobilewidth && viewlista == 1
               ? "none"
               : atendimento != null
                 ? "none"
                 : "flex",
           margin: 0, padding: 0,
-          marginRight: window.innerWidth < 426 ? 0 : 10,
-          borderRadius: window.innerWidth < 426 ? 0 : 5,
+          marginRight: window.innerWidth < mobilewidth ? 0 : 10,
+          borderRadius: window.innerWidth < mobilewidth ? 0 : 5,
           flexDirection: "column",
           justifyContent: "flex-start",
           alignContent: "center",

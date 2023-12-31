@@ -24,6 +24,7 @@ function Alergias() {
     alergias, setalergias,
     paciente,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -79,7 +80,7 @@ function Alergias() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'ALERGIA...')}
             style={{
-              width: window.innerWidth < 426 ? '50vw' : '15vw',
+              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
               margin: 5,
             }}
             type="text"
@@ -126,7 +127,7 @@ function Alergias() {
     return (
       <div style={{
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        alignItems: 'center', marginTop: 15
+        alignItems: 'center',
       }}>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
           <div id="botão de retorno"

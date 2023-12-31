@@ -25,6 +25,7 @@ function Infusoes() {
     atendimento,
     infusoes, setinfusoes,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -123,7 +124,7 @@ function Infusoes() {
   const [selectedinputvazao, setselectedinputvazao] = useState(null);
   function Botoes() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 15, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div id="botão de retorno"
           className="button-red"
           style={{
@@ -181,7 +182,7 @@ function Infusoes() {
               display: 'flex',
               flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
               whiteSpace: 'pre-wrap',
-              width: window.innerWidth < 426 ? '70vw' : '50vw',
+              width: window.innerWidth < mobilewidth ? '70vw' : '50vw',
             }}
             id="inputDroga"
             title="INSERIR AQUI O NOME DO FÁRMACO, SOLUÇÃO OU ESQUEMA PARA INFUSÃO CONTÍNUA."
@@ -275,7 +276,7 @@ function Infusoes() {
         style={{
           display: 'flex',
           overflowX: 'scroll', overflowY: 'hidden', justifyContent: 'flex-start', flexDirection: 'row',
-          width: window.innerWidth < 426 ? '70vw' : '60vw',
+          width: window.innerWidth < mobilewidth ? '70vw' : '60vw',
           height: 285, minHeight: 285,
           marginTop: 5,
           alignSelf: 'center',
@@ -330,6 +331,7 @@ function Infusoes() {
         ))}
       </div>
     )
+    // eslint-disable-next-line
   }, [infusoes]);
 
   var timeout = null;
@@ -349,9 +351,9 @@ function Infusoes() {
             className='row'
             style={{
               margin: 5,
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-              height: window.innerWidth < 426 ? 230 : 220,
-              maxHeight: window.innerWidth < 426 ? 230 : 220,
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+              height: window.innerWidth < mobilewidth ? 230 : 220,
+              maxHeight: window.innerWidth < mobilewidth ? 230 : 220,
               width: 220
             }}
           >
@@ -499,7 +501,7 @@ function Infusoes() {
         display: infusoes.length > 0 ? 'flex' : 'none',
         flexDirection: 'column', justifyContent: 'center',
         alignSelf: 'center', alignContent: 'center',
-        width: window.innerWidth < 426 ? '80vw' : '95%'
+        width: window.innerWidth < mobilewidth ? '80vw' : '95%'
       }}>
         {graficoInfusoes()}
       </div>

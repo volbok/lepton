@@ -27,6 +27,7 @@ function Boneco() {
     pickdate2, setpickdate2,
     setviewdatepicker,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -202,7 +203,7 @@ function Boneco() {
     return (
       <div id={local} style={{
         display: localdispositivo == local ? 'flex' : 'none',
-        flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+        flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
         flexWrap: 'wrap'
       }}>
         {arraydispositivos.map((item) => (
@@ -337,9 +338,9 @@ function Boneco() {
             onClick={(e) => e.stopPropagation()}
             style={{
               position: 'relative',
-              width: window.innerWidth < 426 ? '90vw' : '',
+              width: window.innerWidth < mobilewidth ? '90vw' : '',
               height: '80vh',
-              borderRadius: window.innerWidth < 426 ? 0 : 5,
+              borderRadius: window.innerWidth < mobilewidth ? 0 : 5,
               padding: 10,
             }}>
             <div className="text1">{'LESÃO ' + local}</div>
@@ -387,7 +388,7 @@ function Boneco() {
             </label>
             <div id="estágios da lesão" style={{
               display: 'flex',
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center',
               flex: 5,
             }}>
@@ -599,8 +600,8 @@ function Boneco() {
                 paddingRight: 5,
                 height: 200,
                 minHeight: 200,
-                minWidth: window.innerWidth < 426 ? '70vw' : '30vw',
-                width: window.innerWidth < 426 ? '70vw' : '30vw',
+                minWidth: window.innerWidth < mobilewidth ? '70vw' : '30vw',
+                width: window.innerWidth < mobilewidth ? '70vw' : '30vw',
               }}
             >
               {curativos.map((item) => (
@@ -741,11 +742,11 @@ function Boneco() {
         </div>
         <div style={{
           display: 'flex',
-          flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+          flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
           justifyContent: 'center',
           position: 'absolute',
-          top: window.innerWidth < 426 ? -20 : 5,
-          right: window.innerWidth < 426 ? -25 : -100,
+          top: window.innerWidth < mobilewidth ? -20 : 5,
+          right: window.innerWidth < mobilewidth ? -25 : -100,
         }}>
           <button
             id="botão alternador invasão x lesão"
@@ -800,7 +801,7 @@ function Boneco() {
       style={{
         display: card == 'card-boneco' ? 'flex' : 'none',
         flexDirection: 'column', justifyContent: 'center',
-        marginTop: window.innerWidth < 426 ? 40 : 0,
+        marginTop: window.innerWidth < mobilewidth ? 40 : 0,
       }}
     >
       <div style={{

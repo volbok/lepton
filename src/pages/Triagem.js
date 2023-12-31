@@ -31,7 +31,8 @@ function Triagem() {
     setatendimentos,
     setatendimento,
     atendimento,
-    salatriagem, setsalatriagem
+    salatriagem, setsalatriagem,
+    mobilewidth,
   } = useContext(Context);
 
   // history (router).
@@ -227,11 +228,11 @@ function Triagem() {
         className="input cor2"
         autoComplete="off"
         placeholder={
-          window.innerWidth < 426 ? "BUSCAR PACIENTE..." : "BUSCAR..."
+          window.inenrWidth < mobilewidth ? "BUSCAR PACIENTE..." : "BUSCAR..."
         }
         onFocus={(e) => (e.target.placeholder = "")}
         onBlur={(e) =>
-          window.innerWidth < 426
+          window.inenrWidth < mobilewidth
             ? (e.target.placeholder = "BUSCAR PACIENTE...")
             : "BUSCAR..."
         }
@@ -482,14 +483,11 @@ function Triagem() {
         }}
       >
         <div className="text3">
-          {window.innerWidth < 769
-            ? unidades
-              .filter((item) => item.id_unidade == unidade)
-              .map((item) => item.nome_unidade)
-            : "LISTA DE PACIENTES - " +
+          {"LISTA DE PACIENTES - " +
             unidades
               .filter((item) => item.id_unidade == unidade)
-              .map((item) => item.nome_unidade)}
+              .map((item) => item.nome_unidade)
+          }
         </div>
         <div
           className="scroll"
@@ -498,7 +496,7 @@ function Triagem() {
             display: arrayatendimentos.filter(item => item.id_unidade == unidade).length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             height: window.innerHeight - 250,
-            width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
+            width: window.inenrWidth < mobilewidth ? "calc(95vw - 15px)" : "100%",
           }}
         >
           {arrayatendimentos.filter(item => item.id_unidade == unidade)
@@ -607,20 +605,11 @@ function Triagem() {
                         justifyContent: "flex-start",
                       }}
                     >
-                      {window.innerWidth < 768
-                        ? pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map(
-                            (valor) =>
-                              valor.nome_paciente.substring(0, 20) + "..."
-                          )
-                        : pacientes
-                          .filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                          .map((valor) => valor.nome_paciente)}
+                      {pacientes
+                        .filter(
+                          (valor) => valor.id_paciente == item.id_paciente
+                        )
+                        .map((valor) => valor.nome_paciente.substring(0, 20) + "...")}
                       <div>
                         {moment().diff(
                           moment(
@@ -645,7 +634,7 @@ function Triagem() {
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
             height: window.innerHeight - 250,
-            width: window.innerWidth < 426 ? "calc(95vw - 15px)" : "100%",
+            width: "100%",
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
@@ -662,8 +651,8 @@ function Triagem() {
       className="main fadein"
       style={{
         display: pagina == 30 ? "flex" : "none",
-        flexDirection: window.innerWidth > 425 ? "row" : "column",
-        justifyContent: window.innerWidth > 425 ? "space-evenly" : "center",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
         width: "100vw",
         height: altura,
       }}
@@ -671,7 +660,7 @@ function Triagem() {
       <div
         id="lista de pacientes"
         style={{
-          display: window.innerWidth < 426 ? "none" : "flex",
+          display: window.inenrWidth < mobilewidth ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "space-between",
           width: 'calc(40vw - 50px)',
@@ -687,7 +676,7 @@ function Triagem() {
         className="scroll"
         style={{
           display:
-            window.innerWidth < 426
+            window.inenrWidth < mobilewidth
               ? "none"
               : atendimento == null
                 ? "none"
@@ -718,7 +707,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'PAS')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -737,7 +726,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'PAD')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -756,7 +745,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'FC')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -775,7 +764,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'FR')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -794,7 +783,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'SAO2')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -820,7 +809,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'TAX')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -839,7 +828,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'GLICEMIA')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -858,7 +847,7 @@ function Triagem() {
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'GLASGOW')}
               style={{
-                width: window.innerWidth < 426 ? '70vw' : '10vw',
+                width: window.inenrWidth < mobilewidth ? '70vw' : '10vw',
                 margin: 5,
               }}
               type="text"
@@ -874,7 +863,7 @@ function Triagem() {
         className="scroll"
         style={{
           display:
-            window.innerWidth < 426
+            window.inenrWidth < mobilewidth
               ? "none"
               : atendimento != null
                 ? "none"

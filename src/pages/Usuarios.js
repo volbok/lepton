@@ -326,7 +326,7 @@ function Usuarios() {
               flexDirection: "row",
               justifyContent: "center",
               flexWrap: "wrap",
-              marginRight: window.innerWidth > 425 ? 10 : 0,
+              marginRight: 10,
               alignItems: "center",
             }}
           >
@@ -354,7 +354,7 @@ function Usuarios() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "30vw" : "70vw",
+                  width: "30vw",
                 }}
               ></input>
             </div>
@@ -389,7 +389,7 @@ function Usuarios() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "10vw" : "70vw",
+                  width: "10vw",
                 }}
               ></input>
             </div>
@@ -416,7 +416,7 @@ function Usuarios() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "30vw" : "70vw",
+                  width: "30vw",
                 }}
               ></input>
             </div>
@@ -447,7 +447,7 @@ function Usuarios() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "30vw" : "70vw",
+                  width: "30vw",
                 }}
               ></input>
             </div>
@@ -477,7 +477,7 @@ function Usuarios() {
                 flexDirection: "center",
                 justifyContent: "center",
                 alignSelf: "center",
-                width: window.innerWidth > 425 ? "30vw" : "70vw",
+                width: "30vw",
               }}
             ></input>
           </div>
@@ -496,7 +496,7 @@ function Usuarios() {
               flexDirection: "center",
               justifyContent: "center",
               alignSelf: "center",
-              width: window.innerWidth > 425 ? "30vw" : "70vw",
+              width: "30vw",
             }}
           ></input>
           <div
@@ -609,7 +609,7 @@ function Usuarios() {
         id="inputUsuario"
         defaultValue={filterusuario}
         maxLength={100}
-        style={{ margin: 0, width: window.innerWidth < 426 ? "100%" : "100%" }}
+        style={{ margin: 0, width: "100%" }}
       ></input>
     );
   }
@@ -620,9 +620,9 @@ function Usuarios() {
         className="scroll"
         id="scroll usuários"
         style={{
-          width: window.innerWidth < 426 ? "90vw" : 400,
-          maxWidth: window.innerWidth < 426 ? "90vw" : 400,
-          height: window.innerWidth < 426 ? "50vh" : "calc(100vh - 80px)",
+          width: 400,
+          maxWidth: 400,
+          height: "calc(100vh - 80px)",
           marginTop: 10,
         }}
       >
@@ -675,7 +675,7 @@ function Usuarios() {
                   }, 300);
                 }}
                 style={{
-                  flex: window.innerWidth < 426 ? 6 : 2,
+                  flex: 2,
                   justifyContent: "space-between",
                   paddingLeft: 10,
                 }}
@@ -852,7 +852,7 @@ function Usuarios() {
           flexDirection: "column",
           justifyContent: "flex-start",
           width: "calc(100vw - 460px)",
-          height: window.innerWidth < 426 ? "50vh" : "calc(100vh - 30px)",
+          height: "calc(100vh - 30px)",
           overflowY: "scroll",
           marginLeft: 10,
         }}
@@ -1154,7 +1154,7 @@ function Usuarios() {
         id="cadastro de usuários e de acessos"
         style={{
           display: "flex",
-          flexDirection: window.innerWidth < 426 ? "column" : "row",
+          flexDirection: "row",
           justifyContent: "space-between",
           height: window.innerHeight - 20,
         }}

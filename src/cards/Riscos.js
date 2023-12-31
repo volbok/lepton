@@ -18,6 +18,7 @@ function Riscos() {
     riscos, setriscos,
     paciente,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -109,7 +110,7 @@ function Riscos() {
               e.stopPropagation();
             }}
             style={{
-              width: window.innerWidth < 426 ? '50vw' : '15vw',
+              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
               margin: 5,
             }}
             id="inputRisco"
@@ -143,7 +144,7 @@ function Riscos() {
       <div className="text3">
         RISCOS
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 15 }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <div id="botão de retorno"
           className="button-red"
           style={{

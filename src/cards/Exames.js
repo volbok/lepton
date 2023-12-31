@@ -21,7 +21,8 @@ function Exames() {
     setpagina,
     card, setcard,
     pacientes, setpacientes,
-    paciente
+    paciente,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -129,7 +130,7 @@ function Exames() {
           style={{
             display: 'flex',
             flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
-            width: window.innerWidth > 425 ? '50vw' : '70vw',
+            width: window.innerWidth < mobilewidth ? '70vw' : '50vw',
             height: 300,
             whiteSpace: 'pre-wrap'
           }}

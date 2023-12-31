@@ -24,6 +24,7 @@ function Interconsultas() {
     interconsultas, setinterconsultas,
     atendimento,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ function Interconsultas() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'ESPECIALIDADE...')}
             style={{
-              width: window.innerWidth < 426 ? '50vw' : '15vw',
+              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
               margin: 5,
             }}
             type="text"
@@ -127,7 +128,7 @@ function Interconsultas() {
   // registro de interconsulta por voz.
   function Botoes() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 15, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div id="botão de retorno"
           className="button-red"
           style={{
@@ -215,26 +216,26 @@ function Interconsultas() {
           <div key={'interconsulta ' + item.id_interconsulta}
             style={{
               display: 'flex',
-              flex: window.innerWidth < 426 ? 1 : 8,
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+              flex: window.innerWidth < mobilewidth ? 1 : 8,
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center',
-              width: window.innerWidth < 426 ? '80vw' : 300,
-              maxWidth: window.innerWidth < 426 ? '80vw' : 300,
+              width: window.innerWidth < mobilewidth ? '80vw' : 300,
+              maxWidth: window.innerWidth < mobilewidth ? '80vw' : 300,
               margin: 5,
             }}>
             <div className='button'
               style={{
                 flex: 1,
-                flexDirection: window.innerWidth < 426 ? 'row' : 'column',
-                justifyContent: window.innerWidth < 426 ? 'space-between' : 'center',
-                padding: window.innerWidth < 426 ? 5 : 15,
-                paddingLeft: window.innerWidth < 426 ? 20 : '',
-                paddingRight: window.innerWidth < 426 ? 8 : '',
+                flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
+                justifyContent: window.innerWidth < mobilewidth ? 'space-between' : 'center',
+                padding: window.innerWidth < mobilewidth ? 5 : 15,
+                paddingLeft: window.innerWidth < mobilewidth ? 20 : '',
+                paddingRight: window.innerWidth < mobilewidth ? 8 : '',
                 margin: 0,
-                borderTopLeftRadius: window.innerWidth < 426 ? 5 : 5,
-                borderTopRightRadius: window.innerWidth < 426 ? 5 : 0,
-                borderBottomLeftRadius: window.innerWidth < 426 ? 0 : 5,
-                borderBottomRightRadius: window.innerWidth < 426 ? 0 : 0,
+                borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
               }}>
               {moment(item.data_pedido).format('DD/MM/YY')}
               <div className='button-red'
@@ -263,9 +264,9 @@ function Interconsultas() {
                 padding: 2.5,
                 // backgroundColor: 'white',
                 borderTopLeftRadius: 0,
-                borderTopRightRadius: window.innerWidth < 426 ? 0 : 5,
-                borderBottomLeftRadius: window.innerWidth < 426 ? 5 : 0,
-                borderBottomRightRadius: window.innerWidth < 426 ? 5 : 5,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
               }}>
               <div
                 className='input'

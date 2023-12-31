@@ -24,6 +24,7 @@ function VentilacaoMecanica() {
     vm, setvm,
     atendimento,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   const [item_ventilacaomecanica, setitem_ventilacaomecanica] = useState();
@@ -144,21 +145,21 @@ function VentilacaoMecanica() {
       <div className="fundo"
         onClick={(e) => { setviewinsertvm(0); e.stopPropagation() }}
         style={{ display: viewinsertvm == 1 || viewinsertvm == 2 ? 'flex' : 'none' }}>
-        <div className={window.innerWidth < 426 ? "janela scroll" : "janela"}
+        <div className={window.innerWidth < mobilewidth ? "janela scroll" : "janela"}
           onClick={(e) => e.stopPropagation()}
           style={{
             flexDirection: 'column',
-            width: window.innerWidth < 426 ? '80vw' : '60vw',
-            height: window.innerWidth < 426 ? 0.5 * window.innerHeight : '',
-            justifyContent: window.innerWidth < 426 ? 'flex-start' : 'center',
+            width: window.innerWidth < mobilewidth ? '80vw' : '60vw',
+            height: window.innerWidth < mobilewidth ? 0.5 * window.innerHeight : '',
+            justifyContent: window.innerWidth < mobilewidth ? 'flex-start' : 'center',
             alignContent: 'center',
           }}>
           <div
             style={{
               display: 'flex',
-              flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-              flexWrap: window.innerWidth < 426 ? 'nowrap' : 'wrap',
-              justifyContent: window.innerWidth < 426 ? 'flex-start' : 'center',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+              flexWrap: window.innerWidth < mobilewidth ? 'nowrap' : 'wrap',
+              justifyContent: window.innerWidth < mobilewidth ? 'flex-start' : 'center',
               alignContent: 'center',
             }}>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -170,7 +171,7 @@ function VentilacaoMecanica() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'MODO')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -190,7 +191,7 @@ function VentilacaoMecanica() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'PRESSÃO')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -210,7 +211,7 @@ function VentilacaoMecanica() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'VOLUME')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -230,7 +231,7 @@ function VentilacaoMecanica() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'PEEP')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -250,7 +251,7 @@ function VentilacaoMecanica() {
                 onFocus={(e) => (e.target.placeholder = '')}
                 onBlur={(e) => (e.target.placeholder = 'FIO2')}
                 style={{
-                  width: window.innerWidth < 426 ? '70vw' : '10vw',
+                  width: window.innerWidth < mobilewidth ? '70vw' : '10vw',
                   margin: 5,
                 }}
                 type="text"
@@ -360,7 +361,7 @@ function VentilacaoMecanica() {
         </div>
         <div className='text2'
           style={{
-            width: window.innerWidth < 426 ? '50vw' : '8vw', marginTop: 0, paddingTop: 0,
+            width: window.innerWidth < mobilewidth ? '50vw' : '8vw', marginTop: 0, paddingTop: 0,
             color: isNaN(item) == false && (item < min || item > max) ? '#F1948A' : '#ffffff',
           }}>
           {item + ' ' + unidade}
@@ -376,7 +377,7 @@ function VentilacaoMecanica() {
         style={{
           display: vm.length > 0 && vm.slice(-1).map(item => item.modo != 'OFF') ? 'flex' : 'none',
           flexDirection: 'column', justifyContent: 'center',
-          width: window.innerWidth < 426 ? '80vw' : '65vw', marginTop: 5,
+          width: window.innerWidth < mobilewidth ? '80vw' : '65vw', marginTop: 5,
           alignSelf: 'center',
         }}>
         <div id="gráfico" className='scroll'
@@ -513,7 +514,7 @@ function VentilacaoMecanica() {
           onClick={(e) => { setitem_ventilacaomecanica(item); setviewinsertvm(2); e.stopPropagation(); }}
           style={{
             display: item.modo == 'OFF' ? 'none' : 'flex',
-            flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+            flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
             width: '65vw'
           }}
         >
@@ -521,20 +522,20 @@ function VentilacaoMecanica() {
             className='button-yellow'
             style={{
               flex: 1,
-              flexDirection: window.innerWidth < 426 ? 'row' : 'column',
+              flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
               justifyContent: 'center', alignSelf: 'center',
               margin: 5, padding: 5,
-              height: window.innerWidth < 426 ? '100vh' : window.innerWidth > 425 && window.innerWidth < 769 ? '60vh' : '20vh',
+              height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth + 1) && window.innerWidth < 769 ? '60vh' : '20vh',
               width: '95%',
-              marginBottom: window.innerWidth < 426 ? 0 : 5,
-              marginRight: window.innerWidth < 426 ? 5 : 0,
-              borderTopLeftRadius: window.innerWidth < 426 ? 5 : 5,
-              borderTopRightRadius: window.innerWidth < 426 ? 5 : 0,
-              borderBottomLeftRadius: window.innerWidth < 426 ? 0 : 5,
-              borderBottomRightRadius: window.innerWidth < 426 ? 0 : 0,
+              marginBottom: window.innerWidth < mobilewidth ? 0 : 5,
+              marginRight: window.innerWidth < mobilewidth ? 5 : 0,
+              borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+              borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+              borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+              borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
             }}>
             <div style={{
-              display: window.innerWidth < 426 ? 'none' : 'flex',
+              display: window.innerWidth < mobilewidth ? 'none' : 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
             }}>
@@ -557,7 +558,7 @@ function VentilacaoMecanica() {
               </div>
             </div>
             <div style={{
-              display: window.innerWidth < 426 ? 'flex' : 'none',
+              display: window.innerWidth < mobilewidth ? 'flex' : 'none',
               flexDirection: 'row',
               justifyContent: 'space-between',
               width: '100%',
@@ -584,17 +585,17 @@ function VentilacaoMecanica() {
           <div id="parâmetros ventilatórios"
             className='button'
             style={{
-              flex: window.innerWidth < 426 ? 11 : 4,
+              flex: window.innerWidth < mobilewidth ? 11 : 4,
               display: 'flex', flexDirection: 'row',
               justifyContent: 'center',
               flexWrap: 'wrap', width: '95%',
-              height: window.innerWidth < 426 ? '100vh' : window.innerWidth > 425 && window.innerWidth < 769 ? '60vh' : '20vh',
-              borderTopLeftRadius: window.innerWidth < 426 ? 0 : 0,
-              borderTopRightRadius: window.innerWidth < 426 ? 0 : 5,
-              borderBottomLeftRadius: window.innerWidth < 426 ? 5 : 0,
-              borderBottomRightRadius: window.innerWidth < 426 ? 5 : 5,
-              marginTop: window.innerWidth < 426 ? 0 : 5,
-              marginLeft: window.innerWidth < 426 ? 5 : 0,
+              height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth) + 1 && window.innerWidth < 769 ? '60vh' : '20vh',
+              borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
+              borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+              borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+              borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
+              marginTop: window.innerWidth < mobilewidth ? 0 : 5,
+              marginLeft: window.innerWidth < mobilewidth ? 5 : 0,
             }}
           >
             {montaParametrosVentilatorios('MODO', item.modo, '', '', '')}

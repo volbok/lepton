@@ -447,7 +447,7 @@ function Cadastro() {
               flexDirection: "row",
               justifyContent: "center",
               flexWrap: "wrap",
-              marginRight: window.innerWidth > 425 ? 10 : 0,
+              marginRight: 10,
               alignItems: "center",
             }}
           >
@@ -472,7 +472,7 @@ function Cadastro() {
                   flexDirection: "row",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "30vw" : "70vw",
+                  width: "30vw",
                   alignContent: "center",
                   height: 40,
                   minHeight: 40,
@@ -508,7 +508,7 @@ function Cadastro() {
                   flexDirection: "row",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "10vw" : "70vw",
+                  width: "10vw",
                   height: 40,
                   minHeight: 40,
                   maxHeight: 40,
@@ -547,7 +547,7 @@ function Cadastro() {
                     flexDirection: "row",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? 130 : "70vw",
+                    width: 130,
                     alignContent: "center",
                     textAlign: "center",
                   }}
@@ -564,7 +564,7 @@ function Cadastro() {
                     flexDirection: "row",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "30vw" : "70vw",
+                    width: "30vw",
                     alignContent: "center",
                     height: 40,
                     minHeight: 40,
@@ -596,7 +596,7 @@ function Cadastro() {
                   flexDirection: "row",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "30vw" : "70vw",
+                  width: "30vw",
                   alignContent: "center",
                   height: 40,
                   minHeight: 40,
@@ -627,7 +627,7 @@ function Cadastro() {
                   flexDirection: "row",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? 200 : "70vw",
+                  width: 200,
                   alignContent: "center",
                   height: 40,
                   minHeight: 40,
@@ -650,7 +650,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 75,
                   minHeight: 75,
@@ -680,7 +680,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -709,7 +709,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -740,7 +740,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id="inputNovoAntecedentesPessoais"
@@ -768,7 +768,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id="inputNovoMedicacoesPrevias"
@@ -794,7 +794,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id="inputNovoExamesPrevios"
@@ -931,7 +931,7 @@ function Cadastro() {
           <div
             className="header"
             style={{
-              display: window.innerWidth > 425 ? "flex" : "none",
+              display: "flex",
               flex: 1,
             }}
           >
@@ -940,7 +940,7 @@ function Cadastro() {
           <div
             className="header"
             style={{
-              display: window.innerWidth > 425 ? "flex" : "none",
+              display: "flex",
               flex: 2,
             }}
           >
@@ -949,7 +949,7 @@ function Cadastro() {
           <div
             className="header"
             style={{
-              display: window.innerWidth > 425 ? "flex" : "none",
+              display: "flex",
               flex: 1,
             }}
           >
@@ -986,7 +986,7 @@ function Cadastro() {
                 className="row"
                 style={{
                   justifyContent:
-                    window.innerWidth > 425 ? "space-between" : "center",
+                    "space-between",
                   flex: 6,
                   margin: 0,
                 }}
@@ -1015,7 +1015,7 @@ function Cadastro() {
                 <div
                   className="button"
                   style={{
-                    display: window.innerWidth > 425 ? "flex" : "none",
+                    display: "flex",
                     flex: 1,
                   }}
                 >
@@ -1024,7 +1024,7 @@ function Cadastro() {
                 <div
                   className="button"
                   style={{
-                    display: window.innerWidth > 425 ? "flex" : "none",
+                    display: "flex",
                     flex: 2,
                   }}
                 >
@@ -1041,7 +1041,7 @@ function Cadastro() {
                       : "button"
                   }
                   style={{
-                    display: window.innerWidth > 425 ? "flex" : "none",
+                    display: "flex",
                     flex: 1,
                   }}
                 >
@@ -1255,7 +1255,7 @@ function Cadastro() {
         className="retract"
         style={{
           display: "flex",
-          flexDirection: window.innerWidth > 425 ? "row" : "column",
+          flexDirection: "row",
           justifyContent: "flex-start",
           alignSelf: "center",
           padding: 0,
@@ -1265,7 +1265,7 @@ function Cadastro() {
           className="hide"
           id={"informações do paciente " + paciente.id_paciente}
           style={{
-            flexDirection: window.innerWidth > 425 ? "row" : "column",
+            flexDirection: "row",
             justifyContent: "center",
             alignSelf: "center",
           }}
@@ -1276,7 +1276,7 @@ function Cadastro() {
               flexDirection: "row",
               justifyContent: "center",
               flexWrap: "wrap",
-              marginRight: window.innerWidth > 425 ? 10 : 0,
+              marginRight: 10,
               alignItems: "center",
             }}
           >
@@ -1302,7 +1302,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1343,7 +1343,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "10vw" : "70vw",
+                  width: "10vw",
                   textAlign: "center",
                   padding: 15,
                   height: 20,
@@ -1383,7 +1383,7 @@ function Cadastro() {
                     flexDirection: "row",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? 130 : "70vw",
+                    width: 130,
                     alignContent: "center",
                     textAlign: "center",
                   }}
@@ -1401,7 +1401,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "30vw" : "70vw",
+                    width: "30vw",
                     padding: 15,
                     height: 20,
                     minHeight: 20,
@@ -1432,7 +1432,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1461,7 +1461,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? 100 : "70vw",
+                  width: 100,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1487,7 +1487,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 75,
                   minHeight: 75,
@@ -1520,7 +1520,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1550,7 +1550,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: window.innerWidth > 425 ? "50vw" : "70vw",
+                  width: "50vw",
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1582,7 +1582,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id={"inputAntecedentesPessoais " + paciente.id_paciente}
@@ -1611,7 +1611,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id={"inputMedicacoesPrevias " + paciente.id_paciente}
@@ -1638,7 +1638,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: window.innerWidth > 425 ? "50vw" : "70vw",
+                    width: "50vw",
                     whiteSpace: "pre-wrap",
                   }}
                   id={"inputExamesPrevios " + paciente.id_paciente}
@@ -1664,7 +1664,7 @@ function Cadastro() {
                       flexDirection: "center",
                       justifyContent: "center",
                       alignSelf: "center",
-                      width: window.innerWidth > 425 ? "50vw" : "70vw",
+                      width: "50vw",
                       whiteSpace: "pre-wrap",
                     }}
                     id={"inputExamesAtuais " + paciente.id_paciente}
@@ -1762,13 +1762,13 @@ function Cadastro() {
             id="status de atendimento"
             className="card cor7"
             style={{
-              position: window.innerWidth > 425 ? "sticky" : "",
+              position: "sticky",
               top: 10,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               height: 345,
-              marginTop: window.innerWidth > 425 ? 0 : 10,
+              marginTop: 0,
               marginBottom: 20,
             }}
           >

@@ -7,9 +7,7 @@ import Context from "./pages/Context";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Prontuario from "./pages/Prontuario";
-import Settings from "./pages/Settings";
 import Usuarios from "./pages/Usuarios";
-import Pdf from "./pages/Pdf";
 import Triagem from "./pages/Triagem";
 import Painel from "./pages/Painel";
 import Laboratorio from "./pages/Laboratorio";
@@ -120,6 +118,9 @@ function App() {
   const [documentos, setdocumentos] = useState([]);
 
   const [laboratorio, setlaboratorio] = useState([]);
+
+  // largura do dispositivo (global).
+  const [mobilewidth, setmobilewidth] = useState(600);
 
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
@@ -268,7 +269,8 @@ function App() {
         setsalatriagem,
         tipodocumento, settipodocumento,
         documentos, setdocumentos,
-        laboratorio, setlaboratorio
+        laboratorio, setlaboratorio,
+        mobilewidth, setmobilewidth,
       }}
     >
       <div>
@@ -280,14 +282,8 @@ function App() {
             <Route path="/prontuario">
               <Prontuario></Prontuario>
             </Route>
-            <Route path="/pdf">
-              <Pdf></Pdf>
-            </Route>
             <Route path="/cadastro">
               <Cadastro></Cadastro>
-            </Route>
-            <Route path="/settings">
-              <Settings></Settings>
             </Route>
             <Route path="/usuarios">
               <Usuarios></Usuarios>

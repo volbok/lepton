@@ -21,6 +21,7 @@ function Precaucoes() {
     precaucoes, setprecaucoes,
     paciente,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -112,7 +113,7 @@ function Precaucoes() {
               e.stopPropagation();
             }}
             style={{
-              width: window.innerWidth < 426 ? '50vw' : '15vw',
+              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
               margin: 5,
             }}
             id="inputPrecaucao"
@@ -152,7 +153,7 @@ function Precaucoes() {
       useLegacyResults: false
     });
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 15 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="botão de retorno"
             className="button-red"

@@ -28,6 +28,7 @@ function Propostas() {
     propostas, setpropostas,
     arraypropostas, setarraypropostas,
     card, setcard,
+    mobilewidth,
   } = useContext(Context);
 
   useEffect(() => {
@@ -172,7 +173,7 @@ function Propostas() {
                 display: 'flex',
                 flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
                 whiteSpace: 'pre-wrap',
-                width: window.innerWidth < 426 ? '70vw' : '40vw',
+                width: window.innerWidth < mobilewidth ? '70vw' : '40vw',
                 height: 50,
               }}
             >
@@ -244,7 +245,7 @@ function Propostas() {
       <div className='input-special'
         style={{
           position: 'sticky',
-          top: window.innerWidth < 426 ? 70 : 10,
+          top: window.innerWidth < mobilewidth ? 70 : 10,
           display: 'flex', alignSelf: 'center',
           zIndex: 20,
         }}>
@@ -260,7 +261,7 @@ function Propostas() {
           id="inputFilterProposta"
           defaultValue={filterproposta}
           maxLength={100}
-          style={{ margin: 5, width: window.innerWidth < 426 ? '65vw' : '30vw' }}
+          style={{ margin: 5, width: window.innerWidth < mobilewidth ? '65vw' : '30vw' }}
         ></input>
       </div>
     )
@@ -311,7 +312,7 @@ function Propostas() {
             }}
           >
             <div style={{
-              display: 'flex', flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+              display: 'flex', flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center', alignContent: 'center',
               flex: 5, alignItems: 'center',
             }}>
@@ -319,22 +320,22 @@ function Propostas() {
                 className={item.status == 1 ? 'button-green' : moment().startOf('day').add(1, 'day').diff(item.prazo, 'days') > -1 ? 'button-red' : 'button'}
                 style={{
                   flex: 1,
-                  flexDirection: window.innerWidth < 426 ? 'row' : 'column',
-                  justifyContent: window.innerWidth < 426 ? 'space-between' : 'center',
+                  flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
+                  justifyContent: window.innerWidth < mobilewidth ? 'space-between' : 'center',
                   alignSelf: 'center',
                   margin: 0, padding: 5,
-                  width: window.innerWidth < 426 ? '95%' : '',
-                  height: window.innerWidth < 426 ? 60 : 130,
+                  width: window.innerWidth < mobilewidth ? '95%' : '',
+                  height: window.innerWidth < mobilewidth ? 60 : 130,
                   marginBottom: 0,
                   marginRight: 0,
                   marginLeft: 0,
-                  borderTopLeftRadius: window.innerWidth < 426 ? 5 : 5,
-                  borderTopRightRadius: window.innerWidth < 426 ? 5 : 0,
-                  borderBottomLeftRadius: window.innerWidth < 426 ? 0 : 5,
-                  borderBottomRightRadius: window.innerWidth < 426 ? 0 : 0,
+                  borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                  borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                  borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                  borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
                 }}>
                 <div style={{
-                  display: window.innerWidth < 426 ? 'none' : 'flex',
+                  display: window.innerWidth < mobilewidth ? 'none' : 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center'
                 }}>
@@ -342,7 +343,7 @@ function Propostas() {
                   <div className='text2 cor 1' >{moment(item.data_proposta).format('HH:mm')}</div>
                 </div>
                 <div style={{
-                  display: window.innerWidth < 426 ? 'flex' : 'none',
+                  display: window.innerWidth < mobilewidth ? 'flex' : 'none',
                   flexDirection: 'column',
                   justifyContent: 'center'
                 }}>
@@ -368,26 +369,26 @@ function Propostas() {
               <div id="conteúdo da proposta"
                 className='cor0'
                 style={{
-                  display: 'flex', flexDirection: window.innerWidth < 426 ? 'column' : 'row',
+                  display: 'flex', flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
                   justifyContent: 'center',
                   flex: 4,
                   // backgroundColor: 'white',
                   padding: 5,
-                  paddingBottom: window.innerWidth < 426 ? 10 : 5,
-                  height: window.innerWidth < 426 ? 100 : 130,
-                  borderTopLeftRadius: window.innerWidth < 426 ? 0 : 0,
-                  borderTopRightRadius: window.innerWidth < 426 ? 0 : 5,
-                  borderBottomLeftRadius: window.innerWidth < 426 ? 5 : 0,
-                  borderBottomRightRadius: window.innerWidth < 426 ? 5 : 5,
+                  paddingBottom: window.innerWidth < mobilewidth ? 10 : 5,
+                  height: window.innerWidth < mobilewidth ? 100 : 130,
+                  borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                  borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                  borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                  borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
                   margin: 0,
                   marginTop: 0,
-                  width: window.innerWidth < 426 ? '95%' : '',
+                  width: window.innerWidth < mobilewidth ? '95%' : '',
                 }}>
                 <div style={{
-                  display: 'flex', flexDirection: window.innerWidth < 426 ? 'column' : 'row',
-                  flex: window.innerWidth < 426 ? 1 : 3,
-                  width: window.innerWidth < 426 ? '95%' : '',
-                  paddingRight: window.innerWidth < 426 ? '' : 10,
+                  display: 'flex', flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+                  flex: window.innerWidth < mobilewidth ? 1 : 3,
+                  width: window.innerWidth < mobilewidth ? '95%' : '',
+                  paddingRight: window.innerWidth < mobilewidth ? '' : 10,
                   alignItems: 'center',
                   alignSelf: 'center',
                 }}>
@@ -415,7 +416,7 @@ function Propostas() {
                       }, 2000);
                     }}
                     style={{
-                      flex: window.innerWidth < 426 ? 1 : 3,
+                      flex: window.innerWidth < mobilewidth ? 1 : 3,
                       display: 'flex',
                       margin: 0,
                       flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
