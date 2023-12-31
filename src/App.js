@@ -12,6 +12,7 @@ import Usuarios from "./pages/Usuarios";
 import Pdf from "./pages/Pdf";
 import Triagem from "./pages/Triagem";
 import Painel from "./pages/Painel";
+import Laboratorio from "./pages/Laboratorio";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -293,6 +294,9 @@ function App() {
             </Route>
             <Route path="/painel">
               <Painel></Painel>
+            </Route>
+            <Route path="/laboratorio">
+              <Laboratorio></Laboratorio>
             </Route>
           </Switch>
         </Router>

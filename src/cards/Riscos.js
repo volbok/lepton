@@ -143,7 +143,7 @@ function Riscos() {
       <div className="text3">
         RISCOS
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 15 }}>
         <div id="botão de retorno"
           className="button-red"
           style={{
@@ -157,7 +157,7 @@ function Riscos() {
             style={{ width: 30, height: 30 }}
           ></img>
         </div>
-        <div id="btninputalergia"
+        <div id="btninputrisco"
           className='button-green'
           onClick={(e) => { setviewinsertrisco(1); e.stopPropagation() }}
           style={{ width: 50, height: 50 }}

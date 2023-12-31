@@ -251,7 +251,7 @@ function Laboratorio() {
         marginTop: 20,
       }}>
         {laboratorio.filter(item => item.status == 1).map(item => (
-          <div>{item.nome_exame}</div>
+          <div>{moment(item.data_pedido).format('DD/MM/YY - HH:mm') + ' - ' + item.nome_exame}</div>
         ))}
       </div>
     )
@@ -375,16 +375,16 @@ function Laboratorio() {
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div className='text2'>PACOTES DE EXAMES</div>
+              <div className='text1'>PACOTES DE EXAMES</div>
               <div id="packs para solicitação de exames"
                 className='scroll'
                 style={{
-                  width: '40vw', marginLeft: 10, height: 300,
-                  display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+                  width: '40vw', marginLeft: 10, height: 330,
+                  display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly'
                 }}
               >
                 <div className='button'
-                  style={{ height: 50, paddingLeft: 10, paddingRight: 10 }}
+                  style={{ height: 100, width: 100, paddingLeft: 10, paddingRight: 10 }}
                   onClick={() => insertPackLaboratorio(['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
                 >
                   BÁSICO
@@ -392,7 +392,6 @@ function Laboratorio() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     )
