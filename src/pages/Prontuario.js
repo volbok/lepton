@@ -1184,13 +1184,13 @@ function Prontuario() {
                 atendimento != null
                 ? "flex"
                 : "none",
-            // flex: 1,
             pointerEvents: opcao == null ? 'none' : 'auto',
             backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
             borderColor: "transparent",
             height: 180,
-            minWidth: 120,
-            maxWidth: 120,
+            margin: 5,
+            minWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
+            maxWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
           }}
           onClick={() => {
             if (card == opcao) {
@@ -1934,10 +1934,8 @@ function Prontuario() {
           display: 'flex',
           paddingRight: 5, flexDirection: "row",
           flexWrap: "wrap",
-          justifyContent: "space-evenly",
-          alignContent: "flex-start",
-          alignSelf: "center",
-          alignItems: "center",
+          justifyContent: "center",
+          alignContent: "center",
         }}>
           {cartao(null, "DIAS DE INTERNAÇÃO: " +
             atendimentos
