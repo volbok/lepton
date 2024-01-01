@@ -246,7 +246,7 @@ function Prontuario() {
   // identificação do usuário.
   function Usuario() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', width: 'calc(100% - 10px)' }}>
         <div className="text1" style={{ alignSelf: 'flex-start', margin: 0 }}>{'USUÁRIO: ' + usuario.nome_usuario.split(' ', 1)}</div>
         <div
           style={{
@@ -330,7 +330,7 @@ function Prontuario() {
           id="inputPaciente"
           defaultValue={filterpaciente}
           maxLength={100}
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
         ></input>
         <div
           id="botão para atualizar a lista de pacientes."
@@ -427,7 +427,8 @@ function Prontuario() {
           marginRight: 10,
           marginLeft: 10,
           height: window.innerHeight - 130,
-          // minHeight: window.innerHeight - 25,
+          width: 'calc(100% - 10px)',
+          flex: 1
         }}
       >
         <div className="text3">
@@ -445,19 +446,19 @@ function Prontuario() {
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
-            width: window.innerWidth < mobilewidth ? '90vw' : ''
+            width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)'
           }}
         >
           {arrayatendimentos
             .filter(item => item.leito != 'F')
             .sort((a, b) => (a.leito > b.leito ? 1 : -1))
             .map((item) => (
-              <div key={"pacientes" + item.id_atendimento}>
+              <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
                 <div
                   className="row"
                   style={{
                     position: "relative",
-                    margin: 2.5, padding: 0
+                    margin: 2.5, padding: 0,
                   }}
                 >
                   <div
@@ -538,6 +539,7 @@ function Prontuario() {
                       borderBottomLeftRadius: 0,
                       minHeight: 100,
                       height: 100,
+                      width: '100%',
                     }}
                     onClick={() => {
                       setviewlista(0);
@@ -786,7 +788,7 @@ function Prontuario() {
             justifyContent: "center",
             height: window.innerHeight - 240,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
-            width: window.innerWidth < mobilewidth ? '90vw' : ''
+            width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)'
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
@@ -1890,6 +1892,7 @@ function Prontuario() {
           display: window.innerWidth < mobilewidth && viewlista == 0 ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          alignItems: 'center',
           height: window.innerHeight - 15,
           margin: 0,
           flex: 1,
