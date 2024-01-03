@@ -106,23 +106,32 @@ function Usuarios() {
   const [acessopaciente, setacessopaciente] = useState(0);
   const [acessousuarios, setacessousuarios] = useState(0);
 
+  const arrayespecialidades = [
+    'ANESTESIOLOGIA',
+    'CARDIOLOGIA',
+    'CLÍNICA MÉDICA',
+    'CIRURGIA GERAL',
+    'CIRURGIA TORÁCICA',
+    'UROLOGIA',
+    'RADIOLOGIA',
+    'MEDICINA INTENSIVA',
+  ]
+
   // registrando um usuário.
   const insertUsuario = () => {
-    var cpf = document.getElementById("inputCpf").value.toUpperCase();
     var obj = {
-      nome_usuario: document.getElementById("inputNome").value.toUpperCase(),
+      nome_usuario: nomeusuario.toUpperCase(),
       dn_usuario: moment(
-        document.getElementById("inputDn").value,
+        dn,
         "DD/MM/YYYY"
       ),
-      cpf_usuario: document.getElementById("inputCpf").value.toUpperCase(),
-      contato_usuario: document.getElementById("inputContato").value,
-      senha: document.getElementById("inputCpf").value.toUpperCase(),
-      login: document.getElementById("inputCpf").value.toUpperCase(),
-      conselho: document.getElementById("inputConselho").value.toUpperCase(),
-      n_conselho: document
-        .getElementById("inputNumeroConselho")
-        .value.toUpperCase(),
+      cpf_usuario: cpf,
+      contato_usuario: contato.toUpperCase(),
+      senha: cpf,
+      login: cpf,
+      conselho: conselho.toUpperCase(),
+      n_conselho: n_conselho.toUpperCase(),
+      tipo_usuario: especialidade,
     };
     if (usuarios.filter((item) => item.cpf_usuario == cpf).length < 1) {
       console.log(obj);
@@ -169,17 +178,13 @@ function Usuarios() {
         document.getElementById("inputDn").value,
         "DD/MM/YYYY"
       ),
-      cpf_usuario: document.getElementById("inputCpf").value.toUpperCase(),
-      contato_usuario: document
-        .getElementById("inputContato")
-        .value.toUpperCase(),
+      cpf_usuario: document.getElementById("inputCpf").value,
+      contato_usuario: document.getElementById("inputContato").value,
       senha: selectedusuario.senha,
       login: selectedusuario.login,
       conselho: document.getElementById("inputConselho").value.toUpperCase(),
-      n_conselho: document
-        .getElementById("inputNumeroConselho")
-        .value.toUpperCase(),
-      tipo_usuario: null,
+      n_conselho: document.getElementById("inputNumeroConselho").value,
+      tipo_usuario: especialidade,
       paciente: acessopaciente,
       prontuario: acessoprontuario,
       laboratorio: acessolaboratorio,
@@ -226,7 +231,7 @@ function Usuarios() {
       login: selectedusuario.login,
       conselho: selectedusuario.conselho,
       n_conselho: selectedusuario.n_conselho,
-      tipo_usuario: selectedusuario.tipo_usuario,
+      tipo_usuario: especialidade,
       paciente: acessopaciente,
       prontuario: acessoprontuario,
       laboratorio: acessolaboratorio,
@@ -240,7 +245,6 @@ function Usuarios() {
       .post(html + "update_usuario/" + selectedusuario.id_usuario, obj)
       .then(() => {
         loadUsuarios();
-        setselectedusuario(0);
         setviewnewusuario(0);
         toast(
           settoast,
@@ -303,7 +307,15 @@ function Usuarios() {
   // componente para inserir novo usuário.
   const [viewnewusuario, setviewnewusuario] = useState(0);
   const [selectedusuario, setselectedusuario] = useState(0);
-  const InsertUsuario = useCallback(() => {
+  const [especialidade, setespecialidade] = useState(selectedusuario.tipo_usuario);
+  const [nomeusuario, setnomeusuario] = useState(null);
+  const [dn, setdn] = useState(null);
+  const [contato, setcontato] = useState(null);
+  const [cpf, setcpf] = useState(null);
+  const [conselho, setconselho] = useState(null);
+  const [n_conselho, setn_conselho] = useState(null);
+
+  function InsertUsuario() {
     var timeout = null;
     return (
       <div
@@ -317,101 +329,163 @@ function Usuarios() {
       >
         <div
           className="janela scroll"
-          style={{ height: "90vh", minHeight: "90vh" }}
+          style={{ padding: 10 }}
           onClick={(e) => e.stopPropagation()}
         >
           <div
             id="cadastrar usuario"
             style={{
+              display: 'flex',
               flexDirection: "row",
-              justifyContent: "center",
-              flexWrap: "wrap",
+              flexWrap: 'wrap',
+              justifyContent: 'space-evenly',
               marginRight: 10,
               alignItems: "center",
+              alignContent: 'center',
             }}
           >
-            <div
-              id="nome do usuário"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">NOME DO USUÁRIO</div>
-              <input
-                autoComplete="off"
-                placeholder="NOME DO USUÁRIO"
-                className="input"
-                type="text"
-                id="inputNome"
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "NOME DO USUÁRIO")}
-                defaultValue={
-                  viewnewusuario == 2 ? selectedusuario.nome_usuario : ""
-                }
+            <div id='coluna1' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+              <div id="nome do usuário"
                 style={{
-                  flexDirection: "center",
+                  display: "flex",
+                  flexDirection: "column",
                   justifyContent: "center",
-                  alignSelf: "center",
-                  width: "30vw",
+                  alignContent: 'center',
                 }}
-              ></input>
+              >
+                <div className="text1">NOME DO USUÁRIO</div>
+                <input
+                  autoComplete="off"
+                  placeholder="NOME DO USUÁRIO"
+                  className="input"
+                  type="text"
+                  id="inputNome"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "NOME DO USUÁRIO")}
+                  defaultValue={
+                    nomeusuario
+                  }
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 300,
+                  }}
+                ></input>
+              </div>
+              <div id="dn usuário"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">DATA DE NASCIMENTO</div>
+                <input
+                  autoComplete="off"
+                  placeholder="DN"
+                  className="input"
+                  type="text"
+                  id="inputDn"
+                  inputMode="numeric"
+                  onClick={() => (document.getElementById("inputDn").value = "")}
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "DN")}
+                  onKeyUp={() => {
+                    maskdate(timeout, "inputDn");
+                  }}
+                  defaultValue={
+                    moment(dn).format('DD/MM/YYYY')
+                  }
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 100,
+                  }}
+                ></input>
+              </div>
+              <div id="contato"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">CONTATO</div>
+                <input
+                  autoComplete="off"
+                  placeholder="CONTATO"
+                  className="input"
+                  type="text"
+                  id="inputContato"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "CONTATO")}
+                  defaultValue={contato}
+                  onKeyUp={() => {
+                    maskphone(timeout, "inputContato");
+                  }}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 200,
+                  }}
+                ></input>
+              </div>
+              <div id="cpf do usuário"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">CPF DO USUÁRIO</div>
+                <input
+                  autoComplete="off"
+                  placeholder="CPF DO USUÁRIO"
+                  className="input"
+                  type="text"
+                  id="inputCpf"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "CPF DO USUÁRIO")}
+                  onKeyUp={() => {
+                    masknumbers(timeout, "inputCpf", 13);
+                  }}
+                  defaultValue={
+                    cpf
+                  }
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 200,
+                  }}
+                ></input>
+              </div>
             </div>
-            <div
-              id="dn usuário"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">DATA DE NASCIMENTO</div>
+            <div id="coluna 02" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+              <div className="text1">CONSELHO PROFISSIONAL</div>
               <input
                 autoComplete="off"
-                placeholder="DN"
+                placeholder="CONSELHO"
                 className="input"
                 type="text"
-                id="inputDn"
-                inputMode="numeric"
-                onClick={() => (document.getElementById("inputDn").value = "")}
+                id="inputConselho"
                 onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "DN")}
+                onBlur={(e) => (e.target.placeholder = "CONSELHO")}
                 onKeyUp={() => {
-                  maskdate(timeout, "inputDn");
+                  maskoptions(timeout, "inputConselho", 10, [
+                    "CRM",
+                    "CRO",
+                    "CRESS",
+                    "CRF",
+                    "CREFONO",
+                    "COREN",
+                    "CREFITO",
+                  ]);
                 }}
-                defaultValue={
-                  viewnewusuario == 2
-                    ? moment(selectedusuario.dn_usuario).format("DD/MM/YYYY")
-                    : ""
-                }
-                style={{
-                  flexDirection: "center",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "10vw",
-                }}
-              ></input>
-            </div>
-            <div
-              id="contato"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">CONTATO</div>
-              <input
-                autoComplete="off"
-                placeholder="CONTATO"
-                className="input"
-                type="text"
-                id="inputContato"
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "CONTATO")}
-                defaultValue={selectedusuario.contato_usuario}
-                onKeyUp={() => maskphone(timeout, "inputContato")}
+                defaultValue={conselho}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -419,30 +493,19 @@ function Usuarios() {
                   width: "30vw",
                 }}
               ></input>
-            </div>
-            <div
-              id="cpf do usuário"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">CPF DO USUÁRIO</div>
+              <div className="text1">NÚMERO DO CONSELHO PROFISSIONAL</div>
               <input
                 autoComplete="off"
-                placeholder="CPF DO USUÁRIO"
+                placeholder="NÚMERO DO CONSELHO"
                 className="input"
                 type="text"
-                id="inputCpf"
+                id="inputNumeroConselho"
                 onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "CPF DO USUÁRIO")}
+                onBlur={(e) => (e.target.placeholder = "NÚMERO DO CONSELHO")}
+                defaultValue={n_conselho}
                 onKeyUp={() => {
-                  masknumbers(timeout, "inputCpf", 13);
+                  masknumbers(timeout, "inputNumeroConselho", 8);
                 }}
-                defaultValue={
-                  viewnewusuario == 2 ? selectedusuario.cpf_usuario : ""
-                }
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -450,120 +513,92 @@ function Usuarios() {
                   width: "30vw",
                 }}
               ></input>
-            </div>
-
-            <div className="text1">CONSELHO PROFISSIONAL</div>
-            <input
-              autoComplete="off"
-              placeholder="CONSELHO"
-              className="input"
-              type="text"
-              id="inputConselho"
-              onFocus={(e) => (e.target.placeholder = "")}
-              onBlur={(e) => (e.target.placeholder = "CONSELHO")}
-              onKeyUp={() =>
-                maskoptions(timeout, "inputConselho", 10, [
-                  "CRM",
-                  "CRO",
-                  "CRESS",
-                  "CRF",
-                  "CREFONO",
-                  "COREN",
-                  "CREFITO",
-                ])
-              }
-              defaultValue={viewnewusuario == 2 ? selectedusuario.conselho : ""}
-              style={{
-                flexDirection: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-                width: "30vw",
-              }}
-            ></input>
-          </div>
-          <div className="text1">NÚMERO DO CONSELHO PROFISSIONAL</div>
-          <input
-            autoComplete="off"
-            placeholder="NÚMERO DO CONSELHO"
-            className="input"
-            type="text"
-            id="inputNumeroConselho"
-            onFocus={(e) => (e.target.placeholder = "")}
-            onBlur={(e) => (e.target.placeholder = "NÚMERO DO CONSELHO")}
-            defaultValue={viewnewusuario == 2 ? selectedusuario.n_conselho : ""}
-            onKeyUp={() => masknumbers(timeout, "inputNumeroConselho", 8)}
-            style={{
-              flexDirection: "center",
-              justifyContent: "center",
-              alignSelf: "center",
-              width: "30vw",
-            }}
-          ></input>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              className="button-red"
-              onClick={(e) => {
-                setviewnewusuario(0);
-                e.stopPropagation();
-              }}
-            >
-              <img
-                alt=""
-                src={back}
+              <div className="text1">ESPECIALIDADE MÉDICA</div>
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '50vw' }}>
+                {arrayespecialidades.map(item => (
+                  <div
+                    onClick={() => {
+                      setnomeusuario(document.getElementById('inputNome').value.toUpperCase());
+                      setdn(moment(document.getElementById('inputDn').value, 'DD/MM/YYYY'));
+                      setcontato(document.getElementById('inputContato').value);
+                      setcpf(document.getElementById('inputCpf').value);
+                      setconselho(document.getElementById('inputConselho').value.toUpperCase());
+                      setn_conselho(document.getElementById('inputNumeroConselho').value);
+                      setespecialidade(item);
+                    }}
+                    className={especialidade == item ? "button-red" : "button"}
+                    style={{ width: 150 }}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <div
                 style={{
-                  margin: 10,
-                  height: 25,
-                  width: 25,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
                 }}
-              ></img>
-            </div>
-            <div
-              className="button-green"
-              id="btnusuario"
-              onClick={() => {
-                if (viewnewusuario == 1) {
-                  checkinput(
-                    "input",
-                    settoast,
-                    ["inputNome", "inputDn", "inputContato", "inputCpf"],
-                    "btnusuario",
-                    insertUsuario,
-                    []
-                  );
-                } else {
-                  checkinput(
-                    "input",
-                    settoast,
-                    ["inputNome", "inputDn", "inputContato", "inputCpf"],
-                    "btnusuario",
-                    updateUsuario,
-                    []
-                  );
-                }
-              }}
-            >
-              <img
-                alt=""
-                src={salvar}
-                style={{
-                  margin: 10,
-                  height: 25,
-                  width: 25,
-                }}
-              ></img>
+              >
+                <div
+                  className="button-red"
+                  onClick={(e) => {
+                    setviewnewusuario(0);
+                    e.stopPropagation();
+                  }}
+                >
+                  <img
+                    alt=""
+                    src={back}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+                <div
+                  className="button-green"
+                  id="btnusuario"
+                  onClick={() => {
+                    if (viewnewusuario == 1) {
+                      checkinput(
+                        "input",
+                        settoast,
+                        ["inputNome", "inputDn", "inputContato", "inputCpf"],
+                        "btnusuario",
+                        insertUsuario,
+                        []
+                      );
+                    } else {
+                      checkinput(
+                        "input",
+                        settoast,
+                        ["inputNome", "inputDn", "inputContato", "inputCpf"],
+                        "btnusuario",
+                        updateUsuario,
+                        []
+                      );
+                    }
+                  }}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     );
     // eslint-disable-next-line
-  }, [viewnewusuario]);
+  };
 
   const [filterusuario, setfilterusuario] = useState("");
   var timeout = null;
@@ -642,25 +677,21 @@ function Usuarios() {
                 id={"usuario " + item.id_usuario}
                 onClick={() => {
                   localStorage.setItem("selecteduser", JSON.stringify(item));
-
                   setselectedusuario(item);
+                  setnomeusuario(item.nome_usuario);
+                  setdn(item.dn_usuario);
+                  setcpf(item.cpf_usuario);
+                  setcontato(item.contato_usuario);
+                  setconselho(item.conselho);
+                  setn_conselho(item.n_conselho);
+                  setespecialidade(item.tipo_usuario);
+                  // acessos.
                   setacessofarmacia(item.farmacia);
                   setacessofaturamento(item.faturamento);
                   setacessolaboratorio(item.laboratorio);
                   setacessopaciente(item.paciente);
                   setacessoprontuario(item.prontuario);
                   setacessousuarios(item.usuarios);
-
-                  /*
-                console.log(item);
-                setacessofarmacia(item.farmacia);
-                setacessofaturamento(item.faturamento);
-                setacessolaboratorio(item.laboratorio);
-                setacessopaciente(item.paciente);
-                setacessoprontuario(item.prontuario);
-                setacessousuarios(item.usuarios);
-                */
-
                   loadTodosAcessos(item.id_usuario);
                   setTimeout(() => {
                     var botoes = document
@@ -863,11 +894,12 @@ function Usuarios() {
     );
   }
 
+  const [viewunidades, setviewunidades] = useState(0);
   function ListaDeUnidades() {
     return (
       <div
         style={{
-          display: selectedusuario.prontuario == 1 ? "flex" : "none",
+          display: selectedusuario.prontuario == 1 || viewunidades == 1 ? "flex" : "none",
           flexDirection: "column",
           justifyContent: "center",
           alignContent: "center",
@@ -885,7 +917,7 @@ function Usuarios() {
             padding: 5,
           }}
         >
-          <div>UNIDADES DE ATENDIMENTO LIBERADAS:</div>
+          <div style={{ display: 'flex', marginBottom: 10 }}>UNIDADES DE ATENDIMENTO LIBERADAS:</div>
           <div
             style={{
               display: "flex",
@@ -1043,7 +1075,15 @@ function Usuarios() {
           <div
             className={acessoprontuario == 1 ? "button-red" : "button"}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessoprontuario, setacessoprontuario)}
+            onClick={() => {
+              mudaModulo(acessoprontuario, setacessoprontuario);
+              if (viewunidades == 1 && arrayacessos.length == 0) {
+                setviewunidades(0);
+              } else {
+                setviewunidades(1);
+                setacessoprontuario(1);
+              }
+            }}
           >
             PRONTUÁRIO
           </div>
@@ -1086,7 +1126,7 @@ function Usuarios() {
         <div
           className="button-green"
           style={{ margin: 5, marginTop: 10, pading: 5, width: 50, height: 50 }}
-          onClick={() => updateAcessoModulos()}
+          onClick={() => { updateAcessoModulos(); setselectedusuario(0) }}
         >
           <img
             alt=""
@@ -1200,7 +1240,17 @@ function Usuarios() {
               className="button-green"
               style={{ margin: 0, marginLeft: 10, width: 50, height: 50 }}
               title={"CADASTRAR USUÁRIO"}
-              onClick={() => setviewnewusuario(1)}
+              onClick={() => {
+                setselectedusuario(0);
+                setnomeusuario(null);
+                setdn(null);
+                setcontato(null);
+                setcpf(null);
+                setconselho(null);
+                setn_conselho(null);
+                setespecialidade(null);
+                setviewnewusuario(1);
+              }}
             >
               <img
                 alt=""

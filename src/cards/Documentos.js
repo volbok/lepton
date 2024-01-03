@@ -18,6 +18,9 @@ import novo from '../images/novo.svg';
 import deletar from '../images/deletar.svg';
 import checkinput from '../functions/checkinput';
 
+// componentes.
+import Cid10 from '../functions/cid10';
+
 function Documentos() {
 
   // context.
@@ -43,50 +46,205 @@ function Documentos() {
     lesoes,
     culturas,
 
-    prescricao
+    prescricao,
+    mobilewidth,
   } = useContext(Context);
 
-  const loadDocumentos = () => {
+  const loadDocumentos = (situacao, item, status) => {
     axios.get(html + "list_documentos/" + atendimento).then((response) => {
       var x = response.data.rows;
       setdocumentos(x.sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1));
+      if (situacao == 'atualizar') {
+        document.getElementById('documento ' + item.id).className = "button-red";
+        setTimeout(() => {
+          if (status == 1) {
+            document.getElementById("inputFieldDocumento").value = x.filter(valor => valor.id == item.id).map(valor => valor.texto);
+            document.getElementById("inputFieldDocumento").style.pointerEvents = 'none';
+          } else {
+            document.getElementById("inputFieldDocumento").style.pointerEvents = 'auto';
+          }
+        }, 500);
+      } else if (situacao == 'inserir') {
+        let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
+        // setselecteddocumento(novodocumento);
+        setTimeout(() => {
+          var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
+          for (var i = 0; i < botoes.length; i++) {
+            botoes.item(i).className = "button";
+          }
+          document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
+          document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
+        }, 500);
+      } else if (situacao == 'copiar') {
+        document.getElementById('documento ' + item.id).className = "button-red";
+        let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
+        document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'none';
+        // setselecteddocumento(novodocumento);
+        setTimeout(() => {
+          var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
+          for (var i = 0; i < botoes.length; i++) {
+            botoes.item(i).className = "button";
+          }
+          setTimeout(() => {
+            document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'flex';
+            document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
+            document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
+          }, 300);
+        }, 500);
+      }
     })
   }
 
   useEffect(() => {
-    loadModelos();
-    loadDocumentos();
-    setselecteddocumento([]);
     if (card == 'card-documento-admissao') {
       settipodocumento('ADMISSÃO');
+      preparaDocumentos();
     } else if (card == 'card-documento-evolucao') {
       settipodocumento('EVOLUÇÃO');
+      preparaDocumentos();
     } else if (card == 'card-documento-receita') {
       settipodocumento('RECEITA MÉDICA');
+      preparaDocumentos();
     } else if (card == 'card-documento-atestado') {
-      settipodocumento('ATESTADO');
+      settipodocumento('ATESTADO MÉDICO');
+      preparaDocumentos();
     } else if (card == 'card-documento-alta') {
       settipodocumento('ALTA HOSPITALAR');
+      preparaDocumentos();
     }
 
     // eslint-disable-next-line
   }, [card, paciente, atendimentos, atendimento]);
 
+  const preparaDocumentos = () => {
+    loadModelos();
+    loadDocumentos();
+    setselecteddocumento([]);
+  }
+
+  // SELEÇÃO DE CID PARA ATESTADO MÉDICO.
+  const [viewseletorcid10, setviewseletorcid10] = useState(0);
+  function SeletorCid10() {
+    const [cid10] = useState(Cid10());
+    const [arraycid10, setarraycid10] = useState([]);
+    // filtro de paciente por nome.
+    function FilterCid10() {
+      var searchcid10 = "";
+      const [filtercid10, setfiltercid10] = useState("");
+      const filterCid10 = () => {
+        clearTimeout(timeout);
+        searchcid10 = document.getElementById("inputCid10").value;
+        document.getElementById("inputCid10").focus();
+        timeout = setTimeout(() => {
+          if (searchcid10 == "") {
+            searchcid10 = "";
+            setarraycid10([]);
+            document.getElementById("inputCid10").value = "";
+            setTimeout(() => {
+              document.getElementById("inputCid10").focus();
+            }, 100);
+          } else {
+            console.log(searchcid10);
+            setfiltercid10(searchcid10);
+            setTimeout(() => {
+              console.log(filtercid10);
+              setarraycid10(cid10.filter((item) => item.DESCRICAO.toUpperCase().includes(searchcid10) || item.DESCRICAO.includes(searchcid10)));
+              document.getElementById("inputCid10").value = searchcid10;
+              document.getElementById("inputCid10").focus();
+            }, 100);
+          }
+        }, 1000);
+      };
+      return (
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+          <input
+            className="input"
+            autoComplete="off"
+            placeholder={
+              window.innerWidth < mobilewidth ? "BUSCAR DOENÇA..." : "BUSCAR..."
+            }
+            onFocus={(e) => (e.target.placeholder = "")}
+            onBlur={(e) =>
+              window.innerWidth < mobilewidth
+                ? (e.target.placeholder = "BUSCAR DOENÇA...")
+                : "BUSCAR..."
+            }
+            onKeyUp={() => filterCid10()}
+            type="text"
+            id="inputCid10"
+            maxLength={100}
+            defaultValue={filtercid10}
+            style={{ width: '100%' }}
+          ></input>
+        </div>
+      );
+    }
+    return (
+      <div
+        style={{ display: viewseletorcid10 == 1 ? 'flex' : 'none' }}
+        className='fundo' onClick={() => setviewseletorcid10(0)}>
+        <div
+          className='janela scroll'
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            width: '40vw', height: '50vw'
+          }}>
+          <FilterCid10></FilterCid10>
+          {arraycid10.map(item => (
+            <div className='button'
+              style={{ width: 'calc(100% - 20px)' }}
+              onClick={() => {
+                setviewseletorcid10(0);
+                setTimeout(() => {
+                  let textoantigo = localStorage.getItem("texto");
+                  let novotexto = textoantigo.slice(0, textoantigo.length - 5) + ' ' + item.CAT + '.';
+                  document.getElementById("inputFieldDocumento").value = novotexto;
+                    document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
+                }, 1000);
+              }}
+            >
+              {item.CAT + ' - ' + item.DESCRICAO.toUpperCase()}
+            </div>
+          ))}
+        </div>
+      </div >
+    )
+  }
+  function BtnCid10() {
+    return (
+      <div id="botão para selecionar cid10"
+        className="button-green"
+        style={{
+          position: 'absolute',
+          bottom: 10, right: 225,
+          display: tipodocumento != 'ATESTADO MÉDICO' || selecteddocumento.status != 0 ? 'none' : 'flex',
+          alignSelf: 'center',
+        }}
+        onClick={() => {
+          localStorage.setItem('texto', document.getElementById("inputFieldDocumento").value.toUpperCase());
+          setviewseletorcid10(1);
+        }}>
+        CID-10
+      </div>
+    )
+  }
+
   // atualizando um documento.
-  const updateDocumento = (item, status) => {
+  const updateDocumento = (item, texto, status) => {
     var obj = {
       id_paciente: item.id_paciente,
       nome_paciente: item.nome_paciente,
       id_atendimento: item.id_atendimento,
       data: item.data,
-      texto: document.getElementById("inputFieldDocumento").value.toUpperCase(),
+      texto: texto,
       status: status,
       tipo_documento: item.tipo_documento,
       profissional: item.profissional
     }
     axios.post(html + 'update_documento/' + item.id, obj).then(() => {
       if (status == 1) {
-        loadDocumentos();
+        loadDocumentos('atualizar', item, status, document.getElementById("inputFieldDocumento").value.toUpperCase());
       }
     })
   }
@@ -197,7 +355,7 @@ function Documentos() {
       insertDocumento(texto);
     } else if (tipodocumento == 'ATESTADO MÉDICO') {
       let texto =
-        'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE XX DIAS, POR MOTIVO DE DOENÇA CID 10 XXX.'
+        'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE 2 DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 XXX.';
       insertDocumento(texto);
     } else if (tipodocumento == 'ALTA HOSPITALAR') {
       let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
@@ -225,27 +383,25 @@ function Documentos() {
     console.log(obj);
     console.log(usuario);
     axios.post(html + 'insert_documento', obj).then(() => {
-      loadDocumentos();
-      setselecteddocumento([]);
+      loadDocumentos('inserir');
     })
   }
 
   // copiar documento.
-  const copiarDocumento = (item) => {
+  const copiarDocumento = (item, texto) => {
     var obj = {
       id_paciente: item.id_paciente,
       nome_paciente: item.nome_paciente,
       id_atendimento: item.id_atendimento,
       data: moment(),
-      texto: item.texto,
+      texto: texto,
       status: 0,
       tipo_documento: item.tipo_documento,
       profissional: usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho
     }
     console.log(obj);
     axios.post(html + 'insert_documento', obj).then(() => {
-      loadDocumentos();
-      setselecteddocumento([]);
+      loadDocumentos('copiar', item);
     })
   }
 
@@ -311,7 +467,6 @@ function Documentos() {
               onClick={() => {
                 setselecteddocumento(item);
                 setTimeout(() => {
-                  // artifício para preservar o texto de um documento atualizado, sem precisar chamar a função loadDocumentos().
                   if (item.id == localStorage.getItem("id")) {
                     document.getElementById("inputFieldDocumento").value = localStorage.getItem("texto");
                   } else {
@@ -330,7 +485,7 @@ function Documentos() {
                 <div id="botão para deletar documento"
                   className="button-yellow"
                   style={{
-                    display: 'flex',
+                    display: item.profissional == usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho ? 'flex' : 'none',
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25,
                   }}
@@ -353,7 +508,10 @@ function Documentos() {
                     marginLeft: 0,
                     marginRight: item.status == 0 ? 5 : 0,
                   }}
-                  onClick={() => updateDocumento(item, 1)}>
+                  onClick={() => {
+                    setselecteddocumento(item);
+                    updateDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase(), 1);
+                  }}>
                   <img
                     alt=""
                     src={salvar}
@@ -367,7 +525,10 @@ function Documentos() {
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0
                   }}
-                  onClick={() => copiarDocumento(item)}>
+                  onClick={() => {
+                    setselecteddocumento(item);
+                    copiarDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase())
+                  }}>
                   <img
                     alt=""
                     src={copiar}
@@ -400,7 +561,45 @@ function Documentos() {
     )
     // eslint-disable-next-line
   }, [documentos]);
+  function FieldDocumento() {
+    return (
+      <textarea
+        className="textarea"
+        autoComplete='off'
+        placeholder='DIGITE AQUI O TEXTO DO DOCUMENTO.'
+        onFocus={(e) => (e.target.placeholder = '')}
+        onBlur={(e) => (e.target.placeholder = 'DIGITE AQUI O TEXTO DO DOCUMENTO.')}
+        onKeyUp={(e) => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            if (document.getElementById("inputFieldDocumento").value != '') {
+              let texto = document.getElementById("inputFieldDocumento").value;
+              localStorage.setItem("id", selecteddocumento.id);
+              localStorage.setItem("texto", texto);
+              console.log('ID:' + localStorage.getItem("id"));
+              updateDocumento(selecteddocumento, document.getElementById("inputFieldDocumento").value.toUpperCase(), 0);
+            }
+            e.stopPropagation();
+          }, 2000);
+        }}
+        style={{
+          display: 'flex',
+          flex: 2,
+          flexDirection: 'row', justifyContent: 'center',
+          alignSelf: 'center', alignContent: 'center',
+          whiteSpace: 'pre-wrap',
+          height: 'calc(100% - 20px)',
+          margin: 0, marginLeft: -5,
+          pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
+        }}
+        id="inputFieldDocumento"
+      ></textarea>
+    )
+  }
 
+  // MODELOS DE DOCUMENTOS
+  // modelos personalizados de receita médica e demais documentos, criados pelos usuários, que podem ser resgatados para edição de novos documentos.
+  // selecionando modelos cadastrados e criando documentos a partir dos mesmos.
   const [arraymodelos, setarraymodelos] = useState([]);
   const loadModelos = () => {
     axios.get(html + 'list_model_documentos/' + usuario.id).then((response) => {
@@ -408,10 +607,6 @@ function Documentos() {
       setarraymodelos(x);
     });
   }
-
-  // MODELOS DE DOCUMENTOS
-  // modelos personalizados de receita médica e demais documentos, criados pelos usuários, que podem ser resgatados para edição de novos documentos.
-  // selecionando modelos cadastrados e criando documentos a partir dos mesmos.
   const insertModeloDocumento = (item) => {
     var obj = {
       id_paciente: paciente,
@@ -425,8 +620,7 @@ function Documentos() {
     }
     axios.post(html + 'insert_documento', obj).then(() => {
       setviewselectmodelos(0);
-      loadDocumentos();
-      setselecteddocumento([]);
+      loadDocumentos('inserir');
     })
   }
   const [viewselectmodelos, setviewselectmodelos] = useState(0);
@@ -488,7 +682,6 @@ function Documentos() {
       </div>
     )
   }
-
   // criando um modelo de documento.
   const criarModeloDocumento = () => {
     var obj = {
@@ -501,7 +694,6 @@ function Documentos() {
       setviewcreatemodelo(0);
       loadModelos();
       loadDocumentos();
-      setselecteddocumento([]);
     })
   }
   const deletarModeloDocumento = (item) => {
@@ -509,7 +701,6 @@ function Documentos() {
       loadModelos();
     });
   }
-
   const [viewcreatemodelo, setviewcreatemodelo] = useState(0);
   function ViewCreateModelo() {
     return (
@@ -576,54 +767,7 @@ function Documentos() {
     )
   }
 
-  function FieldDocumento() {
-    return (
-      <textarea
-        className="textarea"
-        autoComplete='off'
-        placeholder='DIGITE AQUI O TEXTO DO DOCUMENTO.'
-        onFocus={(e) => (e.target.placeholder = '')}
-        onBlur={(e) => (e.target.placeholder = 'DIGITE AQUI O TEXTO DO DOCUMENTO.')}
-        onAuxClick={(e) => {
-          if (selecteddocumento.status == 1) {
-            document.getElementById("inputFieldDocumento").blur();
-            e.stopPropagation();
-          }
-        }}
-        onClick={(e) => {
-          if (selecteddocumento.status == 1) {
-            document.getElementById("inputFieldDocumento").blur();
-            e.stopPropagation();
-          }
-        }}
-        onKeyUp={(e) => {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => {
-            if (document.getElementById("inputFieldDocumento").value != '') {
-              let texto = document.getElementById("inputFieldDocumento").value;
-              localStorage.setItem("id", selecteddocumento.id);
-              localStorage.setItem("texto", texto);
-              console.log('ID:' + localStorage.getItem("id"));
-              updateDocumento(selecteddocumento, 0);
-            }
-            e.stopPropagation();
-          }, 2000);
-        }}
-        style={{
-          display: 'flex',
-          flex: 2,
-          flexDirection: 'row', justifyContent: 'center',
-          alignSelf: 'center', alignContent: 'center',
-          whiteSpace: 'pre-wrap',
-          height: 'calc(100% - 20px)',
-          margin: 0, marginLeft: -5,
-          // pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
-        }}
-        id="inputFieldDocumento"
-      ></textarea>
-    )
-  }
-
+  // IMPRESSÃO DO DOCUMENTO.
   function printDiv() {
     console.log('PREPARANDO DOCUMENTO PARA IMPRESSÃO');
     let printdocument = document.getElementById("IMPRESSÃO - DOCUMENTO").innerHTML;
@@ -633,8 +777,6 @@ function Documentos() {
     a.document.write('</html>');
     a.print();
   }
-
-  // impressão do documento.
   function PrintDocumento() {
     return (
       <div id="IMPRESSÃO - DOCUMENTO"
@@ -769,6 +911,7 @@ function Documentos() {
         flexDirection: 'row', justifyContent: 'center',
         alignContent: 'center', alignSelf: 'center', alignItems: 'center',
         height: 'calc(100% - 20px)',
+        position: 'relative',
       }}
     >
       <FieldDocumento></FieldDocumento>
@@ -776,6 +919,8 @@ function Documentos() {
       <PrintDocumento></PrintDocumento>
       <ViewSelectModelos></ViewSelectModelos>
       <ViewCreateModelo></ViewCreateModelo>
+      <BtnCid10></BtnCid10>
+      <SeletorCid10></SeletorCid10>
     </div>
   )
 }

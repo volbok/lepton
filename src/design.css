@@ -264,6 +264,29 @@ body {
   }
 }
 
+.clickme {
+  animation-name: clickme;
+  animation-iteration-count: infinite;
+  animation-duration: 200ms;
+}
+
+@keyframes clickme {
+  0% {
+    opacity: 1;
+    background-color: rgb(64, 74, 131, 1);
+  }
+
+  50% {
+    opacity: 1;
+    background-color: #e74c3c;
+  }
+
+  100% {
+    opacity: 1;
+    background-color: rgb(64, 74, 131, 1);
+  }
+}
+
 
 /* DESTAQUE PARA O BOTÃO DE GRAVAÇÃO (PISCANDO) */
 .gravando {

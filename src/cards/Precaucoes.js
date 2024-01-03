@@ -3,13 +3,11 @@ import React, { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
 import moment from 'moment';
-import useSpeechToText from 'react-hook-speech-to-text';
 // funções.
 import modal from '../functions/modal';
 // imagens.
 import deletar from '../images/deletar.svg';
 import novo from '../images/novo.svg';
-import microfone from '../images/microfone.svg';
 import back from '../images/back.svg';
 
 function Precaucoes() {
@@ -141,17 +139,6 @@ function Precaucoes() {
 
   // registro de alergia por voz.
   function Botoes() {
-    const [btngravavoz, setbtngravavoz] = useState("button-green");
-    const {
-      isRecording,
-      results,
-      startSpeechToText,
-      stopSpeechToText,
-      setResults,
-    } = useSpeechToText({
-      continuous: true,
-      useLegacyResults: false
-    });
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
@@ -168,31 +155,6 @@ function Precaucoes() {
               style={{ width: 30, height: 30 }}
             ></img>
           </div>
-          <div id="btngravavoz" className={btngravavoz}
-            style={{ display: 'flex', width: 50, height: 50 }}
-            onClick={isRecording ?
-              (e) => {
-                stopSpeechToText();
-                setbtngravavoz("button-green");
-                results.map(result => insertPrecaucao([result.transcript.toString().toUpperCase()]));
-                e.stopPropagation();
-              } :
-              (e) => {
-                setbtngravavoz("gravando");
-                startSpeechToText();
-                e.stopPropagation();
-              }}
-          >
-            <img
-              alt=""
-              src={microfone}
-              style={{
-                margin: 10,
-                height: 30,
-                width: 30,
-              }}
-            ></img>
-          </div>
           <div id="btninputprecaucao"
             className='button-green'
             onClick={(e) => { setviewinsertprecaucao(1); e.stopPropagation() }}
@@ -205,36 +167,6 @@ function Precaucoes() {
                 margin: 10,
                 height: 30,
                 width: 30,
-              }}
-            ></img>
-          </div>
-        </div>
-        <div id="lista de resultados"
-          className="button"
-          style={{
-            display: btngravavoz == "gravando" ? 'flex' : 'none',
-            flexDirection: 'column', justifyContent: 'center', width: 150
-          }}>
-          {results.map(item => (
-            <div key={item.timestamp}>
-              {item.transcript.toUpperCase()}
-            </div>
-          ))}
-          <div className='button-red'
-            style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
-            onClick={(e) => {
-              stopSpeechToText();
-              setResults([]);
-              setbtngravavoz("button-green");
-              e.stopPropagation();
-            }}>
-            <img
-              alt=""
-              src={deletar}
-              style={{
-                margin: 10,
-                height: 25,
-                width: 25,
               }}
             ></img>
           </div>

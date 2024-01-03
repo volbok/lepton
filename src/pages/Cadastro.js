@@ -370,7 +370,7 @@ function Cadastro() {
     // api para busca do endereço pelo CEP:
     const pegaEndereco = (cep) => {
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://cep.la/" + cep, true);
+      xhr.open("GET", "https://viacep.com.br/ws/" + cep + "/json/", true);
       xhr.setRequestHeader("Accept", "application/json");
       xhr.onreadystatechange = function () {
         if ((xhr.readyState == 0 || xhr.readyState == 4) && xhr.status == 200) {
@@ -382,7 +382,7 @@ function Cadastro() {
               ", BAIRRO: " +
               endereco.bairro +
               ", " +
-              endereco.cidade +
+              endereco.localidade +
               " - " +
               endereco.uf +
               " - CEP: " +
@@ -390,7 +390,7 @@ function Cadastro() {
             document.getElementById("inputNovoCep").value = endereco.cep;
           } else {
             document.getElementById("inputNovoEndereco").value = "";
-            document.getElementById("inputNovoCep").value = "CPF";
+            document.getElementById("inputNovoCep").value = "CEP";
           }
         }
       };
@@ -1082,7 +1082,7 @@ function Cadastro() {
     // api para busca do endereço pelo CEP:
     const pegaEndereco = (cep) => {
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://cep.la/" + cep, true);
+      xhr.open("GET", "https://viacep.com.br/ws/" + cep + "/json/", true);
       xhr.setRequestHeader("Accept", "application/json");
       xhr.onreadystatechange = function () {
         if ((xhr.readyState == 0 || xhr.readyState == 4) && xhr.status == 200) {
@@ -1096,7 +1096,7 @@ function Cadastro() {
               ", BAIRRO: " +
               endereco.bairro +
               ", " +
-              endereco.cidade +
+              endereco.localidade +
               " - " +
               endereco.uf +
               " - CEP: " +
@@ -1108,7 +1108,7 @@ function Cadastro() {
               "inputEndereco " + paciente.id_paciente
             ).value = "";
             document.getElementById("inputCep " + paciente.id_paciente).value =
-              "CPF";
+              "CEP";
           }
         }
       };
@@ -1461,6 +1461,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
+                  textAlign: 'center',
                   width: 100,
                   padding: 15,
                   height: 20,

@@ -35,6 +35,7 @@ const maskdate = (timeout, id) => {
         document.getElementById(id).value = moment(date).format("DD/MM/YYYY");
       }
     }
+    return x;
   }, 100);
 };
 
