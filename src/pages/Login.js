@@ -459,6 +459,27 @@ function Login() {
             width: window.innerWidth < mobilewidth ? "80vw" : "45vw",
           }}
         >
+          <div
+            className="button"
+            style={{
+              display: "flex",
+              padding: 10,
+              margin: 5,
+              width: 150,
+              minWidth: 150,
+              height: 150,
+              minHeight: 150,
+              maxWidth: 150,
+              maxHeight: 150,
+              color: 'white',
+            }}
+            onClick={() => {
+              setpagina(-1);
+              history.push("/prontuario_todos_pacientes");
+            }}
+          >
+            TODOS OS PACIENTES
+          </div>
           {acessos.map((item) => (
             <div
               key={"ACESSO: " + item.id_acesso}

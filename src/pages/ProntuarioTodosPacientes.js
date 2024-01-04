@@ -156,16 +156,13 @@ function Prontuario() {
     */
 
     axios
-      .get(html + "list_atendimentos/" + unidade)
+      .get(html + "all_atendimentos")
       .then((response) => {
-        setatendimentos(response.data.rows);
-        setarrayatendimentos(response.data.rows);
+        let x = response.data.rows;
+        setatendimentos(x.filter(item => item.situacao == 1));
+        setarrayatendimentos(x.filter(item => item.situacao == 1));
         loadAllInterconsultas();
         loadAllPrecaucoes();
-        // loadAllRiscos();
-        console.log(
-          "LISTA DE ATENDIMENTOS CARREGADA: " + response.data.rows.length
-        );
       })
       .catch(function (error) {
         if (error.response == undefined) {
@@ -229,16 +226,13 @@ function Prontuario() {
 
   var timeout = null;
   useEffect(() => {
-    if (pagina == 1) {
+    if (pagina == -1) {
       setpaciente([]);
       setatendimento(null);
       loadPacientes();
-      loadChamadas();
       if (consultorio == null) {
         setviewsalaselector(1);
       }
-
-
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -378,7 +372,7 @@ function Prontuario() {
 
   // recuperando o total de chamadas para a unidade de atendimento.
   const [chamadas, setchamadas] = useState([]);
-  const loadChamadas = () => {
+  const loadChamadas = (unidade) => {
     axios.get(html + 'list_chamada/' + unidade).then((response) => {
       setchamadas(response.data.rows);
     })
@@ -432,9 +426,6 @@ function Prontuario() {
           flex: 1,
         }}
       >
-        <div className="text3">
-          {unidades.filter((item) => item.id_unidade == unidade).map((item) => 'UNIDADE: ' + item.nome_unidade)}
-        </div>
         <div className="button" style={{ margin: 10, marginTop: 5, width: '60%', alignSelf: 'center' }}
           onClick={() => setviewsalaselector(1)}
         >
@@ -507,7 +498,7 @@ function Prontuario() {
                             borderBottomRightRadius: 0,
                             minHeight: 100,
                             height: 100,
-                            width: 75,
+                            width: 75, minWidth: 75, maxWidth: 75,
                             backgroundColor:
                               item.classificacao == 'AZUL' ? 'blue' :
                                 item.classificacao == 'VERDE' ? 'green' :
@@ -520,48 +511,7 @@ function Prontuario() {
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
                             style={{ margin: 5, padding: 0, fontSize: 24 }}
                           >
-                            {item.leito}
-                          </div>
-                          <div style={{
-                            display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
-                            flexDirection: 'row', flexWrap: 'wrap',
-                            alignSelf: 'center',
-                            margin: 5, marginBottom: 0
-                          }}>
-                            <div
-                              className="button-opaque"
-                              style={{
-                                display: 'flex',
-                                margin: 2.5, marginRight: 0,
-                                minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
-                                backgroundColor: 'rgba(231, 76, 60, 0.8)',
-                                borderTopRightRadius: 0,
-                                borderBottomRightRadius: 0,
-                              }}
-                              onClick={() => {
-                                callPaciente(item);
-                              }}
-                            >
-                              <img
-                                alt=""
-                                src={call}
-                                style={{
-                                  margin: 0,
-                                  height: 20,
-                                  width: 20,
-                                }}
-                              ></img>
-                            </div>
-                            <div id={'contagem de chamadas do PA' + item.id_atendimento}
-                              title="TOTAL DE CHAMADAS"
-                              className="text1"
-                              style={{
-                                margin: 2.5, marginLeft: 0,
-                                borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                                backgroundColor: 'white', height: 20, width: 20
-                              }}>
-                              {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
-                            </div>
+                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + '- ' + item.leito}
                           </div>
                         </div>
                         <div
@@ -581,7 +531,7 @@ function Prontuario() {
                             setatendimento(item.id_atendimento);
                             setpaciente(item.id_paciente);
                             getAllData(item.id_paciente, item.id_atendimento);
-                            if (pagina == 1) {
+                            if (pagina == -1) {
                               setTimeout(() => {
                                 var botoes = document
                                   .getElementById("scroll atendimentos com pacientes")
@@ -676,6 +626,7 @@ function Prontuario() {
                             borderBottomRightRadius: 0,
                             minHeight: 100,
                             height: 100,
+                            width: 75, minWidth: 75, maxWidth: 75,
                             backgroundColor:
                               item.classificacao == 'AZUL' ? 'blue' :
                                 item.classificacao == 'VERDE' ? 'green' :
@@ -688,7 +639,7 @@ function Prontuario() {
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
                             style={{ margin: 5, padding: 0, fontSize: 24 }}
                           >
-                            {item.leito}
+                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + '- ' + item.leito}
                           </div>
                           <div style={{
                             display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
@@ -748,7 +699,7 @@ function Prontuario() {
                             setatendimento(item.id_atendimento);
                             setpaciente(item.id_paciente);
                             getAllData(item.id_paciente, item.id_atendimento);
-                            if (pagina == 1) {
+                            if (pagina == -1) {
                               setTimeout(() => {
                                 var botoes = document
                                   .getElementById("scroll atendimentos com pacientes")
@@ -1921,7 +1872,7 @@ function Prontuario() {
       <div className="fundo"
         onClick={() => setviewinterconsultas(0)}
         style={{
-          display: unidade == 3 && viewinterconsultas == 1 ? 'flex' : 'none',
+          display: viewinterconsultas == 1 ? 'flex' : 'none',
           flexDirection: 'column', justifyContent: 'center'
         }}>
         <div className="janela scroll" style={{ width: '40vw', height: '60vh' }}>
@@ -1938,7 +1889,7 @@ function Prontuario() {
                     setatendimento(valor.id_atendimento);
                     setpaciente(valor.id_paciente);
                     getAllData(valor.id_paciente, valor.id_atendimento);
-                    if (pagina == 1) {
+                    if (pagina == -1) {
                       setTimeout(() => {
                         var botoes = document
                           .getElementById("scroll atendimentos com pacientes")
@@ -1969,7 +1920,7 @@ function Prontuario() {
     <div
       className="main fadein"
       style={{
-        display: pagina == 1 ? "flex" : "none",
+        display: pagina == -1 ? "flex" : "none",
         flexDirection: window.innerWidth < mobilewidth ? "column" : "row",
         justifyContent: window.innerWidth < mobilewidth ? "center" : "space-between",
         height: altura,

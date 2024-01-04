@@ -7,6 +7,7 @@ import Context from "./pages/Context";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Prontuario from "./pages/Prontuario";
+import ProntuarioTodosPacientes from "./pages/ProntuarioTodosPacientes";
 import Usuarios from "./pages/Usuarios";
 import Triagem from "./pages/Triagem";
 import Painel from "./pages/Painel";
@@ -292,6 +293,9 @@ function App() {
             </Route>
             <Route path="/prontuario">
               <Prontuario></Prontuario>
+            </Route>
+            <Route path="/prontuario_todos_pacientes">
+              <ProntuarioTodosPacientes></ProntuarioTodosPacientes>
             </Route>
             <Route path="/cadastro">
               <Cadastro></Cadastro>
