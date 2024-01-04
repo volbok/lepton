@@ -340,6 +340,8 @@ function Triagem() {
                 }, 1000);
               }}
               style={{
+                color: item == 'AMARELO' ? 'rgb(97, 99, 110, 1)' : '',
+                fontSize: 12,
                 backgroundColor:
                   item == 'AZUL' ? 'blue' :
                     item == 'VERDE' ? 'green' :
@@ -388,6 +390,7 @@ function Triagem() {
         <div className="text1">CLASSIFICAÇÃO INDICADA</div>
         <div className="button"
           style={{
+            color: classificacao == 'AMARELO' ? 'rgb(97, 99, 110, 1)' : '',
             backgroundColor:
               classificacao == 'AZUL' ? 'blue' : classificacao == 'VERDE' ? 'green' : classificacao == 'AMARELO' ? 'yellow' : classificacao == 'LARANJA' ? 'orange' : classificacao == 'VERMELHO' ? 'red' : 'grey',
             padding: 10, paddingLeft: 20, paddingRight: 20,
@@ -402,7 +405,10 @@ function Triagem() {
           {unidades.map(item => (
             <div
               className="button"
-              style={{ paddingLeft: 20, paddingRight: 20, width: 150 }}
+              style={{
+                display: item.nome_unidade == 'TRIAGEM' ? 'none' : 'flex',
+                paddingLeft: 20, paddingRight: 20, width: 150
+              }}
               onClick={() => updateAtendimento(item.id_unidade, classificacao)}
             >
               {item.nome_unidade}
@@ -523,7 +529,8 @@ function Triagem() {
                       borderBottomRightRadius: 0,
                       minHeight: 100,
                       height: 100,
-                      width: 100, minWidth: 100, maxWidth: 100
+                      width: 100, minWidth: 100, maxWidth: 100,
+                      backgroundColor: 'grey',
                     }}
                   >
                     <div>

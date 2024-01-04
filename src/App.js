@@ -118,6 +118,16 @@ function App() {
   const [documentos, setdocumentos] = useState([]);
 
   const [laboratorio, setlaboratorio] = useState([]);
+  const [arrayespecialidades, setarrayespecialidades] = useState([
+    'ANESTESIOLOGIA',
+    'CARDIOLOGIA',
+    'CLÍNICA MÉDICA',
+    'CIRURGIA GERAL',
+    'CIRURGIA TORÁCICA',
+    'UROLOGIA',
+    'RADIOLOGIA',
+    'MEDICINA INTENSIVA',
+  ])
 
   // largura do dispositivo (global).
   const [mobilewidth, setmobilewidth] = useState(600);
@@ -270,6 +280,7 @@ function App() {
         tipodocumento, settipodocumento,
         documentos, setdocumentos,
         laboratorio, setlaboratorio,
+        arrayespecialidades, setarrayespecialidades,
         mobilewidth, setmobilewidth,
       }}
     >

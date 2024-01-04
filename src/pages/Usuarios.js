@@ -34,6 +34,7 @@ function Usuarios() {
     hospital,
     unidades,
     usuario,
+    arrayespecialidades,
   } = useContext(Context);
 
   // history (router).
@@ -56,7 +57,6 @@ function Usuarios() {
     if (pagina == 5) {
       setselectedusuario(0);
       loadUsuarios();
-      // loadTodosAcessos();
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -105,17 +105,6 @@ function Usuarios() {
   const [acessofaturamento, setacessofaturamento] = useState(0);
   const [acessopaciente, setacessopaciente] = useState(0);
   const [acessousuarios, setacessousuarios] = useState(0);
-
-  const arrayespecialidades = [
-    'ANESTESIOLOGIA',
-    'CARDIOLOGIA',
-    'CLÍNICA MÉDICA',
-    'CIRURGIA GERAL',
-    'CIRURGIA TORÁCICA',
-    'UROLOGIA',
-    'RADIOLOGIA',
-    'MEDICINA INTENSIVA',
-  ]
 
   // registrando um usuário.
   const insertUsuario = () => {
@@ -1126,7 +1115,7 @@ function Usuarios() {
         <div
           className="button-green"
           style={{ margin: 5, marginTop: 10, pading: 5, width: 50, height: 50 }}
-          onClick={() => { updateAcessoModulos(); setselectedusuario(0) }}
+          onClick={() => { updateAcessoModulos(); setselectedusuario(0); setviewunidades(0); }}
         >
           <img
             alt=""

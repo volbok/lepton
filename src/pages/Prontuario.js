@@ -415,6 +415,7 @@ function Prontuario() {
     )
   }
 
+  const [arrayclassificacao, setarrayclassificacao] = useState(['VERMELHO', 'LARANJA', 'AMARELO', 'VERDE', 'AZUL', null]);
   // lista de atendimentos.
   const ListaDeAtendimentos = useCallback(() => {
     return (
@@ -428,7 +429,7 @@ function Prontuario() {
           marginLeft: 10,
           height: window.innerHeight - 130,
           width: 'calc(100% - 10px)',
-          flex: 1
+          flex: 1,
         }}
       >
         <div className="text3">
@@ -439,6 +440,37 @@ function Prontuario() {
         >
           {consultorio}
         </div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <div
+            className="button"
+            title="FILTRAR PACIENTES CLASSIFICADOS COMO VERMELHO OU LARANJA."
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'red' }}
+            onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA'])}
+          >
+          </div>
+          <div
+            className="button"
+            title="FILTRAR PACIENTES CLASSIFICADOS COMO AMARELO."
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'yellow' }}
+            onClick={() => setarrayclassificacao(['AMARELO'])}
+          >
+          </div>
+          <div
+            className="button"
+            title="FILTRAR PACIENTES CLASSIFICADOS COMO VERDE OU AZUL."
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'green' }}
+            onClick={() => setarrayclassificacao(['VERDE', 'AZUL'])}
+          >
+          </div>
+          <div
+            className="button"
+            title="EXIBIR TODAS AS CLASSIFICAÇÕES."
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'gray' }}
+            onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA', 'AMARELO', 'VERDE', 'AZUL', null])}
+          >
+          </div>
+
+        </div>
         <div id="scroll atendimentos com pacientes"
           className="scroll"
           style={{
@@ -446,340 +478,348 @@ function Prontuario() {
             justifyContent: "flex-start",
             height: window.innerHeight - 240,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
-            width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)'
+            width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)',
           }}
         >
-          {arrayatendimentos
-            .filter(item => item.leito != 'F')
-            .sort((a, b) => (a.leito > b.leito ? 1 : -1))
-            .map((item) => (
-              <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
-                <div
-                  className="row"
-                  style={{
-                    position: "relative",
-                    margin: 2.5, padding: 0,
-                  }}
-                >
-                  <div
-                    className="button-yellow"
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      marginRight: 0,
-                      borderTopRightRadius: 0,
-                      borderBottomRightRadius: 0,
-                      minHeight: 100,
-                      height: 100,
-                      width: 75,
-                      backgroundColor:
-                        item.classificacao == 'AZUL' ? 'blue' :
-                          item.classificacao == 'VERDE' ? 'green' :
-                            item.classificacao == 'AMARELO' ? 'yellow' :
-                              item.classificacao == 'LARANJA' ? 'orange' :
-                                item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
-                    }}
-                  >
-                    <div
-                      className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                      style={{ margin: 5, padding: 0, fontSize: 24 }}
-                    >
-                      {item.leito}
-                    </div>
-                    <div style={{
-                      display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
-                      flexDirection: 'row', flexWrap: 'wrap',
-                      alignSelf: 'center',
-                      margin: 5, marginBottom: 0
-                    }}>
+          {arrayclassificacao.map(x => (
+            <div>
+              {
+                arrayatendimentos
+                  .filter(item => item.leito != 'F' && item.classificacao == x)
+                  .sort((a, b) => (a.leito > b.leito ? 1 : -1))
+                  .map((item) => (
+                    <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
                       <div
-                        className="button-opaque"
+                        className="row"
                         style={{
-                          display: 'flex',
-                          margin: 2.5, marginRight: 0,
-                          minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
-                          backgroundColor: 'rgba(231, 76, 60, 0.8)',
-                          borderTopRightRadius: 0,
-                          borderBottomRightRadius: 0,
-                        }}
-                        onClick={() => {
-                          callPaciente(item);
+                          position: "relative",
+                          margin: 2.5, padding: 0,
                         }}
                       >
-                        <img
-                          alt=""
-                          src={call}
+                        <div
+                          className="button-yellow"
                           style={{
-                            margin: 0,
-                            height: 20,
-                            width: 20,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            marginRight: 0,
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                            minHeight: 100,
+                            height: 100,
+                            width: 75,
+                            backgroundColor:
+                              item.classificacao == 'AZUL' ? 'blue' :
+                                item.classificacao == 'VERDE' ? 'green' :
+                                  item.classificacao == 'AMARELO' ? 'yellow' :
+                                    item.classificacao == 'LARANJA' ? 'orange' :
+                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
                           }}
-                        ></img>
-                      </div>
-                      <div id={'contagem de chamadas do PA' + item.id_atendimento}
-                        title="TOTAL DE CHAMADAS"
-                        className="text1"
-                        style={{
-                          margin: 2.5, marginLeft: 0,
-                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                          backgroundColor: 'white', height: 20, width: 20
-                        }}>
-                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                        >
+                          <div
+                            className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                          >
+                            {item.leito}
+                          </div>
+                          <div style={{
+                            display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
+                            flexDirection: 'row', flexWrap: 'wrap',
+                            alignSelf: 'center',
+                            margin: 5, marginBottom: 0
+                          }}>
+                            <div
+                              className="button-opaque"
+                              style={{
+                                display: 'flex',
+                                margin: 2.5, marginRight: 0,
+                                minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                                backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
+                              }}
+                              onClick={() => {
+                                callPaciente(item);
+                              }}
+                            >
+                              <img
+                                alt=""
+                                src={call}
+                                style={{
+                                  margin: 0,
+                                  height: 20,
+                                  width: 20,
+                                }}
+                              ></img>
+                            </div>
+                            <div id={'contagem de chamadas do PA' + item.id_atendimento}
+                              title="TOTAL DE CHAMADAS"
+                              className="text1"
+                              style={{
+                                margin: 2.5, marginLeft: 0,
+                                borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                                backgroundColor: 'white', height: 20, width: 20
+                              }}>
+                              {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          id={"atendimento " + item.id_atendimento}
+                          className="button"
+                          style={{
+                            flex: 3,
+                            marginLeft: 0,
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            minHeight: 100,
+                            height: 100,
+                            width: '100%',
+                          }}
+                          onClick={() => {
+                            setviewlista(0);
+                            setatendimento(item.id_atendimento);
+                            setpaciente(item.id_paciente);
+                            getAllData(item.id_paciente, item.id_atendimento);
+                            if (pagina == 1) {
+                              setTimeout(() => {
+                                var botoes = document
+                                  .getElementById("scroll atendimentos com pacientes")
+                                  .getElementsByClassName("button-red");
+                                for (var i = 0; i < botoes.length; i++) {
+                                  botoes.item(i).className = "button";
+                                }
+                                document.getElementById(
+                                  "atendimento " + item.id_atendimento
+                                ).className = "button-red";
+                              }, 100);
+                            }
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "flex-start",
+                              padding: 5
+                            }}
+                          >
+                            {pacientes.filter(
+                              (valor) => valor.id_paciente == item.id_paciente
+                            )
+                              .map((valor) => valor.nome_paciente)}
+                            <div>
+                              {moment().diff(
+                                moment(
+                                  pacientes
+                                    .filter(
+                                      (valor) => valor.id_paciente == item.id_paciente
+                                    )
+                                    .map((item) => item.dn_paciente)
+                                ),
+                                "years"
+                              ) + " ANOS"}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          id="informações do paciente"
+                          style={{
+                            position: "absolute",
+                            right: -5,
+                            bottom: -5,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {tagsDosPacientes(
+                            "INTERCONSULTAS",
+                            item,
+                            allinterconsultas,
+                            esteto
+                          )}
+                          {tagsDosPacientes(
+                            "PRECAUÇÕES",
+                            item,
+                            allprecaucoes,
+                            prec_padrao
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    id={"atendimento " + item.id_atendimento}
-                    className="button"
-                    style={{
-                      flex: 3,
-                      marginLeft: 0,
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
-                      minHeight: 100,
-                      height: 100,
-                      width: '100%',
-                    }}
-                    onClick={() => {
-                      setviewlista(0);
-                      setatendimento(item.id_atendimento);
-                      setpaciente(item.id_paciente);
-                      getAllData(item.id_paciente, item.id_atendimento);
-                      if (pagina == 1) {
-                        setTimeout(() => {
-                          var botoes = document
-                            .getElementById("scroll atendimentos com pacientes")
-                            .getElementsByClassName("button-red");
-                          for (var i = 0; i < botoes.length; i++) {
-                            botoes.item(i).className = "button";
-                          }
-                          document.getElementById(
-                            "atendimento " + item.id_atendimento
-                          ).className = "button-red";
-                        }, 100);
-                      }
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        padding: 5
-                      }}
-                    >
-                      {pacientes.filter(
-                        (valor) => valor.id_paciente == item.id_paciente
-                      )
-                        .map((valor) => valor.nome_paciente)}
-                      <div>
-                        {moment().diff(
-                          moment(
-                            pacientes
+                  ))
+              }
+              {
+                arrayatendimentos
+                  .filter(item => item.leito == 'F' && item.classificacao == x)
+                  .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
+                  .map((item) => (
+                    <div key={"pacientes" + item.id_atendimento}>
+                      <div
+                        className="row"
+                        style={{
+                          padding: 0,
+                          flex: 4,
+                          position: "relative",
+                          margin: 2.5
+                        }}
+                      >
+                        <div
+                          className="button-yellow"
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            marginRight: 0,
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                            minHeight: 100,
+                            height: 100,
+                            backgroundColor:
+                              item.classificacao == 'AZUL' ? 'blue' :
+                                item.classificacao == 'VERDE' ? 'green' :
+                                  item.classificacao == 'AMARELO' ? 'yellow' :
+                                    item.classificacao == 'LARANJA' ? 'orange' :
+                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                          }}
+                        >
+                          <div
+                            className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                          >
+                            {item.leito}
+                          </div>
+                          <div style={{
+                            display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
+                            flexDirection: 'row', flexWrap: 'wrap',
+                            alignSelf: 'center',
+                            margin: 5, marginBottom: 0
+                          }}>
+                            <div
+                              className="button-opaque"
+                              style={{
+                                display: 'flex',
+                                margin: 2.5, marginRight: 0,
+                                minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                                backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
+                              }}
+                              onClick={() => {
+                                callPaciente(item);
+                              }}
+                            >
+                              <img
+                                alt=""
+                                src={call}
+                                style={{
+                                  margin: 0,
+                                  height: 20,
+                                  width: 20,
+                                }}
+                              ></img>
+                            </div>
+                            <div id={'contagem de chamadas do PA' + item.id_atendimento}
+                              title="TOTAL DE CHAMADAS"
+                              className="text1"
+                              style={{
+                                margin: 2.5, marginLeft: 0,
+                                borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                                backgroundColor: 'white', height: 20, width: 20
+                              }}>
+                              {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          id={"atendimento " + item.id_atendimento}
+                          className="button"
+                          style={{
+                            flex: 3,
+                            marginLeft: 0,
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            minHeight: 100,
+                            height: 100,
+                          }}
+                          onClick={() => {
+                            setviewlista(0);
+                            setatendimento(item.id_atendimento);
+                            setpaciente(item.id_paciente);
+                            getAllData(item.id_paciente, item.id_atendimento);
+                            if (pagina == 1) {
+                              setTimeout(() => {
+                                var botoes = document
+                                  .getElementById("scroll atendimentos com pacientes")
+                                  .getElementsByClassName("button-red");
+                                for (var i = 0; i < botoes.length; i++) {
+                                  botoes.item(i).className = "button";
+                                }
+                                document.getElementById(
+                                  "atendimento " + item.id_atendimento
+                                ).className = "button-red";
+                              }, 100);
+                            }
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "flex-start",
+                              padding: 5
+                            }}
+                          >
+                            {pacientes
                               .filter(
                                 (valor) => valor.id_paciente == item.id_paciente
                               )
-                              .map((item) => item.dn_paciente)
-                          ),
-                          "years"
-                        ) + " ANOS"}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    id="informações do paciente"
-                    style={{
-                      position: "absolute",
-                      right: -5,
-                      bottom: -5,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {tagsDosPacientes(
-                      "INTERCONSULTAS",
-                      item,
-                      allinterconsultas,
-                      esteto
-                    )}
-                    {tagsDosPacientes(
-                      "PRECAUÇÕES",
-                      item,
-                      allprecaucoes,
-                      prec_padrao
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          {arrayatendimentos
-            .filter(item => item.leito == 'F')
-            .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
-            .map((item) => (
-              <div key={"pacientes" + item.id_atendimento}>
-                <div
-                  className="row"
-                  style={{
-                    padding: 0,
-                    flex: 4,
-                    position: "relative",
-                    margin: 2.5
-                  }}
-                >
-                  <div
-                    className="button-yellow"
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      marginRight: 0,
-                      borderTopRightRadius: 0,
-                      borderBottomRightRadius: 0,
-                      minHeight: 100,
-                      height: 100,
-                      backgroundColor:
-                        item.classificacao == 'AZUL' ? 'blue' :
-                          item.classificacao == 'VERDE' ? 'green' :
-                            item.classificacao == 'AMARELO' ? 'yellow' :
-                              item.classificacao == 'LARANJA' ? 'orange' :
-                                item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
-                    }}
-                  >
-                    <div
-                      className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                      style={{ margin: 5, padding: 0, fontSize: 24 }}
-                    >
-                      {item.leito}
-                    </div>
-                    <div style={{
-                      display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
-                      flexDirection: 'row', flexWrap: 'wrap',
-                      alignSelf: 'center',
-                      margin: 5, marginBottom: 0
-                    }}>
-                      <div
-                        className="button-opaque"
-                        style={{
-                          display: 'flex',
-                          margin: 2.5, marginRight: 0,
-                          minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
-                          backgroundColor: 'rgba(231, 76, 60, 0.8)',
-                          borderTopRightRadius: 0,
-                          borderBottomRightRadius: 0,
-                        }}
-                        onClick={() => {
-                          callPaciente(item);
-                        }}
-                      >
-                        <img
-                          alt=""
-                          src={call}
+                              .map((valor) => valor.nome_paciente)}
+                            <div>
+                              {moment().diff(
+                                moment(
+                                  pacientes
+                                    .filter(
+                                      (valor) => valor.id_paciente == item.id_paciente
+                                    )
+                                    .map((item) => item.dn_paciente)
+                                ),
+                                "years"
+                              ) + " ANOS"}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          id="informações do paciente"
                           style={{
-                            margin: 0,
-                            height: 20,
-                            width: 20,
+                            position: "absolute",
+                            right: -5,
+                            bottom: -5,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "center",
                           }}
-                        ></img>
-                      </div>
-                      <div id={'contagem de chamadas do PA' + item.id_atendimento}
-                        title="TOTAL DE CHAMADAS"
-                        className="text1"
-                        style={{
-                          margin: 2.5, marginLeft: 0,
-                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                          backgroundColor: 'white', height: 20, width: 20
-                        }}>
-                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    id={"atendimento " + item.id_atendimento}
-                    className="button"
-                    style={{
-                      flex: 3,
-                      marginLeft: 0,
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
-                      minHeight: 100,
-                      height: 100,
-                    }}
-                    onClick={() => {
-                      setviewlista(0);
-                      setatendimento(item.id_atendimento);
-                      setpaciente(item.id_paciente);
-                      getAllData(item.id_paciente, item.id_atendimento);
-                      if (pagina == 1) {
-                        setTimeout(() => {
-                          var botoes = document
-                            .getElementById("scroll atendimentos com pacientes")
-                            .getElementsByClassName("button-red");
-                          for (var i = 0; i < botoes.length; i++) {
-                            botoes.item(i).className = "button";
-                          }
-                          document.getElementById(
-                            "atendimento " + item.id_atendimento
-                          ).className = "button-red";
-                        }, 100);
-                      }
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        padding: 5
-                      }}
-                    >
-                      {pacientes
-                        .filter(
-                          (valor) => valor.id_paciente == item.id_paciente
-                        )
-                        .map((valor) => valor.nome_paciente)}
-                      <div>
-                        {moment().diff(
-                          moment(
-                            pacientes
-                              .filter(
-                                (valor) => valor.id_paciente == item.id_paciente
-                              )
-                              .map((item) => item.dn_paciente)
-                          ),
-                          "years"
-                        ) + " ANOS"}
+                        >
+                          {tagsDosPacientes(
+                            "INTERCONSULTAS",
+                            item,
+                            allinterconsultas,
+                            esteto
+                          )}
+                          {tagsDosPacientes(
+                            "PRECAUÇÕES",
+                            item,
+                            allprecaucoes,
+                            prec_padrao
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    id="informações do paciente"
-                    style={{
-                      position: "absolute",
-                      right: -5,
-                      bottom: -5,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {tagsDosPacientes(
-                      "INTERCONSULTAS",
-                      item,
-                      allinterconsultas,
-                      esteto
-                    )}
-                    {tagsDosPacientes(
-                      "PRECAUÇÕES",
-                      item,
-                      allprecaucoes,
-                      prec_padrao
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+                  ))
+              }
+            </div>
+          ))}
         </div>
         <div id="scroll atendimento vazio"
           className="scroll"
@@ -795,10 +835,10 @@ function Prontuario() {
             SEM PACIENTES CADASTRADOS PARA ESTA UNIDADE
           </div>
         </div>
-      </div>
+      </div >
     );
     // eslint-disable-next-line
-  }, [arrayatendimentos, allinterconsultas, allprecaucoes, consultorio]);
+  }, [arrayclassificacao, arrayatendimentos, allinterconsultas, allprecaucoes, consultorio]);
 
   const tagsDosPacientes = (titulo, item, lista, imagem) => {
     return (
@@ -1875,6 +1915,32 @@ function Prontuario() {
     );
   }
 
+  const [viewinterconsultas, setviewinterconsultas] = useState(0);
+  function TelaInterconsultas() {
+    return (
+      <div className="fundo"
+        onClick={() => setviewinterconsultas(0)}
+        style={{
+          display: unidade == 3 && viewinterconsultas == 1 ? 'flex' : 'none',
+          flexDirection: 'column', justifyContent: 'center'
+        }}>
+        <div className="janela scroll" style={{ width: '40vw', height: '60vh' }}>
+          {interconsultas.filter(item => item.especialidade == usuario.tipo_usuario).map(item => (
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: 'calc(100% - 5px)' }}>
+              {atendimentos.filter(valor => valor.id_atendimento == item.id_atendimento && valor.situacao == 1).map(valor => (
+                <div style={{ display: 'flex', flexDirection: 'row', justifyItems: 'center', width: '100%' }}>
+                  <div className='button-yellow' style={{ width: 100 }}>{unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade)}</div>
+                  <div className='button' style={{ width: 100 }}>{'LEITO: ' + valor.leito}</div>
+                  <div className='button' style={{ width: '100%' }}>{valor.nome_paciente}</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className="main fadein"
@@ -1896,8 +1962,28 @@ function Prontuario() {
           height: window.innerHeight - 15,
           margin: 0,
           flex: 1,
+          position: 'relative',
         }}
       >
+        <div
+          style={{
+            display: 'flex',
+            position: 'absolute', top: 80, right: 80,
+            borderRadius: 50,
+            width: 50, height: 50,
+            backgroundColor: 'red',
+            borderColor: 'rgb(215, 219, 221)',
+            borderWidth: 5,
+            borderStyle: 'solid',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}
+          onClick={() => setviewinterconsultas(1)}
+          title={'INTERCONSULTAS PARA ' + usuario.tipo_usuario + '.'}
+        >
+          <div className="text2" style={{ margin: 0, padding: 0 }}>{interconsultas.filter(item => item.especialidade == usuario.tipo_usuario).length}</div>
+        </div>
         <Usuario></Usuario>
         <ListaDeAtendimentos></ListaDeAtendimentos>
       </div>
@@ -2018,6 +2104,7 @@ function Prontuario() {
         </div>
       </div>
       <SalaSelector></SalaSelector>
+      <TelaInterconsultas></TelaInterconsultas>
     </div>
   );
 }

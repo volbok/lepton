@@ -1,5 +1,5 @@
 /* eslint eqeqeq: "off" */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Context from "./Context";
 import moment from "moment";
@@ -55,8 +55,11 @@ function Cadastro() {
   };
   window.addEventListener("load", refreshApp);
 
+  const [atendimento, setatendimento] = useState([]);
   useEffect(() => {
     if (pagina == 2) {
+      setpaciente([]);
+      setatendimento([]);
       loadPacientes();
       loadAtendimentos();
     }
@@ -258,43 +261,54 @@ function Cadastro() {
 
   // atualizando um atendimento (mudando de leito).
   const updateAtendimento = (leito, atendimento) => {
-    axios.get(html + "list_all_leitos").then((response) => {
-      var x = response.data.rows;
-      // recuperando a id do leito a ter seu status alterado para livre.
-      let id_leito = x.filter((valor) => valor.leito == atendimento.map(item => parseInt(item.leito)).pop() && valor.id_unidade == atendimento.map(item => parseInt(item.id_unidade)).pop()).map(item => parseInt(item.id_leito)).pop();
-      console.log('ID LEITO ANTIGO: ' + id_leito);
-      // liberando o leito.
-      var obj = {
-        id_unidade: atendimento.map(item => parseInt(item.id_unidade)).pop(),
-        leito: atendimento.map(item => parseInt(item.leito)).pop(),
-        status: 'LIVRE',
-      };
-      axios.post(html + "update_leito/" + id_leito, obj).then(() => {
-        // atualizando o atendimento no novo leito.
-        atendimento.map((item) => {
-          var obj = {
-            data_inicio: item.data_inicio,
-            data_termino: null,
-            problemas: item.problemas,
-            id_paciente: item.id_paciente,
-            id_unidade: unidade,
-            nome_paciente: item.nome_paciente,
-            leito: leito,
-            situacao: 1,
-            id_cliente: hospital,
-            classificacao: item.classificacao,
-          };
-          axios
-            .post(html + "update_atendimento/" + item.id_atendimento, obj)
-            .then(() => {
-              axios
-                .get(html + "allatendimentos/" + hospital)
-                .then((response) => {
-                  setatendimentos(response.data.rows);
-                  loadLeitos(unidade);
-                })
-            })
-          return null;
+    let leito_atual = null
+    let id_leito_atual = null;
+    let unidade_atual = null;
+    axios.get(html + "allatendimentos/" + hospital).then((response) => {
+      let x = response.data.rows;
+      unidade_atual = x.filter(item => item.id_atendimento == atendimento.map(valor => valor.id_atendimento)).map(item => item.id_unidade).pop();
+      leito_atual = x.filter(item => item.id_atendimento == atendimento.map(valor => valor.id_atendimento)).map(item => item.leito).pop();
+      console.log('LEITO ATUAL DO ATENDIMENTO, A SER LIBERADO: ' + leito_atual);
+      // recuperando a id do leito atual, a ter seu status alterado para livre.
+      axios.get(html + "list_all_leitos").then((response) => {
+        let y = response.data.rows;
+        id_leito_atual = y.filter(valor => valor.leito == leito_atual && valor.id_unidade == unidade_atual).map(item => item.id_leito).pop();
+        console.log('ID LEITO ATUAL A SER LIBERADO: ' + id_leito_atual);
+        // liberando o leito.
+        var obj = {
+          id_unidade: unidade_atual,
+          leito: leito_atual,
+          status: 'LIVRE',
+        };
+        console.log(obj);
+        axios.post(html + "update_leito/" + id_leito_atual, obj).then(() => {
+          // atualizando o atendimento no novo leito.
+          atendimento.map((item) => {
+            var obj = {
+              data_inicio: item.data_inicio,
+              data_termino: null,
+              problemas: item.problemas,
+              id_paciente: item.id_paciente,
+              id_unidade: unidade,
+              nome_paciente: item.nome_paciente,
+              leito: leito,
+              situacao: 1,
+              id_cliente: hospital,
+              classificacao: item.classificacao,
+            };
+            axios
+              .post(html + "update_atendimento/" + item.id_atendimento, obj)
+              .then(() => {
+                axios
+                  .get(html + "allatendimentos/" + hospital)
+                  .then((response) => {
+                    setatendimentos(response.data.rows);
+                    loadLeitos(unidade);
+                    setvieweditpaciente(0);
+                  })
+              })
+            return null;
+          });
         });
       });
     });
@@ -363,73 +377,45 @@ function Cadastro() {
     });
   };
 
+  const [viewtipodocumento, setviewtipodocumento] = useState(0);
+  function ViewTipoDocumento() {
+    let array = ["CPF", "RG", "CERT. NASCTO.", "OUTRO"];
+    return (
+      <div
+        className="fundo"
+        style={{ display: viewtipodocumento == 1 ? "flex" : "none" }}
+        onClick={() => setviewtipodocumento(0)}
+      >
+        <div className="janela scroll" onClick={(e) => e.stopPropagation()}>
+          {array.map((item) => (
+            <div
+              className="button"
+              style={{ width: 100 }}
+              onClick={() => {
+                if (viewnewpaciente == 0) {
+                  document.getElementById(
+                    "inputTipoDocumento " + paciente.id_paciente
+                  ).value = item;
+                  setviewtipodocumento(0);
+                } else {
+                  document.getElementById("inputNovoTipoDocumento").value =
+                    item;
+                  setviewtipodocumento(0);
+                }
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   // componente para inserir novo paciente.
   const [viewnewpaciente, setviewnewpaciente] = useState(0);
   function InsertPaciente() {
     var timeout = null;
-    // api para busca do endereço pelo CEP:
-    const pegaEndereco = (cep) => {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "https://viacep.com.br/ws/" + cep + "/json/", true);
-      xhr.setRequestHeader("Accept", "application/json");
-      xhr.onreadystatechange = function () {
-        if ((xhr.readyState == 0 || xhr.readyState == 4) && xhr.status == 200) {
-          let endereco = JSON.parse(xhr.responseText);
-          if (endereco.logradouro != undefined) {
-            console.log("ENDEREÇO: " + endereco.logradouro);
-            document.getElementById("inputNovoEndereco").value =
-              endereco.logradouro +
-              ", BAIRRO: " +
-              endereco.bairro +
-              ", " +
-              endereco.localidade +
-              " - " +
-              endereco.uf +
-              " - CEP: " +
-              endereco.cep;
-            document.getElementById("inputNovoCep").value = endereco.cep;
-          } else {
-            document.getElementById("inputNovoEndereco").value = "";
-            document.getElementById("inputNovoCep").value = "CEP";
-          }
-        }
-      };
-      xhr.send(null);
-    };
-    const [viewtipodocumento, setviewtipodocumento] = useState(0);
-    function ViewTipoDocumento() {
-      let array = ["CPF", "RG", "CERT. NASCTO.", "OUTRO"];
-      return (
-        <div
-          className="fundo"
-          style={{ display: viewtipodocumento == 1 ? "flex" : "none" }}
-          onClick={() => setviewtipodocumento(0)}
-        >
-          <div className="janela scroll" onClick={(e) => e.stopPropagation()}>
-            {array.map((item) => (
-              <div
-                className="button"
-                style={{ width: 100 }}
-                onClick={() => {
-                  if (viewnewpaciente == 0) {
-                    document.getElementById(
-                      "inputTipoDocumento " + paciente.id_paciente
-                    ).value = item;
-                    setviewtipodocumento(0);
-                  } else {
-                    document.getElementById("inputNovoTipoDocumento").value =
-                      item;
-                    setviewtipodocumento(0);
-                  }
-                }}
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
     return (
       <div
         className="fundo"
@@ -992,16 +978,14 @@ function Cadastro() {
                 }}
                 onClick={() => {
                   setpaciente(item);
-                  setTimeout(() => {
-                    document
-                      .getElementById("expandlist " + item.id_paciente)
-                      .classList.toggle("expandpaciente");
-                    document
-                      .getElementById(
-                        "informações do paciente " + item.id_paciente
-                      )
-                      .classList.toggle("show");
-                  }, 100);
+                  setatendimento(
+                    atendimentos.filter(
+                      (valor) =>
+                        valor.id_cliente == hospital &&
+                        valor.data_termino == null &&
+                        valor.id_paciente == item.id_paciente
+                    ));
+                  setvieweditpaciente(1)
                 }}
               >
                 <div
@@ -1054,14 +1038,6 @@ function Cadastro() {
                     : "INICIAR ATENDIMENTO"}
                 </div>
               </div>
-              {DadosPacienteAtendimento(
-                item,
-                atendimentos.filter(
-                  (valor) =>
-                    valor.id_paciente == item.id_paciente &&
-                    valor.data_termino == null
-                )
-              )}
             </div>
           ))}
         <div
@@ -1078,206 +1054,84 @@ function Cadastro() {
     );
   }
 
-  function DadosPacienteAtendimento(paciente, atendimento) {
-    // api para busca do endereço pelo CEP:
-    const pegaEndereco = (cep) => {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "https://viacep.com.br/ws/" + cep + "/json/", true);
-      xhr.setRequestHeader("Accept", "application/json");
-      xhr.onreadystatechange = function () {
-        if ((xhr.readyState == 0 || xhr.readyState == 4) && xhr.status == 200) {
-          let endereco = JSON.parse(xhr.responseText);
-          if (endereco.logradouro != undefined) {
-            console.log("ENDEREÇO: " + endereco.logradouro);
-            document.getElementById(
-              "inputEndereco " + paciente.id_paciente
-            ).value =
-              endereco.logradouro +
-              ", BAIRRO: " +
-              endereco.bairro +
-              ", " +
-              endereco.localidade +
-              " - " +
-              endereco.uf +
-              " - CEP: " +
-              endereco.cep;
-            document.getElementById("inputCep " + paciente.id_paciente).value =
-              endereco.cep;
-          } else {
-            document.getElementById(
-              "inputEndereco " + paciente.id_paciente
-            ).value = "";
-            document.getElementById("inputCep " + paciente.id_paciente).value =
-              "CEP";
-          }
+  // api para busca do endereço pelo CEP:
+  const pegaEndereco = (cep) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://viacep.com.br/ws/" + cep + "/json/", true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.onreadystatechange = function () {
+      if ((xhr.readyState == 0 || xhr.readyState == 4) && xhr.status == 200) {
+        let endereco = JSON.parse(xhr.responseText);
+        if (endereco.logradouro != undefined) {
+          console.log("ENDEREÇO: " + endereco.logradouro);
+          document.getElementById(
+            "inputEndereco " + paciente.id_paciente
+          ).value =
+            endereco.logradouro +
+            ", BAIRRO: " +
+            endereco.bairro +
+            ", " +
+            endereco.localidade +
+            " - " +
+            endereco.uf +
+            " - CEP: " +
+            endereco.cep;
+          document.getElementById("inputCep " + paciente.id_paciente).value =
+            endereco.cep;
+        } else {
+          document.getElementById(
+            "inputEndereco " + paciente.id_paciente
+          ).value = "";
+          document.getElementById("inputCep " + paciente.id_paciente).value =
+            "CEP";
         }
-      };
-      xhr.send(null);
+      }
     };
-    const [viewtipodocumento, setviewtipodocumento] = useState(0);
-    function ViewTipoDocumento() {
-      let array = ["CPF", "RG", "CERT. NASCTO.", "OUTRO"];
-      return (
-        <div
-          className="fundo"
-          style={{ display: viewtipodocumento == 1 ? "flex" : "none" }}
-          onClick={() => setviewtipodocumento(0)}
-        >
-          <div className="janela scroll" onClick={(e) => e.stopPropagation()}>
-            {array.map((item) => (
-              <div
-                className="button"
-                style={{ width: 100 }}
-                onClick={() => {
-                  document.getElementById(
-                    "inputTipoDocumento " + paciente.id_paciente
-                  ).value = item;
-                  setviewtipodocumento(0);
-                }}
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
+    xhr.send(null);
+  };
+
+  const [vieweditpaciente, setvieweditpaciente] = useState(0);
+  const DadosPacienteAtendimento = useCallback(() => {
     var timeout = null;
-    // atualizando um novo paciente.
-    const updatePaciente = (paciente) => {
-      var obj = {
-        nome_paciente: document
-          .getElementById("inputNomePaciente " + paciente.id_paciente)
-          .value.toUpperCase(),
-        nome_mae_paciente: document
-          .getElementById("inputNomeMae " + paciente.id_paciente)
-          .value.toUpperCase(),
-        dn_paciente: moment(
-          document.getElementById("inputDn " + paciente.id_paciente).value,
-          "DD/MM/YYYY"
-        ),
-
-        antecedentes_pessoais: paciente.antecedentes_pessoais,
-        medicacoes_previas: paciente.medicacoes_previas,
-        exames_previos: paciente.exames_previos,
-        exames_atuais: paciente.exames_atuais,
-
-        tipo_documento: document
-          .getElementById("inputTipoDocumento " + paciente.id_paciente)
-          .value.toUpperCase(),
-        numero_documento: document
-          .getElementById("inputNumeroDocumento " + paciente.id_paciente)
-          .value.toUpperCase(),
-        endereco: document
-          .getElementById("inputEndereco " + paciente.id_paciente)
-          .value.toUpperCase(),
-        telefone: document
-          .getElementById("inputTelefone " + paciente.id_paciente)
-          .value.toUpperCase(),
-        email: document.getElementById("inputEmail " + paciente.id_paciente)
-          .value,
-      };
-      console.log(obj);
-      axios
-        .post(html + "update_paciente/" + paciente.id_paciente, obj)
-        .then(() => {
-          loadPacientes();
-          toast(
-            settoast,
-            "PACIENTE ATUALIZADO COM SUCESSO NA BASE PULSAR",
-            "rgb(82, 190, 128, 1)",
-            3000
-          );
-        })
-        .catch(function () {
-          toast(
-            settoast,
-            "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-            "black",
-            5000
-          );
-          setTimeout(() => {
-            setpagina(0);
-            history.push("/");
-          }, 5000);
-        });
-    };
-    const toastypacientes = (settoast, mensagem, cor, duracao) => {
-      settoast({ display: "flex", mensagem: mensagem, cor: cor });
-      setTimeout(() => {
-        settoast({ display: "none", mensagem: "", cor: "transparent" });
-      }, duracao);
-    };
-    const [toastpacientes, settoastpacientes] = useState(0);
-    function ToastPacientes() {
-      return (
-        <div
-          style={{
-            display: toastpacientes.display,
-            zIndex: 999,
-            position: "fixed",
-            bottom: window.innerWidth > 426 ? 20 : "",
-            top: window.innerWidth > 426 ? "" : 20,
-            left: window.innerWidth > 426 ? "" : 20,
-            right: window.innerWidth > 426 ? 20 : 20,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            className="toasty"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textAlign: "center",
-              backgroundColor: toastpacientes.cor,
-              padding: 10,
-              minHeight: 50,
-              maxHeight: 300,
-              minWidth: 100,
-              maxWidth: 300,
-              color: "#ffffff",
-              fontWeight: "bold",
-              fontSize: 14,
-              borderRadius: 5,
-            }}
-          >
-            {toastpacientes.mensagem}
-          </div>
-        </div>
-      );
-    }
     return (
       <div
-        id={"expandlist " + paciente.id_paciente}
-        className="retract"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignSelf: "center",
-          padding: 0,
-        }}
+        className="fundo"
+        style={{ display: vieweditpaciente == 1 && atendimento != null ? "flex" : "none" }}
+        onClick={() => setvieweditpaciente(0)}
       >
         <div
-          className="hide"
-          id={"informações do paciente " + paciente.id_paciente}
+          className="janela"
+          onClick={(e) => e.stopPropagation()}
           style={{
+            position: 'relative',
             flexDirection: "row",
             justifyContent: "center",
             alignSelf: "center",
           }}
         >
-          <div
-            id="dados do paciente"
+          <div id="botão para fechar tela de edição do apciente e movimentação de leito"
+            className="button-red"
+            onClick={() => setvieweditpaciente(0)}
+            style={{ position: 'absolute', top: 10, right: 10 }}
+          >
+            <img
+              alt=""
+              src={back}
+              style={{
+                margin: 10,
+                height: 30,
+                width: 30,
+              }}
+            ></img>
+          </div>
+          <div id="dados do paciente"
+            className="scroll"
             style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              marginRight: 10,
+              flexDirection: "column",
+              justifyContent: 'flex-start',
               alignItems: "center",
+              height: '80vh',
+              marginRight: 20
             }}
           >
             <div
@@ -1294,7 +1148,7 @@ function Cadastro() {
                 placeholder="NOME DO PACIENTE"
                 className="textarea"
                 type="text"
-                id={"inputNomePaciente " + paciente.id_paciente}
+                id="inputEditNomePaciente"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "NOME DO PACIENTE")}
                 defaultValue={paciente.nome_paciente}
@@ -1302,7 +1156,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "50vw",
+                  width: 400,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1326,24 +1180,18 @@ function Cadastro() {
                 type="text"
                 inputMode="numeric"
                 maxLength={10}
-                id={"inputDn " + paciente.id_paciente}
+                id="inputEditDn"
                 title="FORMATO: DD/MM/YYYY"
-                onClick={() =>
-                (document.getElementById(
-                  "inputDn " + paciente.id_paciente
-                ).value = "")
-                }
+                onClick={() => document.getElementById("inputEditDn").value = ""}
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "DN")}
-                onKeyUp={() =>
-                  maskdate(timeout, "inputDn " + paciente.id_paciente)
-                }
+                onKeyUp={() => maskdate(timeout, "inputEditDn")}
                 defaultValue={moment(paciente.dn_paciente).format("DD/MM/YYYY")}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "10vw",
+                  width: 100,
                   textAlign: "center",
                   padding: 15,
                   height: 20,
@@ -1374,7 +1222,7 @@ function Cadastro() {
                   placeholder="TIPO DE DOC."
                   className="input destacaborda"
                   type="text"
-                  id={"inputTipoDocumento " + paciente.id_paciente}
+                  id="inputEditTipoDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "TIPO DE DOC.")}
                   defaultValue={paciente.tipo_documento}
@@ -1393,7 +1241,7 @@ function Cadastro() {
                   placeholder="NÚMERO DO DOCUMENTO"
                   className="textarea"
                   type="text"
-                  id={"inputNumeroDocumento " + paciente.id_paciente}
+                  id="inputEditNumeroDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "NÚMERO DO DOCUMENTO")}
                   defaultValue={paciente.numero_documento}
@@ -1401,7 +1249,7 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: "30vw",
+                    width: 200,
                     padding: 15,
                     height: 20,
                     minHeight: 20,
@@ -1410,8 +1258,7 @@ function Cadastro() {
                 ></textarea>
               </div>
             </div>
-            <div
-              id="nome da mae"
+            <div id="nome da mae"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -1424,7 +1271,7 @@ function Cadastro() {
                 placeholder="NOME DA MÃE"
                 className="textarea"
                 type="text"
-                id={"inputNomeMae " + paciente.id_paciente}
+                id="inputEditNomeMae"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "NOME DA MÃE")}
                 defaultValue={paciente.nome_mae_paciente}
@@ -1432,7 +1279,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "50vw",
+                  width: 400,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1440,8 +1287,7 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div
-              id="endereco"
+            <div id="endereco"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -1454,7 +1300,7 @@ function Cadastro() {
                 placeholder="BUSCAR CEP..."
                 className="textarea"
                 type="text"
-                id={"inputCep " + paciente.id_paciente}
+                id="inputEditCep"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "BUSCAR CEP...")}
                 style={{
@@ -1482,13 +1328,13 @@ function Cadastro() {
               <textarea
                 className="textarea"
                 type="text"
-                id={"inputEndereco " + paciente.id_paciente}
+                id="inputEditEndereco"
                 defaultValue={paciente.endereco}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "50vw",
+                  width: 400,
                   padding: 15,
                   height: 75,
                   minHeight: 75,
@@ -1496,8 +1342,7 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div
-              id="telefone"
+            <div id="telefone"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -1510,18 +1355,18 @@ function Cadastro() {
                 placeholder="TELEFONE"
                 className="textarea"
                 type="text"
-                id={"inputTelefone " + paciente.id_paciente}
+                id="inputEditTelefone"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "TELEFONE")}
                 defaultValue={paciente.telefone}
                 onKeyUp={() =>
-                  maskphone(timeout, "inputTelefone " + paciente.id_paciente)
+                  maskphone(timeout, "inputEditTelefone")
                 }
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "50vw",
+                  width: 150,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1529,8 +1374,7 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div
-              id="email"
+            <div id="email"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -1543,7 +1387,7 @@ function Cadastro() {
                 placeholder="EMAIL"
                 className="textarea"
                 type="text"
-                id={"inputEmail " + paciente.id_paciente}
+                id="inputEditEmail"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "EMAIL")}
                 defaultValue={paciente.email}
@@ -1551,7 +1395,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: "50vw",
+                  width: 200,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1559,123 +1403,7 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-
-            <div style={{ display: "none" }}>
-              <div
-                id="antecedentes pessoais"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">ANTECEDENTES PESSOAIS</div>
-                <textarea
-                  className="textarea"
-                  placeholder="ANTECEDENTES PESSOAIS"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) =>
-                    (e.target.placeholder = "ANTECEDENTES PESSOAIS")
-                  }
-                  defaultValue={paciente.antecedentes_pessoais}
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id={"inputAntecedentesPessoais " + paciente.id_paciente}
-                  title="ANTECEDENTES PESSOAIS."
-                ></textarea>
-              </div>
-              <div
-                id="medicações de uso domiciliar "
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">MEDICAÇÕES DE USO DOMICILIAR</div>
-                <textarea
-                  className="textarea"
-                  placeholder="MEDICAÇÕES DE USO DOMICILIAR"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) =>
-                    (e.target.placeholder = "MEDICAÇÕES DE USO DOMICILIAR")
-                  }
-                  defaultValue={paciente.medicacoes_previas}
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id={"inputMedicacoesPrevias " + paciente.id_paciente}
-                  title="MEDICAÇÕES DE USO DOMICILIAR."
-                ></textarea>
-              </div>
-              <div
-                id="exames prévios"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">EXAMES PRÉVIOS</div>
-                <textarea
-                  className="textarea"
-                  placeholder="EXAMES PRÉVIOS"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) => (e.target.placeholder = "EXAMES PRÉVIOS")}
-                  defaultValue={paciente.exames_previos}
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id={"inputExamesPrevios " + paciente.id_paciente}
-                  title="EXAMES PRÉVIOS."
-                ></textarea>
-                <div
-                  id="exames atuais"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div className="text1">EXAMES ATUAIS</div>
-                  <textarea
-                    className="textarea"
-                    placeholder="EXAMES ATUAIS"
-                    onFocus={(e) => (e.target.placeholder = "")}
-                    onBlur={(e) => (e.target.placeholder = "EXAMES ATUAIS")}
-                    defaultValue={paciente.exames_atuais}
-                    style={{
-                      display: "flex",
-                      flexDirection: "center",
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      width: "50vw",
-                      whiteSpace: "pre-wrap",
-                    }}
-                    id={"inputExamesAtuais " + paciente.id_paciente}
-                    title="EXAMES ATUAIS."
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            <div
+            <div id="botões da tela editar paciente"
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -1683,43 +1411,11 @@ function Cadastro() {
                 marginTop: 10,
               }}
             >
-              <div
-                id="btnUpdatePaciente"
+              <div id="btnUpdatePaciente"
                 title="ATUALIZAR DADOS DO PACIENTE"
                 className="button-green"
                 onClick={() => {
-                  var array = [
-                    "inputNomePaciente " + paciente.id_paciente,
-                    "inputDn " + paciente.id_paciente,
-                    "inputNomeMae " + paciente.id_paciente,
-                    "inputTipoDocumento " + paciente.id_paciente,
-                    "inputNumeroDocumento " + paciente.id_paciente,
-                    "inputEndereco " + paciente.id_paciente,
-                    "inputTelefone " + paciente.id_paciente,
-                    "inputEmail " + paciente.id_paciente,
-                  ];
-                  var check = 0;
-                  array.map((item) => {
-                    if (document.getElementById(item).value == "") {
-                      check = 1;
-                      document.getElementById(item).className =
-                        "textarea emptyinput emptyplaceholder";
-                    } else {
-                      document.getElementById(item).className =
-                        "textarea filledinput emptyplaceholder";
-                    }
-                    return null;
-                  });
-                  if (check == 0) {
-                    updatePaciente(paciente);
-                  } else {
-                    toastypacientes(
-                      settoastpacientes,
-                      "CAMPO(S) OBRIGATÓRIO(S) EM BRANCO!",
-                      "rgba(231, 76, 60, 1)",
-                      2000
-                    );
-                  }
+                  checkinput('textarea', settoast, ["inputEditNomePaciente", "inputEditDn", "inputEditNumeroDocumento", "inputEditNomeMae", "inputEditEndereco", "inputEditTelefone", "inputEditEmail"], "btnUpdatePaciente", updatePaciente, [])
                 }}
                 style={{ width: 50, height: 50, alignSelf: "center" }}
               >
@@ -1733,8 +1429,7 @@ function Cadastro() {
                   }}
                 ></img>
               </div>
-              <div
-                id="btnDeletePaciente"
+              <div id="btnDeletePaciente"
                 title="EXCLUIR PACIENTE"
                 className="button-red"
                 onClick={() => {
@@ -1759,8 +1454,7 @@ function Cadastro() {
               </div>
             </div>
           </div>
-          <div
-            id="status de atendimento"
+          <div id="card status de atendimento"
             className="card cor7"
             style={{
               position: "sticky",
@@ -1773,8 +1467,7 @@ function Cadastro() {
               marginBottom: 20,
             }}
           >
-            <div
-              id="paciente sem atendimento ativo"
+            <div id="paciente sem atendimento ativo"
               style={{
                 display:
                   atendimentos.filter(
@@ -1807,15 +1500,13 @@ function Cadastro() {
                 }}
               ></div>
             </div>
-            <div
-              id="em atendimento na unidade logada"
+            <div id="em atendimento na unidade logada"
               className="card cor5hover"
               style={{
                 display:
                   atendimentos.filter(
                     (item) =>
                       item.id_paciente == paciente.id_paciente &&
-                      item.id_cliente == hospital &&
                       item.data_termino == null
                   ).length > 0
                     ? "flex"
@@ -1829,7 +1520,14 @@ function Cadastro() {
             >
               <div className="text1"
                 style={{
-                  display: atendimento.map(item => item.id_unidade) == 4 ? 'none' : 'flex',
+                  display:
+                    atendimentos.filter(
+                      (item) =>
+                        item.id_paciente == paciente.id_paciente &&
+                        item.data_termino == null
+                    ).length > 0
+                      ? "flex"
+                      : "none",
                 }}>
                 {"PACIENTE ATUALMENTE EM ATENDIMENTO: UNIDADE " +
                   unidades
@@ -1846,6 +1544,7 @@ function Cadastro() {
                 style={{
                   display: atendimento.map(item => item.id_unidade) == 4 ? 'flex' : 'none',
                 }}>
+                {atendimento.id_unidade}
                 {"PACIENTE AGUARDANDO TRIAGEM PARA ATENDIMENTO"}
               </div>
               <div className="button" onClick={() => setviewseletorunidades(1)}>
@@ -1866,8 +1565,7 @@ function Cadastro() {
                 ENCERRAR ATENDIMENTO
               </div>
             </div>
-            <div
-              id="em atendimento em outro serviço"
+            <div id="em atendimento em outro serviço"
               className="card cor6hover"
               style={{
                 display:
@@ -1903,11 +1601,52 @@ function Cadastro() {
             </div>
           </div>
         </div>
-        <ToastPacientes></ToastPacientes>
         <ViewTipoDocumento></ViewTipoDocumento>
       </div>
     );
-  }
+    // eslint-disable-next-line
+  }, [paciente, hospital, unidades, unidade, atendimento, atendimentos, vieweditpaciente]);
+
+  // atualizando um novo paciente.
+  const updatePaciente = () => {
+    var obj = {
+      nome_paciente: document.getElementById("inputEditNomePaciente").value.toUpperCase(),
+      nome_mae_paciente: document.getElementById("inputEditNomeMae").value.toUpperCase(),
+      dn_paciente: moment(document.getElementById("inputEditDn").value, "DD/MM/YYYY"),
+      antecedentes_pessoais: paciente.antecedentes_pessoais,
+      medicacoes_previas: paciente.medicacoes_previas,
+      exames_previos: paciente.exames_previos,
+      exames_atuais: paciente.exames_atuais,
+      tipo_documento: document.getElementById("inputEditTipoDocumento").value.toUpperCase(),
+      numero_documento: document.getElementById("inputEditNumeroDocumento").value.toUpperCase(),
+      endereco: document.getElementById("inputEditEndereco").value.toUpperCase(),
+      telefone: document.getElementById("inputEditTelefone").value.toUpperCase(),
+      email: document.getElementById("inputEditEmail").value,
+    };
+    axios
+      .post(html + "update_paciente/" + paciente.id_paciente, obj)
+      .then(() => {
+        loadPacientes();
+        toast(
+          settoast,
+          "PACIENTE ATUALIZADO COM SUCESSO NA BASE PULSAR",
+          "rgb(82, 190, 128, 1)",
+          3000
+        );
+      })
+      .catch(function () {
+        toast(
+          settoast,
+          "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
+          "black",
+          5000
+        );
+        setTimeout(() => {
+          setpagina(0);
+          history.push("/");
+        }, 5000);
+      });
+  };
 
   const [viewseletorunidades, setviewseletorunidades] = useState(0);
   const [selectedunidade, setselectedunidade] = useState("");
@@ -2229,15 +1968,7 @@ function Cadastro() {
                       valor.data_termino == null
                   ).length > 0
                 ) {
-                  updateAtendimento(
-                    item,
-                    atendimentos.filter(
-                      (valor) =>
-                        valor.id_cliente == hospital &&
-                        valor.data_termino == null &&
-                        valor.id_paciente == paciente.id_paciente
-                    )
-                  );
+                  updateAtendimento(item, atendimento);
                   // inserindo ou atualizando status do leito selecionado para ocupado.
                   if (localStorage.getItem("leito").length < 4) {
                     var obj = {
@@ -2583,6 +2314,7 @@ function Cadastro() {
         <HeaderListaDePacientes></HeaderListaDePacientes>
         <ListaDePacientes></ListaDePacientes>
         <InsertPaciente></InsertPaciente>
+        <DadosPacienteAtendimento></DadosPacienteAtendimento>
         <MovimentaPaciente></MovimentaPaciente>
       </div>
     </div>

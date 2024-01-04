@@ -6,13 +6,10 @@ import moment from 'moment';
 // funções.
 import modal from '../functions/modal';
 import toast from '../functions/toast';
-import checkinput from '../functions/checkinput';
 // imagens.
 import deletar from '../images/deletar.svg';
-import salvar from '../images/salvar.svg';
 import novo from '../images/novo.svg';
 import back from '../images/back.svg';
-import Gravador from '../components/Gravador';
 
 function Interconsultas() {
 
@@ -25,6 +22,7 @@ function Interconsultas() {
     atendimento,
     card, setcard,
     mobilewidth,
+    arrayespecialidades,
   } = useContext(Context);
 
   useEffect(() => {
@@ -50,7 +48,7 @@ function Interconsultas() {
   }
 
   // inserir interconsulta.
-  const insertInterconsulta = ([especialidade]) => {
+  const insertInterconsulta = (especialidade) => {
     var obj = {
       id_atendimento: atendimento,
       especialidade: especialidade,
@@ -75,49 +73,14 @@ function Interconsultas() {
           onClick={(e) => e.stopPropagation()}
           style={{ flexDirection: 'column' }}>
           <div className='text3'>ESPECIALIDADE</div>
-          <input
-            className="input"
-            autoComplete="off"
-            placeholder="ESPECIALIDADE..."
-            onFocus={(e) => (e.target.placeholder = '')}
-            onBlur={(e) => (e.target.placeholder = 'ESPECIALIDADE...')}
-            style={{
-              width: window.innerWidth < mobilewidth ? '50vw' : '15vw',
-              margin: 5,
-            }}
-            type="text"
-            id="inputEspecialidade"
-            maxLength={100}
-          ></input>
-
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div id="botão de retorno"
-              className="button-red"
-              style={{
-                display: 'flex',
-                alignSelf: 'center',
-              }}
-              onClick={() => setviewinsertinterconsulta(0)}>
-              <img
-                alt=""
-                src={back}
-                style={{ width: 30, height: 30 }}
-              ></img>
-            </div>
-            <div id="btnsalvarinterconsulta"
-              className='button-green'
-              onClick={() => checkinput('input', settoast, ['inputEspecialidade'], "btnsalvarinterconsulta", insertInterconsulta, [document.getElementById("inputEspecialidade").value.toUpperCase()])}
-            >
-              <img
-                alt=""
-                src={salvar}
-                style={{
-                  margin: 10,
-                  height: 30,
-                  width: 30,
-                }}
-              ></img>
-            </div>
+          <div className='scroll' style={{ height: '40vh', margin: 10, marginBottom: 20 }}>
+            {arrayespecialidades.map(item => (
+              <div className='button' style={{ width: 200 }}
+                onClick={() => insertInterconsulta(item)}
+              >
+                {item}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -142,7 +105,6 @@ function Interconsultas() {
             style={{ width: 30, height: 30 }}
           ></img>
         </div>
-        <Gravador funcao={insertInterconsulta}></Gravador>
         <div id="btninputinterconsulta"
           className='button-green'
           onClick={(e) => { setviewinsertinterconsulta(1); e.stopPropagation() }}
