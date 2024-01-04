@@ -127,13 +127,13 @@ function Cadastro() {
   const insertPaciente = () => {
     var obj = {
       nome_paciente: document
-        .getElementById("inputNovoNomePaciente")
+        .getElementById("inputEditNomePaciente")
         .value.toUpperCase(),
       nome_mae_paciente: document
-        .getElementById("inputNovoNomeMae")
+        .getElementById("inputEditNomeMae")
         .value.toUpperCase(),
       dn_paciente: moment(
-        document.getElementById("inputNovaDn").value,
+        document.getElementById("inputEditDn").value,
         "DD/MM/YYYY"
       ),
 
@@ -143,24 +143,24 @@ function Cadastro() {
       exames_atuais: null,
 
       tipo_documento: document
-        .getElementById("inputNovoTipoDocumento")
+        .getElementById("inputEditTipoDocumento")
         .value.toUpperCase(),
       numero_documento: document
-        .getElementById("inputNovoNumeroDocumento")
+        .getElementById("inputEditNumeroDocumento")
         .value.toUpperCase(),
       endereco: document
-        .getElementById("inputNovoEndereco")
+        .getElementById("inputEditEndereco")
         .value.toUpperCase(),
       telefone: document
-        .getElementById("inputNovoTelefone")
+        .getElementById("inputEditTelefone")
         .value.toUpperCase(),
-      email: document.getElementById("inputNovoEmail").value,
+      email: document.getElementById("inputEditEmail").value,
     };
     axios
       .post(html + "insert_paciente", obj)
       .then(() => {
         loadPacientes();
-        setviewnewpaciente(0);
+        setvieweditpaciente(0);
         toast(
           settoast,
           "PACIENTE CADASTRADO COM SUCESSO NA BASE PULSAR",
@@ -392,449 +392,14 @@ function Cadastro() {
               className="button"
               style={{ width: 100 }}
               onClick={() => {
-                if (viewnewpaciente == 0) {
-                  document.getElementById(
-                    "inputTipoDocumento " + paciente.id_paciente
-                  ).value = item;
-                  setviewtipodocumento(0);
-                } else {
-                  document.getElementById("inputNovoTipoDocumento").value =
-                    item;
-                  setviewtipodocumento(0);
-                }
+                document.getElementById("inputEditTipoDocumento").value = item;
+                setviewtipodocumento(0);
               }}
             >
               {item}
             </div>
           ))}
         </div>
-      </div>
-    );
-  }
-
-  // componente para inserir novo paciente.
-  const [viewnewpaciente, setviewnewpaciente] = useState(0);
-  function InsertPaciente() {
-    var timeout = null;
-    return (
-      <div
-        className="fundo"
-        style={{ display: viewnewpaciente == 1 ? "flex" : "none" }}
-        onClick={() => setviewnewpaciente(0)}
-      >
-        <div
-          className="janela scroll"
-          onClick={(e) => e.stopPropagation()}
-          style={{ height: 0.8 * window.innerHeight }}
-        >
-          <div
-            id="cadastrar paciente"
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              marginRight: 10,
-              alignItems: "center",
-            }}
-          >
-            <div
-              id="nome do paciente"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">NOME DO PACIENTE</div>
-              <input
-                autoComplete="off"
-                placeholder="NOME DO PACIENTE"
-                className="textarea"
-                type="text"
-                id="inputNovoNomePaciente"
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "NOME DO PACIENTE")}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "30vw",
-                  alignContent: "center",
-                  height: 40,
-                  minHeight: 40,
-                  maxHeight: 40,
-                  borderStyle: "none",
-                  textAlign: "center",
-                }}
-              ></input>
-            </div>
-            <div
-              id="dn paciente"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">DATA DE NASCIMENTO</div>
-              <input
-                autoComplete="off"
-                placeholder="DN"
-                className="textarea"
-                type="text"
-                id="inputNovaDn"
-                title="FORMATO: DD/MM/YYYY"
-                onClick={() =>
-                  (document.getElementById("inputNovaDn").value = "")
-                }
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "DN")}
-                onKeyUp={() => maskdate(timeout, "inputNovaDn")}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "10vw",
-                  height: 40,
-                  minHeight: 40,
-                  maxHeight: 40,
-                  borderStyle: "none",
-                  textAlign: "center",
-                }}
-              ></input>
-            </div>
-            <div
-              id="documento"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">DOCUMENTO</div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                <input
-                  autoComplete="off"
-                  placeholder="TIPO DE DOC."
-                  className="input destacaborda"
-                  type="text"
-                  id={"inputNovoTipoDocumento"}
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) => (e.target.placeholder = "TIPO DE DOC.")}
-                  onClick={() => setviewtipodocumento(1)}
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: 130,
-                    alignContent: "center",
-                    textAlign: "center",
-                  }}
-                ></input>
-                <input
-                  autoComplete="off"
-                  placeholder="NÚMERO DO DOCUMENTO"
-                  className="textarea"
-                  type="text"
-                  id={"inputNovoNumeroDocumento"}
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) => (e.target.placeholder = "NÚMERO DO DOCUMENTO")}
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "30vw",
-                    alignContent: "center",
-                    height: 40,
-                    minHeight: 40,
-                    maxHeight: 40,
-                    borderStyle: "none",
-                    textAlign: "center",
-                  }}
-                ></input>
-              </div>
-            </div>
-            <div
-              id="nome da mae"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">NOME DA MÃE</div>
-              <input
-                autoComplete="off"
-                placeholder="NOME DA MÃE"
-                className="textarea"
-                type="text"
-                id="inputNovoNomeMae"
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "NOME DA MÃE")}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "30vw",
-                  alignContent: "center",
-                  height: 40,
-                  minHeight: 40,
-                  maxHeight: 40,
-                  borderStyle: "none",
-                  textAlign: "center",
-                }}
-              ></input>
-            </div>
-            <div
-              id="endereco"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">ENDEREÇO</div>
-              <input
-                autoComplete="off"
-                placeholder="BUSCAR CEP..."
-                className="textarea"
-                type="text"
-                id={"inputNovoCep"}
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "BUSCAR CEP...")}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: 200,
-                  alignContent: "center",
-                  height: 40,
-                  minHeight: 40,
-                  maxHeight: 40,
-                  borderStyle: "none",
-                  textAlign: "center",
-                }}
-                onKeyUp={() => {
-                  clearTimeout(timeout);
-                  timeout = setTimeout(() => {
-                    pegaEndereco(document.getElementById("inputNovoCep").value);
-                  }, 2000);
-                }}
-              ></input>
-              <textarea
-                className="textarea"
-                type="text"
-                id={"inputNovoEndereco"}
-                style={{
-                  flexDirection: "center",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "50vw",
-                  padding: 15,
-                  height: 75,
-                  minHeight: 75,
-                  maxHeight: 75,
-                }}
-              ></textarea>
-            </div>
-            <div
-              id="telefone"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">TELEFONE</div>
-              <textarea
-                autoComplete="off"
-                placeholder="TELEFONE"
-                className="textarea"
-                type="text"
-                id={"inputNovoTelefone"}
-                onKeyUp={() => maskphone(timeout, "inputNovoTelefone")}
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "TELEFONE")}
-                style={{
-                  flexDirection: "center",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "50vw",
-                  padding: 15,
-                  height: 20,
-                  minHeight: 20,
-                  maxHeight: 20,
-                }}
-              ></textarea>
-            </div>
-            <div
-              id="email"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div className="text1">EMAIL</div>
-              <textarea
-                autoComplete="off"
-                placeholder="EMAIL"
-                className="textarea"
-                type="text"
-                id={"inputNovoEmail"}
-                onFocus={(e) => (e.target.placeholder = "")}
-                onBlur={(e) => (e.target.placeholder = "EMAIL")}
-                style={{
-                  flexDirection: "center",
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  width: "50vw",
-                  padding: 15,
-                  height: 20,
-                  minHeight: 20,
-                  maxHeight: 20,
-                }}
-              ></textarea>
-            </div>
-
-            <div style={{ display: "none" }}>
-              <div
-                id="antecedentes pessoais"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">ANTECEDENTES PESSOAIS</div>
-                <textarea
-                  className="textarea"
-                  placeholder="ANTECEDENTES PESSOAIS"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) =>
-                    (e.target.placeholder = "ANTECEDENTES PESSOAIS")
-                  }
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id="inputNovoAntecedentesPessoais"
-                  title="ANTECEDENTES PESSOAIS."
-                ></textarea>
-              </div>
-              <div
-                id="medicações de uso domiciliar"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">MEDICAÇÕES DE USO DOMICILIAR</div>
-                <textarea
-                  className="textarea"
-                  placeholder="MEDICAÇÕES DE USO DOMICILIAR"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) =>
-                    (e.target.placeholder = "MEDICAÇÕES DE USO DOMICILIAR")
-                  }
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id="inputNovoMedicacoesPrevias"
-                  title="MEDICAÇÕES DE USO DOMICILIAR."
-                ></textarea>
-              </div>
-              <div
-                id="exames prévios"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div className="text1">EXAMES PRÉVIOS</div>
-                <textarea
-                  className="textarea"
-                  placeholder="EXAMES PRÉVIOS"
-                  onFocus={(e) => (e.target.placeholder = "")}
-                  onBlur={(e) => (e.target.placeholder = "EXAMES PRÉVIOS")}
-                  style={{
-                    display: "flex",
-                    flexDirection: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    width: "50vw",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  id="inputNovoExamesPrevios"
-                  title="EXAMES PRÉVIOS."
-                ></textarea>
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                id="btnNovoPaciente"
-                title="REGISTRAR PACIENTE"
-                className="button-green"
-                onClick={() => {
-                  checkinput(
-                    "textarea",
-                    settoast,
-                    [
-                      "inputNovoNomePaciente",
-                      "inputNovaDn",
-                      "inputNovoNomeMae",
-                      "inputNovoTipoDocumento",
-                      "inputNovoNumeroDocumento",
-                      "inputNovoEndereco",
-                      "inputNovoTelefone",
-                      "inputNovoEmail",
-                    ],
-                    "btnNovoPaciente",
-                    insertPaciente,
-                    []
-                  );
-                }}
-                style={{ width: 50, height: 50, alignSelf: "center" }}
-              >
-                <img
-                  alt=""
-                  src={salvar}
-                  style={{
-                    margin: 10,
-                    height: 30,
-                    width: 30,
-                  }}
-                ></img>
-              </div>
-            </div>
-          </div>
-        </div>
-        <ViewTipoDocumento></ViewTipoDocumento>
       </div>
     );
   }
@@ -1064,9 +629,7 @@ function Cadastro() {
         let endereco = JSON.parse(xhr.responseText);
         if (endereco.logradouro != undefined) {
           console.log("ENDEREÇO: " + endereco.logradouro);
-          document.getElementById(
-            "inputEndereco " + paciente.id_paciente
-          ).value =
+          document.getElementById("inputEditEndereco").value =
             endereco.logradouro +
             ", BAIRRO: " +
             endereco.bairro +
@@ -1076,14 +639,10 @@ function Cadastro() {
             endereco.uf +
             " - CEP: " +
             endereco.cep;
-          document.getElementById("inputCep " + paciente.id_paciente).value =
-            endereco.cep;
+          document.getElementById("inputEditCep").value = endereco.cep;
         } else {
-          document.getElementById(
-            "inputEndereco " + paciente.id_paciente
-          ).value = "";
-          document.getElementById("inputCep " + paciente.id_paciente).value =
-            "CEP";
+          document.getElementById("inputEditEndereco").value = "";
+          document.getElementById("inputEditCep").value = "CEP";
         }
       }
     };
@@ -1096,7 +655,7 @@ function Cadastro() {
     return (
       <div
         className="fundo"
-        style={{ display: vieweditpaciente == 1 && atendimento != null ? "flex" : "none" }}
+        style={{ display: (vieweditpaciente == 1 || vieweditpaciente == 2) && atendimento != null ? "flex" : "none" }}
         onClick={() => setvieweditpaciente(0)}
       >
         <div
@@ -1112,7 +671,7 @@ function Cadastro() {
           <div id="botão para fechar tela de edição do apciente e movimentação de leito"
             className="button-red"
             onClick={() => setvieweditpaciente(0)}
-            style={{ position: 'absolute', top: 10, right: 10 }}
+            style={{ display: vieweditpaciente == 1 ? "flex" : "none", position: 'absolute', top: 10, right: 10 }}
           >
             <img
               alt=""
@@ -1151,7 +710,7 @@ function Cadastro() {
                 id="inputEditNomePaciente"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "NOME DO PACIENTE")}
-                defaultValue={paciente.nome_paciente}
+                defaultValue={vieweditpaciente == 1 ? paciente.nome_paciente : ''}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -1186,7 +745,7 @@ function Cadastro() {
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "DN")}
                 onKeyUp={() => maskdate(timeout, "inputEditDn")}
-                defaultValue={moment(paciente.dn_paciente).format("DD/MM/YYYY")}
+                defaultValue={vieweditpaciente == 1 ? moment(paciente.dn_paciente).format("DD/MM/YYYY") : moment().format('DD/MM/YYYY')}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -1225,7 +784,7 @@ function Cadastro() {
                   id="inputEditTipoDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "TIPO DE DOC.")}
-                  defaultValue={paciente.tipo_documento}
+                  defaultValue={vieweditpaciente == 1 ? paciente.tipo_documento : ''}
                   onClick={() => setviewtipodocumento(1)}
                   style={{
                     flexDirection: "row",
@@ -1244,7 +803,7 @@ function Cadastro() {
                   id="inputEditNumeroDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "NÚMERO DO DOCUMENTO")}
-                  defaultValue={paciente.numero_documento}
+                  defaultValue={vieweditpaciente == 1 ? paciente.numero_documento : ''}
                   style={{
                     flexDirection: "center",
                     justifyContent: "center",
@@ -1274,7 +833,7 @@ function Cadastro() {
                 id="inputEditNomeMae"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "NOME DA MÃE")}
-                defaultValue={paciente.nome_mae_paciente}
+                defaultValue={vieweditpaciente == 1 ? paciente.nome_mae_paciente : ''}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -1317,11 +876,7 @@ function Cadastro() {
                 onKeyUp={() => {
                   clearTimeout(timeout);
                   timeout = setTimeout(() => {
-                    pegaEndereco(
-                      document.getElementById(
-                        "inputCep " + paciente.id_paciente
-                      ).value
-                    );
+                    pegaEndereco(document.getElementById("inputEditCep").value);
                   }, 2000);
                 }}
               ></textarea>
@@ -1329,7 +884,7 @@ function Cadastro() {
                 className="textarea"
                 type="text"
                 id="inputEditEndereco"
-                defaultValue={paciente.endereco}
+                defaultValue={vieweditpaciente == 1 ? paciente.endereco : ''}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -1358,7 +913,7 @@ function Cadastro() {
                 id="inputEditTelefone"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "TELEFONE")}
-                defaultValue={paciente.telefone}
+                defaultValue={vieweditpaciente == 1 ? paciente.telefone : ''}
                 onKeyUp={() =>
                   maskphone(timeout, "inputEditTelefone")
                 }
@@ -1390,7 +945,7 @@ function Cadastro() {
                 id="inputEditEmail"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "EMAIL")}
-                defaultValue={paciente.email}
+                defaultValue={vieweditpaciente == 1 ? paciente.email : ''}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -1411,11 +966,30 @@ function Cadastro() {
                 marginTop: 10,
               }}
             >
+              <div id="botão para fechar tela de edição do apciente e movimentação de leito"
+                className="button-red"
+                onClick={() => setvieweditpaciente(0)}
+                style={{ display: vieweditpaciente == 2 ? "flex" : "none" }}
+              >
+                <img
+                  alt=""
+                  src={back}
+                  style={{
+                    margin: 10,
+                    height: 30,
+                    width: 30,
+                  }}
+                ></img>
+              </div>
               <div id="btnUpdatePaciente"
-                title="ATUALIZAR DADOS DO PACIENTE"
+                title={vieweditpaciente == 1 ? "ATUALIZAR DADOS DO PACIENTE" : "SALVAR REGISTRO DE PACIENTE"}
                 className="button-green"
                 onClick={() => {
-                  checkinput('textarea', settoast, ["inputEditNomePaciente", "inputEditDn", "inputEditNumeroDocumento", "inputEditNomeMae", "inputEditEndereco", "inputEditTelefone", "inputEditEmail"], "btnUpdatePaciente", updatePaciente, [])
+                  if (vieweditpaciente == 1) {
+                    checkinput('textarea', settoast, ["inputEditNomePaciente", "inputEditDn", "inputEditNumeroDocumento", "inputEditNomeMae", "inputEditEndereco", "inputEditTelefone", "inputEditEmail"], "btnUpdatePaciente", updatePaciente, [])
+                  } else {
+                    checkinput('textarea', settoast, ["inputEditNomePaciente", "inputEditDn", "inputEditNumeroDocumento", "inputEditNomeMae", "inputEditEndereco", "inputEditTelefone", "inputEditEmail"], "btnUpdatePaciente", insertPaciente, [])
+                  }
                 }}
                 style={{ width: 50, height: 50, alignSelf: "center" }}
               >
@@ -1459,7 +1033,7 @@ function Cadastro() {
             style={{
               position: "sticky",
               top: 10,
-              display: "flex",
+              display: vieweditpaciente == 1 ? "flex" : "none",
               flexDirection: "column",
               justifyContent: "center",
               height: 345,
@@ -1601,7 +1175,6 @@ function Cadastro() {
             </div>
           </div>
         </div>
-        <ViewTipoDocumento></ViewTipoDocumento>
       </div>
     );
     // eslint-disable-next-line
@@ -1627,6 +1200,7 @@ function Cadastro() {
       .post(html + "update_paciente/" + paciente.id_paciente, obj)
       .then(() => {
         loadPacientes();
+        setvieweditpaciente(0);
         toast(
           settoast,
           "PACIENTE ATUALIZADO COM SUCESSO NA BASE PULSAR",
@@ -2298,7 +1872,7 @@ function Cadastro() {
             className="button-green"
             style={{ margin: 0, marginLeft: 10, width: 50, height: 50 }}
             title={"CADASTRAR PACIENTE"}
-            onClick={() => setviewnewpaciente(1)}
+            onClick={() => setvieweditpaciente(2)}
           >
             <img
               alt=""
@@ -2313,9 +1887,9 @@ function Cadastro() {
         </div>
         <HeaderListaDePacientes></HeaderListaDePacientes>
         <ListaDePacientes></ListaDePacientes>
-        <InsertPaciente></InsertPaciente>
         <DadosPacienteAtendimento></DadosPacienteAtendimento>
         <MovimentaPaciente></MovimentaPaciente>
+        <ViewTipoDocumento></ViewTipoDocumento>
       </div>
     </div>
   );
