@@ -590,10 +590,16 @@ function Login() {
             7
           )}
           {montaModuloDeApoio(
+            "FARMÁCIA",
+            usuario.laboratorio,
+            "/farmacia",
+            8
+          )}
+          {montaModuloDeApoio(
             "FATURAMENTO",
             usuario.faturamento,
             "/financeiro",
-            8
+            9
           )}
         </div>
       </div>

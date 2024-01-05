@@ -504,7 +504,7 @@ function Laboratorio() {
           <div id="botão para imprimir exames laboratoriais solicitados."
             className='button-green'
             style={{
-              display: 'flex',
+              display: laboratorio.filter(item => item.status == 1).length > 0 ? 'flex' : 'none',
             }}
             onClick={(e) => {
               assinarPedidos();

@@ -596,6 +596,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: default;
 }
 
+.nocaps {
+  text-transform: none;
+}
+
 .textarea::-webkit-scrollbar {
   width: 10px;
   height: 10px;

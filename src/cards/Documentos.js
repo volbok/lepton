@@ -45,6 +45,7 @@ function Documentos() {
     invasoes,
     lesoes,
     culturas,
+    laboratorio,
 
     prescricao,
     mobilewidth,
@@ -200,7 +201,7 @@ function Documentos() {
                   let textoantigo = localStorage.getItem("texto");
                   let novotexto = textoantigo.slice(0, textoantigo.length - 5) + ' ' + item.CAT + '.';
                   document.getElementById("inputFieldDocumento").value = novotexto;
-                    document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
+                  document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
                 }, 1000);
               }}
             >
@@ -277,8 +278,9 @@ function Documentos() {
       let tag_examesatuais = '';
       let tag_culturas = '';
       let tag_antibioticos = '';
+      let tag_laboratorio = '';
 
-      // função para montar os dados vindos dos cards.
+      // função para montar os dados importados dos cards e demais componentes.
       if (alergias.length > 0) {
         tag_alergias =
           "ALERGIAS:" + alergias.map(item => '\n' + item.alergia)
@@ -322,18 +324,26 @@ function Documentos() {
           arrayprescricao;
       }
 
+      if (laboratorio.filter(item => item.status == 2).length > 0) {
+        let arraylaboratorio = laboratorio.filter(item => item.status == 2).sort((a, b) => moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => '\n' + moment(item.data_pedido).format('DD/MM/YY') + ' - ' + item.nome_exame + ': ' + item.resultado);
+        tag_laboratorio =
+          "\nEXAMES LABORATORIAIS:" +
+          arraylaboratorio;
+      }
+
       let texto = null;
       if (usuario.conselho == 'CRM') {
         texto =
           'HD: \n\n' +
-          tag_alergias + '\n' +
-          tag_antibioticos + '\n' +
-          tag_culturas + '\n' +
-          tag_invasoes + '\n' +
-          tag_vm + '\n' +
-          tag_lesoes + '\n' +
-          tag_examesatuais + '\n' +
-          tag_dadosvitais + '\n\n' +
+          tag_alergias +
+          tag_antibioticos +
+          tag_culturas +
+          tag_invasoes +
+          tag_vm +
+          tag_lesoes +
+          tag_examesatuais +
+          tag_laboratorio +
+          tag_dadosvitais + '\n' +
           'EVOLUÇÃO: \n\n' +
           'AO EXAME: \n\n' +
           'CONDUTA:'

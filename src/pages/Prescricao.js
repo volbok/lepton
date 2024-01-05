@@ -902,7 +902,7 @@ function Prescricao() {
                 title={'IMPRIMIR PRESCRIÇÃOs'}
                 onClick={() => {
                   printDiv();
-                  // montaAprazamentos()
+                  montaAprazamentos()
                 }}>
                 <img
                   alt=""
@@ -2634,15 +2634,8 @@ function Prescricao() {
   }
 
   // APRAZAMENTOS DE ITENS DA PRESCRIÇÃO PARA FARMÁCIA....
-  /*
-  const loadAprazamentos = () => {
-    axios.get(html + 'list_aprazamentos/' + idprescricao).then((response) => {
-      var x = response.data.rows;
-    })
-  }
   const montaAprazamentos = () => {
     console.log('DISPARA APRAZAMENTOS');
-    console.log(arrayitensprescricao.filter(item => item.freq == '4/4H').length);
     arrayitensprescricao.filter(item => item.freq == '4/4H').map(item => {
       montaHorarios(item, 6, quatroemquatro);
       return null;
@@ -2693,7 +2686,6 @@ function Prescricao() {
       return null;
     })
   }
-  */
 
   return (
     <div className='card-aberto'

@@ -940,7 +940,7 @@ function Cadastro() {
               <textarea
                 autoComplete="off"
                 placeholder="EMAIL"
-                className="textarea"
+                className="textarea nocaps"
                 type="text"
                 id="inputEditEmail"
                 onFocus={(e) => (e.target.placeholder = "")}

@@ -5,7 +5,6 @@ import Context from "./Context";
 import moment from "moment";
 // imagens.
 import power from "../images/power.svg";
-import call from "../images/call.svg";
 import back from "../images/back.svg";
 import body from "../images/body.svg";
 import refresh from "../images/refresh.svg";
@@ -91,6 +90,8 @@ function Prontuario() {
     setlaboratorio,
 
     mobilewidth,
+
+    setunidade,
   } = useContext(Context);
 
   // history (router).
@@ -344,40 +345,6 @@ function Prontuario() {
     );
   }
 
-  // inserindo registro de chamada para triagem.
-  const callPaciente = (item) => {
-    console.log(localStorage.getItem("sala"));
-    if (consultorio != 'SELECIONAR SALA') {
-      var obj = {
-        id_unidade: unidade,
-        id_paciente: item.id_paciente,
-        nome_paciente: item.nome_paciente,
-        id_atendimento: item.id_atendimento,
-        id_sala: consultorio,
-        data: moment()
-      }
-      console.log(obj);
-      axios.post(html + 'insert_chamada/', obj).then(() => {
-        axios.get(html + 'list_chamada/' + unidade).then((response) => {
-          let x = response.data.rows;
-          let y = x.filter(valor => valor.id_atendimento == item.id_atendimento);
-          setchamadas(response.data.rows);
-          document.getElementById('contagem de chamadas do PA' + item.id_atendimento).innerHTML = y.length;
-        });
-      });
-    } else {
-      toast(settoast, 'SELECIONE UMA SALA PARA ATENDIMENTO PRIMEIRO', 'red', 2000);
-    }
-  }
-
-  // recuperando o total de chamadas para a unidade de atendimento.
-  const [chamadas, setchamadas] = useState([]);
-  const loadChamadas = (unidade) => {
-    axios.get(html + 'list_chamada/' + unidade).then((response) => {
-      setchamadas(response.data.rows);
-    })
-  }
-
   // seleção de consultório para chamada de pacientes (aplicável ao PA).
   let salas = ['SALA 01', 'SALA 02', 'SALA 03', 'SALA 04', 'SALA 05']
   const [viewsalaselector, setviewsalaselector] = useState(0);
@@ -498,7 +465,7 @@ function Prontuario() {
                             borderBottomRightRadius: 0,
                             minHeight: 100,
                             height: 100,
-                            width: 75, minWidth: 75, maxWidth: 75,
+                            width: 80, minWidth: 80, maxWidth: 80,
                             backgroundColor:
                               item.classificacao == 'AZUL' ? 'blue' :
                                 item.classificacao == 'VERDE' ? 'green' :
@@ -511,7 +478,7 @@ function Prontuario() {
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
                             style={{ margin: 5, padding: 0, fontSize: 24 }}
                           >
-                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + '- ' + item.leito}
+                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
                           </div>
                         </div>
                         <div
@@ -528,8 +495,10 @@ function Prontuario() {
                           }}
                           onClick={() => {
                             setviewlista(0);
+                            setunidade(parseInt(item.id_unidade));
                             setatendimento(item.id_atendimento);
-                            setpaciente(item.id_paciente);
+                            setpaciente(parseInt(item.id_paciente));
+                            console.log(item.id_unidade);
                             getAllData(item.id_paciente, item.id_atendimento);
                             if (pagina == -1) {
                               setTimeout(() => {
@@ -626,7 +595,7 @@ function Prontuario() {
                             borderBottomRightRadius: 0,
                             minHeight: 100,
                             height: 100,
-                            width: 75, minWidth: 75, maxWidth: 75,
+                            width: 80, minWidth: 80, maxWidth: 80,
                             backgroundColor:
                               item.classificacao == 'AZUL' ? 'blue' :
                                 item.classificacao == 'VERDE' ? 'green' :
@@ -639,48 +608,7 @@ function Prontuario() {
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
                             style={{ margin: 5, padding: 0, fontSize: 24 }}
                           >
-                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + '- ' + item.leito}
-                          </div>
-                          <div style={{
-                            display: unidade == 3 ? 'flex' : 'none', // unidade 3 = PA.
-                            flexDirection: 'row', flexWrap: 'wrap',
-                            alignSelf: 'center',
-                            margin: 5, marginBottom: 0
-                          }}>
-                            <div
-                              className="button-opaque"
-                              style={{
-                                display: 'flex',
-                                margin: 2.5, marginRight: 0,
-                                minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
-                                backgroundColor: 'rgba(231, 76, 60, 0.8)',
-                                borderTopRightRadius: 0,
-                                borderBottomRightRadius: 0,
-                              }}
-                              onClick={() => {
-                                callPaciente(item);
-                              }}
-                            >
-                              <img
-                                alt=""
-                                src={call}
-                                style={{
-                                  margin: 0,
-                                  height: 20,
-                                  width: 20,
-                                }}
-                              ></img>
-                            </div>
-                            <div id={'contagem de chamadas do PA' + item.id_atendimento}
-                              title="TOTAL DE CHAMADAS"
-                              className="text1"
-                              style={{
-                                margin: 2.5, marginLeft: 0,
-                                borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                                backgroundColor: 'white', height: 20, width: 20
-                              }}>
-                              {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
-                            </div>
+                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
                           </div>
                         </div>
                         <div
@@ -697,7 +625,9 @@ function Prontuario() {
                           onClick={() => {
                             setviewlista(0);
                             setatendimento(item.id_atendimento);
-                            setpaciente(item.id_paciente);
+                            setunidade(parseInt(item.id_unidade));
+                            setpaciente(parseInt(item.id_paciente));
+                            console.log(item.id_paciente);
                             getAllData(item.id_paciente, item.id_atendimento);
                             if (pagina == -1) {
                               setTimeout(() => {

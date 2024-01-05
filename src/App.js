@@ -12,6 +12,7 @@ import Usuarios from "./pages/Usuarios";
 import Triagem from "./pages/Triagem";
 import Painel from "./pages/Painel";
 import Laboratorio from "./pages/Laboratorio";
+import Farmacia from "./pages/Farmacia";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -311,6 +312,9 @@ function App() {
             </Route>
             <Route path="/laboratorio">
               <Laboratorio></Laboratorio>
+            </Route>
+            <Route path="/farmacia">
+              <Farmacia></Farmacia>
             </Route>
           </Switch>
         </Router>
