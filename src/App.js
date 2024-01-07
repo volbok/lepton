@@ -129,7 +129,7 @@ function App() {
     'UROLOGIA',
     'RADIOLOGIA',
     'MEDICINA INTENSIVA',
-  ])
+  ]);
 
   // largura do dispositivo (global).
   const [mobilewidth, setmobilewidth] = useState(600);

@@ -813,7 +813,7 @@ function Prescricao() {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="botão para nova prescrição."
             className='button-green'
-            onClick={() => insertPrescricao()}
+            onClick={() => { setidprescricao(0); insertPrescricao() }}
           >
             <img
               alt=""
@@ -899,10 +899,10 @@ function Prescricao() {
                   maxWidth: 30, width: 30, minWidth: 30,
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
-                title={'IMPRIMIR PRESCRIÇÃOs'}
+                title={'IMPRIMIR PRESCRIÇÕES'}
                 onClick={() => {
                   printDiv();
-                  montaAprazamentos()
+                  montaAprazamentos(item.id);
                 }}>
                 <img
                   alt=""
@@ -1003,7 +1003,7 @@ function Prescricao() {
 
   // componente para selecionar a frequência de administração de um item de prescrição.
   const [viewfreqitemprescricao, setviewfreqitemprescricao] = useState(0);
-  const arrayfreq = ['1/1H', '2/2H', '3/3H', '4/4H', '5/5H', '6/6H', '8/8H', '12/12H', '24/24H', '8H', '10H', '12H', '17H', '20H', '22H']
+  const arrayfreq = ['1/1H', '2/2H', '4/4H', '6/6H', '8/8H', '12/12H', '24/24H', '8H', '10H', '12H', '17H', '20H', '22H']
   function ViewItemFreq() {
     return (
       <div
@@ -1105,7 +1105,17 @@ function Prescricao() {
                 display: idprescricao != 0 ? 'flex' : 'none',
                 flexDirection: 'row', paddingLeft: 15, paddingRight: 15,
               }}
-              onClick={() => { insertItemPrescricao(item) }}
+              onClick={() => {
+                insertItemPrescricao(item)
+                setviewopcoesitensprescricao(0);
+                setfilterprescricao('');
+                setarrayopcoesprescricao([]);
+                setarrayitensprescricao(prescricao);
+                document.getElementById("inputItemPrescricao").value = '';
+                setTimeout(() => {
+                  document.getElementById("inputItemPrescricao").focus();
+                }, 100);
+              }}
             >
               {item.nome_item}
             </div>
@@ -2379,7 +2389,6 @@ function Prescricao() {
     )
   }
 
-
   function printDiv() {
     console.log('PREPARANDO PRESCRIÇÃO PARA IMPRESSÃO');
     let printdocument = document.getElementById("IMPRESSÃO - PRESCRIÇÃO").innerHTML;
@@ -2633,49 +2642,108 @@ function Prescricao() {
     });
   }
 
-  // APRAZAMENTOS DE ITENS DA PRESCRIÇÃO PARA FARMÁCIA....
-  const montaAprazamentos = () => {
-    console.log('DISPARA APRAZAMENTOS');
-    arrayitensprescricao.filter(item => item.freq == '4/4H').map(item => {
-      montaHorarios(item, 6, quatroemquatro);
-      return null;
+  // ### APRAZAMENTOS DE ITENS DA PRESCRIÇÃO PARA FARMÁCIA (DISPENSAÇÃO DAS MEDICAÇÕES) ### //
+  const montaAprazamentos = (idprescricao) => {
+    console.log('DISPARA APRAZAMENTOS PARA A FARMÁCIA');
+    console.log(idprescricao);
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '1/1H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 24, moment().startOf('day').add(14, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 24, moment().startOf('day').add(14, 'hours'));
+      });
     });
-    arrayitensprescricao.filter(item => item.freq == '6/6H').map(item => {
-      montaHorarios(item, 4, seisemseis);
-      return null;
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '2/2H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 12, moment().startOf('day').add(14, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 12, moment().startOf('day').add(14, 'hours'));
+      });
     });
-    arrayitensprescricao.filter(item => item.freq == '8/8H').map(item => {
-      montaHorarios(item, 3, oitoemoito);
-      return null;
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '4/4H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 6, moment().startOf('day').add(16, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 6, moment().startOf('day').add(16, 'hours'));
+      });
     });
-    arrayitensprescricao.filter(item => item.freq == '12/12H').map(item => {
-      montaHorarios(item, 2, dozeemdoze);
-      return null;
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '6/6H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 4, moment().startOf('day').add(18, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 4, moment().startOf('day').add(18, 'hours'));
+      });
     });
-    arrayitensprescricao.filter(item => item.freq == '24/24H').map(item => {
-      montaHorarios(item, 1, diaria);
-      return null;
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '8/8H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 3, moment().startOf('day').add(16, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 3, moment().startOf('day').add(16, 'hours'));
+      });
+    });
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '12/12H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 2, moment().startOf('day').add(22, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 2, moment().startOf('day').add(22, 'hours'));
+      });
+    });
+
+    // eslint-disable-next-line
+    arrayitensprescricao.filter(item => item.freq == '24/24H' && item.id_prescricao == idprescricao).map(item => {
+      let id_componente_pai = item.id_componente_pai;
+      // montando aprazamento para o item de prescrição mapeado.
+      montaHorarios(item, 1, moment().startOf('day').add(1, 'day').add(10, 'hours'));
+      // montando aprazamento para os componentes do item de prescrição mapeado. 
+      // eslint-disable-next-line
+      arrayitensprescricao.filter(valor => valor.id_componente_filho == id_componente_pai && item.id_prescricao == idprescricao).map(valor => {
+        montaHorarios(valor, 1, moment().startOf('day').add(1, 'day').add(10, 'hours'));
+      });
     });
   }
+
   // definindo os horários de incício dos aprazamentos, baseado do horário padrão de 13h.
-  const quatroemquatro = moment().startOf('day').add(16, 'hours'); // 16h, 20h, 0h, 4h, 8h, 12h.
-  const seisemseis = moment().startOf('day').add(18, 'hours'); // 18h, 0h, 6h, 12h. 
-  const oitoemoito = moment().startOf('day').add(16, 'hours'); // 16h, 0h, 8h.
-  const dozeemdoze = moment().startOf('day').add(22, 'hours'); // 22h, 10h.
-  const diaria = moment().startOf('day').add(1, 'day').add(10, 'hours'); // 10h (dia seguinte).
-  const montaHorarios = (item, qtde, inicio) => {
-    let arrayprazos = [inicio];
-    let intervalo = 24 / qtde;
-    let count = 0;
-    while (count < intervalo) {
-      arrayprazos.push(inicio.add(intervalo, 'hours'));
-      count = count + 1;
+  const montaHorarios = (item, qtde, horainicio) => {
+    let arrayprazos = [moment(horainicio).format('DD/MM/YY - HH:mm')];
+    let intervalo = parseInt(24 / qtde);
+    for (var i = 0; i < qtde; i++) {
+      horainicio = horainicio.add(intervalo, 'hours');
+      arrayprazos.push(horainicio.format('DD/MM/YY - HH:mm'));
     }
-    console.log(arrayprazos);
     arrayprazos.map(valor => {
       var obj = {
         id_atendimento: atendimento,
-        id_prescricao: idprescricao,
+        id_prescricao: item.id_prescricao,
         id_componente_pai: item.id_componente_pai,
         id_componente_filho: item.id_componente_filho,
         nome: item.nome_item,

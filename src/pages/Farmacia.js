@@ -3,6 +3,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Context from "./Context";
 import moment from "moment";
+// imagens.
+import back from '../images/back.svg';
+import refresh from "../images/refresh.svg";
 import "moment/locale/pt-br";
 // router.
 import { useHistory } from "react-router-dom";
@@ -11,9 +14,9 @@ function Farmacia() {
 
   // context.
   const {
-    pagina,
+    pagina, setpagina,
     html,
-    setatendimentos,
+    atendimentos, setatendimentos,
     unidades,
     atendimento, setatendimento,
     pacientes, setpacientes,
@@ -65,7 +68,92 @@ function Farmacia() {
       var x = response.data.rows;
       setaprazamentos(response.data.rows);
       console.log(x.length);
+      console.log(prescricao);
     });
+  }
+
+  const [filterpaciente, setfilterpaciente] = useState("");
+  var searchpaciente = "";
+  var timeout = null;
+  const filterPaciente = () => {
+    clearTimeout(timeout);
+    document.getElementById("inputPaciente").focus();
+    searchpaciente = document
+      .getElementById("inputPaciente")
+      .value.toUpperCase();
+    timeout = setTimeout(() => {
+      if (searchpaciente == "") {
+        setfilterpaciente("");
+        setarrayatendimentos(atendimentos);
+        document.getElementById("inputPaciente").value = "";
+        setTimeout(() => {
+          document.getElementById("inputPaciente").focus();
+        }, 100);
+      } else {
+        setfilterpaciente(
+          document.getElementById("inputPaciente").value.toUpperCase()
+        );
+        setarrayatendimentos(
+          atendimentos.filter((item) =>
+            item.nome_paciente.includes(searchpaciente)
+          )
+        );
+        document.getElementById("inputPaciente").value = searchpaciente;
+        setTimeout(() => {
+          document.getElementById("inputPaciente").focus();
+        }, 100);
+      }
+    }, 1000);
+  };
+  // filtro de paciente por nome.
+  function FilterPaciente() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
+        <div className='button-red'
+          title={'VOLTAR PARA O PASSÔMETRO'}
+          onClick={() => {
+            setpagina(0);
+            history.push('/');
+          }}>
+          <img
+            alt=""
+            src={back}
+            style={{
+              margin: 0,
+              height: 30,
+              width: 30,
+            }}
+          ></img>
+        </div>
+        <input
+          className="input cor2"
+          autoComplete="off"
+          placeholder="BUSCAR PACIENTE..."
+          onFocus={(e) => (e.target.placeholder = "")}
+          onBlur={(e) => (e.target.placeholder = "BUSCAR PACIENTE...")}
+          onKeyUp={() => filterPaciente()}
+          type="text"
+          id="inputPaciente"
+          defaultValue={filterpaciente}
+          maxLength={100}
+          style={{ width: '100%' }}
+        ></input>
+        <div
+          id="botão para atualizar a lista de pacientes."
+          className="button"
+          style={{
+            display: "flex",
+            opacity: 1,
+            alignSelf: "center",
+          }}
+          onClick={() => { loadPacientes(); setatendimento(null); }}
+        >
+          <img
+            alt="" src={refresh}
+            style={{ width: 30, height: 30 }}></img>
+        </div>
+      </div >
+    );
   }
 
   const ListaDeAtendimentos = useCallback(() => {
@@ -79,8 +167,7 @@ function Farmacia() {
           marginRight: 10,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        </div>
+        <FilterPaciente></FilterPaciente>
         <div id="scroll atendimentos com pacientes"
           className="scroll"
           style={{
@@ -88,7 +175,8 @@ function Farmacia() {
             justifyContent: "flex-start",
             marginBottom: '',
             width: '30vw',
-            height: 'calc(100vh - 40px)',
+            marginTop: 5,
+            height: 'calc(100vh - 115px)',
           }}
         >
           {unidades.map(unidade => (
@@ -205,14 +293,15 @@ function Farmacia() {
             justifyContent: "center",
             marginBottom: '',
             width: '30vw',
-            height: 'calc(100vh - 40px)',
+            marginTop: 5,
+            height: 'calc(100vh - 115px)',
           }}
         >
           <div className="text3" style={{ opacity: 0.5 }}>
             SEM PACIENTES CADASTRADOS PARA ESTA UNIDADE
           </div>
         </div>
-      </div >
+      </div>
     );
     // eslint-disable-next-line
   }, [arrayatendimentos]);
@@ -226,41 +315,74 @@ function Farmacia() {
             display: arraylistaprescricao.filter(valor => valor.id_atendimento == atendimento).length > 0 ? 'flex' : 'none',
             width: 'calc(70vw - 60px)',
             height: 'calc(100vh - 40px)',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+            flexDirection: 'column',
             justifyContent: 'flex-start',
           }}>
           {arraylistaprescricao.filter(valor => valor.id_atendimento == atendimento).map(valor => (
-            <div className="button" style={{ width: 'calc(100% - 20px' }}>
+            <div className="button" style={{ width: 'calc(100% - 20px)' }}>
               <div style={{
                 display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-                width: 'calc(100% - 20px)'
+                width: 'calc(100% - 10px)',
+                height: aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).length > 0 ? 500 : 70,
               }}
-                onClick={() => { loadAprazamentos(valor.id) }}
               >
-                <div>
-                  {moment(valor.data).format('DD/MM/YY')}
-                </div>
-                <div>
-                  {moment(valor.data).format('HH:mm:SS')}
+                <div id="botão indicador de data e hora da prescrição"
+                  className="button-yellow"
+                  style={{
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 200,
+                    margin: 5, marginLeft: 2.5
+                  }}
+                  onClick={() => { loadAprazamentos(valor.id) }}
+                >
+                  <div>
+                    {moment(valor.data).format('DD/MM/YY')}
+                  </div>
+                  <div>
+                    {moment(valor.data).format('HH:mm:SS')}
+                  </div>
                 </div>
                 <div id="lista com itens de prescrição e seus componentes"
                   className="scroll"
                   style={{
-                    width: 'calc(100% - 20px)', height: 500, margin: 10,
-                    display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+                    display: aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).length > 0 ? 'flex' : 'none',
+                    width: 'calc(100% - 20px)', height: 500, margin: 5,
+                    flexDirection: 'row', flexWrap: 'wrap',
                   }}
                 >
-                  {aprazamentos.filter(aprazamento => aprazamento.id_prescricao == valor.id_prescricao && aprazamento.id_componente_pai != null).map(aprazamento => (
+                  {aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).map(aprazamento => (
                     <div id="card do item de prescrição"
+                      className="scroll"
                       style={{
-                        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                        width: 200, height: 200
+                        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+                        width: 300, height: 200,
+                        padding: 10, margin: 10,
+                        backgroundColor: 'lightgray',
+                        borderColor: 'lightgray',
                       }}>
-                      <div id="item de prescrição">{aprazamento.nome}</div>
+                      <div className="button"
+                        style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: 0 }}
+                      >
+                        {aprazamento.prazo}
+                      </div>
+                      <div id="item de prescrição"
+                        className="button"
+                        style={{
+                          padding: 5, backgroundColor: 'rgb( 0, 0, 0, 0.4)', marginTop: 0,
+                          borderTopLeftRadius: 0, borderTopRightRadius: 0
+                        }}
+                      >
+                        {aprazamento.nome + ' - QTDE: ' + aprazamento.qtde}
+                      </div>
                       <div id="componentes do item">
-                        {aprazamentos.filter(componente => componente.id_componente_filho == aprazamento.id_componente_pai).map(componente => (
-                          <div>{componente => componente.nome}</div>
+                        {aprazamentos.filter(componente => componente.id_componente_filho == aprazamento.id_componente_pai && componente.prazo == aprazamento.prazo).map(componente => (
+                          <div
+                            className="button"
+                            style={{
+                              padding: 5, backgroundColor: 'rgb( 0, 0, 0, 0.2)',
+                            }}
+                          >
+                            {componente.nome + ' - QTDE: ' + componente.qtde}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -293,7 +415,7 @@ function Farmacia() {
             SEM PRESCRIÇÕES PARA ESTE ATENDIMENTO.
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -303,6 +425,7 @@ function Farmacia() {
       style={{
         display: pagina == 8 ? 'flex' : 'none',
         flexDirection: 'row', justifyContent: 'center',
+        position: 'relative',
       }}
     >
       <ListaDeAtendimentos></ListaDeAtendimentos>
