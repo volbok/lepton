@@ -319,10 +319,10 @@ function Farmacia() {
             justifyContent: 'flex-start',
           }}>
           {arraylistaprescricao.filter(valor => valor.id_atendimento == atendimento).map(valor => (
-            <div className="button" style={{ width: 'calc(100% - 20px)' }}>
+            <div className="cor1" style={{ width: 'calc(100% - 20px)', borderRadius: 5, margin: 5, padding: 5 }}>
               <div style={{
-                display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-                width: 'calc(100% - 10px)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                width: 'calc(100%)',
                 height: aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).length > 0 ? 500 : 70,
               }}
               >
@@ -346,7 +346,7 @@ function Farmacia() {
                   style={{
                     display: aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).length > 0 ? 'flex' : 'none',
                     width: 'calc(100% - 20px)', height: 500, margin: 5,
-                    flexDirection: 'row', flexWrap: 'wrap',
+                    flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly',
                   }}
                 >
                   {aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).map(aprazamento => (
@@ -354,7 +354,8 @@ function Farmacia() {
                       className="scroll"
                       style={{
                         display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-                        width: 300, height: 200,
+                        width: '27vw',
+                        height: 300,
                         padding: 10, margin: 10,
                         backgroundColor: 'lightgray',
                         borderColor: 'lightgray',
