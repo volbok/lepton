@@ -2750,7 +2750,8 @@ function Prescricao() {
         id_componente_filho: item.id_componente_filho,
         nome: item.nome_item,
         qtde: item.qtde_item,
-        prazo: valor
+        prazo: valor,
+        dispensado: false,
       }
       axios.post(html + 'insert_aprazamento', obj);
       return null;

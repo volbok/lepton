@@ -1,5 +1,5 @@
 /* eslint eqeqeq: "off" */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
 // imagens.
@@ -39,9 +39,11 @@ function Laboratorio() {
   // history (router).
   let history = useHistory();
 
+  const [arrayatendimentos, setarrayatendimentos] = useState([])
   const loadAllAtendimentos = () => {
     axios.get(html + "all_atendimentos/").then((response) => {
       setatendimentos(response.data.rows);
+      setarrayatendimentos(response.data.rows);
     })
   }
 
@@ -80,37 +82,7 @@ function Laboratorio() {
           position: 'relative', width: 'calc(100% - 40px)',
           height: 'calc(100% - 40px)'
         }}>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <div id="botão para sair da tela de laboratório"
-              className="button-red"
-              onClick={() => {
-                setpagina(0);
-                history.push("/");
-              }}>
-              <img
-                alt=""
-                src={back}
-                style={{ width: 30, height: 30 }}
-              ></img>
-            </div>
-          </div>
-          <div className='button-green'
-            title={'GERENCIADOR DE ITENS DE LABORATÓRIO'}
-            onClick={() => setviewopcoeslaboratorio(1)}>
-            <img
-              alt=""
-              src={preferencias}
-              style={{
-                margin: 0,
-                height: 30,
-                width: 30,
-              }}
-            ></img>
-          </div>
-        </div>
-        <div className='text1'>LISTA DE EXAMES LABORATORIAIS PARA PREENCHIMENTO DO RESULTADO</div>
-        {atendimentos.filter(valor => valor.situacao == 1 && laboratorio.filter(item => item.status == 1 && item.id_atendimento == valor.id_atendimento).length > 0).map(valor =>
+        {arrayatendimentos.filter(valor => valor.situacao == 1 && laboratorio.filter(item => item.status == 1 && item.id_atendimento == valor.id_atendimento).length > 0).map(valor =>
           <div className='text1 cor3'
             style={{
               display: 'flex', flexDirection: 'column',
@@ -121,10 +93,10 @@ function Laboratorio() {
               width: 'calc(100% - 60px)'
             }}>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-              <div className='button-red' style={{ marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 120 }}>
-                {'UNIDADE: ' + unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade)}
+              <div className='button-red' style={{ marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 80 }}>
+                {unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade)}
               </div>
-              <div className='button' style={{ marginLeft: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: 120 }}>
+              <div className='button' style={{ marginLeft: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: 80 }}>
                 {'LEITO: ' + valor.leito}
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-start', fontSize: 16, alignSelf: 'center' }}>{valor.nome_paciente}</div>
@@ -457,6 +429,40 @@ function Laboratorio() {
     )
   }
 
+  const FiltraUnidades = useCallback(() => {
+    return (
+      <div id="lista de unidades"
+        className='scroll cor0'
+        style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          overflowY: 'hidden', overflowX: 'scroll',
+          width: 500, marginLeft: 10
+        }}>
+        {unidades.map(item => (
+          <div id={"unidade" + item.id_unidade}
+            className="button"
+            style={{ width: 100 }}
+            onClick={() => {
+              setarrayatendimentos(atendimentos.filter(valor => valor.id_unidade == item.id_unidade));
+              setTimeout(() => {
+                var botoes = document
+                  .getElementById("lista de unidades")
+                  .getElementsByClassName("button-red");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "button";
+                }
+                document.getElementById("unidade" + item.id_unidade).className = "button-red";
+              }, 300);
+            }}
+          >
+            {item.nome_unidade}
+          </div>
+        ))}
+      </div>
+    )
+    // eslint-disable-next-line
+  }, [arrayatendimentos]);
+
   return (
     <div id="tela do laboratório"
       className='main'
@@ -465,6 +471,38 @@ function Laboratorio() {
         flexDirection: 'column', justifyContent: 'center',
       }}
     >
+      <div style={{
+        display: 'flex', flexDirection: 'row', justifyContent: 'center',
+        alignSelf: 'center', alignItems: 'center', marginTop: 10
+      }}>
+        <div id="botão para sair da tela de laboratório"
+          className="button-red" style={{ maxHeight: 50 }}
+          onClick={() => {
+            setpagina(0);
+            history.push("/");
+          }}>
+          <img
+            alt=""
+            src={back}
+            style={{ width: 30, height: 30 }}
+          ></img>
+        </div>
+        <div className='button-green' style={{ maxHeight: 50 }}
+          title={'GERENCIADOR DE ITENS DE LABORATÓRIO'}
+          onClick={() => setviewopcoeslaboratorio(1)}>
+          <img
+            alt=""
+            src={preferencias}
+            style={{
+              margin: 0,
+              height: 30,
+              width: 30,
+            }}
+          ></img>
+        </div>
+        <FiltraUnidades></FiltraUnidades>
+      </div>
+      <div className='text1' style={{ fontSize: 16, marginTop: 10 }}>LISTA DE EXAMES LABORATORIAIS PARA PREENCHIMENTO DO RESULTADO</div>
       <TelaResultadoLaboratorio></TelaResultadoLaboratorio>
       <ViewOpcoesLaboratorio></ViewOpcoesLaboratorio>
     </div>
