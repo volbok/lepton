@@ -299,7 +299,7 @@ function Prescricao() {
 
         // registrando itens de prescrição.
         //eslint-disable-next-line
-        arrayitensprescricao.filter(valor => valor.id_componente_filho == null && valor.id_prescricao == old_id_prescricao).map(valor => {
+        arrayitensprescricao.filter(valor => valor.id_componente_pai != null && valor.id_componente_filho == null && valor.id_prescricao == old_id_prescricao).map(valor => {
           let random = Math.random();
           var objitem = {
             id_unidade: parseInt(unidade),
@@ -880,7 +880,12 @@ function Prescricao() {
             }}
           >
             <div
-              style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+              style={{
+                display: 'flex',
+                flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
+                pointerEvents: expand == 1 ? 'none' : 'auto',
+                opacity: expand == 1 ? 0.5 : 1,
+              }}>
               <div id="botão para excluir prescrição."
                 className='button-yellow'
                 style={{
@@ -2585,7 +2590,7 @@ function Prescricao() {
         fontFamily: 'Helvetica',
         breakInside: 'avoid',
       }}>
-        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1).map(item =>
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null).sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item =>
         (
           < div style={{
             display: 'flex', flexDirection: 'column', width: '100%',
