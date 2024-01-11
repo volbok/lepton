@@ -91,6 +91,7 @@ function Prontuario() {
     setlaboratorio,
 
     mobilewidth,
+    setidprescricao,
   } = useContext(Context);
 
   // history (router).
@@ -223,7 +224,6 @@ function Prontuario() {
     axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
       let x = response.data.rows;
       setprescricao(x);
-      console.log(x.filter(item => item.categoria == '1. ANTIMICROBIANOS'))
     });
   }
 
@@ -580,6 +580,7 @@ function Prontuario() {
                             setviewlista(0);
                             setatendimento(item.id_atendimento);
                             setpaciente(item.id_paciente);
+                            setidprescricao(0);
                             getAllData(item.id_paciente, item.id_atendimento);
                             if (pagina == 1) {
                               setTimeout(() => {

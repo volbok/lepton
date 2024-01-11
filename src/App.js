@@ -134,6 +134,9 @@ function App() {
   // largura do dispositivo (global).
   const [mobilewidth, setmobilewidth] = useState(600);
 
+  const [idprescricao, setidprescricao] = useState(0);
+  
+
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
   const documentHeight = () => {
@@ -284,6 +287,7 @@ function App() {
         laboratorio, setlaboratorio,
         arrayespecialidades, setarrayespecialidades,
         mobilewidth, setmobilewidth,
+        idprescricao, setidprescricao,
       }}
     >
       <div>

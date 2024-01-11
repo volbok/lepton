@@ -43,6 +43,7 @@ function Prescricao() {
     unidades,
     paciente, pacientes,
     card, setcard,
+    idprescricao, setidprescricao,
   } = useContext(Context);
 
   // history (router).
@@ -95,7 +96,7 @@ function Prescricao() {
         qtde_item: qtde.toUpperCase(),
         via: via.toUpperCase(),
         freq: freq.toUpperCase(),
-        obs: obs.toUpperCase(),
+        obs: obs,
         id_componente_filho: null, // item de prescrição.
         id_componente_pai: localrandom,
       }
@@ -112,6 +113,8 @@ function Prescricao() {
         });
     } else {
       toast(settoast, 'PREENCHER TODOS OS CAMPOS', 'red', 1000);
+      document.getElementById("inputNome").value = nome;
+      document.getElementById("inputObservacoes").value = obs;
     }
   }
   const saveAsComponent = () => {
@@ -469,6 +472,9 @@ function Prescricao() {
         // inserir componentes predefinidos para o item prescrito.
         opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(random, valor, lastIdItemPrescricao));
         loadItensPrescricao();
+        setTimeout(() => {
+          document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+        }, 600);
       }, 2000);
     })
       .catch(function () {
@@ -479,7 +485,7 @@ function Prescricao() {
         }, 5000);
       });
   }
-  const insertComponentePrescricao = (random, componente, id_pai) => {
+  const insertComponentePrescricao = (id_componente_pai, componente, id_item) => {
     var obj = {
       id_unidade: unidade,
       id_paciente: paciente,
@@ -495,17 +501,27 @@ function Prescricao() {
       sn: null,
       obs: null,
       data: moment(),
-      id_componente_filho: random,
+      id_componente_filho: id_componente_pai,
       id_componente_pai: null,
       id_prescricao: idprescricao,
-      id_pai: parseInt(id_pai),
+      id_pai: parseInt(id_item),
     }
     axios.post(html + 'insert_item_prescricao', obj).then(() => {
       console.log('COMPONENTE INSERIDO:');
       console.log(obj);
+      loadItensPrescricao();
+      setTimeout(() => {
+        if (expand == 1) {
+          document.getElementById("trava mouse").style.pointerEvents = "none";
+          document.getElementById("trava mouse").style.opacity = 0.5;
+        }
+        document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+      }, 600);
+      /*
       if (expand == 1) {
         setexpand(0);
       }
+      */
     })
   }
   // atualizando um registro de prescrição.
@@ -570,6 +586,11 @@ function Prescricao() {
     axios.get(html + 'delete_item_prescricao/' + id).then(() => {
       console.log('DELETANDO COMPONENTE.');
       loadItensPrescricao();
+      setTimeout(() => {
+        document.getElementById("trava mouse").style.pointerEvents = "none";
+        document.getElementById("trava mouse").style.opacity = 0.5;
+        document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+      }, 600);
     });
   }
 
@@ -694,7 +715,7 @@ function Prescricao() {
   // via de administração do item prescrito.
   const [via, setvia] = useState('VIA');
   const [freq, setfreq] = useState('FREQ');
-  const [obs, setobs] = useState(null);
+  const [obs, setobs] = useState('');
   const [id_componente_pai, setid_componente_pai] = useState(null);
   const [id, setid] = useState(null);
 
@@ -784,7 +805,6 @@ function Prescricao() {
   }
 
   // LISTA LATERAL DE PRESCRIÇÕES.
-  const [idprescricao, setidprescricao] = useState(0);
   const [statusprescricao, setstatusprescricao] = useState(0);
   // MODELOS DE PRESCRIÇÃO.
   const [modelosprescricao, setmodelosprescricao] = useState([]);
@@ -812,7 +832,7 @@ function Prescricao() {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="botão para nova prescrição."
             className='button-green'
-            onClick={() => { setidprescricao(0); insertPrescricao() }}
+            onClick={() => { setidprescricao(0); insertPrescricao(); setexpand(0) }}
           >
             <img
               alt=""
@@ -843,10 +863,11 @@ function Prescricao() {
               minHeight: 180
             }}
             onClick={() => {
+              setexpand(0);
               loadItensPrescricao();
               setidprescricao(item.id);
+              localStorage.setItem('id', item.id);
               setstatusprescricao(item.status);
-
               setTimeout(() => {
                 var botoes = document
                   .getElementById("scroll lista de prescrições")
@@ -855,7 +876,7 @@ function Prescricao() {
                   botoes.item(i).className = "button";
                 }
                 document.getElementById("item de prescrição " + item.id).className = "button-red";
-              }, 300);
+              }, 600);
             }}
           >
             <div
@@ -970,7 +991,7 @@ function Prescricao() {
       </div >
     )
     // eslint-disable-next-line
-  }, [arraylistaprescricao, atendimento, modelosprescricao])
+  }, [prescricao, arraylistaprescricao, atendimento, modelosprescricao])
 
   // componente para selecionar a via de administração de um item de prescrição.
   const [viewviaitemprescricao, setviewviaitemprescricao] = useState(0);
@@ -1013,22 +1034,20 @@ function Prescricao() {
         onClick={() => setviewfreqitemprescricao(0)}
         style={{ display: viewfreqitemprescricao == 1 ? 'flex' : 'none' }}
       >
-        <div className='janela'>
-          <div className='scroll' style={{ height: '60vh' }}>
-            {arrayfreq.map(item => (
-              <div
-                key={'freq: ' + item}
-                onClick={() => {
-                  updateItemPrescricao(selectitemprescricao, document.getElementById("inputQtde " + selectitemprescricao.id).value, selectitemprescricao.via, item, selectitemprescricao.agora, selectitemprescricao.acm, selectitemprescricao.sn, selectitemprescricao.obs);
-                  document.getElementById("inputFreq " + selectitemprescricao.id).innerHTML = item;
-                  // document.getElementById("inputQtde " + selectitemprescricao.id).value = selectitemprescricao.qtde_item;
-                }}
-                className='button'
-              >
-                {item}
-              </div>
-            ))}
-          </div>
+        <div className='janela scroll' style={{ height: '60vh', maxHeight: '60vh' }}>
+          {arrayfreq.map(item => (
+            <div
+              key={'freq: ' + item}
+              onClick={() => {
+                updateItemPrescricao(selectitemprescricao, document.getElementById("inputQtde " + selectitemprescricao.id).value, selectitemprescricao.via, item, selectitemprescricao.agora, selectitemprescricao.acm, selectitemprescricao.sn, selectitemprescricao.obs);
+                document.getElementById("inputFreq " + selectitemprescricao.id).innerHTML = item;
+                // document.getElementById("inputQtde " + selectitemprescricao.id).value = selectitemprescricao.qtde_item;
+              }}
+              className='button'
+            >
+              {item}
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -1089,7 +1108,7 @@ function Prescricao() {
         margin: 5, width: '70vw',
       }}>
         <div style={{
-          pointerEvents: statusprescricao == 1 ? 'none' : 'auto',
+          pointerEvents: statusprescricao == 1 || idprescricao == 0 ? 'none' : 'auto',
           opacity: statusprescricao == 1 ? 0.5 : 1,
         }}>
           <FilterItemPrescricao></FilterItemPrescricao>
@@ -1123,7 +1142,7 @@ function Prescricao() {
             </div>
           ))}
         </div>
-        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
           <div
             key={"prescricao " + item.id}
             style={{
@@ -1161,6 +1180,10 @@ function Prescricao() {
                         document.getElementById("trava mouse").style.opacity = 0.5;
                       });
                     }
+                    setTimeout(() => {
+                      console.log(idprescricao);
+                      document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+                    }, 600);
                   }}
                   style={{
                     display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
@@ -1332,7 +1355,7 @@ function Prescricao() {
             </div>
           </div>
         ))}
-        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null && item.categoria != '1. ANTIMICROBIANOS').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null && item.categoria == '0. DIETA').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
           <div
             key={"prescricao " + item.id}
             style={{
@@ -1370,6 +1393,221 @@ function Prescricao() {
                         document.getElementById("trava mouse").style.opacity = 0.5;
                       });
                     }
+                    setTimeout(() => {
+                      document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+                    }, 600);
+                  }}
+                  style={{
+                    display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
+                    backgroundColor: item.categoria == '1. ANTIMICROBIANOS' ? '#FFC300' : '',
+                    justifyContent: 'flex-start',
+                  }}>
+                  {item.nome_item}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row' }} id="trava mouse">
+                  <input id={"inputQtde " + item.id}
+                    className="input"
+                    autoComplete="off"
+                    placeholder="QTDE"
+                    inputMode='numeric'
+                    onKeyUp={() => {
+                      checkInputAndUpdateItemPrescricao("inputQtde " + item.id, 1, 100, item);
+                    }}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                    style={{
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5,
+                    }}
+                    type="text"
+                    defaultValue={item.qtde_item}
+                    maxLength={3}
+                  ></input>
+                  <div id={"inputVia " + item.id}
+                    className='button'
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewviaitemprescricao(1);
+                    }}
+                    style={{
+                      display: 'flex',
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
+                    }}>
+                    {item.via}
+                  </div>
+                  <div id={"inputFreq " + item.id}
+                    className="button"
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewfreqitemprescricao(1);
+                    }}
+                    style={{
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5,
+                    }}
+                    type="text"
+                  >
+                    {item.freq}
+                  </div>
+                  <div id={"condição " + item.id}
+                    className='button'
+                    onClick={() => {
+                      setselectitemprescricao(item);
+                      setviewcondicaoitemprescricao(1);
+                    }}
+                    style={{
+                      display: 'flex',
+                      width: 50, minWidth: 50, maxWidth: 50,
+                      margin: 5
+                    }}>
+                    {item.agora == true ? 'AGORA' : item.acm == true ? 'ACM' : item.sn == true ? 'SN' : ''}
+                  </div>
+                </div>
+                <div className={'button-red'}
+                  title={'EXCLUIR ITEM DE PRESCRIÇÃO.'}
+                  onClick={(e) => { deleteItemPrescricao(item) }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 0,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </div>
+              </div>
+              <div id={"expansivel " + item.id}
+                className={expand == 1 ? 'expand' : 'retract'}
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', marginTop: 0 }}>
+                <div id={"informações " + item.id}
+                  className={expand == 1 ? 'show' : 'hide'}
+                  style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+                >
+                  <textarea id={"inputObs " + item.id}
+                    className="textarea"
+                    autoComplete="off"
+                    placeholder="OBSERVAÇÕES"
+                    inputMode='text'
+                    onKeyUp={() => {
+                      clearTimeout(timeout);
+                      timeout = setTimeout(() => {
+                        updateItemPrescricao(item, item.qtde_item, item.via, item.freq, item.agora, item.acm, item.sn, document.getElementById("inputObs " + item.id).value.toUpperCase());
+                      }, 1000);
+                    }}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES')}
+                    style={{
+                      width: '15vw', minWidth: '15vw', maxWidth: '15vw',
+                      height: 'calc(100% - 30px)',
+                      margin: 0, marginRight: 10,
+                    }}
+                    type="text"
+                    defaultValue={item.obs}
+                    maxLength={1000}
+                  ></textarea>
+                  <div id="LISTA DE COMPONENTES" className='scroll'
+                    style={{
+                      width: 'calc(100% - 10px)',
+                      height: 'calc(100% - 10px)',
+                      margin: 0
+                    }}>
+                    {prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => (
+                      <div style={{
+                        display: 'flex', flexDirection: 'row',
+                        justifyContent: 'space-between', width: '100%'
+                      }}>
+                        <div className='button'
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                          }}>
+                          {valor.nome_item}
+                        </div>
+                        <input id={"inputQtdeComponent " + valor.id}
+                          className="input"
+                          autoComplete="off"
+                          placeholder="QTDE"
+                          inputMode='numeric'
+                          onKeyUp={() => { checkInputAndUpdateItemPrescricao("inputQtdeComponent " + valor.id, 1, 100, valor) }}
+                          onFocus={(e) => (e.target.placeholder = '')}
+                          onBlur={(e) => (e.target.placeholder = 'QTDE')}
+                          style={{
+                            width: 50,
+                            margin: 5,
+                          }}
+                          type="text"
+                          defaultValue={valor.qtde_item}
+                          maxLength={3}
+                        ></input>
+                        <div className={'button-red'}
+                          style={{
+                            display: 'flex',
+                            marginRight: 5,
+                          }}
+                          title={'EXCLUIR ITEM.'}
+                          onClick={(e) => { deleteComponentePrescricao(valor.id); e.stopPropagation() }}>
+                          <img
+                            alt=""
+                            src={deletar}
+                            style={{
+                              margin: 0,
+                              height: 30,
+                              width: 30,
+                            }}
+                          ></img>
+                        </div>
+                      </div>
+                    ))}
+                    {ViewInsertComponentePrescricao(item)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+        {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null && item.categoria != '1. ANTIMICROBIANOS' && item.categoria != '0. DIETA').sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).map(item => (
+          <div
+            key={"prescricao " + item.id}
+            style={{
+              display: arrayitensprescricao.length > 0 ? 'flex' : 'none',
+              flexDirection: 'column', justifyContent: 'center',
+              pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto'
+            }}>
+            <div className='row'
+              style={{
+                justifyContent: 'space-between',
+                display: 'flex', flexDirection: 'column',
+                margin: 0,
+              }}
+            >
+              <div id='linha principal' style={{ display: 'flex', flexDirection: 'row', position: 'relative' }}>
+                <div className='button'
+                  onClick={() => {
+                    if (expand == 1) {
+                      setexpand(0);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
+                        document.getElementById("trava mouse").style.pointerEvents = "auto";
+                        document.getElementById("trava mouse").style.opacity = 1;
+                      });
+                    } else {
+                      setselectitemprescricao(item);
+                      setexpand(1);
+                      axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+                        let x = response.data.rows;
+                        setprescricao(response.data.rows);
+                        setarrayitensprescricao(x.filter(valor => valor.id == item.id));
+                        document.getElementById("trava mouse").style.pointerEvents = "none";
+                        document.getElementById("trava mouse").style.opacity = 0.5;
+                      });
+                    }
+                    setTimeout(() => {
+                      document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+                    }, 600);
                   }}
                   style={{
                     display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
@@ -1589,8 +1827,8 @@ function Prescricao() {
             className="button-green"
             style={{ display: 'flex', flexDirection: 'row', paddingLeft: 15, paddingRight: 15 }}
             onClick={() => {
-              insertComponentePrescricao(valor, item.id);
-              loadItensPrescricao();
+              console.log(item);
+              insertComponentePrescricao(item.id_componente_pai, valor, item.id);
             }}
           >
             {valor.nome_item}
@@ -1893,8 +2131,11 @@ function Prescricao() {
             onKeyUp={() => {
               clearTimeout(timeout);
               timeout = setTimeout(() => {
-                setnome(document.getElementById("inputNome").value);
-              }, 1000);
+                setnome(document.getElementById("inputNome").value.toUpperCase());
+                setTimeout(() => {
+                  document.getElementById("inputNome").focus();
+                }, 1000);
+              }, 2000);
             }}
             type="text"
             defaultValue={nome}
@@ -1984,8 +2225,12 @@ function Prescricao() {
               onKeyUp={() => {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
-                  setobs(document.getElementById("inputObservacoes").value);
-                }, 1000);
+                  setobs(document.getElementById("inputObservacoes").value.toUpperCase());
+                  setTimeout(() => {
+                    document.getElementById("inputObservacoes").focus();
+                    document.getElementById("inputObservacoes").selectionStart = document.getElementById("inputObservacoes").value.length;
+                  }, 1000);
+                }, 2000);
               }}
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'OBSERVAÇÕES...')}
@@ -2008,7 +2253,7 @@ function Prescricao() {
           <div className='button-green'
             style={{
               display: 'flex',
-              opacity: id == null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 1 : 0.5, flexDirection: 'row', margin: 5, width: 150, height: 50,
+              opacity: id == null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' && categoria != 'CATEGORIA' ? 1 : 0.5, flexDirection: 'row', margin: 5, width: 150, height: 50,
               pointerEvents: id == null && nome != null && qtde != null && via != 'VIA' && freq != 'FREQ' ? 'auto' : 'none'
             }}
             title={'SALVAR ITEM'}
@@ -2249,10 +2494,10 @@ function Prescricao() {
           _______________________________________________
         </div>
         <div className="text1">
-          {'PROFISSIONAL: ' + prescricao.filter(valor => valor.id == idprescricao).map(valor => valor.nome_profissional)}
+          {'PROFISSIONAL: ' + arraylistaprescricao.filter(valor => valor.id == idprescricao).map(valor => valor.nome_profissional)}
         </div>
         <div className="text1">
-          {'REGISTRO PROFISSIONAL: ' + prescricao.filter(valor => valor.id == idprescricao).map(valor => valor.registro_profissional)}
+          {'REGISTRO PROFISSIONAL: ' + arraylistaprescricao.filter(valor => valor.id == idprescricao).map(valor => valor.registro_profissional)}
         </div>
       </div>
     )
@@ -2399,7 +2644,7 @@ function Prescricao() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    // a.close();
+    a.close();
   }
 
   // MODELOS DE PRESCRIÇÃO.

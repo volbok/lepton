@@ -44,7 +44,7 @@ function Login() {
       if (usuario.prontuario == 1) {
         setviewlistaunidades(1);
         loadAcessos(usuario.id);
-        console.log(usuario.prontuario);
+        // console.log(usuario.prontuario);
       }
     }
     // eslint-disable-next-line
@@ -56,7 +56,7 @@ function Login() {
     axios.get(html + "settings/" + usuario).then((response) => {
       var x = [];
       x = response.data.rows;
-      console.log("TEMA: " + x.map((item) => item.tema));
+      // console.log("TEMA: " + x.map((item) => item.tema));
       changeTema(x.map((item) => item.tema));
       settema(x.map((item) => item.tema));
       setsettings(response.data.rows);
@@ -313,7 +313,7 @@ function Login() {
         .then((response) => {
           var x = [];
           x = response.data;
-          console.log("RESPONSE: " + JSON.stringify(x));
+          // console.log("RESPONSE: " + JSON.stringify(x));
           // armazenando o token no localStorage.
           localStorage.setItem("token", x.token);
 
@@ -345,7 +345,7 @@ function Login() {
               faturamento: x.faturamento,
               usuarios: x.usuarios,
             });
-            console.log(x);
+            // console.log(x);
             // armazenando o context na localStorage.
             localStorage.setItem("usuario", usuario);
             loadAcessos(x.id);
@@ -848,7 +848,7 @@ function Login() {
             alignSelf: 'flex-end'
           }}
           title="FAZER LOGOFF."
-          onMouseOver={() => console.log(usuario.id)}
+          // onMouseOver={() => console.log(usuario.id)}
           onClick={() => {
             setusuario({});
             setacessos([]);

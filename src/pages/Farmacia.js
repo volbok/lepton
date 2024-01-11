@@ -6,9 +6,12 @@ import moment from "moment";
 // imagens.
 import back from '../images/back.svg';
 import refresh from "../images/refresh.svg";
+import salvar from "../images/salvar.svg";
 import "moment/locale/pt-br";
 // router.
 import { useHistory } from "react-router-dom";
+// functions.
+import modal from "../functions/modal";
 
 function Farmacia() {
 
@@ -21,6 +24,7 @@ function Farmacia() {
     atendimento, setatendimento,
     pacientes, setpacientes,
     setpaciente,
+    setdialogo,
   } = useContext(Context);
 
   useEffect(() => {
@@ -426,6 +430,25 @@ function Farmacia() {
                           backgroundColor: 'lightgray',
                           borderColor: 'lightgray',
                         }}>
+                        <div
+                          id="botão para dispensar as medicações."
+                          className="button-green"
+                          title="clique para dispensar a medicação."
+                          style={{
+                            display: aprazamento.dispensado == false ? 'flex' : 'none',
+                            opacity: 1,
+                            alignSelf: "center",
+                          }}
+                          onClick={() => {
+                            modal(setdialogo, 'TEM CERTEZA QUE DESEJA DISPENSAR A MEDICAÇÃO ' + aprazamento.nome + '?', updateAprazamentos, aprazamento);
+                            // updateAprazamentos(aprazamento); console.log('DISPENSANDO MEDICAÇÃO')
+                          }}
+                        >
+                          <img
+                            alt="" src={salvar}
+                            style={{ width: 30, height: 30 }}></img>
+                        </div>
+
                         <div className="button-green"
                           style={{ display: aprazamento.dispensado == true ? 'flex' : 'none' }}
                         >
@@ -433,7 +456,7 @@ function Farmacia() {
                         </div>
                         <div className="button"
                           style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: 0 }}
-                          onClick={() => { updateAprazamentos(aprazamento); console.log('DISPENSANDO MEDICAÇÃO') }}
+                        // onClick={() => { updateAprazamentos(aprazamento); console.log('DISPENSANDO MEDICAÇÃO') }}
                         >
                           {aprazamento.prazo}
                         </div>
