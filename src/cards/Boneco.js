@@ -223,7 +223,7 @@ function Boneco() {
   // sítios de invasões.
   const [dispositivo, setdispositivo] = useState('');
   function Sitio({ sitio, classe }) {
-    if (pagina == 1) {
+    if (pagina == 1 || pagina == -1) {
       return (
         <div
           className={classe} // ex.: "green-invasion snc"
@@ -283,7 +283,7 @@ function Boneco() {
 
   // exibição das lesões no boneco.
   function Lesao({ local, top, bottom, left, right, tamanho }) {
-    if (pagina == 1) {
+    if (pagina == 1 || pagina == -1) {
       var x = lesoes.filter(item => item.local == local && item.data_fechamento == null);
       if (x.length > 0) {
         return (
