@@ -44,6 +44,7 @@ function Prescricao() {
     paciente, pacientes,
     card, setcard,
     idprescricao, setidprescricao,
+    arrayitensprescricao, setarrayitensprescricao,
   } = useContext(Context);
 
   // history (router).
@@ -298,35 +299,13 @@ function Prescricao() {
         let arrayobjcomponentes = [];
 
         // registrando itens de prescrição.
-        //eslint-disable-next-line
-        arrayitensprescricao.filter(valor => valor.id_componente_pai != null && valor.id_componente_filho == null && valor.id_prescricao == old_id_prescricao).map(valor => {
-          let random = Math.random();
-          var objitem = {
-            id_unidade: parseInt(unidade),
-            id_paciente: parseInt(paciente),
-            id_atendimento: parseInt(atendimento),
-            categoria: valor.categoria,
-            codigo_item: valor.codigo_item,
-            nome_item: valor.nome_item,
-            qtde_item: parseInt(valor.qtde_item),
-            via: valor.via,
-            freq: valor.freq,
-            agora: valor.agora,
-            acm: valor.acm,
-            sn: valor.sn,
-            obs: valor.obs,
-            data: moment(),
-            id_componente_pai: random,
-            id_componente_filho: null,
-            id_prescricao: parseInt(nova_id_prescricao),
-            id_pai: null
-          }
-          arrayobjitens.push(objitem);
-
-          // registrando os componentes relacionados ao itens de prescrição.
-          // eslint-disable-next-line
-          arrayitensprescricao.filter(item => item.id_componente_filho == valor.id_componente_pai && valor.id_prescricao == old_id_prescricao).map(valor => {
-            var objcomponente = {
+        axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
+          let x = response.data.rows;
+          setprescricao(response.data.rows);
+          //eslint-disable-next-line
+          x.filter(valor => valor.id_componente_pai != null && valor.id_componente_filho == null && valor.id_prescricao == old_id_prescricao).map(valor => {
+            let random = Math.random();
+            var objitem = {
               id_unidade: parseInt(unidade),
               id_paciente: parseInt(paciente),
               id_atendimento: parseInt(atendimento),
@@ -341,28 +320,53 @@ function Prescricao() {
               sn: valor.sn,
               obs: valor.obs,
               data: moment(),
-              id_componente_pai: null,
-              id_componente_filho: random,
+              id_componente_pai: random,
+              id_componente_filho: null,
               id_prescricao: parseInt(nova_id_prescricao),
               id_pai: null
             }
-            arrayobjcomponentes.push(objcomponente);
+            arrayobjitens.push(objitem);
+
+            // registrando os componentes relacionados ao itens de prescrição.
+            // eslint-disable-next-line
+            x.filter(item => item.id_componente_filho == valor.id_componente_pai && valor.id_prescricao == old_id_prescricao).map(valor => {
+              var objcomponente = {
+                id_unidade: parseInt(unidade),
+                id_paciente: parseInt(paciente),
+                id_atendimento: parseInt(atendimento),
+                categoria: valor.categoria,
+                codigo_item: valor.codigo_item,
+                nome_item: valor.nome_item,
+                qtde_item: parseInt(valor.qtde_item),
+                via: valor.via,
+                freq: valor.freq,
+                agora: valor.agora,
+                acm: valor.acm,
+                sn: valor.sn,
+                obs: valor.obs,
+                data: moment(),
+                id_componente_pai: null,
+                id_componente_filho: random,
+                id_prescricao: parseInt(nova_id_prescricao),
+                id_pai: null
+              }
+              arrayobjcomponentes.push(objcomponente);
+            });
+
           });
+          //eslint-disable-next-line
+          arrayobjitens.map(item => {
+            axios.post(html + 'insert_item_prescricao', item);
+          });
+          //eslint-disable-next-line
+          arrayobjcomponentes.map(item => {
+            axios.post(html + 'insert_item_prescricao', item);
+          });
+          loadPrescricao();
+          loadItensPrescricao();
+          setidprescricao(0);
         });
-
-        //eslint-disable-next-line
-        arrayobjitens.map(item => {
-          axios.post(html + 'insert_item_prescricao', item);
-        });
-        //eslint-disable-next-line
-        arrayobjcomponentes.map(item => {
-          axios.post(html + 'insert_item_prescricao', item);
-        });
-        loadPrescricao();
-        loadItensPrescricao();
-        setidprescricao(0);
       });
-
     });
 
   }
@@ -411,7 +415,6 @@ function Prescricao() {
 
   // ## ITENS DE PRESCRIÇÃO ## //
   // recuperando registros de itens de prescrição.
-  const [arrayitensprescricao, setarrayitensprescricao] = useState([]);
 
   const ordenaListaItensPrescricao = (x) => {
     let arrayitens = [];
@@ -432,29 +435,15 @@ function Prescricao() {
     axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
       let x = response.data.rows;
       setprescricao(response.data.rows);
-      if (idprescricao != 0) {
+      if (idprescricao != 0 && expand == 0) {
         ordenaListaItensPrescricao(x);
       } else {
-        // setarrayitensprescricao(x.filter(item => item.id_prescricao == idprescricao && item.id_componente_filho == null).sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
-        setarrayitensprescricao(x);
+        setarrayitensprescricao(x.filter(item => item.id == selectitemprescricao.id));
+        console.log(x.filter(item => item.id == selectitemprescricao.id))
       }
     })
-      .catch(function (error) {
-        if (error.response == undefined) {
-          toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 3000);
-          setTimeout(() => {
-            setpagina(0);
-            history.push('/');
-          }, 3000);
-        } else {
-          toast(settoast, error.response.data.message + ' REINICIANDO APLICAÇÃO.', 'black', 3000);
-          setTimeout(() => {
-            setpagina(0);
-            history.push('/');
-          }, 3000);
-        }
-      });
   }
+
   // registrando um novo item de prescrição.
   const insertItemPrescricao = (item) => {
     let random = Math.random();
@@ -527,6 +516,7 @@ function Prescricao() {
       console.log('COMPONENTE INSERIDO:');
       console.log(obj);
       loadItensPrescricao();
+      
       setTimeout(() => {
         if (expand == 1) {
           document.getElementById("trava mouse").style.pointerEvents = "none";
@@ -534,11 +524,7 @@ function Prescricao() {
         }
         document.getElementById("item de prescrição " + idprescricao).className = "button-red";
       }, 600);
-      /*
-      if (expand == 1) {
-        setexpand(0);
-      }
-      */
+      
     })
   }
   // atualizando um registro de prescrição.
@@ -567,9 +553,6 @@ function Prescricao() {
       console.log('ITEM ATUALIZADO')
       console.log(item.id);
       console.log(obj);
-      if (expand == 1) {
-        // loadItensPrescricao();
-      }
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -908,7 +891,7 @@ function Prescricao() {
                 display: 'flex',
                 flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
                 pointerEvents: expand == 1 ? 'none' : 'auto',
-                opacity: expand == 1 ? 0.5 : 1,
+                // opacity: expand == 1 ? 0.5 : 1,
               }}>
               <div id="botão para excluir prescrição."
                 className='button-yellow'
@@ -917,7 +900,7 @@ function Prescricao() {
                   maxWidth: 30, width: 30, minWidth: 30,
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
-                onClick={() => deletePrescricao(item.id)}
+                onClick={(e) => { deletePrescricao(item.id); e.stopPropagation() }}
               >
                 <img
                   alt=""
@@ -932,8 +915,9 @@ function Prescricao() {
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
                 className='button-green'
-                onClick={() => {
+                onClick={(e) => {
                   updatePrescricao(item, 1);
+                  e.stopPropagation();
                 }}
               >
                 <img
@@ -951,8 +935,9 @@ function Prescricao() {
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
                 title={'IMPRIMIR PRESCRIÇÕES'}
-                onClick={() => {
+                onClick={(e) => {
                   printDiv();
+                  e.stopPropagation();
                   // montaAprazamentos(item.id);
                 }}>
                 <img
@@ -973,7 +958,7 @@ function Prescricao() {
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
                 title={'COPIAR PRESCRIÇÃO'}
-                onClick={() => copiarPrescricao(item)}>
+                onClick={(e) => { copiarPrescricao(item); e.stopPropagation() }}>
                 <img
                   alt=""
                   src={copiar}
@@ -1143,7 +1128,7 @@ function Prescricao() {
           <FilterItemPrescricao></FilterItemPrescricao>
         </div>
         <div style={{
-          display: viewopcoesitensprescricao == 1 && statusprescricao == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
+          display: viewopcoesitensprescricao == 1 && statusprescricao == 0 && idprescricao != 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
           flexWrap: 'wrap',
           marginTop: 10, marginBottom: 0,
           borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)',
@@ -1176,7 +1161,7 @@ function Prescricao() {
           <div
             key={"prescricao " + item.id}
             style={{
-              display: arrayitensprescricao.length > 0 ? 'flex' : 'none',
+              display: idprescricao != 0 ? 'flex' : 'none',
               flexDirection: 'column', justifyContent: 'center',
               pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto'
             }}>
@@ -1197,8 +1182,8 @@ function Prescricao() {
                         setprescricao(response.data.rows);
                         // setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
                         ordenaListaItensPrescricao(x);
-                        // document.getElementById("trava mouse").style.pointerEvents = "auto";
-                        // document.getElementById("trava mouse").style.opacity = 1;
+                        document.getElementById("trava mouse").style.pointerEvents = "auto";
+                        document.getElementById("trava mouse").style.opacity = 1;
                       });
                     } else {
                       setselectitemprescricao(item);
@@ -1207,8 +1192,8 @@ function Prescricao() {
                         let x = response.data.rows;
                         setprescricao(response.data.rows);
                         setarrayitensprescricao(x.filter(valor => valor.id == item.id));
-                        // document.getElementById("trava mouse").style.pointerEvents = "none";
-                        // document.getElementById("trava mouse").style.opacity = 0.5;
+                        document.getElementById("trava mouse").style.pointerEvents = "none";
+                        document.getElementById("trava mouse").style.opacity = 0.5;
                       });
                     }
                     setTimeout(() => {

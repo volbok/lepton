@@ -379,7 +379,7 @@ function Farmacia() {
           }}>
           {arraylistaprescricao
             .filter(valor => moment(valor.data) > moment().subtract(1, 'days').startOf('day'))
-            .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -  1).filter(valor => valor.id_atendimento == atendimento).map(valor => (
+            .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1).filter(valor => valor.id_atendimento == atendimento).map(valor => (
               <div className="cor1" style={{ width: '100%', borderRadius: 5, margin: 5, padding: 5 }}>
                 <div style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -407,7 +407,7 @@ function Farmacia() {
                       {moment(valor.data).format('DD/MM/YY')}
                     </div>
                     <div>
-                      {moment(valor.data).format('HH:mm:SS')}
+                      {moment(valor.data).format('HH:mm:ss')}
                     </div>
                   </div>
                   <div id="lista com itens de prescrição e seus componentes"
@@ -419,7 +419,7 @@ function Farmacia() {
                       flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly',
                     }}
                   >
-                    {aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).map(aprazamento => (
+                    {aprazamentos.filter(aprazamento => aprazamento.id_componente_pai != null && aprazamento.id_prescricao == valor.id).sort((a, b) => moment(a.prazo, 'DD/MM/YY - HH:mm') < moment(b.prazo, 'DD/MM/YY - HH:mm') ? -1 : 1).map(aprazamento => (
                       <div id="card do item de prescrição"
                         className="scroll"
                         style={{

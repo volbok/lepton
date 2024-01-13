@@ -112,7 +112,8 @@ function App() {
   const [interconsultas, setinterconsultas] = useState([]);
 
   const [prescricao, setprescricao] = useState([]);
-
+  const [arrayitensprescricao, setarrayitensprescricao] = useState([]);
+  
   const [consultorio, setconsultorio] = useState('SELECIONAR SALA'); // seletor da sala de atendimento.
   const [salatriagem, setsalatriagem] = useState(null); // seletor da sala de triagem.
 
@@ -135,7 +136,7 @@ function App() {
   const [mobilewidth, setmobilewidth] = useState(600);
 
   const [idprescricao, setidprescricao] = useState(0);
-  
+
 
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
@@ -276,6 +277,8 @@ function App() {
         setinterconsultas,
         prescricao,
         setprescricao,
+        arrayitensprescricao,
+        setarrayitensprescricao,
         altura,
         setaltura,
         consultorio,

@@ -92,6 +92,8 @@ function Prontuario() {
     mobilewidth,
 
     setunidade,
+    setarrayitensprescricao,
+    setidprescricao,
   } = useContext(Context);
 
   // history (router).
@@ -498,8 +500,8 @@ function Prontuario() {
                             setunidade(parseInt(item.id_unidade));
                             setatendimento(item.id_atendimento);
                             setpaciente(parseInt(item.id_paciente));
-                            console.log(item.id_unidade);
                             getAllData(item.id_paciente, item.id_atendimento);
+                            setidprescricao(0);
                             if (pagina == -1) {
                               setTimeout(() => {
                                 var botoes = document
@@ -627,8 +629,8 @@ function Prontuario() {
                             setatendimento(item.id_atendimento);
                             setunidade(parseInt(item.id_unidade));
                             setpaciente(parseInt(item.id_paciente));
-                            console.log(item.id_paciente);
                             getAllData(item.id_paciente, item.id_atendimento);
+                            setidprescricao(0);
                             if (pagina == -1) {
                               setTimeout(() => {
                                 var botoes = document
@@ -719,7 +721,7 @@ function Prontuario() {
       </div >
     );
     // eslint-disable-next-line
-  }, [arrayclassificacao, arrayatendimentos, allinterconsultas, allprecaucoes, consultorio]);
+  }, [arrayclassificacao, arrayatendimentos, allinterconsultas, allprecaucoes, consultorio, setarrayitensprescricao]);
 
   const tagsDosPacientes = (titulo, item, lista, imagem) => {
     return (
@@ -1818,7 +1820,8 @@ function Prontuario() {
                     setviewlista(0);
                     setatendimento(valor.id_atendimento);
                     setpaciente(valor.id_paciente);
-                    getAllData(valor.id_paciente, valor.id_atendimento);
+                    getAllData(item.id_paciente, item.id_atendimento);
+                    setidprescricao(0);
                     if (pagina == -1) {
                       setTimeout(() => {
                         var botoes = document
