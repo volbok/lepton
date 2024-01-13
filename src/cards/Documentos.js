@@ -786,6 +786,7 @@ function Documentos() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
+    a.close();
   }
   function PrintDocumento() {
     return (

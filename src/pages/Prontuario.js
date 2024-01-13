@@ -1229,10 +1229,10 @@ function Prontuario() {
             pointerEvents: opcao == null ? 'none' : 'auto',
             backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
             borderColor: "transparent",
-            height: 180,
             margin: 5,
             minWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
             maxWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
+            height: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
           }}
           onClick={() => {
             if (card == opcao) {

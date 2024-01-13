@@ -195,7 +195,7 @@ function Farmacia() {
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
             margin: 5, marginBottom: 0,
-            height: 'calc(100vh - 220px)',
+            height: 'calc(100vh - 205px)',
             width: 'calc(100% - 20px)'
           }}
         >
@@ -380,7 +380,7 @@ function Farmacia() {
           {arraylistaprescricao
             .filter(valor => moment(valor.data) > moment().subtract(1, 'days').startOf('day'))
             .sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1).filter(valor => valor.id_atendimento == atendimento).map(valor => (
-              <div className="cor1" style={{ width: '100%', borderRadius: 5, margin: 5, padding: 5 }}>
+              <div className="cor1" style={{ width: 'calc(100% - 40px)', borderRadius: 5, margin: 5, padding: 5 }}>
                 <div style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   width: 'calc(100%)',
@@ -426,6 +426,7 @@ function Farmacia() {
                           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
                           opacity: aprazamento.dispensado == true ? 0.7 : 1,
                           width: '27vw',
+                          height: '27vw',
                           padding: 10, margin: 10,
                           backgroundColor: 'lightgray',
                           borderColor: 'lightgray',
