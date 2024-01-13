@@ -61,6 +61,7 @@ function Prescricao() {
   }, [card, atendimento]);
 
   var timeout = null;
+  const [expand, setexpand] = useState(0);
 
   // ## OPÇÕES DE ITENS DE PRESCRIÇÃO ## //
   // recuperando opções de itens de prescrição.
@@ -516,15 +517,14 @@ function Prescricao() {
       console.log('COMPONENTE INSERIDO:');
       console.log(obj);
       loadItensPrescricao();
-      
+
       setTimeout(() => {
         if (expand == 1) {
-          document.getElementById("trava mouse").style.pointerEvents = "none";
-          document.getElementById("trava mouse").style.opacity = 0.5;
+          lockElements(1);
         }
         document.getElementById("item de prescrição " + idprescricao).className = "button-red";
       }, 600);
-      
+
     })
   }
   // atualizando um registro de prescrição.
@@ -587,8 +587,7 @@ function Prescricao() {
       console.log('DELETANDO COMPONENTE.');
       loadItensPrescricao();
       setTimeout(() => {
-        document.getElementById("trava mouse").style.pointerEvents = "none";
-        document.getElementById("trava mouse").style.opacity = 0.5;
+        lockElements(1);
         document.getElementById("item de prescrição " + idprescricao).className = "button-red";
       }, 600);
     });
@@ -790,8 +789,7 @@ function Prescricao() {
         }
         axios.post(html + 'update_item_prescricao/' + item.id, obj).then(() => {
           if (expand == 1) {
-            document.getElementById("trava mouse").style.pointerEvents = "none";
-            document.getElementById("trava mouse").style.opacity = 0.5;
+            lockElements(1);
           }
         })
           .catch(function () {
@@ -886,11 +884,11 @@ function Prescricao() {
               }, 600);
             }}
           >
-            <div
+            <div id="conjunto de botoes do item de prescricao"
               style={{
                 display: 'flex',
                 flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
-                pointerEvents: expand == 1 ? 'none' : 'auto',
+                // pointerEvents: expand == 1 ? 'none' : 'auto',
                 // opacity: expand == 1 ? 0.5 : 1,
               }}>
               <div id="botão para excluir prescrição."
@@ -1112,9 +1110,34 @@ function Prescricao() {
     )
   }
 
+  const lockElements = (key) => {
+    if (key == 0) {
+      document.getElementById("trava mouse").style.pointerEvents = "auto";
+      document.getElementById("trava mouse").style.opacity = 1;
+      document.getElementById("conjunto de botoes do item de prescricao").style.pointerEvents = "auto";
+      document.getElementById("conjunto de botoes do item de prescricao").style.opacity = 1;
+      document.getElementById("botao para excluir item de prescricao").style.pointerEvents = "auto";
+      document.getElementById("botao para excluir item de prescricao").style.opacity = 1;
+      document.getElementById("scroll lista de prescrições").style.pointerEvents = "auto";
+      document.getElementById("scroll lista de prescrições").style.opacity = 1;
+      document.getElementById("inputItemPrescricao").style.pointerEvents = "auto";
+      document.getElementById("inputItemPrescricao").style.opacity = 1;
+    } else {
+      document.getElementById("trava mouse").style.pointerEvents = "none";
+      document.getElementById("trava mouse").style.opacity = 0.5;
+      document.getElementById("conjunto de botoes do item de prescricao").style.pointerEvents = "none";
+      document.getElementById("conjunto de botoes do item de prescricao").style.opacity = 0.5;
+      document.getElementById("botao para excluir item de prescricao").style.pointerEvents = "none";
+      document.getElementById("botao para excluir item de prescricao").style.opacity = 0.5;
+      document.getElementById("scroll lista de prescrições").style.pointerEvents = "none";
+      document.getElementById("scroll lista de prescrições").style.opacity = 0.5;
+      document.getElementById("inputItemPrescricao").style.pointerEvents = "none";
+      document.getElementById("inputItemPrescricao").style.opacity = 0.5;
+    }
+  }
+
   const [selectitemprescricao, setselectitemprescricao] = useState([]);
   const [viewopcoesitensprescricao, setviewopcoesitensprescricao] = useState(0);
-  const [expand, setexpand] = useState(0);
   const ListaItensPrescricoes = useCallback(() => {
     var timeout = null;
     return (
@@ -1182,8 +1205,7 @@ function Prescricao() {
                         setprescricao(response.data.rows);
                         // setarrayitensprescricao(x.sort((a, b) => a.nome_item > b.nome_item ? -1 : 1));
                         ordenaListaItensPrescricao(x);
-                        document.getElementById("trava mouse").style.pointerEvents = "auto";
-                        document.getElementById("trava mouse").style.opacity = 1;
+                        lockElements(0);
                       });
                     } else {
                       setselectitemprescricao(item);
@@ -1192,8 +1214,7 @@ function Prescricao() {
                         let x = response.data.rows;
                         setprescricao(response.data.rows);
                         setarrayitensprescricao(x.filter(valor => valor.id == item.id));
-                        document.getElementById("trava mouse").style.pointerEvents = "none";
-                        document.getElementById("trava mouse").style.opacity = 0.5;
+                        lockElements(1);
                       });
                     }
                     setTimeout(() => {
@@ -1267,7 +1288,8 @@ function Prescricao() {
                     {item.agora == true ? 'AGORA' : item.acm == true ? 'ACM' : item.sn == true ? 'SN' : ''}
                   </div>
                 </div>
-                <div className={'button-red'}
+                <div id="botao para excluir item de prescricao"
+                  className={'button-red'}
                   title={'EXCLUIR ITEM DE PRESCRIÇÃO.'}
                   onClick={(e) => { deleteItemPrescricao(item) }}>
                   <img
