@@ -582,6 +582,9 @@ function Prontuario() {
                             setpaciente(item.id_paciente);
                             setidprescricao(0);
                             getAllData(item.id_paciente, item.id_atendimento);
+                            if (card == 'card-prescricao') {
+                              setidprescricao(0);
+                            }
                             if (pagina == 1) {
                               setTimeout(() => {
                                 var botoes = document
