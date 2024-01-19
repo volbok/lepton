@@ -8,10 +8,12 @@ import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Prontuario from "./pages/Prontuario";
 import ProntuarioTodosPacientes from "./pages/ProntuarioTodosPacientes";
+import Consultas from "./pages/Consultas";
 import Usuarios from "./pages/Usuarios";
 import Triagem from "./pages/Triagem";
 import Painel from "./pages/Painel";
 import Laboratorio from "./pages/Laboratorio";
+import Agendamento from "./pages/Agendamento";
 import Farmacia from "./pages/Farmacia";
 // componentes.
 import Toast from "./components/Toast";
@@ -113,7 +115,7 @@ function App() {
 
   const [prescricao, setprescricao] = useState([]);
   const [arrayitensprescricao, setarrayitensprescricao] = useState([]);
-  
+
   const [consultorio, setconsultorio] = useState('SELECIONAR SALA'); // seletor da sala de atendimento.
   const [salatriagem, setsalatriagem] = useState(null); // seletor da sala de triagem.
 
@@ -305,6 +307,9 @@ function App() {
             <Route path="/prontuario_todos_pacientes">
               <ProntuarioTodosPacientes></ProntuarioTodosPacientes>
             </Route>
+            <Route path="/consultas">
+              <Consultas></Consultas>
+            </Route>
             <Route path="/cadastro">
               <Cadastro></Cadastro>
             </Route>
@@ -322,6 +327,9 @@ function App() {
             </Route>
             <Route path="/farmacia">
               <Farmacia></Farmacia>
+            </Route>
+            <Route path="/agendamento">
+              <Agendamento></Agendamento>
             </Route>
           </Switch>
         </Router>

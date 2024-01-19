@@ -480,6 +480,27 @@ function Login() {
           >
             TODOS OS PACIENTES
           </div>
+          <div
+            className="button"
+            style={{
+              display: "flex",
+              padding: 10,
+              margin: 5,
+              width: 150,
+              minWidth: 150,
+              height: 150,
+              minHeight: 150,
+              maxWidth: 150,
+              maxHeight: 150,
+              color: 'white',
+            }}
+            onClick={() => {
+              setpagina(-2);
+              history.push("/consultas");
+            }}
+          >
+            CONSULTAS
+          </div>
           {acessos.map((item) => (
             <div
               key={"ACESSO: " + item.id_acesso}

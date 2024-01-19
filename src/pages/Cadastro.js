@@ -1036,7 +1036,7 @@ function Cadastro() {
               display: vieweditpaciente == 1 ? "flex" : "none",
               flexDirection: "column",
               justifyContent: "center",
-              height: 345,
+              // height: 345,
               marginTop: 0,
               marginBottom: 20,
             }}
@@ -1053,7 +1053,6 @@ function Cadastro() {
                     : "none",
                 flexDirection: "column",
                 justifyContent: "center",
-                height: "50vh",
                 width: window.innerWidth < 426 ? "70vw" : "30vw",
                 alignSelf: "center",
               }}
@@ -1087,7 +1086,6 @@ function Cadastro() {
                     : "none",
                 flexDirection: "column",
                 justifyContent: "center",
-                height: "50vh",
                 width: window.innerWidth < 426 ? "70vw" : "30vw",
                 alignSelf: "center",
               }}
@@ -1154,7 +1152,6 @@ function Cadastro() {
                     : "none",
                 flexDirection: "column",
                 justifyContent: "center",
-                height: "50vh",
                 width: window.innerWidth < 426 ? "70vw" : "30vw",
                 alignSelf: "center",
               }}
@@ -1172,6 +1169,16 @@ function Cadastro() {
                   justifyContent: "center",
                 }}
               ></div>
+            </div>
+            <div id="botão para agendar consulta"
+              className="button"
+              style={{width: 100, height: 100, alignSelf: 'center'}}
+              onClick={() => {
+                setpagina(20);
+                history.push("/agendamento");
+              }}
+            >
+              AGENDAR CONSULTA
             </div>
           </div>
         </div>
