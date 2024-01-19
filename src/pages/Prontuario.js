@@ -350,6 +350,7 @@ function Prontuario() {
     );
   }
 
+  // CHAMADA DE PACIENTES NA TELA DA RECEPÇÃO.
   // inserindo registro de chamada para triagem.
   const callPaciente = (item) => {
     console.log(localStorage.getItem("sala"));
@@ -375,7 +376,6 @@ function Prontuario() {
       toast(settoast, 'SELECIONE UMA SALA PARA ATENDIMENTO PRIMEIRO', 'red', 2000);
     }
   }
-
   // recuperando o total de chamadas para a unidade de atendimento.
   const [chamadas, setchamadas] = useState([]);
   const loadChamadas = () => {
@@ -383,7 +383,6 @@ function Prontuario() {
       setchamadas(response.data.rows);
     })
   }
-
   // seleção de consultório para chamada de pacientes (aplicável ao PA).
   let salas = ['SALA 01', 'SALA 02', 'SALA 03', 'SALA 04', 'SALA 05']
   const [viewsalaselector, setviewsalaselector] = useState(0);

@@ -834,6 +834,17 @@ function Login() {
           >
             PAINEL PA
           </div>
+          <div
+            className="button"
+            style={{ padding: 10, width: 150, height: 150, alignSelf: 'center' }}
+            onClick={() => {
+              setunidade(5);
+              setpagina(40);
+              history.push("/painel");
+            }}
+          >
+            PAINEL CONSULTAS
+          </div>
         </div>
       </div>
     )

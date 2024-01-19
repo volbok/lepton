@@ -7,6 +7,7 @@ import moment from "moment";
 import power from "../images/power.svg";
 import back from "../images/back.svg";
 import body from "../images/body.svg";
+import call from "../images/call.svg";
 import refresh from "../images/refresh.svg";
 import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
@@ -232,6 +233,7 @@ function Consultas() {
       setpaciente([]);
       setatendimento(null);
       loadPacientes();
+      loadChamadas();
       console.log(usuario.id)
       if (consultorio == null) {
         setviewsalaselector(1);
@@ -353,7 +355,7 @@ function Consultas() {
   function SalaSelector() {
     return (
       <div className="fundo"
-        style={{ display: unidade == 3 && viewsalaselector == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        style={{ display: unidade == 5 && viewsalaselector == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="janela">
           <div className="text1">SELECIONE A SALA PARA ATENDIMENTO DO PACIENTE</div>
           <div id="salas para chamada"
@@ -376,6 +378,40 @@ function Consultas() {
         </div>
       </div>
     )
+  }
+
+  // CHAMADA DE PACIENTES NA TELA DA RECEPÇÃO.
+  // inserindo registro de chamada para triagem.
+  const callPaciente = (item) => {
+    console.log(localStorage.getItem("sala"));
+    if (consultorio != 'SELECIONAR SALA') {
+      var obj = {
+        id_unidade: unidade,
+        id_paciente: item.id_paciente,
+        nome_paciente: item.nome_paciente,
+        id_atendimento: item.id_atendimento,
+        id_sala: consultorio,
+        data: moment()
+      }
+      console.log(obj);
+      axios.post(html + 'insert_chamada/', obj).then(() => {
+        axios.get(html + 'list_chamada/' + unidade).then((response) => {
+          let x = response.data.rows;
+          let y = x.filter(valor => valor.id_atendimento == item.id_atendimento);
+          setchamadas(response.data.rows);
+          document.getElementById('contagem de chamadas do PA' + item.id_atendimento).innerHTML = y.length;
+        });
+      });
+    } else {
+      toast(settoast, 'SELECIONE UMA SALA PARA ATENDIMENTO PRIMEIRO', 'red', 2000);
+    }
+  }
+  // recuperando o total de chamadas para a unidade de atendimento.
+  const [chamadas, setchamadas] = useState([]);
+  const loadChamadas = () => {
+    axios.get(html + 'list_chamada/' + 5).then((response) => {
+      setchamadas(response.data.rows);
+    })
   }
 
   // lista de atendimentos.
@@ -447,6 +483,47 @@ function Consultas() {
                       style={{ margin: 0, padding: 0, fontSize: 18 }}
                     >
                       {moment(item.data_inicio).format('HH:mm')}
+                    </div>
+                    <div style={{
+                      display: 'flex', // unidade 5 = CONSULTAS.
+                      flexDirection: 'row', flexWrap: 'wrap',
+                      alignSelf: 'center',
+                      margin: 5, marginBottom: 0
+                    }}>
+                      <div
+                        className="button-opaque"
+                        style={{
+                          display: 'flex',
+                          margin: 2.5, marginRight: 0,
+                          minHeight: 20, maxHeight: 20, minWidth: 20, maxWidth: 20,
+                          backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                        onClick={() => {
+                          callPaciente(item);
+                        }}
+                      >
+                        <img
+                          alt=""
+                          src={call}
+                          style={{
+                            margin: 0,
+                            height: 20,
+                            width: 20,
+                          }}
+                        ></img>
+                      </div>
+                      <div id={'contagem de chamadas do PA' + item.id_atendimento}
+                        title="TOTAL DE CHAMADAS"
+                        className="text1"
+                        style={{
+                          margin: 2.5, marginLeft: 0,
+                          borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                          backgroundColor: 'white', height: 20, width: 20
+                        }}>
+                        {chamadas.filter(valor => valor.id_paciente == item.id_paciente && valor.id_atendimento == item.id_atendimento).length}
+                      </div>
                     </div>
                   </div>
                   <div
