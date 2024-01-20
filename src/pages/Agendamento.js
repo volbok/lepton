@@ -107,6 +107,7 @@ function Agendamento() {
       .then((response) => {
         var x = response.data.rows;
         var y = x.filter(item => item.id_unidade == 5);
+        // item.id_paciente == paciente.id_paciente
         console.log(y);
         setarrayatendimentos(y);
       })
@@ -173,7 +174,7 @@ function Agendamento() {
         className="scroll"
         id="scroll usuários"
         style={{
-          display: selectedespecialista.length == 0 ? 'flex' : 'none',
+          display: listatodosatendimentos == 0 && selectedespecialista.length == 0 ? 'flex' : 'none',
           width: 'calc(100vw - 40px)',
           height: "calc(100vh - 110px)",
           margin: 5,
@@ -394,7 +395,6 @@ function Agendamento() {
                 onClick={(e) => {
                   setselectdate(item);
                   mountHorarios(item);
-                  // setviewopcoeshorarios(1);
                   e.stopPropagation()
                 }}
                 style={{
@@ -411,8 +411,9 @@ function Agendamento() {
                 {item.substring(0, 2)}
                 <div id='botão para buscar horários...'
                   style={{
+                    display: listatodosatendimentos == 1 ? 'none' : 'flex',
                     borderRadius: 50,
-                    backgroundColor: 'green',
+                    backgroundColor: 'rgb(82, 190, 128, 0.7)',
                     borderWidth: 3,
                     borderStyle: 'solid',
                     borderColor: 'rgba(242, 242, 242)',
@@ -420,7 +421,6 @@ function Agendamento() {
                     position: 'absolute',
                     bottom: -5, right: -5,
                     alignContent: 'center',
-                    display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center'
                   }}
@@ -440,7 +440,7 @@ function Agendamento() {
     return (
       <div
         style={{
-          display: 'flex',
+          display: listatodosatendimentos == 0 ? 'flex' : 'none',
           flexDirection: "column",
           alignSelf: "center",
         }}
@@ -565,6 +565,139 @@ function Agendamento() {
     // eslint-disable-next-line
   }, [arrayatendimentos, selectedespecialista, selectdate]);
 
+  const [listatodosatendimentos, setlistatodosatendimentos] = useState(0);
+  const ListaTodosAtendimentos = useCallback(() => {
+    return (
+      <div
+        style={{
+          display: listatodosatendimentos == 1 ? 'flex' : 'none',
+          flexDirection: "column",
+          alignSelf: "center",
+        }}
+      >
+        <div id="scroll atendimentos com pacientes"
+          className="scroll"
+          style={{
+            display: arrayatendimentos.length > 0 ? "flex" : "none",
+            justifyContent: "flex-start",
+            height: "calc(100vh - 200px)",
+            width: '60vw',
+            margin: 5,
+          }}
+        >
+          {arrayatendimentos
+            .filter(item => item.situacao == 3 && moment(item.data_inicio).format('DD/MM/YYYY') == selectdate)
+            .sort((a, b) => (moment(a.data_inicio) > moment(b.data_inicio) ? 1 : -1))
+            .map((item) => (
+              <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
+                <div
+                  className="row"
+                  style={{
+                    position: "relative",
+                    margin: 2.5, padding: 0,
+                  }}
+                >
+                  <div
+                    id={"atendimento " + item.id_atendimento}
+                    className="button-yellow"
+                    style={{
+                      flex: 1,
+                      marginRight: 0,
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                    }}>
+                    {moment(item.data_inicio).format('HH:mm') + ' ÀS ' + moment(item.data_termino).format('HH:mm')}
+                  </div>
+                  <div
+                    id={"atendimento " + item.id_atendimento}
+                    className="button"
+                    style={{
+                      flex: 3,
+                      marginLeft: 0,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                    }}                    >
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          padding: 5,
+                          alignSelf: 'center',
+                        }}
+                      >
+                        <div style={{ marginRight: 5 }}>
+                          {pacientes.filter(
+                            (valor) => valor.id_paciente == item.id_paciente
+                          )
+                            .map((valor) => valor.nome_paciente + ', ')}
+                        </div>
+                        <div>
+                          {moment().diff(
+                            moment(
+                              pacientes
+                                .filter(
+                                  (valor) => valor.id_paciente == item.id_paciente
+                                )
+                                .map((item) => item.dn_paciente)
+                            ),
+                            "years"
+                          ) + " ANOS"}
+                        </div>
+                      </div>
+                      <div className='text2'>
+                        {'PROFISSIONAL: ' + especialistas.filter(valor => valor.id_usuario == item.id_profissional).map(valor => valor.nome_usuario)}
+                      </div>
+                      <div id="btn deletar agendamento de consulta"
+                        title="DESMARCAR CONSULTA"
+                        className="button-red"
+                        onClick={() => {
+                          modal(
+                            setdialogo,
+                            "TEM CERTEZA QUE DESEJA DESMARCAR A CONSULTA?",
+                            deleteAtendimento,
+                            item.id_atendimento
+                          );
+                        }}
+                        style={{ width: 50, height: 50, alignSelf: 'flex-end' }}
+                      >
+                        <img
+                          alt=""
+                          src={deletar}
+                          style={{
+                            margin: 10,
+                            height: 30,
+                            width: 30,
+                          }}
+                        ></img>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <div id="scroll atendimento vazio"
+          className="scroll"
+          style={{
+            display: arrayatendimentos.length > 0 ? "none" : "flex",
+            justifyContent: "flex-start",
+            height: "calc(100vh - 200px)",
+            width: '60vw',
+            margin: 5,
+          }}
+        >
+          <div className="text3" style={{ opacity: 0.5 }}>
+            SELECIONE UMA DATA
+          </div>
+        </div>
+      </div >
+    );
+    // eslint-disable-next-line
+  }, [arrayatendimentos, selectedespecialista, selectdate]);
+
   const [arrayhorarios, setarrayhorarios] = useState([]);
   const mountHorarios = (selectdate) => {
     let array = [];
@@ -576,8 +709,6 @@ function Agendamento() {
     console.log(array);
     setarrayhorarios(array);
   }
-
-
 
   const [viewopcoeshorarios, setviewopcoeshorarios] = useState(0);
   const ViewOpcoesHorarios = () => {
@@ -602,7 +733,7 @@ function Agendamento() {
             {arrayhorarios.map(item => (
               <div className='button'
                 style={{
-                  opacity: arrayatendimentos.filter(valor => moment(valor.data_inicio).format('DD/MM/YYYY - HH:mm') == item).length > 0 ? 0.3 : 1,
+                  opacity: arrayatendimentos.filter(valor => moment(valor.data_inicio).format('DD/MM/YYYY - HH:mm') == item && valor.id_profissional == selectedespecialista.id_usuario).length > 0 ? 0.3 : 1,
                   pointerEvents: arrayatendimentos.filter(valor => moment(valor.data_inicio).format('DD/MM/YYYY - HH:mm') == item).length > 0 ? 'none' : 'auto',
                   width: 100, height: 100,
                 }}
@@ -642,42 +773,63 @@ function Agendamento() {
               style={{ width: 30, height: 30 }}
             ></img>
           </div>
+          <div id="botão para sair da tela de agendamento"
+            className="button" style={{ maxHeight: 50, alignSelf: 'center', paddingLeft: 15, paddingRight: 15 }}
+            onClick={() => {
+              if (listatodosatendimentos == 1) {
+                setlistatodosatendimentos(0);
+              } else {
+                setlistatodosatendimentos(1);
+              }
+            }}>
+            {listatodosatendimentos == 0 ? 'VER TODOS OS AGENDAMENTOS' : 'VOLTAR PARA O AGENDAMENTO'}
+          </div>
+          <div
+            className='text1'
+            style={{ display: listatodosatendimentos == 1 ? 'flex' : 'none', fontSize: 16 }}
+          >
+            TODAS AS CONSULTAS AGENDADAS
+          </div>
           <div
             style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-              alignItems: 'flex-start', textAlign: 'left'
+              display: listatodosatendimentos == 0 ? 'flex' : 'none',
+              flexDirection: 'column', justifyContent: 'flex-start',
+              alignItems: 'flex-start', textAlign: 'left', alignSelf: 'center',
             }}>
-            <div className='text1' style={{ fontSize: 16, alignSelf: 'flex-start', marginBottom: 0 }}>
+            <div className='text1' style={{
+              fontSize: 16, justifyContent: 'flex-start', alignSelf: 'flex-start', margin: 0,
+              marginTop: selectedespecialista.nome_usuario == undefined ? 0 : 5
+            }}>
               {'CONSULTA PARA: ' + paciente.nome_paciente + ' - ' + moment().diff(moment(paciente.dn_paciente), 'years') + ' ANOS'}
             </div>
-            <div className='text1'
-              style={{
-                display: selectedespecialista.nome_usuario != undefined ? 'flex' : 'none',
-                flexDirection: 'column',
-                fontSize: 16, marginTop: 0
-              }}>
-              {'PROFISSIONAL SELECIONADO: ' + selectedespecialista.nome_usuario + ' - ' + selectedespecialista.tipo_usuario}
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'center', marginTop: -5 }}>
+              <div className='text1' style={{ fontSize: 14, margin: 0, alignSelf: 'center' }}>
+                {selectedespecialista.nome_usuario == undefined ? 'SELECIONE ABAIXO UM PROFISSIONAL PARA A CONSULTA' : selectedespecialista.tipo_usuario != null ? 'PROFISSIONAL SELECIONADO: ' + selectedespecialista.nome_usuario + ' - ' + selectedespecialista.tipo_usuario : 'PROFISSIONAL SELECIONADO: ' + selectedespecialista.nome_usuario + ' - ESPECIALIDADE NÃO REGISTRADA'}
+              </div>
               <div className='button'
                 onClick={() => {
                   setselectedespecialista([]);
                 }}
-                style={{ width: 100, alignSelf: 'flex-start', minHeight: 20, maxHeight: 20, marginLeft: 0 }}>
-                TROCAR
+                style={{
+                  display: selectedespecialista.nome_usuario != undefined ? 'flex' : 'none',
+                  width: 150, alignSelf: 'center', minHeight: 20, maxHeight: 20
+                }}>
+                TROCAR PROFISSIONAL
               </div>
             </div>
           </div>
-
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <ListaDeUsuarios></ListaDeUsuarios>
           <div
             style={{
-              display: selectedespecialista.nome_usuario != undefined ? "flex" : "none",
+              display: selectedespecialista.nome_usuario != undefined || listatodosatendimentos == 1 ? "flex" : "none",
               flexDirection: 'row', justifyContent: 'center'
             }}
           >
             <DatePicker></DatePicker>
             <ListaDeAtendimentos></ListaDeAtendimentos>
+            <ListaTodosAtendimentos></ListaTodosAtendimentos>
             <ViewOpcoesHorarios></ViewOpcoesHorarios>
           </div>
         </div>
