@@ -329,14 +329,14 @@ function Farmacia() {
       <div id="lista de unidades"
         className='scroll'
         style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
           overflowY: 'hidden', overflowX: 'scroll',
           width: 'calc(100% - 20px)'
         }}>
         {unidades.map(item => (
           <div id={"unidade" + item.id_unidade}
             className="button"
-            style={{ width: 100 }}
+            style={{ width: 150, minWidth: 150 }}
             onClick={() => {
               setatendimento(null);
               setpaciente(null);

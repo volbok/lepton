@@ -724,9 +724,24 @@ function Agendamento() {
           style={{
             display: 'flex', flexDirection: 'column', justifyItems: 'flex-start',
             justifyContent: 'center',
-            width: 730
+            width: 730, height: '85vh',
+            position: 'relative',
           }}
           onClick={(e) => e.stopPropagation()}>
+          <div id="botão para sair da tela de seleção dos horários"
+            className="button-red" style={{
+              maxHeight: 50, maxWidth: 50,
+              position: 'sticky', top: 10, right: 10, alignSelf: 'flex-end'
+            }}
+            onClick={() => {
+              setviewopcoeshorarios(0);
+            }}>
+            <img
+              alt=""
+              src={back}
+              style={{ width: 30, height: 30 }}
+            ></img>
+          </div>
           <div className='text1' style={{ fontSize: 18, marginBottom: 0 }}>HORÁRIOS DISPONÍVEIS</div>
           <div className='text1' style={{ marginTop: 0 }}>{'DATA: ' + selectdate + ' - PROFISSIONAL: ' + selectedespecialista.nome_usuario}</div>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>

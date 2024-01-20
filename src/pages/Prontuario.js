@@ -237,8 +237,6 @@ function Prontuario() {
       if (consultorio == null) {
         setviewsalaselector(1);
       }
-
-
     }
     // eslint-disable-next-line
   }, [pagina]);
