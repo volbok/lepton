@@ -8,6 +8,7 @@ import power from "../images/power.svg";
 import back from "../images/back.svg";
 import body from "../images/body.svg";
 import call from "../images/call.svg";
+import flag from "../images/flag.svg";
 import refresh from "../images/refresh.svg";
 import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
@@ -15,6 +16,8 @@ import prec_respiratorio from "../images/prec_respiratorio.svg";
 import esteto from "../images/esteto.svg";
 // funções.
 import toast from "../functions/toast";
+import modal from '../functions/modal';
+
 // router.
 import { useHistory } from "react-router-dom";
 // componentes.
@@ -44,6 +47,8 @@ function Consultas() {
     unidade,
     usuario,
     setusuario,
+
+    setdialogo,
 
     settoast,
     pagina,
@@ -414,6 +419,28 @@ function Consultas() {
     })
   }
 
+  const updateConsulta = (item) => {
+    var obj = {
+      data_inicio: item.data_inicio,
+      data_termino: moment(),
+      problemas: item.problemas,
+      id_paciente: item.id_paciente,
+      id_unidade: item.id_unidade,
+      nome_paciente: item.nome_paciente,
+      leito: null,
+      situacao: 2, // 2 = consulta encerrada.
+      id_cliente: item.id_cliente,
+      classificacao: item.classificacao,
+      id_profissional: item.id_profissional,
+    };
+    axios
+      .post(html + "update_atendimento/" + item.id_atendimento, obj)
+      .then(() => {
+        console.log('CONSULTA FINALIZADA COM SUCESSO');
+        loadAtendimentos();
+      });
+  };
+
   // lista de atendimentos.
   const ListaDeAtendimentos = useCallback(() => {
     return (
@@ -560,7 +587,7 @@ function Consultas() {
                       }
                     }}
                   >
-                    <div
+                    <div id="nome e data de nascimento do paciente"
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -597,6 +624,41 @@ function Consultas() {
                       justifyContent: "center",
                     }}
                   >
+                    <div id="botão para finalizar atendimento"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignContent: "center",
+                        backgroundColor: "rgba(242, 242, 242)",
+                        borderColor: "rgba(242, 242, 242)",
+                        borderRadius: 5,
+                        borderStyle: 'solid',
+                        borderWidth: 3,
+                        padding: 2,
+                        margin: 2,
+                      }}
+                    >
+                      <div
+                        id="botão encerrar"
+                        className="button"
+                        onClick={() => {
+                          modal(setdialogo, 'TEM CERTEZA QUE DESEJA FINALIZAR A CONSULTA?', updateConsulta, item);
+                        }}
+                        style={{
+                          display: "flex",
+                          borderColor: "#f2f2f2",
+                          backgroundColor: "rgb(82, 190, 128, 0.5)",
+                          width: 20,
+                          minWidth: 20,
+                          height: 20,
+                          minHeight: 20,
+                          margin: 0,
+                          padding: 7.5,
+                        }}
+                      >
+                        <img alt="" src={flag} style={{ width: 30, height: 30 }}></img>
+                      </div>
+                    </div>
                     {tagsDosPacientes(
                       "INTERCONSULTAS",
                       item,

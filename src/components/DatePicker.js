@@ -68,7 +68,7 @@ function DatePicker() {
   }
   // percorrendo datas do mês anterior.
   const previousMonth = () => {
-    startdate.subtract(30, 'days');
+    startdate.subtract(1, 'month');
     var month = moment(startdate).format('MM');
     var year = moment(startdate).format('YYYY');
     var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
@@ -79,7 +79,7 @@ function DatePicker() {
   }
   // percorrendo datas do mês seguinte.
   const nextMonth = () => {
-    startdate.add(30, 'days');
+    startdate.add(1, 'month');
     var month = moment(startdate).format('MM');
     var year = moment(startdate).format('YYYY');
     var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');

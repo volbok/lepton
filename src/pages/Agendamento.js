@@ -56,11 +56,19 @@ function Agendamento() {
         setTimeout(() => { document.getElementById("inputespecialista").focus() }, 100);
       } else {
         setfilterespecialista(document.getElementById("inputespecialista").value.toUpperCase());
-        setarrayespecialistas(especialistas.filter((item) => item.nome_usuario.includes(searchespecialista)));
-        setTimeout(() => {
-          document.getElementById("inputespecialista").value = searchespecialista;
-          document.getElementById("inputespecialista").focus()
-        }, 100)
+        if (especialistas.filter((item) => item.nome_usuario.includes(searchespecialista)).length > 0) {
+          setarrayespecialistas(especialistas.filter((item) => item.nome_usuario.includes(searchespecialista)));
+          setTimeout(() => {
+            document.getElementById("inputespecialista").value = searchespecialista;
+            document.getElementById("inputespecialista").focus()
+          }, 100)
+        } else {
+          setarrayespecialistas(especialistas.filter((item) => item.tipo_usuario != null && item.tipo_usuario.includes(searchespecialista)));
+          setTimeout(() => {
+            document.getElementById("inputespecialista").value = searchespecialista;
+            document.getElementById("inputespecialista").focus()
+          }, 100)
+        }
       };
     }, 1000);
   };
@@ -198,7 +206,6 @@ function Agendamento() {
                 id={"usuario " + item.id_usuario}
                 onClick={() => {
                   setselectedespecialista(item);
-                  console.log(selectedespecialista);
                 }}
                 style={{
                   justifyContent: "space-between",
@@ -236,9 +243,7 @@ function Agendamento() {
   var arraydate = [];
   const [arraylist, setarraylist] = useState([]);
   // preparando o primeiro dia do mês.
-  var month = moment().format('MM');
-  var year = moment().format('YYYY');
-  const [startdate] = useState(moment('01/' + month + '/' + year, 'DD/MM/YYYY'));
+  const [startdate] = useState(moment().startOf('month'));
   // descobrindo o primeiro dia do calendário (último domingo do mês anteior).
   const firstSunday = (x, y) => {
     while (x.weekday() > 0) {
@@ -261,35 +266,35 @@ function Agendamento() {
   }
   // criando a array de datas baseada no mês atual.
   const currentMonth = () => {
-    var month = moment(startdate).format('MM');
-    var year = moment(startdate).format('YYYY');
-    var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
-    var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
+    var x = moment(startdate, 'DD/MM/YYYY');
+    var y = moment(startdate).add(42, 'days');
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
+    console.log(arraydate);
   }
   // percorrendo datas do mês anterior.
   const previousMonth = () => {
-    startdate.subtract(30, 'days');
-    var month = moment(startdate).format('MM');
-    var year = moment(startdate).format('YYYY');
-    var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
-    var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
+    startdate.subtract(1, 'month');
+    var x = moment(startdate);
+    var y = moment(startdate).add(42, 'days');
+    console.log(y);
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
   }
   // percorrendo datas do mês seguinte.
   const nextMonth = () => {
-    startdate.add(30, 'days');
+    startdate.add(1, 'month');
     var month = moment(startdate).format('MM');
     var year = moment(startdate).format('YYYY');
     var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
     var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
+    console.log(y);
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
+    console.log(arraydate);
   }
 
   const [selectdate, setselectdate] = useState(null);
@@ -413,7 +418,7 @@ function Agendamento() {
                   style={{
                     display: listatodosatendimentos == 1 ? 'none' : 'flex',
                     borderRadius: 50,
-                    backgroundColor: 'rgb(82, 190, 128, 0.7)',
+                    backgroundColor: 'rgb(82, 190, 128, 1)',
                     borderWidth: 3,
                     borderStyle: 'solid',
                     borderColor: 'rgba(242, 242, 242)',
@@ -827,7 +832,7 @@ function Agendamento() {
                 }}
                 style={{
                   display: selectedespecialista.nome_usuario != undefined ? 'flex' : 'none',
-                  width: 150, alignSelf: 'center', minHeight: 20, maxHeight: 20
+                  alignSelf: 'center', minHeight: 20, maxHeight: 20, fontSize: 12, paddingLeft: 10, paddingRight: 10
                 }}>
                 TROCAR PROFISSIONAL
               </div>
