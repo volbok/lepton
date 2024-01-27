@@ -14,6 +14,9 @@ import Logo from "../components/Logo";
 // router.
 import { useHistory } from "react-router-dom";
 
+var bcrypt = require('bcryptjs');
+var salt = bcrypt.genSaltSync(5);
+
 function Login() {
   // context.
   const {
@@ -41,11 +44,9 @@ function Login() {
       sethospital(cliente.id_cliente);
       loadUnidades();
       loadUsuarios();
-      if (usuario.prontuario == 1) {
-        setviewlistaunidades(1);
-        loadAcessos(usuario.id);
-        // console.log(usuario.prontuario);
-      }
+      localStorage.setItem('usuario', null);
+      localStorage.setItem('senha', null);
+      setviewlistaunidades(0);
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -296,81 +297,70 @@ function Login() {
   };
 
   // checando se o usuário inserido está registrado no sistema.
-  let user = null;
   let password = null;
   var timeout = null;
   const checkLogin = () => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      user = document.getElementById("inputUsuario").value;
       password = document.getElementById("inputSenha").value;
-      var obj = {
-        usuario: user,
-        senha: password,
-      };
-      axios
-        .post(html + "checkusuario", obj)
-        .then((response) => {
-          var x = [];
-          x = response.data;
-          // console.log("RESPONSE: " + JSON.stringify(x));
-          // armazenando o token no localStorage.
-          localStorage.setItem("token", x.token);
+      let usuario = localStorage.getItem('usuario');
+      let senha = localStorage.getItem('senha');
+      console.log(bcrypt.compareSync(password, senha));
 
-          // console.log('DADOS DO USUÁRIO: ' + x.nome + ' - ' + x.dn + ' - ' + x.cpf + ' - ' + x.email);
-          // adicionando o token ao header.
-          setAuthToken(x.token);
+      if (bcrypt.compareSync(password, senha) == true) {
+        var obj = {
+          usuario: parseInt(usuario),
+        };
+        console.log(obj);
+        axios
+          .post(html + "grant", obj)
+          .then((response) => {
+            var x = [];
+            x = response.data;
+            // armazenando o token no localStorage.
+            localStorage.setItem("token", x.token);
+            setAuthToken(x.token);
+            if (x.auth == true) {
 
-          if (x.auth == true) {
+              /*
+              toast(
+                settoast,
+                "OLÁ, " + usuario.nome.split(" ", 1),
+                "rgb(82, 190, 128, 1)",
+                3000
+              );
+              */
+
+              // eslint-disable-next-line
+              setviewlistaunidades(1);
+              loadAcessos(x.id.usuario);
+              loadSettings(x.id.usuario);
+            } else {
+              toast(
+                settoast,
+                "USUÁRIO OU SENHA INCORRETOS",
+                "rgb(231, 76, 60, 1)",
+                3000
+              );
+            }
+          })
+          .catch(function () {
             toast(
               settoast,
-              "OLÁ, " + x.nome.split(" ", 1),
-              "rgb(82, 190, 128, 1)",
-              3000
+              "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
+              "black",
+              5000
             );
-            // eslint-disable-next-line
-            setusuario({
-              id: x.id,
-              nome_usuario: x.nome,
-              dn_usuario: x.dn,
-              cpf_usuario: x.cpf,
-              email_usuario: x.email,
-              conselho: x.conselho,
-              n_conselho: x.n_conselho,
-              tipo_usuario: x.tipo_usuario,
-              paciente: x.paciente,
-              prontuario: x.prontuario,
-              laboratorio: x.laboratorio,
-              farmacia: x.farmacia,
-              faturamento: x.faturamento,
-              usuarios: x.usuarios,
-            });
-            // console.log(x);
-            // armazenando o context na localStorage.
-            localStorage.setItem("usuario", usuario);
-            loadAcessos(x.id);
-            loadSettings(x.id);
-          } else {
-            toast(
-              settoast,
-              "USUÁRIO OU SENHA INCORRETOS",
-              "rgb(231, 76, 60, 1)",
-              3000
-            );
-          }
-        })
-        .catch(function () {
-          toast(
-            settoast,
-            "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-            "black",
-            5000
-          );
-          setTimeout(() => {
-            setpagina(0);
-            history.push("/");
-          }, 5000);
-        });
+            setTimeout(() => {
+              setpagina(0);
+              setusuario({})
+              history.push("/");
+            }, 5000);
+          });
+      } else {
+        toast(settoast, 'USUÁRIO E SENHA NÃO CONFEREM', 'red', 1000);
+      }
+
     }, 1000);
   };
 
@@ -381,10 +371,47 @@ function Login() {
     } else delete axios.defaults.headers.common["Authorization"];
   };
 
+  const checkUsuario = (usuario) => {
+    var obj = { usuario: usuario }
+    console.log(document.getElementById("inputUsuario").value);
+    axios.post(html + "checknomeusuario", obj)
+      .then((response) => {
+        console.log(response.data);
+        var x = response.data;
+        // salvando os dados do usuário logado.
+        setusuario({
+          id: x.id,
+          nome_usuario: x.nome,
+          dn_usuario: x.dn,
+          cpf_usuario: x.cpf,
+          email_usuario: x.email,
+          senha: x.senha,
+          login: x.login,
+          conselho: x.conselho,
+          n_conselho: x.n_conselho,
+          tipo_usuario: x.tipo_usuario,
+          paciente: x.paciente,
+          prontuario: x.prontuario,
+          laboratorio: x.laboratorio,
+          farmacia: x.farmacia,
+          faturamento: x.faturamento,
+          usuarios: x.usuarios,
+          primeiro_acesso: x.primeiro_acesso,
+        });
+        console.log(x.senha);
+        localStorage.setItem('usuario', x.id);
+        localStorage.setItem('senha', x.senha);
+        if (x.primeiro_acesso == 0) {
+          setviewcriarsenha(1);
+        }
+      })
+  };
+
   // inputs para login e senha.
   const [viewlistaunidades, setviewlistaunidades] = useState(0);
   const [viewalterarsenha, setviewalterarsenha] = useState(0);
   const Inputs = useCallback(() => {
+    var timeout = null;
     return (
       <div
         style={{
@@ -403,13 +430,17 @@ function Login() {
           id="inputUsuario"
           onFocus={(e) => (e.target.placeholder = "")}
           onBlur={(e) => (e.target.placeholder = "USUÁRIO")}
-          // eslint-disable-next-line
-          onChange={(e) => (user = e.target.value)}
           style={{
             marginTop: 10,
             marginBottom: 10,
             width: 200,
             height: 50,
+          }}
+          onKeyUp={() => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              checkUsuario(document.getElementById("inputUsuario").value);
+            }, 2000);
           }}
         ></input>
         <input
@@ -435,6 +466,143 @@ function Login() {
       </div>
     );
   }, [viewlistaunidades, viewalterarsenha]);
+
+  let termo =
+    'PROMETO QUE VOU USAR O SISTEMA SEGUINDO AS LEIS...'
+
+  const [viewcriarsenha, setviewcriarsenha] = useState(0);
+  const [viewbtngerasenha, setviewbtngerasenha] = useState(0);
+
+  const updateHashPasswordUsuario = (hash) => {
+    var obj = {
+      nome_usuario: usuario.nome_usuario,
+      dn_usuario: usuario.dn_usuario,
+      cpf_usuario: usuario.cpf_usuario,
+      email_usuario: usuario.email_usuario,
+      senha: hash,
+      login: usuario.cpf_usuario,
+      conselho: usuario.conselho,
+      tipo_usuario: null,
+      paciente: usuario.paciente,
+      prontuario: usuario.prontuario,
+      laboratorio: usuario.laboratorio,
+      farmacia: usuario.farmacia,
+      faturamento: usuario.faturamento,
+      usuarios: usuario.usuarios,
+      primeiro_acesso: 1,
+    };
+    axios
+      .post(html + "update_usuario/" + usuario.id, obj)
+      .then(() => {
+        setviewcriarsenha(0);
+        toast(
+          settoast,
+          "SENHA ATUALIZADA COM SUCESSO NA BASE PULSAR",
+          "rgb(82, 190, 128, 1)",
+          3000
+        );
+      })
+      .catch(function () {
+        toast(
+          settoast,
+          "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
+          "black",
+          5000
+        );
+        setTimeout(() => {
+          setpagina(0);
+          history.push("/");
+        }, 5000);
+      });
+  };
+
+
+  function CriarSenha() {
+    return (
+      <div className="fundo"
+        style={{ display: viewcriarsenha == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="janela">
+          <div className="scroll text1" style={{ marginBottom: 10, width: '50vw', height: 200, justifyContent: 'flex-start' }}>
+            {termo}
+          </div>
+          <div className="text1">
+            DIGITE A SENHA
+          </div>
+          <input
+            autoComplete="off"
+            placeholder="SENHA"
+            className="input"
+            type="password"
+            id="inputPrimeiraSenha"
+            onFocus={(e) => (e.target.placeholder = "")}
+            onBlur={(e) => (e.target.placeholder = "NOVA SENHA")}
+            style={{
+              marginTop: 10,
+              marginBottom: 10,
+              width: 200,
+              height: 50,
+              alignSelf: "center",
+            }}
+          ></input>
+          <div className="text1">
+            CONFIRME A NOVA SENHA
+          </div>
+          <input
+            autoComplete="off"
+            placeholder="REPITA A SENHA"
+            className="input"
+            type="password"
+            id="inputConfirmaPrimeiraSenha"
+            onFocus={(e) => (e.target.placeholder = "")}
+            onBlur={(e) => (e.target.placeholder = "REPITA SENHA")}
+            onKeyUp={() => {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => {
+                var primeirasenha = document.getElementById("inputPrimeiraSenha").value;
+                var confirmaprimeirasenha = document.getElementById("inputConfirmaPrimeiraSenha").value;
+                if (primeirasenha == confirmaprimeirasenha) {
+                  setviewbtngerasenha(1);
+                } else {
+                  document.getElementById("inputPrimeiraSenha").value = '';
+                  document.getElementById("inputConfirmaPrimeiraSenha").value = '';
+                  setviewbtngerasenha(0);
+                  toast(settoast, 'AS SENHAS NÃO CONFEREM', 'red', 2000);
+                  setTimeout(() => {
+                    document.getElementById("inputPrimeiraSenha").focus();
+                  }, 2100);
+                }
+              }, 3000);
+            }}
+            style={{
+              marginTop: 10,
+              marginBottom: 10,
+              width: 200,
+              height: 50,
+              alignSelf: "center",
+            }}
+          ></input>
+          <div
+            className="button"
+            style={{
+              display: viewbtngerasenha == 1 ? 'flex' : 'none',
+              margin: 5,
+              width: 150,
+              padding: 20,
+              minWidth: 150,
+            }}
+            onClick={() => {
+              // gerando senha criptografada com o bcrypt.
+              var password = document.getElementById("inputPrimeiraSenha").value;
+              var hash = bcrypt.hashSync(password, salt);
+              updateHashPasswordUsuario(hash);
+            }}
+          >
+            ACEITO OS TERMOS. GERAR ACESSO
+          </div>
+        </div>
+      </div >
+    )
+  }
 
   // lista de unidades disponiveis para o usuário logado.
   function ListaDeUnidadesAssistenciais() {
@@ -542,7 +710,6 @@ function Login() {
       </div>
     );
   }
-
   const montaModuloDeApoio = (titulo, acesso, rota, pagina) => {
     return (
       <div
@@ -569,7 +736,7 @@ function Login() {
     return (
       <div
         style={{
-          display: viewlistaunidades == 1 && window.innerWidth < mobilewidth ? "none" : "flex",
+          display: viewlistaunidades == 1 && window.innerWidth > mobilewidth ? "flex" : "none",
           flexDirection: "column",
           justifyContent: "center",
           alignSelf: "center",
@@ -862,7 +1029,7 @@ function Login() {
           position: 'relative',
           display: "flex",
           flexDirection: "column",
-          justifyContent: viewlistaunidades === 1 ? "flex-start" : "center",
+          justifyContent: "flex-start",
           alignSelf: "center",
           width: "calc(100vw - 20px)",
           height: "calc(100vh - 20px)",
@@ -873,7 +1040,7 @@ function Login() {
         <div
           className="button-red"
           style={{
-            display: usuario.id != undefined ? "flex" : "none",
+            display: "flex",
             position: "sticky",
             top: 10,
             right: 10,
@@ -963,6 +1130,7 @@ function Login() {
         <Inputs></Inputs>
         <ListaDeUnidadesAssistenciais></ListaDeUnidadesAssistenciais>
         <ListaDeUnidadesDeApoio></ListaDeUnidadesDeApoio>
+        <CriarSenha></CriarSenha>
         <AlterarSenha></AlterarSenha>
         <BtnPainel></BtnPainel>
       </div>
