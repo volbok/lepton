@@ -295,7 +295,7 @@ function Laboratorio() {
   // filtro de exame laboratorial por nome.
   function FilterLaboratorio() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 20, marginBottom: 5 }}>
         <input
           className="input cor2"
           autoComplete="off"
@@ -327,7 +327,7 @@ function Laboratorio() {
         <div className="janela"
           onClick={(e) => e.stopPropagation()}
           style={{ flexDirection: 'column', position: 'relative' }}>
-          <div className='text3' style={{ marginBottom: 20 }}>SOLICITAÇÃO DE EXAMES LABORATORIAIS</div>
+          <div className='text3' style={{ marginBottom: 20 }}>{tipoexame == 0 ? 'SOLICITAÇÃO DE EXAMES LABORATORIAIS' : 'SOLICITAÇÃO DE RX'}</div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <div id="filtro e lista de opções de exames laboratoriais"
               style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
@@ -349,8 +349,31 @@ function Laboratorio() {
                 ></img>
               </div>
               <div className='scroll' style={{ height: 300, width: '40vw' }}>
-                {arrayopcoeslaboratorio.map(item => (
-                  <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                {arrayopcoeslaboratorio.filter(item => item.material != 'IMAGEM').map(item => (
+                  <div style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
+                    <div className='button'
+                      style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}
+                    >
+                      {item.nome_exame}
+                    </div>
+                    <div id="btnsalvarlaboratorio"
+                      className='button-green'
+                      onClick={() => insertLaboratorio(item)}
+                    >
+                      <img
+                        alt=""
+                        src={salvar}
+                        style={{
+                          margin: 10,
+                          height: 30,
+                          width: 30,
+                        }}
+                      ></img>
+                    </div>
+                  </div>
+                ))}
+                {arrayopcoeslaboratorio.filter(item => item.material == 'IMAGEM').map(item => (
+                  <div style={{ display: tipoexame == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
                     <div className='button'
                       style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}
                     >
@@ -374,12 +397,12 @@ function Laboratorio() {
                 ))}
               </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
               <div className='text1'>PACOTES DE EXAMES</div>
               <div id="packs para solicitação de exames"
                 className='scroll'
                 style={{
-                  width: '40vw', marginLeft: 10, height: 330,
+                  width: '20vw', marginLeft: 10, height: 330,
                   display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly'
                 }}
               >
@@ -388,6 +411,12 @@ function Laboratorio() {
                   onClick={() => insertPackLaboratorio(['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
                 >
                   BÁSICO
+                </div>
+                <div className='button'
+                  style={{ height: 100, width: 100, paddingLeft: 10, paddingRight: 10 }}
+                  onClick={() => insertPackLaboratorio(['URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
+                >
+                  FUNÇÃO RENAL
                 </div>
               </div>
             </div>
@@ -398,23 +427,107 @@ function Laboratorio() {
     // eslint-disable-next-line
   }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio]);
 
+  const [tipoexame, settipoexame] = useState(0);
   return (
-    <div id="scroll-alergias"
+    <div id="scroll-exames"
       className='card-aberto'
       style={{ display: card == 'card-laboratorio' ? 'flex' : 'none' }}
     >
-      <div className="text3">EXAMES LABORATORIAIS</div>
+      <div className="button"
+        title="CLIQUE PARA ALTERNAR ENTRE EXAMES LABORATORIAIS OU DE RX"
+        style={{ width: '30vw', alignSelf: 'center' }}
+        onClick={() => {
+          if (tipoexame == 0) {
+            settipoexame(1);
+          } else {
+            settipoexame(0);
+          }
+        }}
+      >
+        {tipoexame == 1 ? 'RX' : 'LABORATÓRIO'}
+      </div>
       <div
         style={{
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
           alignItems: 'center',
           width: '100%'
         }}>
-        {laboratorio.sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
-          <div key={'laboratorio ' + item.id_alergia}
-            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+        {laboratorio.filter(item => item.material != 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
+          <div key={'laboratorio ' + item.id}
+            style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
           >
             <div className="button-yellow" style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
+              marginRight: 0,
+              borderTopRightRadius: 0, borderBottomRightRadius: 0,
+            }}>
+              <div>
+                {moment(item.data_pedido).format('DD/MM/YY')}
+              </div>
+              <div>
+                {moment(item.data_pedido).format('HH:mm')}
+              </div>
+            </div>
+            <div
+              className="button" style={{
+                width: '100%',
+                marginLeft: 0,
+                borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+              }}
+            >
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'flex-start', alignContent: 'flex-start',
+                alignItems: 'flex-start', width: '100%',
+              }}>
+                <div style={{
+                  display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+                  width: '100%', margin: 5, textAlign: 'left'
+                }}>
+                  <div>{item.nome_exame}</div>
+                  <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
+                </div>
+                <div
+                  style={{
+                    display: item.resultado == null ? 'none' : 'flex',
+                    flexDirection: 'column', justifyContent: 'center',
+                    textAlign: 'left',
+                    margin: 5, color: 'yellow'
+                  }}>
+                  {item.resultado != null ? item.resultado : 'PENDENTE'}
+                </div>
+              </div>
+              <div className={item.status == 0 ? 'button-red' : item.status == 1 ? 'button-yellow' : 'button-green'}
+                style={{
+                  width: 150, margin: 5,
+                }}>
+                {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
+              </div>
+              <div className='button-red'
+                style={{
+                  display: item.status == 0 ? 'flex' : 'none'
+                }}
+                onClick={(e) => {
+                  deleteLaboratorio(item.id); e.stopPropagation()
+                }}>
+                <img
+                  alt=""
+                  src={deletar}
+                  style={{
+                    margin: 10,
+                    height: 25,
+                    width: 25,
+                  }}
+                ></img>
+              </div>
+            </div>
+          </div>
+        ))}
+        {laboratorio.filter(item => item.material == 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
+          <div key={'imagem ' + item.id}
+            style={{ display: tipoexame == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+          >
+            <div className="button-green" style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
               marginRight: 0,
               borderTopRightRadius: 0, borderBottomRightRadius: 0,

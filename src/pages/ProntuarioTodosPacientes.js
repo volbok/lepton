@@ -21,6 +21,7 @@ import Logo from "../components/Logo";
 // cards.
 import Alergias from "../cards/Alergias";
 import Documentos from "../cards/Documentos";
+import DocumentoEstruturado from "../cards/DocumentoEstruturado";
 import Boneco from "../cards/Boneco";
 import Infusoes from "../cards/Infusoes";
 import Propostas from "../cards/Propostas";
@@ -395,11 +396,6 @@ function Prontuario() {
           flex: 1,
         }}
       >
-        <div className="button" style={{ margin: 10, marginTop: 5, width: '60%', alignSelf: 'center' }}
-          onClick={() => setviewsalaselector(1)}
-        >
-          {consultorio}
-        </div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div
             className="button"
@@ -436,7 +432,7 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerHeight - 240,
+            height: window.innerHeight - 175,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
             width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)',
           }}
@@ -709,7 +705,7 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
-            height: window.innerHeight - 240,
+            height: window.innerHeight - 175,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
             width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)'
           }}
@@ -1707,7 +1703,7 @@ function Prontuario() {
     "CULTURAS",
     "ANTIBIÓTICOS",
     "INTERCONSULTAS",
-    "LABORATÓRIO",
+    "LABORATÓRIO E RX",
     "EXAMES DE IMAGEM",
     "PRESCRIÇÃO",
     "INVASÕES",
@@ -1731,7 +1727,7 @@ function Prontuario() {
     "CULTURAS",
     "ANTIBIÓTICOS",
     "INTERCONSULTAS",
-    "LABORATÓRIO",
+    "LABORATÓRIO E RX",
     "EXAMES DE IMAGEM",
     "PRESCRIÇÃO",
     "INVASÕES",
@@ -1944,6 +1940,7 @@ function Prontuario() {
           {cartao(null, "RECEITA MÉDICA", "card-documento-receita", null, 1)}
           {cartao(null, "ATESTADO", "card-documento-atestado", null, 1)}
           {cartao(null, "SUMÁRIO DE ALTA", "card-documento-alta", null, 1)}
+          {cartao(null, "AIH", "card-doc-estruturado-aih", null, 1)}
           {cartao(propostas.filter((item) => item.status == 0), "PROPOSTAS", "card-propostas", busypropostas, 0)}
           {cartao(precaucoes, "PRECAUÇÕES", "card-precaucoes", null, 0)}
           {cartao(riscos, "RISCOS", "card-riscos", busyriscos, 0)}
@@ -1963,10 +1960,11 @@ function Prontuario() {
           {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
           {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 1)}
           {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
-          {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
+          {cartao(null, 'LABORATÓRIO E RX', 'card-laboratorio', null, 1)}
         </div>
         <Alergias></Alergias>
         <Documentos></Documentos>
+        <DocumentoEstruturado></DocumentoEstruturado>
         <Boneco></Boneco>
         <Propostas></Propostas>
         <SinaisVitais></SinaisVitais>

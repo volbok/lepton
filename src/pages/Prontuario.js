@@ -1823,7 +1823,7 @@ function Prontuario() {
     "CULTURAS",
     "ANTIBIÓTICOS",
     "INTERCONSULTAS",
-    "LABORATÓRIO",
+    "LABORATÓRIO E RX",
     "EXAMES DE IMAGEM",
     "PRESCRIÇÃO",
     "INVASÕES",
@@ -1847,7 +1847,7 @@ function Prontuario() {
     "CULTURAS",
     "ANTIBIÓTICOS",
     "INTERCONSULTAS",
-    "LABORATÓRIO",
+    "LABORATÓRIO E RX",
     "EXAMES DE IMAGEM",
     "PRESCRIÇÃO",
     "INVASÕES",
@@ -2078,7 +2078,7 @@ function Prontuario() {
           {cartao(interconsultas, "INTERCONSULTAS", "card-interconsultas", busyinterconsultas, 0)}
           {cartao(null, 'PRESCRIÇÃO', "card-prescricao", null, 1)}
           {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
-          {cartao(null, 'LABORATÓRIO', 'card-laboratorio', null, 1)}
+          {cartao(null, 'LABORATÓRIO E RX', 'card-laboratorio', null, 1)}
         </div>
         <Alergias></Alergias>
         <Documentos></Documentos>

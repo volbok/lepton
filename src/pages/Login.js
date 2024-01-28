@@ -374,6 +374,7 @@ function Login() {
   const checkUsuario = (usuario) => {
     var obj = { usuario: usuario }
     console.log(document.getElementById("inputUsuario").value);
+    console.log(obj);
     axios.post(html + "checknomeusuario", obj)
       .then((response) => {
         console.log(response.data);
@@ -398,11 +399,20 @@ function Login() {
           usuarios: x.usuarios,
           primeiro_acesso: x.primeiro_acesso,
         });
-        console.log(x.senha);
+        console.log('SENHA: ' + x.senha);
+        console.log('PRIMEIRO ACESSO: ' + x.primeiro_acesso);
+        console.log('ID: ' + x.id);
         localStorage.setItem('usuario', x.id);
         localStorage.setItem('senha', x.senha);
-        if (x.primeiro_acesso == 0) {
+        if (x.id != undefined && x.primeiro_acesso != 1) {
           setviewcriarsenha(1);
+        } else if (x.id == undefined) {
+          document.getElementById("inputSenha").style.opacity = 0.3;
+          document.getElementById("inputSenha").style.pointerEvents = 'none';
+          toast(settoast, 'USUÁRIO INEXISTENTE', 'red', 1000);
+        } else {
+          document.getElementById("inputSenha").style.opacity = 1;
+          document.getElementById("inputSenha").style.pointerEvents = 'auto';
         }
       })
   };
@@ -451,9 +461,7 @@ function Login() {
           id="inputSenha"
           onFocus={(e) => (e.target.placeholder = "")}
           onBlur={(e) => (e.target.placeholder = "SENHA")}
-          onChange={(e) => {
-            // eslint-disable-next-line
-            password = e.target.value;
+          onChange={() => {
             checkLogin();
           }}
           style={{
@@ -461,17 +469,22 @@ function Login() {
             marginBottom: 10,
             width: 200,
             height: 50,
+            opacity: 0.3,
+            pointerEvents: 'none'
           }}
         ></input>
       </div>
     );
+    // eslint-disable-next-line
   }, [viewlistaunidades, viewalterarsenha]);
 
   let termo =
-    'PROMETO QUE VOU USAR O SISTEMA SEGUINDO AS LEIS...'
+    'TERMO DE CONFIDENCIALIDADE\n\n' +
+    'AO CADASTRAR SUA SENHA DE ACESSO AO SISTEMA PULSAR, VOCÊ DECLARA QUE PROTEGERÁ SUA SENHA E NÃO A REPASSARÁ PARA TERCEIROS,' +
+    'BEM COMO NÃO DIVULGARÁ AS INFORMAÇÕES RELACIONADAS AOS PACIENTES DISPONIBILIZADAS NA APLICAÇÃO,' +
+    'GARANTINDO ASSIM A CONFIDENCIALIDADE DOS DADOS SENSÍVEIS ARMAZENADOS NA PLATAFORMA.'
 
   const [viewcriarsenha, setviewcriarsenha] = useState(0);
-  const [viewbtngerasenha, setviewbtngerasenha] = useState(0);
 
   const updateHashPasswordUsuario = (hash) => {
     var obj = {
@@ -482,7 +495,8 @@ function Login() {
       senha: hash,
       login: usuario.cpf_usuario,
       conselho: usuario.conselho,
-      tipo_usuario: null,
+      n_conselho: usuario.n_conselho,
+      tipo_usuario: usuario.tipo_usuario,
       paciente: usuario.paciente,
       prontuario: usuario.prontuario,
       laboratorio: usuario.laboratorio,
@@ -501,6 +515,12 @@ function Login() {
           "rgb(82, 190, 128, 1)",
           3000
         );
+        setTimeout(() => {
+          setpagina(null)
+          setTimeout(() => {
+            setpagina(0);
+          }, 100);
+        }, 3100);
       })
       .catch(function () {
         toast(
@@ -522,7 +542,12 @@ function Login() {
       <div className="fundo"
         style={{ display: viewcriarsenha == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="janela">
-          <div className="scroll text1" style={{ marginBottom: 10, width: '50vw', height: 200, justifyContent: 'flex-start' }}>
+          <div className="text1">{'BEM-VINDO À PLATAFORMA PULSAR, ' + usuario.nome_usuario + '.'}</div>
+          <div className="textarea"
+            style={{
+              marginBottom: 10, width: '50vw', height: 200, justifyContent: 'flex-start',
+              whiteSpace: 'pre-wrap', textAlign: 'center',
+            }}>
             {termo}
           </div>
           <div className="text1">
@@ -561,11 +586,11 @@ function Login() {
                 var primeirasenha = document.getElementById("inputPrimeiraSenha").value;
                 var confirmaprimeirasenha = document.getElementById("inputConfirmaPrimeiraSenha").value;
                 if (primeirasenha == confirmaprimeirasenha) {
-                  setviewbtngerasenha(1);
+                  document.getElementById("btngerarsenha").style.opacity = 1;
+                  document.getElementById("btngerarsenha").style.pointerEvents = 'auto';
                 } else {
                   document.getElementById("inputPrimeiraSenha").value = '';
                   document.getElementById("inputConfirmaPrimeiraSenha").value = '';
-                  setviewbtngerasenha(0);
                   toast(settoast, 'AS SENHAS NÃO CONFEREM', 'red', 2000);
                   setTimeout(() => {
                     document.getElementById("inputPrimeiraSenha").focus();
@@ -582,13 +607,16 @@ function Login() {
             }}
           ></input>
           <div
+            id="btngerarsenha"
             className="button"
             style={{
-              display: viewbtngerasenha == 1 ? 'flex' : 'none',
+              display: 'flex',
               margin: 5,
               width: 150,
               padding: 20,
               minWidth: 150,
+              opacity: 0.3,
+              pointerEvents: 'none'
             }}
             onClick={() => {
               // gerando senha criptografada com o bcrypt.
@@ -809,7 +837,8 @@ function Login() {
         senha: novasenha,
         login: usuario.cpf_usuario,
         conselho: usuario.conselho,
-        tipo_usuario: null,
+        n_conselho: usuario.n_conselho,
+        tipo_usuario: usuario.tipo_usuario,
         paciente: usuario.paciente,
         prontuario: usuario.prontuario,
         laboratorio: usuario.laboratorio,
