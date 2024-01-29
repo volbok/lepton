@@ -668,7 +668,7 @@ function Cadastro() {
             alignSelf: "center",
           }}
         >
-          <div id="botão para fechar tela de edição do apciente e movimentação de leito"
+          <div id="botão para fechar tela de edição do paciente e movimentação de leito"
             className="button-red"
             onClick={() => setvieweditpaciente(0)}
             style={{ display: vieweditpaciente == 1 ? "flex" : "none", position: 'absolute', top: 10, right: 10 }}
@@ -1172,7 +1172,7 @@ function Cadastro() {
             </div>
             <div id="botão para agendar consulta"
               className="button"
-              style={{width: 100, height: 100, alignSelf: 'center'}}
+              style={{ width: 100, height: 100, alignSelf: 'center' }}
               onClick={() => {
                 setpagina(20);
                 history.push("/agendamento");

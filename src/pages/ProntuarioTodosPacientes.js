@@ -474,7 +474,7 @@ function Prontuario() {
                         >
                           <div
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                            style={{ margin: 5, padding: 0, fontSize: 16 }}
                           >
                             {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
                           </div>
@@ -604,7 +604,7 @@ function Prontuario() {
                         >
                           <div
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                            style={{ margin: 5, padding: 0, fontSize: 16 }}
                           >
                             {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
                           </div>

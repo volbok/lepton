@@ -628,6 +628,56 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 5px;
 }
 
+.textarea_campo {
+  font-family: inherit;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  resize: none;
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--texto1);
+  background-color: var(--cor0);
+  border-width: 5px;
+  border-color: var(--cor0);
+  border-radius: 5px;
+  outline: 0px;
+  margin: 5px;
+  cursor: default;
+}
+
+.textarea_campo::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.textarea_campo::-webkit-scrollbar-track {
+  background-color: var(--cor3);
+  border-radius: 5px;
+}
+
+.textarea_campo::-webkit-scrollbar-button {
+  display: none;
+}
+
+.textarea_campo::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.textarea_campo::-webkit-scrollbar-thumb {
+  background-color: var(--cor1);
+  border-radius: 5px;
+}
+
+.textarea_campo::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor1hover);
+  border-radius: 5px;
+}
+
 .dynamics {
   height: '';
   transition: 200ms ease-in-out;
