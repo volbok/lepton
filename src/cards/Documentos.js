@@ -63,11 +63,11 @@ function Documentos() {
             document.getElementById("inputFieldDocumento").style.pointerEvents = 'none';
           } else {
             document.getElementById("inputFieldDocumento").style.pointerEvents = 'auto';
+            document.getElementById("inputFieldDocumento").focus();
           }
         }, 500);
       } else if (situacao == 'inserir') {
         let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
-        // setselecteddocumento(novodocumento);
         setTimeout(() => {
           var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
           for (var i = 0; i < botoes.length; i++) {
@@ -75,12 +75,12 @@ function Documentos() {
           }
           document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
           document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
+          document.getElementById("inputFieldDocumento").focus();
         }, 500);
       } else if (situacao == 'copiar') {
         document.getElementById('documento ' + item.id).className = "button-red";
         let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
         document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'none';
-        // setselecteddocumento(novodocumento);
         setTimeout(() => {
           var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
           for (var i = 0; i < botoes.length; i++) {
@@ -90,6 +90,7 @@ function Documentos() {
             document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'flex';
             document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
             document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
+            document.getElementById("inputFieldDocumento").focus();
           }, 300);
         }, 500);
       }
@@ -189,7 +190,7 @@ function Documentos() {
           onClick={(e) => e.stopPropagation()}
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            width: '40vw', height: '50vw'
+            width: '40vw', height: '70vh'
           }}>
           <FilterCid10></FilterCid10>
           {arraycid10.map(item => (
@@ -202,7 +203,7 @@ function Documentos() {
                   let novotexto = textoantigo.slice(0, textoantigo.length - 5) + ' ' + item.CAT + '.';
                   document.getElementById("inputFieldDocumento").value = novotexto;
                   document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
-                }, 1000);
+                }, 2000);
               }}
             >
               {item.CAT + ' - ' + item.DESCRICAO.toUpperCase()}
@@ -218,7 +219,7 @@ function Documentos() {
         className="button-green"
         style={{
           position: 'absolute',
-          bottom: 10, right: 225,
+          bottom: 15, right: 30,
           display: tipodocumento != 'ATESTADO MÉDICO' || selecteddocumento.status != 0 ? 'none' : 'flex',
           alignSelf: 'center',
         }}
@@ -241,7 +242,7 @@ function Documentos() {
       texto: texto,
       status: status,
       tipo_documento: item.tipo_documento,
-      profissional: item.profissional
+      profissional: usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho
     }
     axios.post(html + 'update_documento/' + item.id, obj).then(() => {
       if (status == 1) {
@@ -253,6 +254,7 @@ function Documentos() {
   const deleteDocumento = (id) => {
     axios.get(html + 'delete_documento/' + id).then(() => {
       loadDocumentos();
+      setselecteddocumento([]);
     })
   }
 
