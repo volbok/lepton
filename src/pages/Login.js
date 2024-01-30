@@ -992,6 +992,23 @@ function Login() {
     );
   }
 
+  function LandPage() {
+    return (
+      <a className="text2 conheca"
+        href="/site/index.html"
+        style={{
+          position: 'absolute', bottom: 5, right: 10,
+          backgroundColor: 'rgb(82, 190, 128, 1)',
+          borderRadius: 5,
+          cursor: 'pointer', textDecoration: 'none',
+          width: 100, height: 100
+        }}
+        target="_blank" rel="noreferrer">
+        CONHEÇA A SOLUÇÃO
+      </a>
+    )
+  }
+
   function BtnPainel() {
     return (
       <div
@@ -1103,7 +1120,7 @@ function Login() {
                 : "flex",
           }}
         >
-          <Logo height={200} width={200}></Logo>
+          <Logo href="/site/index.html" target="_blank" rel="noreferrer" height={200} width={200}></Logo>
         </div>
         <div
           className="text2"
@@ -1162,8 +1179,9 @@ function Login() {
         <CriarSenha></CriarSenha>
         <AlterarSenha></AlterarSenha>
         <BtnPainel></BtnPainel>
+        <LandPage></LandPage>
       </div>
-    </div>
+    </div >
   );
 }
 
