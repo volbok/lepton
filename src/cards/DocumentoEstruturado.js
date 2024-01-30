@@ -592,30 +592,83 @@ function DocumentoEstruturado() {
       )
     }
   }
-  const printcampo = (titulo, valor, altura, largura, flex) => {
-    return (
-      <div style={{
-        margin: 2.5, padding: 2.5,
-        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        height: altura, minHeight: altura,
-        width: 'calc(' + largura / 4 + '* 100% - 15px)',
-        fontFamily: 'Helvetica',
-        breakInside: 'avoid',
-        borderStyle: 'solid', borderWidth: 1, borderRadius: 5,
-        borderColor: 'black',
-      }}
-      >
-        <div
-          className='text1' style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 2.5 }}>{titulo}</div>
-        <div
-          id={titulo}
-          className='text1'
-          style={{ fontSize: 12, fontWeight: 'normal', flex: flex }}
+  const printcampo = (tipocampo, titulo, valor, altura, largura, flex) => {
+    if (tipocampo == 'textarea') {
+      return (
+        <div style={{
+          margin: 2.5, padding: 2.5,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          height: altura, minHeight: altura,
+          width: 'calc(' + largura / 4 + '* 100% - 15px)',
+          fontFamily: 'Helvetica',
+          breakInside: 'avoid',
+          borderStyle: 'solid', borderWidth: 1, borderRadius: 5,
+          borderColor: 'black',
+        }}
         >
-          {valor == '' ? '-x-' : valor}
+          <div
+            className='text1' style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 2.5 }}>{titulo}</div>
+          <div
+            id={titulo}
+            className='text1'
+            style={{ fontSize: 12, fontWeight: 'normal', flex: flex }}
+          >
+            {valor == '' ? '-x-' : valor}
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else if (tipocampo == 'opcaounica') {
+      return (
+        <div style={{
+          margin: 2.5, padding: 2.5,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          height: altura, minHeight: altura,
+          width: 'calc(' + largura / 4 + '* 100% - 15px)',
+          fontFamily: 'Helvetica',
+          breakInside: 'avoid',
+          borderStyle: 'solid', borderWidth: 1, borderRadius: 5,
+          borderColor: 'black',
+        }}>
+          <div
+            className='text1' style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 2.5 }}>{titulo}</div>
+          <div
+            id={titulo}
+            className='text1'
+            style={{ fontSize: 12, fontWeight: 'normal', flex: flex }}
+          >
+            {valor == '' ? '-x-' : valor}
+          </div>
+        </div>
+      )
+    } else if (tipocampo == 'opcaomultipla') {
+      return (
+        <div style={{
+          margin: 2.5, padding: 2.5,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          height: altura, minHeight: altura,
+          width: 'calc(' + largura / 4 + '* 100% - 15px)',
+          fontFamily: 'Helvetica',
+          breakInside: 'avoid',
+          borderStyle: 'solid', borderWidth: 1, borderRadius: 5,
+          borderColor: 'black',
+        }}>
+          <div
+            className='text1' style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 2.5 }}>{titulo}</div>
+          <div
+            id={titulo}
+            className='text1'
+            style={{
+              fontSize: 12, fontWeight: 'normal', flex: flex,
+              display: 'flex', flexDirection: 'row', flexWrap: 'wrap'
+            }}
+          >
+            {valor.split(",").map((item) => (
+              <div style={{ marginRight: 2.5 }}>{item}</div>
+            ))}
+          </div>
+        </div>
+      )
+    }
   }
 
   // FORMULÁRIO.
@@ -650,7 +703,7 @@ function DocumentoEstruturado() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    a.close();
+    // a.close();
   }
   function PrintDocumento() {
     return (
@@ -774,7 +827,7 @@ function DocumentoEstruturado() {
           whiteSpace: 'pre-wrap',
           marginTop: 20,
         }}>
-        {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2))).map(item => printcampo(item.titulo, item.valor, item.altura, item.largura))}
+        {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2))).map(item => printcampo(item.tipocampo, item.titulo, item.valor, item.altura, item.largura))}
       </div>
     )
   }
