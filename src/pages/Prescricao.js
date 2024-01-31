@@ -636,7 +636,7 @@ function Prescricao() {
         type="text"
         defaultValue={filterprescricao}
         maxLength={100}
-        style={{ margin: 0, width: 'calc(100% - 10px)', alignSelf: 'center' }}
+        style={{ margin: 5, width: 'calc(100% - 20px)', alignSelf: 'center' }}
       ></input>
     )
   }
@@ -813,17 +813,17 @@ function Prescricao() {
       setmodelosprescricao(x);
     })
   };
+  const [dataprescricao, setdataprescricao] = useState();
   const ListaPrescricoes = useCallback(() => {
     return (
       <div id="scroll lista de prescrições"
         className='scroll'
         style={{
           position: 'sticky',
-          top: 0,
+          top: 5,
           width: '12vw', minWidth: '12vw', maxWidth: '12vw',
-          height: 'calc(100vh - 105px)',
-          margin: 0, marginTop: 5,
-          marginLeft: 5,
+          height: 'calc(100vh - 115px)',
+          margin: 5, marginTop: 10,
           backgroundColor: 'white',
           borderColor: 'white',
           alignSelf: 'flex-start',
@@ -864,7 +864,7 @@ function Prescricao() {
             onClick={() => {
               setexpand(0);
               setidprescricao(item.id);
-
+              setdataprescricao(item.data);
               axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
                 let x = response.data.rows;
                 setprescricao(response.data.rows);
@@ -1136,13 +1136,37 @@ function Prescricao() {
     }
   }
 
+  // função contadora do tempo de antibióticos.
+  const tempoAtb = (lista, item) => {
+    console.log(lista.length);
+    // array dos itens de antibiótico selecionado para o atendimento.
+    let arrayatb = lista.filter(valor => valor.categoria == '1. ANTIMICROBIANOS' && valor.nome_item == item.nome_item).sort((a, b) => moment(a.data) < moment(b.data) ? -1 : 1).map(item => moment(item.data).format('DD/MM/YY'));
+    console.log(arrayatb);
+    // excluindo datas repetidas da array.
+    let purifiedarrayatb = []
+    // eslint-disable-next-line
+    arrayatb.map(valor => {
+      if (purifiedarrayatb.filter(item => item == valor).length == 0) {
+        purifiedarrayatb.push(valor);
+      }
+    })
+    console.log(purifiedarrayatb);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+        {purifiedarrayatb.map(item => (
+          <div style={{ margin: 5 }}>{item}</div>
+        ))}
+      </div>
+    )
+  }
+
   const [selectitemprescricao, setselectitemprescricao] = useState([]);
   const [viewopcoesitensprescricao, setviewopcoesitensprescricao] = useState(0);
   const ListaItensPrescricoes = useCallback(() => {
     var timeout = null;
     return (
       <div style={{
-        margin: 5, width: '70vw',
+        margin: 5, width: '70vw', height: ''
       }}>
         <div style={{
           pointerEvents: statusprescricao == 1 || idprescricao == 0 ? 'none' : 'auto',
@@ -1223,10 +1247,45 @@ function Prescricao() {
                   }}
                   style={{
                     display: 'flex', margin: 5, paddingLeft: 20, paddingRight: 20, width: '100%',
-                    backgroundColor: item.categoria == '1. ANTIMICROBIANOS' ? '#FFC300' : '',
-                    justifyContent: 'flex-start', textAlign: 'left'
+                    backgroundColor: item.categoria == '1. ANTIMICROBIANOS' ? '#85C1E9' : '',
+                    justifyContent: 'space-between', textAlign: 'left',
                   }}>
-                  {item.nome_item}
+                  <div>{item.nome_item}</div>
+                  <div id="contador de dias do antibiótico."
+                    className='button'
+                    title="DIAS DE ATB"
+                    onClick={(e) => {
+                      document.getElementById("lista_atb " + item.id).style.display = 'flex';
+                      e.stopPropagation();
+                    }}
+                    style={{
+                      position: 'relative',
+                      display: item.categoria == '1. ANTIMICROBIANOS' ? 'flex' : 'none',
+                      backgroundColor: '#5DADE2',
+                      minHeight: 20, maxHeight: 20, height: 20, minWidth: 25, width: '',
+                    }}
+                  >
+                    {prescricao.filter(valor => valor.nome_item == item.nome_item && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => moment(a.data).startOf('day') < moment(b.data).startOf('day') ? 1 : -1).slice(-1).map(item => moment(dataprescricao).startOf('day').diff(moment(item.data).startOf('day'), 'days'))}
+                    <div id={"lista_atb " + item.id}
+                      className='scroll'
+                      onClick={(e) => {
+                        document.getElementById("lista_atb " + item.id).style.display = 'none';
+                        e.stopPropagation();
+                      }}
+                      style={{
+                        display: 'none',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        textAlign: 'left',
+                        width: 155, height: 100,
+                        position: 'absolute',
+                        backgroundColor: '#5DADE2',
+                        borderColor: '#5DADE2',
+                      }}
+                    >
+                      {tempoAtb(prescricao, item)}
+                    </div>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row' }} id="trava mouse">
                   <input id={"inputQtde " + item.id}
@@ -1391,7 +1450,8 @@ function Prescricao() {
               </div>
             </div>
           </div>
-        ))}
+        ))
+        }
         <div className='text1'
           style={{ display: arrayitensprescricao.length == 0 ? 'flex' : 'none', opacity: 0.5, }}>
           SEM ITENS PRESCRITOS.
@@ -1399,7 +1459,7 @@ function Prescricao() {
       </div >
     )
     // eslint-disable-next-line
-  }, [prescricao, statusprescricao, arrayitensprescricao, atendimentos, idprescricao, arraylistaprescricao]);
+  }, [prescricao, statusprescricao, arrayitensprescricao, atendimentos, idprescricao, dataprescricao, arraylistaprescricao]);
 
   const ViewInsertComponentePrescricao = (item) => {
     const [localarray, setlocalarray] = useState([]);
@@ -2648,10 +2708,10 @@ function Prescricao() {
         }}>
         <div id="botões e pesquisa"
           style={{
-            display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
-            alignSelf: 'center', width: '100%'
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            alignSelf: 'center', width: 'calc(100% - 20px)', margin: 5, marginBottom: 0, marginRight: 0
           }}>
-          <div className='button-red'
+          <div className='button-yellow'
             style={{ margin: 0, width: 50, height: 50 }}
             title={'VOLTAR PARA O PASSÔMETRO'}
             onClick={() => setcard('')}>
@@ -2689,7 +2749,7 @@ function Prescricao() {
           </div>
           <div className='button'
             style={{
-              margin: 0, marginLeft: 0, width: '100%', height: 50,
+              margin: 0, marginLeft: 0, marginRight: 0, width: '100%', height: 50,
               borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
             }}>
             {pacientes.filter(valor => valor.id_paciente == paciente).map(valor => valor.nome_paciente)}

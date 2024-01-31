@@ -2013,7 +2013,7 @@ function Prontuario() {
       <div id="conteúdo cheio"
         className={"scroll"}
         style={{
-          flex: 2,
+          flex: 3,
           display:
             window.innerWidth < mobilewidth && viewlista == 1
               ? "none"
@@ -2100,7 +2100,7 @@ function Prontuario() {
       <div id="conteúdo vazio"
         className="scroll"
         style={{
-          flex: 2,
+          flex: 3,
           display:
             window.innerWidth < mobilewidth && viewlista == 1
               ? "none"

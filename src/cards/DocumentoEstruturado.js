@@ -113,9 +113,9 @@ function DocumentoEstruturado() {
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '6 - Nº DO PRONTUÁRIO', paciente, 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '7 - CARTÃO NACIONAL DE SAÚDE (CNS)', '', 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '8 - DATA DE NASCIMENTO', pacientes.filter(item => item.id_paciente == paciente).map(item => moment(item.dn_paciente).format('DD/MM/YY')).pop(), 50, 1, 1);
-        insertCampoEstruturado('opcaounica', iddocumento, tipodocumento, obj, '9 - SEXO', '', 50, 1, 1, 'M,F');
+        insertCampoEstruturado('opcaounica', iddocumento, tipodocumento, obj, '9 - SEXO', '', 50, 2, 1, 'M,F');
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '10 - RAÇA', '', 50, 1, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '11 - NOME DA MÃE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_mae_paciente).pop(), 50, 3, 1);
+        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '11 - NOME DA MÃE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_mae_paciente).pop(), 50, 2, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '12 - TELEFONE DE CONTATO', '', 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '13 - NOME DO RESPONSÁVEL', '', 50, 3, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '14 - TELEFONE DE CONTATO', '', 50, 1, 1);
@@ -147,7 +147,8 @@ function DocumentoEstruturado() {
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '35 - ASSINTAURA E CARIMBO (Nº DO REGISTRO DO CONSELHO)', '', 50, 1, 1);
 
         // testando opção múltipla.
-        insertCampoEstruturado('opcaomultipla', iddocumento, tipodocumento, obj, '36 - OPÇÕES VARIADAS', '', 50, 4, 1, 'A,B,C,D');
+        insertCampoEstruturado('opcaomultipla', iddocumento, tipodocumento, obj, '36 - OPÇÕES VARIADAS', '', 50, 2, 1, 'A,B,C,D');
+        insertCampoEstruturado('opcaounica', iddocumento, tipodocumento, obj, '37 - IAN E LEO VAMOS FICAR RICOS', '', 50, 2, 1, 'SIM,CORRETO MEU AMIGO');
 
         // FALTAM MAIS CAMPOS PARA CADASTRAR...
 
@@ -268,11 +269,10 @@ function DocumentoEstruturado() {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          margin: 0, marginLeft: 10,
           width: '20vw',
           height: 'calc(100vh - 20px)',
           position: 'sticky',
-          top: 10, right: 10,
+          top: 10, right: 5, marginLeft: 7.5
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
@@ -430,7 +430,7 @@ function DocumentoEstruturado() {
           margin: 5, padding: 2.5,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
           position: 'relative',
-          width: largura == 4 ? 0.5 * window.innerWidth - 100 : (0.5 * window.innerWidth - 100) / 4 * largura - 20,
+          width: largura == 4 ? 0.6 * window.innerWidth - 100 : (0.6 * window.innerWidth - 100) / 4 * largura - 20,
           flexGrow: 'inherit',
         }}
           onMouseLeave={() => {
@@ -454,13 +454,17 @@ function DocumentoEstruturado() {
             <div>!</div>
           </div>
           <div
-            className='text1' style={{ alignSelf: 'flex-start', textAlign: 'left' }}>{titulo}</div>
+            className='text1'
+            title={titulo}
+            style={{ alignSelf: 'flex-start', textAlign: 'left' }}>
+            {largura < 2 ? titulo.slice(0, 15) + '...' : titulo}
+          </div>
           <textarea
             id={titulo}
             className='textarea_campo'
             defaultValue={valor}
             style={{
-              height: altura, minHeight: altura, maxHeight: altura,
+              height: altura, minHeight: altura,
               width: 'calc(100% - 40px)'
             }}
             onKeyUp={() => {
@@ -477,9 +481,9 @@ function DocumentoEstruturado() {
       return (
         <div style={{
           margin: 5, padding: 2.5,
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
-          width: largura == 4 ? 0.5 * window.innerWidth - 100 : (0.5 * window.innerWidth - 100) / 4 * largura - 20,
+          width: largura == 4 ? 0.6 * window.innerWidth - 100 : (0.6 * window.innerWidth - 100) / 4 * largura - 20,
           flexGrow: 'inherit',
         }}
           onMouseLeave={() => {
@@ -502,13 +506,22 @@ function DocumentoEstruturado() {
             }}>
             <div>!</div>
           </div>
-          <div className='text1' style={{ alignSelf: 'flex-start', textAlign: 'left' }}>{titulo}</div>
+          <div
+            className='text1'
+            title={titulo}
+            style={{ alignSelf: 'flex-start', textAlign: 'left' }}>
+            {largura < 2 ? titulo.slice(0, 15) + '...' : titulo}
+          </div>
           <div id={'lista opcoes ' + item.id}
-            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+            style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+              flexWrap: 'wrap'
+            }}>
             {arrayopcoes.map(valor => (
               <div
                 id={'btn ' + valor}
                 className={item.valor == valor ? 'button-red' : 'button'}
+                style={{ padding: 10 }}
                 onClick={() => {
                   updateCampoEstruturado(item, valor);
                   setTimeout(() => {
@@ -530,9 +543,9 @@ function DocumentoEstruturado() {
       return (
         <div style={{
           margin: 5, padding: 2.5,
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
-          width: largura == 4 ? 0.5 * window.innerWidth - 100 : (0.5 * window.innerWidth - 100) / 4 * largura - 20,
+          width: largura == 4 ? 0.6 * window.innerWidth - 100 : (0.6 * window.innerWidth - 100) / 4 * largura - 20,
           flexGrow: 'inherit',
         }}
           onMouseLeave={() => {
@@ -555,14 +568,19 @@ function DocumentoEstruturado() {
             }}>
             <div>!</div>
           </div>
-          <div className='text1' style={{ alignSelf: 'flex-start', textAlign: 'left' }}>{titulo}</div>
+          <div
+            className='text1'
+            title={titulo}
+            style={{ alignSelf: 'flex-start', textAlign: 'left' }}>
+            {largura < 3 ? titulo.slice(0, 15) + '...' : titulo}
+          </div>
           <div id={"lista de opcoes multiplas " + item.id}
             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
             {arrayopcoes.map(valor => (
               <div
                 id={'btn multi ' + valor}
-                // className='button'
                 className={array.filter(x => x == valor).length > 0 ? 'button-red' : 'button'}
+                style={{ padding: 10 }}
                 onClick={() => {
                   if (array.filter(item => item == valor).length == 1) {
                     let newarray = [];
@@ -680,7 +698,9 @@ function DocumentoEstruturado() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
-          width: 0.5 * window.innerWidth - 100,
+          width: 0.6 * window.innerWidth - 100,
+          height: 'calc(100vh - 100px)',
+          alignSelf: 'flex-start'
         }}>
         <div className='text1' style={{ fontSize: 16 }}>{tipodocumento}</div>
         <div style={{
@@ -841,7 +861,7 @@ function DocumentoEstruturado() {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         width: '100vw',
-        height: '100vh'
+        height: '300vh',
       }}
     >
       <Formulario></Formulario>
