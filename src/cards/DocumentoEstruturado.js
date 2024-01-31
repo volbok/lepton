@@ -77,6 +77,7 @@ function DocumentoEstruturado() {
         console.log(iddocumento);
         // inserir campos estruturados correspondentes.
         insertGrupoCamposEstruturados(iddocumento, tipodocumento, obj);
+        setselecteddocumentoestruturado([]);
       })
     })
   }
@@ -91,7 +92,8 @@ function DocumentoEstruturado() {
     }
     axios.post(html + 'update_documento_estruturado/' + item.id, obj).then(() => {
       loadDocumentosEstruturados(tipodocumento);
-      loadCamposEstruturados(null)
+      loadCamposEstruturados(null);
+      setselecteddocumentoestruturado([]);
     })
   }
 
@@ -125,9 +127,9 @@ function DocumentoEstruturado() {
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '18 - UF', '', 50, 0.5, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '19 - CEP', '', 50, 1, 1);
 
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '20 - PRINCIPAIS SINAIS E SINTOMAS CLÍNICOS', lastevolucao, 100, 4, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '21 - CONDIÇÕES QUE JUSTIFICAM A INTERNAÇÃO', 'RISCO DE MORTE', 100, 4, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '22 - PRINCIPAIS RESULTADOS DE PROVAS DIAGNÓSTICAS (RESULTADOS DE EXAMES REALIZADOS)', 'VIDE EXAMES ACIMA', 100, 4, 1);
+        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '20 - PRINCIPAIS SINAIS E SINTOMAS CLÍNICOS', lastevolucao, 100, 4, 1, '');
+        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '21 - CONDIÇÕES QUE JUSTIFICAM A INTERNAÇÃO', 'RISCO DE MORTE', 100, 4, 1, '');
+        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '22 - PRINCIPAIS RESULTADOS DE PROVAS DIAGNÓSTICAS (RESULTADOS DE EXAMES REALIZADOS)', 'VIDE EXAMES ACIMA', 100, 4, 1, '');
 
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '23 - DIAGNÓSTICO INICIAL', '', 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '24 - CID 10 PRINCIPAL', '', 50, 1, 1);
@@ -166,6 +168,7 @@ function DocumentoEstruturado() {
         x.map(item => deleteCampoEstruturado(item.id));
         loadDocumentosEstruturados(tipodocumento);
         loadCamposEstruturados(null);
+        setselecteddocumentoestruturado([]);
       });
     });
   }
@@ -254,6 +257,7 @@ function DocumentoEstruturado() {
               console.log('CAMPO COPIADO COM SUCESSO');
             });
           });
+          setselecteddocumentoestruturado([])
           loadDocumentosEstruturados(tipodocumento);
           loadCamposEstruturados(null);
         });
@@ -464,7 +468,8 @@ function DocumentoEstruturado() {
             className='textarea_campo'
             defaultValue={valor}
             style={{
-              height: altura, minHeight: altura,
+              height: altura,
+              minHeight: altura,
               width: 'calc(100% - 40px)'
             }}
             onKeyUp={() => {
@@ -704,7 +709,7 @@ function DocumentoEstruturado() {
         }}>
         <div className='text1' style={{ fontSize: 16 }}>{tipodocumento}</div>
         <div style={{
-          display: 'flex',
+          display: selecteddocumentoestruturado != [] ? 'flex' : 'none',
           flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',
           pointerEvents: selecteddocumentoestruturado.status == 0 ? 'auto' : 'none',
         }}>
