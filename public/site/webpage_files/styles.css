@@ -354,15 +354,15 @@ pre.code-format {
     align-self: center;
     transition: 500ms;
   }
-}
 
-.onlymobile {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: rgb(64, 74, 131, 1);
-  font-weight: bold;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  margin-bottom: 30px;
+  .onlymobile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(64, 74, 131, 1);
+    font-weight: bold;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-bottom: 30px;
+  }
 }
