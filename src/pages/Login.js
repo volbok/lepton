@@ -994,9 +994,11 @@ function Login() {
 
   function LandPage() {
     return (
-      <a className="text2 conheca"
+      <a id="landpage"
+        className="text2 conheca"
         href="/site/index.html"
         style={{
+          display: window.innerWidth < mobilewidth || viewlistaunidades == 1 ? "none" : "flex",
           position: 'absolute', bottom: 5, right: 10,
           backgroundColor: 'rgb(82, 190, 128, 1)',
           borderRadius: 5,

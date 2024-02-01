@@ -20,6 +20,7 @@ import checkinput from '../functions/checkinput';
 
 // componentes.
 import Cid10 from '../functions/cid10';
+import toast from '../functions/toast';
 
 function Documentos() {
 
@@ -98,6 +99,7 @@ function Documentos() {
   }
 
   useEffect(() => {
+    loadAllModelos();
     if (card == 'card-documento-admissao') {
       settipodocumento('ADMISSÃO');
       preparaDocumentos();
@@ -199,9 +201,7 @@ function Documentos() {
               onClick={() => {
                 setviewseletorcid10(0);
                 setTimeout(() => {
-                  let textoantigo = localStorage.getItem("texto");
-                  let novotexto = textoantigo.slice(0, textoantigo.length - 5) + ' ' + item.CAT + '.';
-                  document.getElementById("inputFieldDocumento").value = novotexto;
+                  document.getElementById("inputFieldDocumento").value = 'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE X DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item + '.';;
                   document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
                 }, 2000);
               }}
@@ -218,8 +218,6 @@ function Documentos() {
       <div id="botão para selecionar cid10"
         className="button-green"
         style={{
-          position: 'absolute',
-          bottom: 15, right: 30,
           display: tipodocumento != 'ATESTADO MÉDICO' || selecteddocumento.status != 0 ? 'none' : 'flex',
           alignSelf: 'center',
         }}
@@ -256,6 +254,96 @@ function Documentos() {
       loadDocumentos();
       setselecteddocumento([]);
     })
+  }
+
+  // GADGETS PARA O PREGUIÇOSO...
+  // EVOLUÇÃO
+  // inserir dados vitais.
+  function GadgetDadosVitais() {
+    return (
+      <div
+        className='button'
+        style={{
+          display: tipodocumento == 'EVOLUÇÃO' && selecteddocumento.id != undefined ? 'flex' : 'none',
+          position: 'absolute', bottom: 10, left: 10, padding: 10
+        }}
+        onClick={() => {
+          if (sinaisvitais.length > 0) {
+            let tag_dadosvitais = "DADOS VITAIS:\nPA: " + sinaisvitais.slice(-1).map((item) => item.pas) + 'x' + sinaisvitais.slice(-1).map((item) => item.pad) + 'mmHg, FC: ' + sinaisvitais.slice(-1).map((item) => item.fc) + 'bpm, FR: ' + sinaisvitais.slice(-1).map((item) => item.fr) + 'irom, SAO2: ' + sinaisvitais.slice(-1).map((item) => item.sao2) + '%, TAX: ' + sinaisvitais.slice(-1).map((item) => item.tax) + 'ºC';
+            let fielddocumento = document.getElementById("inputFieldDocumento");
+            let posicao = fielddocumento.selectionStart;
+            let textoanterior = fielddocumento.value.substring(0, posicao);
+            let textoposterior = fielddocumento.value.substring(posicao, fielddocumento.value.length);
+            fielddocumento.value = textoanterior + '\n' + tag_dadosvitais + '\n' + textoposterior
+          } else {
+            toast(settoast, 'SEM DADOS VITAIS CADASTRADOS PARA IMPORTAR :(', 'red', 1000);
+          }
+        }}
+      >
+        DADOS VITAIS
+      </div>
+    )
+  }
+
+  // ATESTADO
+  // função para gerar o atestado para a doença clicada.
+  const gadgetAtestado = (doenca, cid) => {
+    return (
+      <div
+        className='button'
+        style={{
+          display: selecteddocumento.id != undefined ? 'flex' : 'none',
+          padding: 10,
+          flexDirection: 'row', justifyContent: 'space-between',
+          width: 150
+        }}
+      >
+        <div>{doenca}</div>
+        <input id={"dias de atestado" + doenca}
+          className='input'
+          autoComplete="off"
+          placeholder=""
+          title=""
+          type="text"
+          onFocus={(e) => (e.target.placeholder = "")}
+          onBlur={(e) => (e.target.placeholder = "")}
+          onKeyUp={(e) => {
+            let fielddocumento = document.getElementById("inputFieldDocumento");
+            let dias = document.getElementById("dias de atestado" + doenca).value;
+            fielddocumento.value = 'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + dias + ' DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + cid + '.';
+          }}
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignSelf: "center",
+            width: 40, minWidth: 40, maxWidth: 40,
+            alignContent: "center",
+            height: 40, minHeight: 40, maxHeight: 40,
+            borderStyle: "none",
+            textAlign: "center",
+          }}
+        ></input>
+      </div>
+    )
+  }
+  // componente que lista os principais gadgets de cid.
+  function GadgetsParaAtestado() {
+    return (
+      <div id="gadgets_atestado"
+        className='scroll'
+        style={{
+          display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
+          position: 'absolute', bottom: 10, left: 10,
+          width: '45vw', height: 90,
+          flexDirection: 'row', flexWrap: 'wrap'
+        }}
+      >
+        <BtnCid10></BtnCid10>
+        {gadgetAtestado('IVAS', 'J06.9')}
+        {gadgetAtestado('GECA', 'A90')}
+        {gadgetAtestado('PNM', 'J15.9')}
+      </div>
+    )
   }
 
   // inserindo um documento.
@@ -369,6 +457,7 @@ function Documentos() {
       let texto =
         'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE 2 DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 XXX.';
       insertDocumento(texto);
+      document.getElementById("gadgets_atestado").style.display = 'flex';
     } else if (tipodocumento == 'ALTA HOSPITALAR') {
       let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
       let evolucao = documentos.filter(item => item.tipo_documento == 'EVOLUÇÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
@@ -378,6 +467,7 @@ function Documentos() {
         anamnese + '\n\n' +
         evolucao
       insertDocumento(texto);
+      document.getElementById("gadgets_atestado").style.display = 'flex';
     }
   }
 
@@ -522,7 +612,9 @@ function Documentos() {
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
-                    updateDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase(), 1);
+                    setTimeout(() => {
+                      updateDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase(), 1);
+                    }, 1000);
                   }}>
                   <img
                     alt=""
@@ -539,7 +631,9 @@ function Documentos() {
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
-                    copiarDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase())
+                    setTimeout(() => {
+                      copiarDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase())
+                    }, 1000);
                   }}>
                   <img
                     alt=""
@@ -554,7 +648,12 @@ function Documentos() {
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0
                   }}
-                  onClick={() => printDiv()}>
+                  onClick={() => {
+                    setselecteddocumento(item);
+                    setTimeout(() => {
+                      printDiv()
+                    }, 1000);
+                  }}>
                   <img
                     alt=""
                     src={print}
@@ -602,10 +701,12 @@ function Documentos() {
           whiteSpace: 'pre-wrap',
           height: 'calc(100% - 20px)',
           margin: 0, marginLeft: -5,
-          pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto'
+          pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto',
+          position: 'relative'
         }}
         id="inputFieldDocumento"
-      ></textarea>
+      >
+      </textarea>
     )
   }
 
@@ -617,6 +718,13 @@ function Documentos() {
     axios.get(html + 'list_model_documentos/' + usuario.id).then((response) => {
       var x = response.data.rows;
       setarraymodelos(x);
+    });
+  }
+  const [allmodels, setallmodels] = useState([]);
+  const loadAllModelos = () => {
+    axios.get(html + 'list_all_model_documentos').then((response) => {
+      var x = response.data.rows;
+      setallmodels(x.filter(item => item.id_usuario == 0));
     });
   }
   const insertModeloDocumento = (item) => {
@@ -651,6 +759,16 @@ function Documentos() {
         >
           <div className='text1'>{'MODELOS DE DOCUMENTO PERSONALIZADOS - ' + tipodocumento}</div>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {allmodels.filter(item => item.tipo_documento == tipodocumento).map(item => (
+              <div className='button'
+                style={{ width: 150, height: 150, position: 'relative', backgroundColor: '#F0B27A' }}
+                onClick={() => insertModeloDocumento(item.texto)}
+              >
+                <div>
+                  {item.nome_modelo}
+                </div>
+              </div>
+            ))}
             {arraymodelos.filter(item => item.tipo_documento == tipodocumento).map(item => (
               <div className='button'
                 style={{ width: 150, height: 150, position: 'relative' }}
@@ -932,8 +1050,9 @@ function Documentos() {
       <PrintDocumento></PrintDocumento>
       <ViewSelectModelos></ViewSelectModelos>
       <ViewCreateModelo></ViewCreateModelo>
-      <BtnCid10></BtnCid10>
       <SeletorCid10></SeletorCid10>
+      <GadgetDadosVitais></GadgetDadosVitais>
+      <GadgetsParaAtestado></GadgetsParaAtestado>
     </div>
   )
 }

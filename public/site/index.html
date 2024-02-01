@@ -29,9 +29,17 @@
 		<p href="#gap4" id='btn4' class="btn" onclick="click4()">CONTATO</p>
 	</div>
 	<!-- conteúdo -->
-	<div id="conteudo" class="content" style='position: relative;'>
-		<video controls autoplay loop muted
-			style="margin: 0; width: 70vw; align-self: center; pointer-events: none; margin-top: 5px; border-radius: 5px;">
+	<div class="onlymobile">
+		<img style="align-self: center; margin-top: 25px;" src="webpage_files/logo.svg" alt="Pulsar" width="80%"></img>
+		<p
+			style="color: white; align-self: center; font-size: 36px; font-weight: bold; margin: 0px; margin-top: 5px; margin-bottom: 20px; text-align: center;">
+			PULSAR SAÚDE
+		</p>
+
+	</div>
+	<div id="conteudo" class="content">
+		<video class="video" controls autoplay loop muted
+			style="margin: 0; align-self: center; pointer-events: none; margin-top: 5px; border-radius: 5px;">
 			<source src="webpage_files/videos/chamada.mp4" type="video/mp4">
 			SEU BROWSER NÃO SUPORTA VÍDEOS! É... VOCÊ PRECISA DE NÓS.
 		</video>
@@ -44,7 +52,7 @@
 				policlínicas ou consultórios.
 			</p>
 			<img class="slide" src="webpage_files/show.svg" alt="Pulsar" width="80%"></img>
-			<video controls autoplay style="width: 700px; margin-top: 20px; align-self: center; border-radius: 5px;">
+			<video class="video" controls autoplay style="margin-top: 20px; align-self: center; border-radius: 5px;">
 				<source src="webpage_files/videos/video.mp4" type="video/mp4">
 				SEU BROWSER NÃO SUPORTA VÍDEOS! É... VOCÊ PRECISA DE NÓS.
 			</video>
@@ -169,8 +177,8 @@
 		</div>
 		<div class="col-lg-12">
 			<hr>
-		</div> <!-- separador -->
-		<div id="gap4" class="col-lg-12">
+		</div style="margin-top: 40px"> <!-- separador -->
+		<div id="gap4" class="col-lg-12" style="margin-bottom: 20px;">
 			<h1>CONVERSE COM NOSSO TIME!</h1>
 			<p>
 				Mande um e-mail e vamos implantar o melhor prontuário eletrônico do planeta em seu serviço.
