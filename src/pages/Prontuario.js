@@ -1784,7 +1784,7 @@ function Prontuario() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  height: window.innerWidth < mobilewidth ? "30vw" : "8vw",
+                  height: window.innerWidth < mobilewidth ? "20vw" : "8vw",
                 }}
               ></img>
             </div>

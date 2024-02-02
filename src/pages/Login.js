@@ -57,7 +57,6 @@ function Login() {
     axios.get(html + "settings/" + usuario).then((response) => {
       var x = [];
       x = response.data.rows;
-      // console.log("TEMA: " + x.map((item) => item.tema));
       changeTema(x.map((item) => item.tema));
       settema(x.map((item) => item.tema));
       setsettings(response.data.rows);
@@ -234,7 +233,6 @@ function Login() {
       .get(html + "list_unidades")
       .then((response) => {
         setunidades(response.data.rows);
-        // console.log(unidades);
       })
       .catch(function (error) {
         console.log(error);
@@ -246,7 +244,6 @@ function Login() {
       .get(html + "list_usuarios")
       .then((response) => {
         setusuarios(response.data.rows);
-        // console.log(response.data.rows);
         /*
         ACESSOS AOS MÓDULOS DE USUÁRIO (tabela usuarios):
         10 - MÉDICO(A)
@@ -305,13 +302,11 @@ function Login() {
       password = document.getElementById("inputSenha").value;
       let usuario = localStorage.getItem('usuario');
       let senha = localStorage.getItem('senha');
-      console.log(bcrypt.compareSync(password, senha));
-
+      
       if (bcrypt.compareSync(password, senha) == true) {
         var obj = {
           usuario: parseInt(usuario),
         };
-        console.log(obj);
         axios
           .post(html + "grant", obj)
           .then((response) => {
@@ -373,11 +368,8 @@ function Login() {
 
   const checkUsuario = (usuario) => {
     var obj = { usuario: usuario }
-    console.log(document.getElementById("inputUsuario").value);
-    console.log(obj);
     axios.post(html + "checknomeusuario", obj)
       .then((response) => {
-        console.log(response.data);
         var x = response.data;
         // salvando os dados do usuário logado.
         setusuario({
@@ -399,9 +391,6 @@ function Login() {
           usuarios: x.usuarios,
           primeiro_acesso: x.primeiro_acesso,
         });
-        console.log('SENHA: ' + x.senha);
-        console.log('PRIMEIRO ACESSO: ' + x.primeiro_acesso);
-        console.log('ID: ' + x.id);
         localStorage.setItem('usuario', x.id);
         localStorage.setItem('senha', x.senha);
         if (x.id != undefined && x.primeiro_acesso != 1) {
@@ -723,7 +712,6 @@ function Login() {
                   history.push("/prontuario");
                   localStorage.setItem("viewlistaunidades", 1);
                   localStorage.setItem("viewlistamodulos", 1);
-                  console.log("HOSPITAL: " + item.id_unidade);
                 }
               }}
             >
@@ -1095,7 +1083,6 @@ function Login() {
             alignSelf: 'flex-end'
           }}
           title="FAZER LOGOFF."
-          // onMouseOver={() => console.log(usuario.id)}
           onClick={() => {
             setusuario({});
             setacessos([]);

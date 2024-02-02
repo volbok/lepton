@@ -205,13 +205,14 @@ function Documentos() {
               onClick={() => {
                 setviewseletorcid10(0);
                 setTimeout(() => {
+                  localStorage.setItem("cid", item.CAT);
                   document.getElementById("dias de atestado").value = localStorage.getItem("dias");
                   document.getElementById("inputFieldDocumento").value =
                     'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
                     ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem("dias") + ' DIAS, A CONTAR DE ' +
                     moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item.CAT + '.';;
                   document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
-                }, 2000);
+                }, 500);
               }}
             >
               {item.CAT + ' - ' + item.DESCRICAO.toUpperCase()}
@@ -274,7 +275,7 @@ function Documentos() {
       <div
         className='button'
         style={{
-          display: tipodocumento == 'EVOLUÇÃO' && selecteddocumento.id != undefined ? 'flex' : 'none',
+          display: tipodocumento == 'EVOLUÇÃO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
           position: 'absolute', bottom: 10, left: 10, padding: 10
         }}
         onClick={() => {
@@ -287,6 +288,11 @@ function Documentos() {
             fielddocumento.value = textoanterior + '\n' + tag_dadosvitais + '\n' + textoposterior
           } else {
             toast(settoast, 'SEM DADOS VITAIS CADASTRADOS PARA IMPORTAR :(', 'red', 1000);
+            setselecteddocumento([]);
+            var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
+            for (var i = 0; i < botoes.length; i++) {
+              botoes.item(i).className = "button";
+            }
           }
         }}
       >
@@ -310,6 +316,10 @@ function Documentos() {
         onKeyUp={(e) => {
           let dias = document.getElementById("dias de atestado").value;
           localStorage.setItem('dias', dias);
+          document.getElementById("inputFieldDocumento").value =
+            'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
+            ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem('dias') + ' DIAS, A CONTAR DE ' +
+            moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 ' + localStorage.getItem('cid') + '.'
         }}
         style={{
           flexDirection: "row",
@@ -330,6 +340,7 @@ function Documentos() {
       <div
         className='button'
         onClick={() => {
+          localStorage.setItem("cid", cid);
           document.getElementById("inputFieldDocumento").value =
             'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
             ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem('dias') + ' DIAS, A CONTAR DE ' +
