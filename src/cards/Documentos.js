@@ -56,6 +56,8 @@ function Documentos() {
     axios.get(html + "list_documentos/" + atendimento).then((response) => {
       var x = response.data.rows;
       setdocumentos(x.sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1));
+      setselecteddocumento([]);
+      /*
       if (situacao == 'atualizar') {
         document.getElementById('documento ' + item.id).className = "button-red";
         setTimeout(() => {
@@ -94,7 +96,9 @@ function Documentos() {
             document.getElementById("inputFieldDocumento").focus();
           }, 300);
         }, 500);
+
       }
+      */
     })
   }
 
@@ -201,7 +205,11 @@ function Documentos() {
               onClick={() => {
                 setviewseletorcid10(0);
                 setTimeout(() => {
-                  document.getElementById("inputFieldDocumento").value = 'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE X DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item + '.';;
+                  document.getElementById("dias de atestado").value = localStorage.getItem("dias");
+                  document.getElementById("inputFieldDocumento").value =
+                    'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
+                    ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem("dias") + ' DIAS, A CONTAR DE ' +
+                    moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item.CAT + '.';;
                   document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
                 }, 2000);
               }}
@@ -217,9 +225,11 @@ function Documentos() {
     return (
       <div id="botão para selecionar cid10"
         className="button-green"
+        title="CLIQUE PARA SELECIONAR UM CID."
         style={{
           display: tipodocumento != 'ATESTADO MÉDICO' || selecteddocumento.status != 0 ? 'none' : 'flex',
           alignSelf: 'center',
+          width: 100,
         }}
         onClick={() => {
           localStorage.setItem('texto', document.getElementById("inputFieldDocumento").value.toUpperCase());
@@ -286,43 +296,52 @@ function Documentos() {
   }
 
   // ATESTADO
+  // função para definir os dias de atestado.
+  const DiasAtestado = () => {
+    return (
+      <input id={"dias de atestado"}
+        className='input'
+        autoComplete="off"
+        placeholder=""
+        title=""
+        type="text"
+        onFocus={(e) => (e.target.placeholder = "")}
+        onBlur={(e) => (e.target.placeholder = "")}
+        onKeyUp={(e) => {
+          let dias = document.getElementById("dias de atestado").value;
+          localStorage.setItem('dias', dias);
+        }}
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignSelf: "center",
+          width: 40, minWidth: 40, maxWidth: 40,
+          alignContent: "center",
+          height: 40, minHeight: 40, maxHeight: 40,
+          borderStyle: "none",
+          textAlign: "center",
+        }}
+      ></input>
+    )
+  }
   // função para gerar o atestado para a doença clicada.
   const gadgetAtestado = (doenca, cid) => {
     return (
       <div
         className='button'
+        onClick={() => {
+          document.getElementById("inputFieldDocumento").value =
+            'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
+            ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem('dias') + ' DIAS, A CONTAR DE ' +
+            moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 ' + cid + '.'
+        }}
         style={{
           display: selecteddocumento.id != undefined ? 'flex' : 'none',
-          padding: 10,
-          flexDirection: 'row', justifyContent: 'space-between',
-          width: 150
+          flexDirection: 'row', justifyContent: 'center',
+          width: 100
         }}
       >
-        <div>{doenca}</div>
-        <input id={"dias de atestado" + doenca}
-          className='input'
-          autoComplete="off"
-          placeholder=""
-          title=""
-          type="text"
-          onFocus={(e) => (e.target.placeholder = "")}
-          onBlur={(e) => (e.target.placeholder = "")}
-          onKeyUp={(e) => {
-            let fielddocumento = document.getElementById("inputFieldDocumento");
-            let dias = document.getElementById("dias de atestado" + doenca).value;
-            fielddocumento.value = 'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + dias + ' DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + cid + '.';
-          }}
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignSelf: "center",
-            width: 40, minWidth: 40, maxWidth: 40,
-            alignContent: "center",
-            height: 40, minHeight: 40, maxHeight: 40,
-            borderStyle: "none",
-            textAlign: "center",
-          }}
-        ></input>
+        {doenca}
       </div>
     )
   }
@@ -334,14 +353,22 @@ function Documentos() {
         style={{
           display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
           position: 'absolute', bottom: 10, left: 10,
-          width: '45vw', height: 90,
-          flexDirection: 'row', flexWrap: 'wrap'
+          width: 255, height: 180,
+          flexDirection: 'column',
         }}
       >
-        <BtnCid10></BtnCid10>
-        {gadgetAtestado('IVAS', 'J06.9')}
-        {gadgetAtestado('GECA', 'A90')}
-        {gadgetAtestado('PNM', 'J15.9')}
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <div className='text1'>DIAS DE ATESTADO:</div>
+          <DiasAtestado></DiasAtestado>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+          <BtnCid10></BtnCid10>
+          {gadgetAtestado('IVAS', 'J06.9')}
+          {gadgetAtestado('GECA', 'A90')}
+          {gadgetAtestado('PNM', 'J15.9')}
+          {gadgetAtestado('DENGUE', 'A90')}
+          {gadgetAtestado('ITU', 'N39')}
+        </div>
       </div>
     )
   }
@@ -413,14 +440,12 @@ function Documentos() {
           "\nANTIBIÓTICOS EM USO:\n" +
           arrayprescricao;
       }
-
       if (laboratorio.filter(item => item.status == 2).length > 0) {
         let arraylaboratorio = laboratorio.filter(item => item.status == 2).sort((a, b) => moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => '\n' + moment(item.data_pedido).format('DD/MM/YY') + ' - ' + item.nome_exame + ': ' + item.resultado);
         tag_laboratorio =
           "\nEXAMES LABORATORIAIS:" +
           arraylaboratorio;
       }
-
       let texto = null;
       if (usuario.conselho == 'CRM') {
         texto =
@@ -455,7 +480,7 @@ function Documentos() {
       insertDocumento(texto);
     } else if (tipodocumento == 'ATESTADO MÉDICO') {
       let texto =
-        'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() + ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE 2 DIAS, A CONTAR DE ' + moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 XXX.';
+        'INFORME ABAIXO OS DIAS E O CID DO ATESTADO.';
       insertDocumento(texto);
       document.getElementById("gadgets_atestado").style.display = 'flex';
     } else if (tipodocumento == 'ALTA HOSPITALAR') {
@@ -662,9 +687,9 @@ function Documentos() {
                 </div>
               </div>
               <div>{tipodocumento}</div>
-              <div style={{ fontSize: 10, marginTop: 10, whiteSpace: 'pre-wrap', marginBottom: 5 }}>{item.profissional}</div>
               <div>{moment(item.data).format('DD/MM/YY')}</div>
               <div>{moment(item.data).format('HH:mm')}</div>
+              <div style={{ fontSize: 12, marginTop: 10, whiteSpace: 'pre-wrap', marginBottom: 5 }}>{item.profissional}</div>
             </div>
           ))}
         </div>
