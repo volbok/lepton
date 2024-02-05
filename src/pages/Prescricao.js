@@ -2258,17 +2258,20 @@ function Prescricao() {
   function Conteudo() {
     return (
       <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        display: 'table', flexDirection: 'column', justifyContent: 'space-between',
         fontFamily: 'Helvetica',
         breakInside: 'auto',
+        whiteSpace: 'pre-wrap',
+        marginTop: 20,
       }}>
         {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null).map(item =>
         (
           < div style={{
             display: 'flex', flexDirection: 'column', width: '100%',
+            breakInside: 'avoid',
+            whiteSpace: 'pre-wrap',
             backgroundColor: (arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null).sort((a, b) => a.nome_item < b.nome_item ? -1 : 1).indexOf(item) + 1) % 2 == 0 ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.1)',
             borderRadius: 5, margin: 2.5,
-            breakInside: 'avoid',
           }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <div style={{ margin: 5, width: 20 }}>{arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null).indexOf(item) + 1}</div>
@@ -2281,7 +2284,6 @@ function Prescricao() {
             <div style={{
               display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
               margin: 1.5, padding: 1.5, borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.3)', borderRadius: 5,
-              breakInside: 'avoid',
             }}>
               <div id="observações"
                 style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', margin: 5, fontSize: 8 }}>
@@ -2291,7 +2293,7 @@ function Prescricao() {
               <div id="componentes"
                 style={{
                   display: prescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).length > 0 ? 'flex' : 'none',
-                  flexDirection: 'column', justifyContent: 'flex-start', margin: 5, fontSize: 8, breakInside: 'avoid',
+                  flexDirection: 'column', justifyContent: 'flex-start', margin: 5, fontSize: 8,
                 }}>
                 <div style={{ margin: 1.5, fontWeight: 'bold' }}>COMPONENTES:</div>
                 <div id="LISTA DE COMPONENTES PARA IMPRESSÃO" style={{ width: '100%', fontSize: 8 }}>
