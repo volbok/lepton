@@ -1055,8 +1055,8 @@ function Login() {
 
   return (
     <div
-      className={tema != 3 ? "main cor1" : "main"}
-      style={{ display: pagina == 0 ? "flex" : "none" }}
+      className={tema != 3 ? "main" : "main"}
+      style={{ display: pagina == 0 ? "flex" : "none", backgroundColor: 'rgb(31, 122, 140, 0.8)' }}
     >
       <div
         className="scroll"

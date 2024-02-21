@@ -400,28 +400,28 @@ function Prontuario() {
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO VERMELHO OU LARANJA."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'red' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#F1948A' }}
             onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA'])}
           >
           </div>
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO AMARELO."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'yellow' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#F9E79F' }}
             onClick={() => setarrayclassificacao(['AMARELO'])}
           >
           </div>
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO VERDE OU AZUL."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'green' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#76D7C4' }}
             onClick={() => setarrayclassificacao(['VERDE', 'AZUL'])}
           >
           </div>
           <div
             className="button"
             title="EXIBIR TODAS AS CLASSIFICAÇÕES."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'gray' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'rgb(133, 146, 158)' }}
             onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA', 'AMARELO', 'VERDE', 'AZUL', null])}
           >
           </div>
@@ -465,11 +465,11 @@ function Prontuario() {
                             height: 100,
                             width: 80, minWidth: 80, maxWidth: 80,
                             backgroundColor:
-                              item.classificacao == 'AZUL' ? 'blue' :
-                                item.classificacao == 'VERDE' ? 'green' :
-                                  item.classificacao == 'AMARELO' ? 'yellow' :
-                                    item.classificacao == 'LARANJA' ? 'orange' :
-                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                item.classificacao == 'VERDE' ? '#76D7C4' :
+                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : 'rgba(0,0,0, 0.6)'
                           }}
                         >
                           <div
@@ -595,11 +595,11 @@ function Prontuario() {
                             height: 100,
                             width: 80, minWidth: 80, maxWidth: 80,
                             backgroundColor:
-                              item.classificacao == 'AZUL' ? 'blue' :
-                                item.classificacao == 'VERDE' ? 'green' :
-                                  item.classificacao == 'AMARELO' ? 'yellow' :
-                                    item.classificacao == 'LARANJA' ? 'orange' :
-                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                item.classificacao == 'VERDE' ? '#76D7C4' :
+                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : 'rgba(0,0,0, 0.6)'
                           }}
                         >
                           <div
