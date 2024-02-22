@@ -10,17 +10,15 @@
   --cor4hover: rgb(229, 126, 52, 1);
   --cor4hover: rgb(229, 152, 102) !important;
   --cor5: rgb(82, 190, 128, 0.7);
-  --cor5: rgb(133, 146, 158) !important;
   --cor5hover: rgb(82, 190, 128, 1);
   --cor5hover: rgb(133, 146, 158) !important;
   --cor6: rgb(229, 152, 102, 0.8) !important;
-  --cor6hover: rgb(229, 152, 102, 0.8) !important;
+  --cor6hover: rgb(229, 152, 102, 1) !important;
   --cor7: rgba(180, 182, 196, 0.4);
   --cor8: '#F1C40F';
   --texto1: rgb(97, 99, 110, 1);
   --texto2: #ffffff;
   --texto3: rgb(31, 122, 140, 1);
-  --texto3: rgb(95, 106, 106) !important;
   --placeholder: rgb(97, 99, 110, 0.6);
   --logo1: "green";
   --logo2: "yellow";
@@ -864,7 +862,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor1hover);
+  background-color: var(--cor1opaque);
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -951,7 +949,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor1);
+  background-color: var(--cor1opaque);
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -963,7 +961,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .button-green:hover {
-  background-color: var(--cor1hover);
+  background-color: var(--cor5);
   transition: 200ms ease-in-out;
 }
 
@@ -976,7 +974,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor4hover);
+  background-color: var(--cor1opaque);
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -1001,7 +999,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--cor6hover);
+  background-color: var(--cor6);
   border: none;
   border-color: transparent;
   border-radius: 5px;
