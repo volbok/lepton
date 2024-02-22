@@ -840,7 +840,7 @@ function Prescricao() {
             ></img>
           </div>
           <div id="botão para acessar modelos de prescrição."
-            className='button-green'
+            className='button'
             onClick={() => setviewselectmodelosprescricao(1)}
             style={{
               pointerEvents: modelosprescricao.length > 0 ? 'auto' : 'none',
@@ -968,7 +968,7 @@ function Prescricao() {
               </div>
               <div
                 id="botão para salvar modelo da prescrição"
-                className='button-green'
+                className='button'
                 style={{
                   display: item.status > 0 ? 'flex' : 'none',
                   maxWidth: 30, width: 30, minWidth: 30,
@@ -1262,7 +1262,7 @@ function Prescricao() {
                       position: 'relative',
                       display: item.categoria == '1. ANTIMICROBIANOS' ? 'flex' : 'none',
                       backgroundColor: '#5DADE2',
-                      minHeight: 20, maxHeight: 20, height: 20, minWidth: 25, width: '',
+                      minHeight: 20, maxHeight: 20, height: 20, minWidth: 25, width: '', zIndex: 200,
                     }}
                   >
                     {prescricao.filter(valor => valor.nome_item == item.nome_item && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => moment(a.data).startOf('day') < moment(b.data).startOf('day') ? 1 : -1).slice(-1).map(item => moment(dataprescricao).startOf('day').diff(moment(item.data).startOf('day'), 'days'))}

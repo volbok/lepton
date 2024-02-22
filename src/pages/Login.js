@@ -1007,7 +1007,8 @@ function Login() {
             backgroundColor: 'transparent',
             borderRadius: 5,
             cursor: 'pointer', textDecoration: 'none',
-            width: 150, height: 100
+            width: 150, height: 100,
+            textShadow: '0px 0px 10px #000000'
           }}
           target="_blank" rel="noreferrer">
           CONHEÇA A SOLUÇÃO

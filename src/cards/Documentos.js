@@ -578,7 +578,7 @@ function Documentos() {
               style={{ width: 30, height: 30 }}
             ></img>
           </div>
-          <div className='button-green'
+          <div className='button'
             title="MEUS MODELOS"
             style={{ width: 50, marginLeft: 0 }}
             onClick={() => setviewselectmodelos(1)}
@@ -916,7 +916,7 @@ function Documentos() {
             }}
           ></textarea>
           <div id="inputSalvarModelo"
-            className="button-green"
+            className="button"
             onClick={() => checkinput("textarea", settoast, ["inputNomeModeloDocumento", "inputTextoModeloDocumento"], "inputSalvarModelo", criarModeloDocumento, [])}
             style={{
               display: 'flex',
