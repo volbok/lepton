@@ -469,7 +469,7 @@ function Prontuario() {
                                 item.classificacao == 'VERDE' ? '#76D7C4' :
                                   item.classificacao == 'AMARELO' ? '#F9E79F' :
                                     item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : 'rgba(0,0,0, 0.6)'
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
                           }}
                         >
                           <div
@@ -599,7 +599,7 @@ function Prontuario() {
                                 item.classificacao == 'VERDE' ? '#76D7C4' :
                                   item.classificacao == 'AMARELO' ? '#F9E79F' :
                                     item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : 'rgba(0,0,0, 0.6)'
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
                           }}
                         >
                           <div
@@ -751,7 +751,6 @@ function Prontuario() {
             style={{
               display: "flex",
               borderColor: "#f2f2f2",
-              backgroundColor: "rgb(229, 126, 52, 1)",
               width: 20,
               minWidth: 20,
               height: 20,
@@ -776,7 +775,7 @@ function Prontuario() {
             borderColor: "white",
             borderStyle: "dashed",
             borderWidth: 1,
-            backgroundColor: "grey",
+            backgroundColor: "#AEB6BF",
             textAlign: "center",
             color: "white",
             fontSize: 14,
@@ -1090,7 +1089,7 @@ function Prontuario() {
   };
 
   // função para renderização dos cards fechados.
-  let yellow = "rgb(241, 196, 15, 0.8)";
+  let yellow = "#F9E79F";
   const cartao = (sinal, titulo, opcao, busy, oculto) => {
     return (
       <div style={{ display: window.innerWidth < mobilewidth && oculto == 1 ? 'none' : 'flex' }}>
@@ -1875,7 +1874,7 @@ function Prontuario() {
             position: 'absolute', top: 80, right: 80,
             borderRadius: 50,
             width: 50, height: 50,
-            backgroundColor: 'red',
+            backgroundColor: 'rgb(229, 126, 52, 1)',
             borderColor: 'rgb(215, 219, 221)',
             borderWidth: 5,
             borderStyle: 'solid',

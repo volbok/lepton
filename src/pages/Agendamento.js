@@ -121,6 +121,42 @@ function Agendamento() {
       })
   };
 
+  // ENVIO DE MENSAGENS DE AGENDAMENTO DA CONSULTA PELO WHATSAPP.
+  function geraWhatsapp(inicio) {
+
+    const gzappy_url_envia_mensagem = "https://api.gzappy.com/v1/message/send-message/";
+    const instance_id = 'L05K3GC2YX03DGWYLDKZQW5L';
+    const instance_token = '2d763c00-4b6d-4842-99d7-cb32ea357a80';
+    const USER_TOKEN_ID = '3a1d021d-ad34-473e-9255-b9a3e6577cf9';
+    const message =
+      'Olá, ' + paciente.nome_paciente + '!\n' +
+      'Você tem uma consulta agendada com o Dr(a). ' + selectedespecialista.nome_usuario + ', ' + selectedespecialista.tipo_usuario + ',\n' +
+      'para o dia ' + inicio + ', na clínica POMERODE.'
+
+    const rawphone = paciente.telefone;
+    console.log(rawphone);
+    let cleanphone = rawphone.replace("(", "");
+    cleanphone = cleanphone.replace(")", "");
+    cleanphone = cleanphone.replace("-", "");
+    cleanphone = cleanphone.replace(" ", "");
+    cleanphone = "55" + cleanphone;
+    console.log(cleanphone);
+
+    fetch(gzappy_url_envia_mensagem, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'user_token_id': USER_TOKEN_ID
+      },
+      body: JSON.stringify({
+        instance_id: instance_id,
+        instance_token: instance_token,
+        message: [message],
+        phone: [cleanphone]
+      })
+    })
+  }
+
   const insertAtendimento = (inicio) => {
     var obj = {
       data_inicio: moment(inicio, 'DD/MM/YYYY - HH:mm'),
@@ -141,6 +177,7 @@ function Agendamento() {
       .then(() => {
         console.log('AGENDAMENTO DE CONSULTA INSERIDO COM SUCESSO')
         loadAtendimentos();
+        geraWhatsapp(inicio);
       });
   };
 

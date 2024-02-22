@@ -5,7 +5,7 @@ export default function Logo() {
   // definindo cores do logo conforme as cores do css.
   var r = document.querySelector(':root');
   var rs = getComputedStyle(r);
-  var cor1 = rs.getPropertyValue('--cor1hover');
+  var cor1 = rs.getPropertyValue('--cor1opaque');
   var cor2 = rs.getPropertyValue('--cor2');
 
   return (

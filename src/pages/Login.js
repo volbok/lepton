@@ -9,6 +9,7 @@ import checkinput from "../functions/checkinput";
 import salvar from "../images/salvar.svg";
 import back from "../images/back.svg";
 import power from "../images/power.svg";
+import doctor from "../images/doctor.png";
 // componentes.
 import Logo from "../components/Logo";
 // router.
@@ -302,7 +303,7 @@ function Login() {
       password = document.getElementById("inputSenha").value;
       let usuario = localStorage.getItem('usuario');
       let senha = localStorage.getItem('senha');
-      
+
       if (bcrypt.compareSync(password, senha) == true) {
         var obj = {
           usuario: parseInt(usuario),
@@ -982,20 +983,36 @@ function Login() {
 
   function LandPage() {
     return (
-      <a id="landpage"
-        className="text2 conheca"
-        href="/site/index.html"
+      <div
         style={{
           display: window.innerWidth < mobilewidth || viewlistaunidades == 1 ? "none" : "flex",
-          position: 'absolute', bottom: 5, right: 10,
-          backgroundColor: 'rgb(82, 190, 128, 1)',
-          borderRadius: 5,
-          cursor: 'pointer', textDecoration: 'none',
-          width: 100, height: 100
-        }}
-        target="_blank" rel="noreferrer">
-        CONHEÇA A SOLUÇÃO
-      </a>
+          position: 'absolute', bottom: 5, right: 10
+        }}>
+        <img
+          alt=""
+          src={doctor}
+          style={{
+            margin: 0,
+            height: 200,
+            width: 200,
+            position: 'absolute', bottom: 5, right: 10, borderRadius: 5,
+          }}
+        ></img>
+        <a id="landpage"
+          className="text2"
+          href="/site/index.html"
+          style={{
+            display: 'flex',
+            position: 'absolute', bottom: 5, right: 50, fontSize: 20,
+            backgroundColor: 'transparent',
+            borderRadius: 5,
+            cursor: 'pointer', textDecoration: 'none',
+            width: 150, height: 100
+          }}
+          target="_blank" rel="noreferrer">
+          CONHEÇA A SOLUÇÃO
+        </a>
+      </div>
     )
   }
 

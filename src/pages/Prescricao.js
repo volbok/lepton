@@ -859,7 +859,7 @@ function Prescricao() {
             className='button'
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              minHeight: 180
+              minHeight: 180,
             }}
             onClick={() => {
               setexpand(0);

@@ -441,28 +441,28 @@ function Prontuario() {
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO VERMELHO OU LARANJA."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'red' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#F1948A' }}
             onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA'])}
           >
           </div>
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO AMARELO."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'yellow' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#F9E79F' }}
             onClick={() => setarrayclassificacao(['AMARELO'])}
           >
           </div>
           <div
             className="button"
             title="FILTRAR PACIENTES CLASSIFICADOS COMO VERDE OU AZUL."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'green' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: '#76D7C4' }}
             onClick={() => setarrayclassificacao(['VERDE', 'AZUL'])}
           >
           </div>
           <div
             className="button"
             title="EXIBIR TODAS AS CLASSIFICAÇÕES."
-            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'gray' }}
+            style={{ width: 30, height: 10, minHeight: 10, backgroundColor: 'rgb(133, 146, 158)' }}
             onClick={() => setarrayclassificacao(['VERMELHO', 'LARANJA', 'AMARELO', 'VERDE', 'AZUL', null])}
           >
           </div>
@@ -506,16 +506,16 @@ function Prontuario() {
                             height: 100,
                             width: 75,
                             backgroundColor:
-                              item.classificacao == 'AZUL' ? 'blue' :
-                                item.classificacao == 'VERDE' ? 'green' :
-                                  item.classificacao == 'AMARELO' ? 'yellow' :
-                                    item.classificacao == 'LARANJA' ? 'orange' :
-                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                item.classificacao == 'VERDE' ? '#76D7C4' :
+                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
                           }}
                         >
                           <div
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                            style={{ margin: 5, padding: 0, fontSize: 14 }}
                           >
                             {item.leito}
                           </div>
@@ -675,16 +675,16 @@ function Prontuario() {
                             minHeight: 100,
                             height: 100,
                             backgroundColor:
-                              item.classificacao == 'AZUL' ? 'blue' :
-                                item.classificacao == 'VERDE' ? 'green' :
-                                  item.classificacao == 'AMARELO' ? 'yellow' :
-                                    item.classificacao == 'LARANJA' ? 'orange' :
-                                      item.classificacao == 'VERMELHO' ? 'red' : 'rgba(0,0,0, 0.6)'
+                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                item.classificacao == 'VERDE' ? '#76D7C4' :
+                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
                           }}
                         >
                           <div
                             className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 24 }}
+                            style={{ margin: 5, padding: 0, fontSize: 14 }}
                           >
                             {item.leito}
                           </div>
@@ -871,7 +871,6 @@ function Prontuario() {
             style={{
               display: "flex",
               borderColor: "#f2f2f2",
-              backgroundColor: "rgb(229, 126, 52, 1)",
               width: 20,
               minWidth: 20,
               height: 20,
@@ -896,7 +895,7 @@ function Prontuario() {
             borderColor: "white",
             borderStyle: "dashed",
             borderWidth: 1,
-            backgroundColor: "grey",
+            backgroundColor: "#AEB6BF",
             textAlign: "center",
             color: "white",
             fontSize: 14,
@@ -1210,7 +1209,7 @@ function Prontuario() {
   };
 
   // função para renderização dos cards fechados.
-  let yellow = "rgb(241, 196, 15, 0.8)";
+  let yellow = "#F9E79F";
   const cartao = (sinal, titulo, opcao, busy, oculto) => {
     return (
       <div style={{ display: window.innerWidth < mobilewidth && oculto == 1 ? 'none' : 'flex' }}>
@@ -1994,7 +1993,7 @@ function Prontuario() {
             position: 'absolute', top: 80, right: 80,
             borderRadius: 50,
             width: 50, height: 50,
-            backgroundColor: 'red',
+            backgroundColor: 'rgb(229, 126, 52, 1)',
             borderColor: 'rgb(215, 219, 221)',
             borderWidth: 5,
             borderStyle: 'solid',
