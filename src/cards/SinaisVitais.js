@@ -706,7 +706,7 @@ function SinaisVitais() {
             }}
           >
             <div id="identificador"
-              className='button-yellow'
+              className='button-opaque'
               style={{
                 flex: 1,
                 flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',

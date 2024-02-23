@@ -202,6 +202,7 @@ function Cadastro() {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
               loadAtendimentos();
+              setvieweditpaciente(0);
             }, 1000);
             return null;
           });
@@ -238,6 +239,9 @@ function Cadastro() {
       .post(html + "insert_atendimento", obj)
       .then(() => {
         loadAtendimentos();
+        loadLeitos(unidade);
+        setvieweditpaciente(0);
+        setviewseletorunidades(0);
         toast(
           settoast,
           "ATENDIMENTO INICIADO COM SUCESSO",
@@ -341,7 +345,8 @@ function Cadastro() {
             status: 'LIVRE',
           };
           axios.post(html + "update_leito/" + id_leito, obj);
-          loadLeitos();
+          setvieweditpaciente(0);
+          loadLeitos(unidade);
           loadAtendimentos();
           toast(
             settoast,
@@ -1036,9 +1041,9 @@ function Cadastro() {
               display: vieweditpaciente == 1 ? "flex" : "none",
               flexDirection: "column",
               justifyContent: "center",
-              // height: 345,
               marginTop: 0,
               marginBottom: 20,
+              width: '40vw',
             }}
           >
             <div id="paciente sem atendimento ativo"
@@ -1057,12 +1062,12 @@ function Cadastro() {
                 alignSelf: "center",
               }}
             >
-              <div className="text1" style={{ margin: 15 }}>
+              <div className="text1" style={{ margin: 15, width: '100%' }}>
                 {
                   "PACIENTE NÃO ESTÁ EM ATENDIMENTO NOS HOSPITAIS CADASTRADOS EM NOSSA BASE."
                 }
               </div>
-              <div className="button" onClick={() => setviewseletorunidades(1)}>
+              <div className="button" onClick={() => {setviewseletorunidades(1)}}>
                 INICIAR ATENDIMENTO
               </div>
               <div
@@ -1092,6 +1097,7 @@ function Cadastro() {
             >
               <div className="text1"
                 style={{
+                  width: '100%',
                   display:
                     atendimentos.filter(
                       (item) =>
@@ -1114,6 +1120,7 @@ function Cadastro() {
               </div>
               <div className="text1"
                 style={{
+                  width: '100%',
                   display: atendimento.map(item => item.id_unidade) == 4 ? 'flex' : 'none',
                 }}>
                 {atendimento.id_unidade}
@@ -1156,7 +1163,9 @@ function Cadastro() {
                 alignSelf: "center",
               }}
             >
-              <div className="text1">
+              <div className="text1" style={{
+                width: '100%',
+              }}>
                 {"PACIENTE COM ATENDIMENTO ATIVO EM OUTRO SERVIÇO"}
               </div>
               <div className="button" onClick={() => setviewseletorunidades(1)}>
@@ -1292,7 +1301,7 @@ function Cadastro() {
                         .post(html + "insert_atendimento", obj)
                         .then(() => {
                           loadAtendimentos();
-                          loadLeitos();
+                          loadLeitos(item.id_unidade);
                           setviewseletorunidades(0);
                         });
                     }
@@ -1450,7 +1459,7 @@ function Cadastro() {
     return (
       <div
         style={{
-          display: "flex",
+          display: statusleitos.length > 0 ? "flex" : "none",
           flexDirection: "column",
           justifyContent: "center",
           alignSelf: "center",

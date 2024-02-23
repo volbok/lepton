@@ -317,7 +317,7 @@ function Propostas() {
               flex: 5, alignItems: 'center',
             }}>
               <div id="identificador"
-                className={item.status == 1 ? 'button-green' : moment().startOf('day').add(1, 'day').diff(item.prazo, 'days') > -1 ? 'button-red' : 'button'}
+                className='button-opaque'
                 style={{
                   flex: 1,
                   flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
@@ -333,6 +333,7 @@ function Propostas() {
                   borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
                   borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
                   borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                  backgroundColor: item.status == 1 ? 'rgb(82, 190, 128, 0.7)' : moment().startOf('day').add(1, 'day').diff(item.prazo, 'days') > -1 ? 'rgb(229, 126, 52, 0.5)' : ''
                 }}>
                 <div style={{
                   display: window.innerWidth < mobilewidth ? 'none' : 'flex',

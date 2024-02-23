@@ -20,6 +20,7 @@ function Precaucoes() {
     paciente,
     card, setcard,
     mobilewidth,
+    usuario,
   } = useContext(Context);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ function Precaucoes() {
       precaucao: precaucao,
       data_inicio: moment(),
       data_termino: null,
+      id_profissional: usuario.id
     }
     axios.post(html + 'insert_precaucao', obj).then(() => {
       // toast(settoast, 'PRECAUÇÃO ADICIONADA COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
@@ -195,7 +197,7 @@ function Precaucoes() {
             <div style={{ width: '100%' }}>
               {item.precaucao}
             </div>
-            <div className='button-red'
+            <div className='button-yellow'
               style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
               onClick={(e) => {
                 modal(setdialogo, 'CONFIRMAR EXCLUSÃO DA PRECAUÇÃO ' + item.precaucao + '?', deletePrecaucao, item.id_precaucao);

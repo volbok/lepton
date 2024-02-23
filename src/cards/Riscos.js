@@ -2,6 +2,7 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
+import moment from 'moment';
 // funções.
 import modal from '../functions/modal';
 // imagens.
@@ -48,9 +49,12 @@ function Riscos() {
     var obj = {
       id_paciente: paciente,
       risco: risco,
+      data_inicio: moment(),
+      data_termino: null,
     }
+    console.log(obj);
     axios.post(html + 'insert_risco', obj).then(() => {
-      // toast(settoast, 'RISCO ADICIONADO COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
+      console.log('RISCO REGISTRADO');
       loadRiscos();
       setviewinsertrisco(0);
     })
@@ -185,7 +189,7 @@ function Riscos() {
             <div style={{ width: '100%' }}>
               {item.risco}
             </div>
-            <div className='button-red'
+            <div className='button-yellow'
               style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
               onClick={(e) => {
                 modal(setdialogo, 'CONFIRMAR EXCLUSÃO DO RISCO ' + item.risco + '?', deleteRisco, item.id_risco);

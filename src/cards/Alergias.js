@@ -185,7 +185,7 @@ function Alergias() {
             <div style={{ width: '100%' }}>
               {item.alergia}
             </div>
-            <div className='button-red'
+            <div className='button-yellow'
               style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
               onClick={(e) => {
                 modal(setdialogo, 'CONFIRMAR EXCLUSÃO DA ALERGIA ' + item.alergia + '?', deleteAlergia, item.id_alergia);

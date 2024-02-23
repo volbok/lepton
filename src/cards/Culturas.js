@@ -356,7 +356,7 @@ function Culturas() {
               justifyContent: 'center', alignContent: 'center', alignItems: 'center',
             }}>
               <div id="identificador"
-                className={item.resultado != null ? 'button-green' : 'button-red'}
+                className='button-opaque'
                 style={{
                   flex: 1,
                   flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',

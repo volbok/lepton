@@ -5,13 +5,13 @@
   --cor0: white;
   --cor2: rgba(242, 242, 242);
   --cor3: rgb(215, 219, 221);
-  --cor6: rgb(229, 126, 52, 0.5);
-  --cor6hover: rgb(229, 126, 52, 0.8) !important;
+  --cor6: rgb(229, 126, 52, 0.8);
+  --cor6hover: rgb(229, 126, 52, 0.5) !important;
   --cor5: rgb(82, 190, 128, 0.7);
   --cor5hover: rgb(82, 190, 128, 1);
   --cor5hover: rgb(133, 146, 158) !important;
-  --cor4: rgb(236, 112, 99, 0.7) !important;
-  --cor4hover: rgb(236, 112, 99, 1) !important;
+  --cor4: rgb(236, 112, 99, 1) !important;
+  --cor4hover: rgb(236, 112, 99, 0.7) !important;
   --cor7: rgba(180, 182, 196, 0.4);
   --cor8: '#F1C40F';
   --texto1: rgb(97, 99, 110, 1);
@@ -1041,7 +1041,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
   min-width: 50px;
   min-height: 50px;
-  background-color: grey;
+  background-color: #AEB6BF;
   border: none;
   border-color: transparent;
   border-radius: 5px;

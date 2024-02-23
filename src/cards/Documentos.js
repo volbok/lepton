@@ -20,7 +20,6 @@ import checkinput from '../functions/checkinput';
 
 // componentes.
 import Cid10 from '../functions/cid10';
-import toast from '../functions/toast';
 
 function Documentos() {
 
@@ -208,7 +207,7 @@ function Documentos() {
                   localStorage.setItem("cid", item.CAT);
                   document.getElementById("dias de atestado").value = localStorage.getItem("dias");
                   document.getElementById("inputFieldDocumento").value =
-                    'ATESTO QUE O PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
+                    'ATESTO QUE O(A) PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
                     ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem("dias") + ' DIAS, A CONTAR DE ' +
                     moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item.CAT + '.';;
                   document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
@@ -274,9 +273,11 @@ function Documentos() {
     return (
       <div
         className='button'
+        title={sinaisvitais.length > 0 ? 'CLIQUE PARA OBTER OS ÚLTIMOS DADOS VITAIS REGISTRADOS NO SISTEMA.' : 'SEM REGISTRO DE DADOS VITAIS PARA ESTE PACIENTE.'}
         style={{
           display: tipodocumento == 'EVOLUÇÃO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
-          position: 'absolute', bottom: 10, left: 10, padding: 10
+          position: 'absolute', bottom: 10, left: 10, padding: 10,
+          opacity: sinaisvitais.length > 0 ? 1 : 0.5,
         }}
         onClick={() => {
           if (sinaisvitais.length > 0) {
@@ -286,13 +287,6 @@ function Documentos() {
             let textoanterior = fielddocumento.value.substring(0, posicao);
             let textoposterior = fielddocumento.value.substring(posicao, fielddocumento.value.length);
             fielddocumento.value = textoanterior + '\n' + tag_dadosvitais + '\n' + textoposterior
-          } else {
-            toast(settoast, 'SEM DADOS VITAIS CADASTRADOS PARA IMPORTAR :(', 'red', 1000);
-            setselecteddocumento([]);
-            var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
-            for (var i = 0; i < botoes.length; i++) {
-              botoes.item(i).className = "button";
-            }
           }
         }}
       >
