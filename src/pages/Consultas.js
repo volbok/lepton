@@ -15,10 +15,11 @@ import prec_padrao from "../images/prec_padrao.svg";
 import prec_contato from "../images/prec_contato.svg";
 import prec_respiratorio from "../images/prec_respiratorio.svg";
 import esteto from "../images/esteto.svg";
+import clock from "../images/clock.svg";
 // funções.
 import toast from "../functions/toast";
 import modal from '../functions/modal';
-
+import selector from "../functions/selector";
 // router.
 import { useHistory } from "react-router-dom";
 // componentes.
@@ -527,7 +528,7 @@ function Consultas() {
           marginRight: 10,
           marginLeft: 10,
           height: window.innerHeight - 130,
-          width: 'calc(100% - 10px)',
+          width: '25vw',
           flex: 1,
         }}
       >
@@ -541,7 +542,7 @@ function Consultas() {
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerHeight - 240,
+            height: window.innerHeight - 175,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
             width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)',
           }}
@@ -570,7 +571,7 @@ function Consultas() {
                       minHeight: 100,
                       height: 100,
                       width: 80, minWidth: 80, maxWidth: 80,
-                      backgroundColor: '#AEB6BF'
+                      backgroundColor: '#006666'
                     }}
                   >
                     <div
@@ -647,17 +648,7 @@ function Consultas() {
                       getAllData(item.id_paciente, item.id_atendimento);
                       setidprescricao(0);
                       if (pagina == -2) {
-                        setTimeout(() => {
-                          var botoes = document
-                            .getElementById("scroll atendimentos com pacientes")
-                            .getElementsByClassName("button-red");
-                          for (var i = 0; i < botoes.length; i++) {
-                            botoes.item(i).className = "button";
-                          }
-                          document.getElementById(
-                            "atendimento " + item.id_atendimento
-                          ).className = "button-red";
-                        }, 100);
+                        selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                       }
                     }}
                   >
@@ -715,14 +706,14 @@ function Consultas() {
                       <div
                         id="botão encerrar"
                         className="button"
-                        title="encerrar consulta"
+                        title="ENCERRAR CONSULTA"
                         onClick={() => {
                           modal(setdialogo, 'TEM CERTEZA QUE DESEJA FINALIZAR A CONSULTA?', updateConsulta, item);
                         }}
                         style={{
                           display: "flex",
                           borderColor: "#f2f2f2",
-                          backgroundColor: "rgb(82, 190, 128, 0.5)",
+                          backgroundColor: "rgb(82, 190, 128, 1)",
                           width: 20,
                           minWidth: 20,
                           height: 20,
@@ -741,7 +732,7 @@ function Consultas() {
                         style={{
                           display: "flex",
                           borderColor: "#f2f2f2",
-                          backgroundColor: "rgb(82, 190, 128, 0.5)",
+                          backgroundColor: "rgb(82, 190, 128, 1)",
                           width: 20,
                           minWidth: 20,
                           height: 20,
@@ -750,7 +741,7 @@ function Consultas() {
                           padding: 7.5,
                         }}
                       >
-                        <img alt="" src={esteto} style={{ width: 30, height: 30 }}></img>
+                        <img alt="" src={clock} style={{ width: 30, height: 30 }}></img>
                       </div>
                     </div>
                     {tagsDosPacientes(
@@ -776,7 +767,7 @@ function Consultas() {
           style={{
             display: arrayatendimentos.length > 0 ? "none" : "flex",
             justifyContent: "center",
-            height: window.innerHeight - 240,
+            height: window.innerHeight - 175,
             marginBottom: window.innerWidth < mobilewidth ? 10 : '',
             width: window.innerWidth < mobilewidth ? '90vw' : 'calc(100% - 20px)'
           }}
@@ -949,7 +940,7 @@ function Consultas() {
             {arraylist.map((item) => (
               <button
                 key={'dia ' + item}
-                className={selectdate == item ? "button-red" : "button"}
+                className={selectdate == item ? "button-selected" : "button"}
                 onClick={(e) => {
                   setselectdate(item);
                   mountHorarios(item);
@@ -1026,7 +1017,7 @@ function Consultas() {
                 >
                   <div
                     id={"atendimento " + item.id_atendimento}
-                    className="button-yellow"
+                    className="button-grey"
                     style={{
                       flex: 1,
                       marginRight: 0,
@@ -1052,6 +1043,7 @@ function Consultas() {
                           justifyContent: "flex-start",
                           padding: 5,
                           alignSelf: 'center',
+                          marginLeft: 10,
                         }}
                       >
                         <div style={{ marginRight: 5 }}>
@@ -1229,7 +1221,7 @@ function Consultas() {
         >
           <div
             id={"botão" + titulo + item.id_paciente}
-            className="button-yellow"
+            className="button"
             style={{
               display: "flex",
               borderColor: "#f2f2f2",
@@ -1239,6 +1231,7 @@ function Consultas() {
               minHeight: 20,
               margin: 0,
               padding: 7.5,
+              backgroundColor: '#EC7063',
             }}
           >
             <img alt="" src={imagem} style={{ width: 30, height: 30 }}></img>
@@ -1257,7 +1250,7 @@ function Consultas() {
             borderColor: "white",
             borderStyle: "dashed",
             borderWidth: 1,
-            backgroundColor: "#AEB6BF",
+            backgroundColor: "#006666",
             textAlign: "center",
             color: "white",
             fontSize: 14,
@@ -1331,7 +1324,7 @@ function Consultas() {
               }}
             >
               <div
-                className="button-yellow"
+                className="button-grey"
                 style={{
                   margin: 5,
                   marginRight: 0,
@@ -1588,9 +1581,9 @@ function Consultas() {
             backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
             borderColor: "transparent",
             margin: 5,
-            minWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
-            maxWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
-            height: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
+            minWidth: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
+            maxWidth: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
+            height: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
           }}
           onClick={() => {
             if (card == opcao) {
@@ -2283,7 +2276,6 @@ function Consultas() {
         flexDirection: window.innerWidth < mobilewidth ? "column" : "row",
         justifyContent: window.innerWidth < mobilewidth ? "center" : "space-between",
         height: altura,
-        flex: 3,
       }}
     >
       <div
@@ -2305,7 +2297,6 @@ function Consultas() {
       <div id="conteúdo cheio"
         className={"scroll"}
         style={{
-          flex: 2,
           display:
             window.innerWidth < mobilewidth && viewlista == 1
               ? "none"
@@ -2324,6 +2315,7 @@ function Consultas() {
           scrollBehavior: "smooth",
           height: window.innerHeight - 25,
           minHeight: window.innerHeight - 25,
+          width: window.innerWidth < mobilewidth ? '100vw' : 'calc(75vw - 40px)',
           backgroundColor: 'rgba(242, 242, 242)',
         }}
       >
@@ -2392,7 +2384,6 @@ function Consultas() {
       <div id="conteúdo vazio"
         className="scroll"
         style={{
-          flex: 2,
           display:
             window.innerWidth < mobilewidth && viewlista == 1
               ? "none"
@@ -2409,6 +2400,7 @@ function Consultas() {
           alignItems: "center",
           height: window.innerHeight - 25,
           minHeight: window.innerHeight - 25,
+          width: window.innerWidth < mobilewidth ? '100vw' : 'calc(75vw - 40px)',
           position: "relative",
           scrollBehavior: "smooth",
           backgroundColor: 'rgba(242, 242, 242)'

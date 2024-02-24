@@ -4,7 +4,7 @@ import axios from "axios";
 import Context from "./Context";
 import moment from "moment";
 // imagens.
-import back from '../images/back.svg';
+import power from '../images/power.svg';
 import refresh from "../images/refresh.svg";
 import salvar from "../images/salvar.svg";
 import "moment/locale/pt-br";
@@ -12,6 +12,7 @@ import "moment/locale/pt-br";
 import { useHistory } from "react-router-dom";
 // functions.
 import modal from "../functions/modal";
+import selector from "../functions/selector";
 
 function Farmacia() {
 
@@ -133,14 +134,14 @@ function Farmacia() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}>
         <div className='button-red'
-          title={'VOLTAR PARA O PASSÔMETRO'}
+          title={'SAIR'}
           onClick={() => {
             setpagina(0);
             history.push('/');
           }}>
           <img
             alt=""
-            src={back}
+            src={power}
             style={{
               margin: 0,
               height: 30,
@@ -215,7 +216,7 @@ function Farmacia() {
                         }}
                       >
                         <div
-                          className="button-yellow"
+                          className="button"
                           style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -226,7 +227,7 @@ function Farmacia() {
                             minHeight: 100,
                             height: 100,
                             width: 60,
-                            backgroundColor: 'rgba(0,0,0, 0.6)'
+                            backgroundColor: '#004c4c'
                           }}
                         >
                           <div
@@ -259,17 +260,7 @@ function Farmacia() {
                             setpaciente(item.id_paciente);
                             loadPrescricao(item.id_atendimento);
                             if (pagina == 8) {
-                              setTimeout(() => {
-                                var botoes = document
-                                  .getElementById("scroll atendimentos com pacientes")
-                                  .getElementsByClassName("button-red");
-                                for (var i = 0; i < botoes.length; i++) {
-                                  botoes.item(i).className = "button";
-                                }
-                                document.getElementById(
-                                  "atendimento " + item.id_atendimento
-                                ).className = "button-red";
-                              }, 100);
+                              selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                             }
                           }}
                         >
@@ -343,15 +334,7 @@ function Farmacia() {
               setlistaprescricao([]);
               setarraylistaprescricao([]);
               setarrayatendimentos(atendimentos.filter(valor => valor.id_unidade == item.id_unidade));
-              setTimeout(() => {
-                var botoes = document
-                  .getElementById("lista de unidades")
-                  .getElementsByClassName("button-red");
-                for (var i = 0; i < botoes.length; i++) {
-                  botoes.item(i).className = "button";
-                }
-                document.getElementById("unidade" + item.id_unidade).className = "button-red";
-              }, 300);
+              selector("lista de unidades", "unidade" + item.id_unidade, 300);
             }}
           >
             {item.nome_unidade}

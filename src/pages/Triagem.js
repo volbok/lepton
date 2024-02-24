@@ -343,11 +343,11 @@ function Triagem() {
                 color: item == 'AMARELO' ? 'rgb(97, 99, 110, 1)' : '',
                 fontSize: 12,
                 backgroundColor:
-                  item == 'AZUL' ? 'blue' :
-                    item == 'VERDE' ? 'green' :
-                      item == 'AMARELO' ? 'yellow' :
-                        item == 'LARANJA' ? 'orange' :
-                          item == 'VERMELHO' ? 'red' : ''
+                  item == 'AZUL' ? '#85C1E9' :
+                    item == 'VERDE' ? 'rgb(82, 190, 128, 1)' :
+                      item == 'AMARELO' ? '#F9E79F' :
+                        item == 'LARANJA' ? '#F8C471' :
+                          item == 'VERMELHO' ? '#EC7063' : ''
               }}
             >
               {item}
@@ -392,7 +392,7 @@ function Triagem() {
           style={{
             color: classificacao == 'AMARELO' ? 'rgb(97, 99, 110, 1)' : '',
             backgroundColor:
-              classificacao == 'AZUL' ? 'blue' : classificacao == 'VERDE' ? 'green' : classificacao == 'AMARELO' ? 'yellow' : classificacao == 'LARANJA' ? 'orange' : classificacao == 'VERMELHO' ? 'red' : 'grey',
+              classificacao == 'AZUL' ? '#85C1E9' : classificacao == 'VERDE' ? 'rgb(82, 190, 128, 1)' : classificacao == 'AMARELO' ? '#F9E79F' : classificacao == 'LARANJA' ? '#F8C471' : classificacao == 'VERMELHO' ? '#EC7063 ' : '#CCD1D1',
             padding: 10, paddingLeft: 20, paddingRight: 20,
             width: 100,
             alignSelf: 'center',
@@ -530,7 +530,7 @@ function Triagem() {
                       minHeight: 100,
                       height: 100,
                       width: 100, minWidth: 100, maxWidth: 100,
-                      backgroundColor: 'grey',
+                      backgroundColor: '#006666',
                     }}
                   >
                     <div>
@@ -544,13 +544,12 @@ function Triagem() {
                       flexDirection: 'row', margin: 5, marginBottom: 0
                     }}>
                       <div
-                        className="button-opaque"
+                        className="button-red"
                         style={{
                           display: 'flex',
                           margin: 5, marginRight: 0,
                           minHeight: 35, maxHeight: 35, minWidth: 35, maxWidth: 35,
                           borderTopRightRadius: 0, borderBottomRightRadius: 0,
-                          backgroundColor: 'rgba(231, 76, 60, 0.8)'
                         }}
                         onClick={() => {
                           callPaciente(item);

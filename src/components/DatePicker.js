@@ -5,7 +5,7 @@ import moment from 'moment';
 import Context from '../pages/Context';
 // imagens.
 import salvar from '../images/salvar.svg';
-import deletar from '../images/deletar.svg';
+import back from '../images/back.svg';
 
 function DatePicker() {
 
@@ -169,14 +169,14 @@ function DatePicker() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="btnCancel"
-            className="button-red"
+            className="button-yellow"
             title="FECHAR O DATEPICKER"
             onClick={() => { setviewdatepicker(0) }}
             style={{ width: 50, height: 50, alignSelf: 'center' }}
           >
             <img
               alt=""
-              src={deletar}
+              src={back}
               style={{
                 margin: 10,
                 height: 30,
@@ -227,7 +227,7 @@ function DatePicker() {
             margin: 0,
             padding: 0, paddingRight: 5,
             width: window.innerWidth < 426 ? 'calc(100vw - 20px)' : 400,
-            height: window.innerWidth < 426 ? '100vh' : '85vh',
+            // height: window.innerWidth < 426 ? '100vh' : '85vh',
             borderRadius: window.innerWidth < 426 ? 0 : 5,
           }}>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -313,7 +313,7 @@ function DatePicker() {
               {arraylist.map((item) => (
                 <button
                   key={'dia ' + item}
-                  className={viewdatepicker == 1 && item == pickdate1 ? "button-red" : viewdatepicker == 2 && item == pickdate2 ? "button-red" : "button"}
+                  className={viewdatepicker == 1 && item == pickdate1 ? "button-selected" : viewdatepicker == 2 && item == pickdate2 ? "button-selected" : "button"}
                   onClick={(e) => { selectDate(item); e.stopPropagation() }}
                   style={{
                     height: 50,

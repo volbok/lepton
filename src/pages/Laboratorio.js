@@ -11,6 +11,8 @@ import deletar from '../images/deletar.svg';
 // router.
 import { useHistory } from "react-router-dom";
 import toast from '../functions/toast';
+// funções.
+import selector from "../functions/selector";
 
 
 function Laboratorio() {
@@ -93,13 +95,13 @@ function Laboratorio() {
               width: 'calc(100% - 60px)'
             }}>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-              <div className='button-red' style={{ marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 80 }}>
-                {unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade)}
+              <div className='button' style={{ marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 200, backgroundColor: '#006666' }}>
+                {unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => 'UNIDADE: ' + item.nome_unidade)}
               </div>
               <div className='button' style={{ marginLeft: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: 80 }}>
                 {'LEITO: ' + valor.leito}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-start', fontSize: 16, alignSelf: 'center' }}>{valor.nome_paciente}</div>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', fontSize: 16, alignSelf: 'center', marginLeft: 10 }}>{valor.nome_paciente}</div>
             </div>
             <div id="lista de exames para preenchimento dos resultados"
               style={{
@@ -116,7 +118,8 @@ function Laboratorio() {
                   <div className="button-yellow" style={{
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                     marginRight: 0,
-                    borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 70
+                    borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 70,
+                    backgroundColor: '#006666',
                   }}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5 }}>
                       <div>
@@ -293,7 +296,7 @@ function Laboratorio() {
   }
 
   // tela para manejo das opções de exames laboratoriais (setup).
-  let arraymaterial = ['SANGUE', 'URINA', 'FEZES', 'ESCARRO', 'SECREÇÃO', 'LÍQUIDO EM GERAL']
+  let arraymaterial = ['SANGUE', 'URINA', 'FEZES', 'ESCARRO', 'SECREÇÃO', 'LÍQUIDO EM GERAL', 'RX', 'USG', 'TOMOGRAFIA']
   const [viewopcoeslaboratorio, setviewopcoeslaboratorio] = useState(0);
   function ViewOpcoesLaboratorio() {
     let material = null;
@@ -306,7 +309,7 @@ function Laboratorio() {
         <div className="janela" style={{ display: 'flex', flexDirection: 'row' }}>
           <div id='coluna 01 - lista de opcoes de exames cadastrados'
             className='scroll'
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '40vw', height: '50vh', marginRight: 10 }}
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '40vw', height: '70vh', marginRight: 10 }}
           >
             <FilterOpcaolaboratorio></FilterOpcaolaboratorio>
             {arrayopcoeslaboratorio.map(item => (
@@ -316,15 +319,15 @@ function Laboratorio() {
                   className='button'
                   style={{
                     opacity: item.disponivel == 1 ? 1 : 0.5,
-                    backgroundColor: item.disponivel == 1 ? 'green' : 'red',
-                    width: 35, minWidth: 35, maxWidth: 35,
-                    height: 35, minHeight: 35, maxHeight: 35,
+                    backgroundColor: item.disponivel == 1 ? 'rgb(82, 190, 128, 1)' : '#EC7063',
+                    width: 20, minWidth: 20, maxWidth: 20,
+                    height: 20, minHeight: 20, maxHeight: 20,
                   }}
                   onClick={() => updateOpcaoLaboratorio(item)}
                 >
                 </div>
                 <div id="botão para excluir o exame"
-                  className='button-red'
+                  className='button-yellow'
                   style={{
                     width: 35, minWidth: 35, maxWidth: 35,
                     height: 35, minHeight: 35, maxHeight: 35,
@@ -347,7 +350,7 @@ function Laboratorio() {
           </div>
           <div id='coluna 02 - campos para inserir nova opcao de exame laboratorial'
             className='scroll'
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '40vw' }}
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '40vw', height: '70vh' }}
           >
             <div className='text1'>NOME DO EXAME</div>
             <input
@@ -374,13 +377,7 @@ function Laboratorio() {
                 <div className='button' id={"material " + item} style={{ width: 200 }}
                   onClick={() => {
                     material = item;
-                    var botoes = document
-                      .getElementById("lista de materiais")
-                      .getElementsByClassName("button-red");
-                    for (var i = 0; i < botoes.length; i++) {
-                      botoes.item(i).className = "button";
-                    }
-                    document.getElementById("material " + item).className = "button-red";
+                    selector("lista de materiais", "material " + item, 100);
                   }}
                 >
                   {item}
@@ -406,7 +403,7 @@ function Laboratorio() {
                 ></img>
               </div>
               <div id="botão para sair da tela de configuração dos exames"
-                className='button-red'
+                className='button-yellow'
                 style={{
                   display: 'flex',
                   alignSelf: 'center',
@@ -434,25 +431,17 @@ function Laboratorio() {
       <div id="lista de unidades"
         className='scroll cor0'
         style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
           overflowY: 'hidden', overflowX: 'scroll',
-          width: 500, marginLeft: 10
+          width: '60vw', marginLeft: 10
         }}>
         {unidades.map(item => (
           <div id={"unidade" + item.id_unidade}
             className="button"
-            style={{ width: 100 }}
+            style={{ width: 200, minWidth: 200 }}
             onClick={() => {
               setarrayatendimentos(atendimentos.filter(valor => valor.id_unidade == item.id_unidade));
-              setTimeout(() => {
-                var botoes = document
-                  .getElementById("lista de unidades")
-                  .getElementsByClassName("button-red");
-                for (var i = 0; i < botoes.length; i++) {
-                  botoes.item(i).className = "button";
-                }
-                document.getElementById("unidade" + item.id_unidade).className = "button-red";
-              }, 300);
+              selector("lista de unidades", "unidade" + item.id_unidade, 300);
             }}
           >
             {item.nome_unidade}

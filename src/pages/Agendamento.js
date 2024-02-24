@@ -4,6 +4,7 @@ import Context from './Context';
 import axios from 'axios';
 // imagens.
 // import salvar from '../images/salvar.svg';
+import power from "../images/power.svg";
 import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
 import moment from "moment";
@@ -20,7 +21,7 @@ function Agendamento() {
     hospital,
     pacientes, setpacientes,
     paciente,
-    setdialogo
+    setdialogo,
   } = useContext(Context);
 
   useEffect(() => {
@@ -181,28 +182,6 @@ function Agendamento() {
       });
   };
 
-  // atualizando um atendimento (mudando de leito).
-  /*
-  const updateAtendimento = (item, situacao) => {
-    var obj = {
-      data_inicio: item.data_inicio,
-      data_termino: item.data_termino,
-      problemas: item.problemas,
-      id_paciente: item.id_paciente,
-      id_unidade: unidade,
-      nome_paciente: item.nome_paciente,
-      leito: null,
-      situacao: situacao,
-      id_cliente: hospital,
-      classificacao: item.classificacao,
-      id_profissional: item.id_profissional,
-    };
-    axios
-      .post(html + "update_atendimento/" + item.id_atendimento, obj)
-      .then(() => { console.log('AGENDAMENTO DE CONSULTA ATUALIZADO COM SUCESSO') });
-  };
-  */
-
   // excluir um atendimento.
   const deleteAtendimento = (id) => {
     console.log(parseInt(id));
@@ -223,10 +202,12 @@ function Agendamento() {
           width: 'calc(100vw - 40px)',
           height: "calc(100vh - 110px)",
           margin: 5,
+          flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'flex-start',
         }}
         onClick={(e) => e.stopPropagation(e)}
       >
         <FilterEspecialista></FilterEspecialista>
+
         {arrayespecialistas
           .sort((a, b) => (a.nome_usuario > b.nome_usuario ? 1 : -1))
           .map((item) => (
@@ -234,32 +215,40 @@ function Agendamento() {
               key={"usuarios " + Math.random()}
               style={{
                 display: arrayespecialistas.length > 0 ? "flex" : "none",
-                flexDirection: "column",
-                justifyContent: "center",
+                // flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                width: 'calc((100vw - 40px)/4 - 30px)', minWidth: 'calc((100vw - 40px)/4 - 30px)',
+                height: 200,
+              }}
+              className="button"
+              id={"usuario " + item.id_usuario}
+              onClick={() => {
+                setselectedespecialista(item);
               }}
             >
               <div
-                className="button"
-                id={"usuario " + item.id_usuario}
-                onClick={() => {
-                  setselectedespecialista(item);
-                }}
-                style={{
-                  justifyContent: "space-between",
-                }}
+                className='button-green'
+                style={{ width: 'calc(100% - 20px)', backgroundColor: '#004c4c80' }}
               >
-                <div style={{ margin: 5, textAlign: 'left' }}>
-                  {item.nome_usuario}
-                </div>
-                <div
-                  className='button-green'
-                  style={{ width: 200, maxWidth: 200, minWidth: 200 }}
-                >
-                  {item.tipo_usuario}
-                </div>
+                {item.tipo_usuario}
+              </div>
+              <div style={{ margin: 5, marginTop: 10, marginBottom: 0, textAlign: 'left', opacity: 0.6 }}>
+                {'PROFISSIONAL:'}
+              </div>
+              <div style={{ margin: 5, marginTop: 0, textAlign: 'left' }}>
+                {item.nome_usuario.length > 25 ? item.nome_usuario.slice(0, 25) + '...' : item.nome_usuario}
+              </div>
+              <div style={{ margin: 5, marginTop: 5, marginBottom: 0, textAlign: 'left', opacity: 0.6 }}>
+                {'CONSELHO:'}
+              </div>
+              <div style={{ margin: 5, marginTop: 0, textAlign: 'left' }}>
+                {item.conselho + ' - ' + item.n_conselho}
               </div>
             </div>
-          ))}
+          ))
+        }
         <div
           className="text1"
           style={{
@@ -270,7 +259,7 @@ function Agendamento() {
         >
           SEM USUÁRIOS CADASTRADOS NA APLICAÇÃO
         </div>
-      </div>
+      </div >
     );
     // eslint-disable-next-line
   };
@@ -433,7 +422,7 @@ function Agendamento() {
             {arraylist.map((item) => (
               <button
                 key={'dia ' + item}
-                className={selectdate == item ? "button-red" : "button"}
+                className={selectdate == item ? "button-selected" : "button"}
                 onClick={(e) => {
                   setselectdate(item);
                   mountHorarios(item);
@@ -511,12 +500,13 @@ function Agendamento() {
                 >
                   <div
                     id={"atendimento " + item.id_atendimento}
-                    className="button-yellow"
+                    className="button"
                     style={{
                       flex: 1,
                       marginRight: 0,
                       borderTopRightRadius: 0,
                       borderBottomRightRadius: 0,
+                      backgroundColor: '#006666',
                     }}>
                     {moment(item.data_inicio).format('HH:mm') + ' ÀS ' + moment(item.data_termino).format('HH:mm')}
                   </div>
@@ -560,7 +550,7 @@ function Agendamento() {
                       </div>
                       <div id="btn deletar agendamento de consulta"
                         title="DESMARCAR CONSULTA"
-                        className="button-red"
+                        className="button-yellow"
                         onClick={() => {
                           modal(
                             setdialogo,
@@ -641,12 +631,13 @@ function Agendamento() {
                 >
                   <div
                     id={"atendimento " + item.id_atendimento}
-                    className="button-yellow"
+                    className="button"
                     style={{
                       flex: 1,
                       marginRight: 0,
                       borderTopRightRadius: 0,
                       borderBottomRightRadius: 0,
+                      backgroundColor: '#006666',
                     }}>
                     {moment(item.data_inicio).format('HH:mm') + ' ÀS ' + moment(item.data_termino).format('HH:mm')}
                   </div>
@@ -660,40 +651,30 @@ function Agendamento() {
                       borderBottomLeftRadius: 0,
                     }}                    >
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          padding: 5,
-                          alignSelf: 'center',
-                        }}
-                      >
-                        <div style={{ marginRight: 5 }}>
-                          {pacientes.filter(
-                            (valor) => valor.id_paciente == item.id_paciente
-                          )
-                            .map((valor) => valor.nome_paciente + ', ')}
-                        </div>
-                        <div>
-                          {moment().diff(
-                            moment(
-                              pacientes
-                                .filter(
-                                  (valor) => valor.id_paciente == item.id_paciente
-                                )
-                                .map((item) => item.dn_paciente)
-                            ),
-                            "years"
-                          ) + " ANOS"}
-                        </div>
+                      <div className='text2' style={{ marginRight: 5 }}>
+                        {pacientes.filter(
+                          (valor) => valor.id_paciente == item.id_paciente
+                        )
+                          .map((valor) => valor.nome_paciente + ', ')}
+                      </div>
+                      <div className='text2'>
+                        {moment().diff(
+                          moment(
+                            pacientes
+                              .filter(
+                                (valor) => valor.id_paciente == item.id_paciente
+                              )
+                              .map((item) => item.dn_paciente)
+                          ),
+                          "years"
+                        ) + " ANOS"}
                       </div>
                       <div className='text2'>
                         {'PROFISSIONAL: ' + especialistas.filter(valor => valor.id_usuario == item.id_profissional).map(valor => valor.nome_usuario)}
                       </div>
                       <div id="btn deletar agendamento de consulta"
                         title="DESMARCAR CONSULTA"
-                        className="button-red"
+                        className="button-yellow"
                         onClick={() => {
                           modal(
                             setdialogo,
@@ -771,7 +752,7 @@ function Agendamento() {
           }}
           onClick={(e) => e.stopPropagation()}>
           <div id="botão para sair da tela de seleção dos horários"
-            className="button-red" style={{
+            className="button-yellow" style={{
               maxHeight: 50, maxWidth: 50,
               position: 'sticky', top: 10, right: 10, alignSelf: 'flex-end'
             }}
@@ -826,7 +807,7 @@ function Agendamento() {
             }}>
             <img
               alt=""
-              src={back}
+              src={power}
               style={{ width: 30, height: 30 }}
             ></img>
           </div>

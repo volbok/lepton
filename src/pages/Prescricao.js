@@ -9,7 +9,6 @@ import { useHistory } from 'react-router-dom';
 // funções.
 import toast from '../functions/toast';
 // imagens.
-import logo from '../images/logo.svg';
 import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
 import back from '../images/back.svg';
@@ -20,6 +19,10 @@ import refresh from '../images/refresh.svg';
 import print from '../images/imprimir.svg';
 import copiar from '../images/copiar.svg';
 import preferencias from '../images/preferencias.svg';
+// componentes.
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import selector from '../functions/selector';
 
 function Prescricao() {
 
@@ -40,7 +43,6 @@ function Prescricao() {
     atendimentos,
     atendimento,
     unidade,
-    unidades,
     paciente, pacientes,
     card, setcard,
     idprescricao, setidprescricao,
@@ -134,7 +136,7 @@ function Prescricao() {
       console.log(JSON.stringify(obj));
       loadOpcoesPrescricao();
       limpaCampos()
-      toast(settoast, 'COMPOENENTE DE PRESCRIÇÃO REGISTRADO COM SUCESSO.', 'green', 2000);
+      toast(settoast, 'COMPOENENTE DE PRESCRIÇÃO REGISTRADO COM SUCESSO.', 'rgb(82, 190, 128, 1)', 2000);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -182,7 +184,7 @@ function Prescricao() {
     }
     axios.post(html + 'update_opcoes_prescricao/' + id, obj).then(() => {
       loadOpcoesPrescricao();
-      toast(settoast, 'ITEM DE PRESCRIÇÃO ATUALIZADO COM SUCESSO', 'green', 3000);
+      toast(settoast, 'ITEM DE PRESCRIÇÃO ATUALIZADO COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -480,7 +482,7 @@ function Prescricao() {
         opcoesprescricao.filter(valor => valor.id_componente_filho == item.id_componente_pai).map(valor => insertComponentePrescricao(random, valor, lastIdItemPrescricao));
         loadItensPrescricao();
         setTimeout(() => {
-          document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+          document.getElementById("item de prescrição " + idprescricao).className = "button-selected";
         }, 600);
       }, 2000);
     })
@@ -522,7 +524,7 @@ function Prescricao() {
         if (expand == 1) {
           lockElements(1);
         }
-        document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+        document.getElementById("item de prescrição " + idprescricao).className = "button-selected";
       }, 600);
 
     })
@@ -588,7 +590,7 @@ function Prescricao() {
       loadItensPrescricao();
       setTimeout(() => {
         lockElements(1);
-        document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+        document.getElementById("item de prescrição " + idprescricao).className = "button-selected";
       }, 600);
     });
   }
@@ -668,7 +670,7 @@ function Prescricao() {
   function FilterOpcoesItemPrescricao() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
-        <div className='button-red'
+        <div className='button-yellow'
           style={{ margin: 0, marginRight: 10, width: 50, height: 50 }}
           onClick={() => { setopcoesitensmenu(0) }}>
           <img
@@ -873,15 +875,7 @@ function Prescricao() {
 
               localStorage.setItem('id', item.id);
               setstatusprescricao(item.status);
-              setTimeout(() => {
-                var botoes = document
-                  .getElementById("scroll lista de prescrições")
-                  .getElementsByClassName("button-red");
-                for (var i = 0; i < botoes.length; i++) {
-                  botoes.item(i).className = "button";
-                }
-                document.getElementById("item de prescrição " + item.id).className = "button-red";
-              }, 600);
+              selector("scroll lista de prescrições", "item de prescrição " + item.id, 600);
             }}
           >
             <div id="conjunto de botoes do item de prescricao"
@@ -1210,7 +1204,7 @@ function Prescricao() {
             style={{
               display: idprescricao != 0 ? 'flex' : 'none',
               flexDirection: 'column', justifyContent: 'center',
-              pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto'
+              pointerEvents: arraylistaprescricao.filter(valor => valor.id == item.id_prescricao).map(valor => parseInt(valor.status)) == 1 ? 'none' : 'auto', zIndex: 5,
             }}>
             <div className='row'
               style={{
@@ -1242,7 +1236,7 @@ function Prescricao() {
                       });
                     }
                     setTimeout(() => {
-                      document.getElementById("item de prescrição " + idprescricao).className = "button-red";
+                      document.getElementById("item de prescrição " + idprescricao).className = "button-selected";
                     }, 600);
                   }}
                   style={{
@@ -1262,7 +1256,7 @@ function Prescricao() {
                       position: 'relative',
                       display: item.categoria == '1. ANTIMICROBIANOS' ? 'flex' : 'none',
                       backgroundColor: '#5DADE2',
-                      minHeight: 20, maxHeight: 20, height: 20, minWidth: 25, width: '', zIndex: 200,
+                      minHeight: 20, maxHeight: 20, height: 20, minWidth: 25, width: '', zIndex: 10,
                     }}
                   >
                     {prescricao.filter(valor => valor.nome_item == item.nome_item && item.categoria == '1. ANTIMICROBIANOS').sort((a, b) => moment(a.data).startOf('day') < moment(b.data).startOf('day') ? 1 : -1).slice(-1).map(item => moment(dataprescricao).startOf('day').diff(moment(item.data).startOf('day'), 'days'))}
@@ -1350,7 +1344,7 @@ function Prescricao() {
                   </div>
                 </div>
                 <div id="botao para excluir item de prescricao"
-                  className={'button-red'}
+                  className={'button-yellow'}
                   title={'EXCLUIR ITEM DE PRESCRIÇÃO.'}
                   onClick={(e) => { deleteItemPrescricao(item) }}>
                   <img
@@ -1427,7 +1421,7 @@ function Prescricao() {
                           defaultValue={valor.qtde_item}
                           maxLength={3}
                         ></input>
-                        <div className={'button-red'}
+                        <div className={'button-yellow'}
                           style={{
                             display: 'flex',
                             marginRight: 5,
@@ -1548,11 +1542,7 @@ function Prescricao() {
                         setvia(item.via);
                         setfreq(item.freq);
                         setobs(item.obs);
-                        var botoes = document.getElementById("scroll itens").getElementsByClassName("button-red");
-                        for (var i = 0; i < botoes.length; i++) {
-                          botoes.item(i).className = "button";
-                        }
-                        document.getElementById("optionItem " + item.id).className = "button-red";
+                        selector("scroll itens", "optionItem " + item.id, 100);
                       }, 200);
                     }}
                   >
@@ -1632,7 +1622,7 @@ function Prescricao() {
               </div>
             </div>
           </div>
-          <div className="button-red"
+          <div className="button-selected"
             style={{ display: id != null ? 'flex' : 'none', width: '80%', alignSelf: 'center', margin: 20 }}
             onClick={() => limpaCampos()}
           >
@@ -1697,7 +1687,7 @@ function Prescricao() {
                   defaultValue={item.qtde_item}
                   maxLength={3}
                 ></input>
-                <div className='button-red'
+                <div className='button-yellow'
                   style={{ margin: 0, width: 40, height: 40, minWidth: 40, minHeight: 40 }}
                   title={'EXCLUIR COMPLEMENTO.'}
                   onClick={() => { deleteOpcaoItemPrescricao(item.id) }}>
@@ -1728,7 +1718,7 @@ function Prescricao() {
             display: 'flex',
             height: 230, width: '40vw'
           }}>
-          {arrayopcoesprescricao.filter(item => item.id_componente_pai == null && item.id_componente_filho == null).map(item => (
+          {opcoesprescricao.filter(item => item.id_componente_pai == null && item.id_componente_filho == null).map(item => (
             <div
               id={"optionItem " + item.id}
               className={'button'}
@@ -2096,87 +2086,6 @@ function Prescricao() {
       </div>
     )
   };
-  function Header() {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-          height: 100, width: '100%',
-          fontFamily: 'Helvetica',
-          breakInside: 'avoid',
-        }}>
-          <img
-            alt=""
-            src={logo}
-            style={{
-              margin: 0,
-              height: 100,
-              width: 100,
-            }}
-          ></img>
-          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
-            PRESCRIÇÃO MÉDICA
-          </div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            borderRadius: 5, backgroundColor: 'gray', color: 'white',
-            padding: 10
-          }}>
-            <div>
-              {moment(selectitemprescricao.data).format('DD/MM/YY - HH:mm')}
-            </div>
-            <div style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-              fontSize: 20,
-              fontFamily: 'Helvetica',
-              breakInside: 'avoid',
-            }}>
-              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
-            </div>
-            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
-            <div>{'ATENDIMENTO: ' + atendimento}</div>
-          </div>
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
-          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'row', fontFamily: 'Helvetica', marginTop: 20 }}>
-          <div style={{ margin: 5, width: 20 }}>{''}</div>
-          <div style={{ margin: 5, width: 440 }}>{'ITEM'}</div>
-          <div style={{ margin: 5, width: 60 }}>{'QTDE'}</div>
-          <div style={{ margin: 5, width: 60 }}>{'VIA'}</div>
-          <div style={{ margin: 5, width: 60 }}>{'FREQ'}</div>
-          <div style={{ margin: 5, width: 200 }}>{'CONDIÇÃO'}</div>
-        </div>
-      </div>
-    )
-  }
-  function Footer() {
-    return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        height: 100, width: '100%',
-        fontFamily: 'Helvetica',
-        breakInside: 'avoid',
-      }}>
-        <div className="text1">
-          _______________________________________________
-        </div>
-        <div className="text1">
-          {'PROFISSIONAL: ' + arraylistaprescricao.filter(valor => valor.id == idprescricao).map(valor => valor.nome_profissional)}
-        </div>
-        <div className="text1">
-          {'REGISTRO PROFISSIONAL: ' + arraylistaprescricao.filter(valor => valor.id == idprescricao).map(valor => valor.registro_profissional)}
-        </div>
-      </div>
-    )
-  }
 
   function MontaPrazos({ freq }) {
     let arrayprazos = [];
@@ -2397,35 +2306,41 @@ function Prescricao() {
           onClick={(e) => e.stopPropagation()}
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            maxHeight: '80vh', maxWwidth: '70vw'
-          }}
+            maxHeight: '70vh', maxWidth: 520}}
         >
-          <div className='text1'>{'MODELOS DE PRESCRIÇÃO PERSONALIZADAS'}</div>
-          {modelosprescricao.map(item => (
-            <div className='button'
-              style={{ width: 150, height: 150, position: 'relative' }}
-              onClick={() => copiaModeloPrescricao(item.id_modelo_prescricao, item.key_modelo)}
-            >
-              <div>
-                {item.nome_prescricao}
+          <div className='text1'>{'MODELOS DE PRESCRIÇÃO PERSONALIZADOS'}</div>
+          <div
+            style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+              flexWrap: 'wrap',
+            }}
+          >
+            {modelosprescricao.map(item => (
+              <div className='button'
+                style={{ width: 150, height: 150, position: 'relative' }}
+                onClick={() => copiaModeloPrescricao(item.id_modelo_prescricao, item.key_modelo)}
+              >
+                <div>
+                  {item.nome_prescricao}
+                </div>
+                <div id="botão para deletar modelo de prescrição."
+                  className="button-yellow"
+                  onClick={(e) => { deleteModeloPrescricao(item.id_modelo_prescricao, item.key_modelo); e.stopPropagation() }}
+                  style={{
+                    position: 'absolute', top: 10, right: 10,
+                    display: 'flex',
+                    alignSelf: 'center',
+                    minHeight: 30, maxHeight: 30, minWidth: 30, maxWidth: 30
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{ width: 20, height: 20 }}
+                  ></img>
+                </div>
               </div>
-              <div id="botão para deletar modelo de prescrição."
-                className="button-red"
-                onClick={(e) => { deleteModeloPrescricao(item.id_modelo_prescricao, item.key_modelo); e.stopPropagation() }}
-                style={{
-                  position: 'absolute', top: 10, right: 10,
-                  display: 'flex',
-                  alignSelf: 'center',
-                  minHeight: 30, maxHeight: 30, minWidth: 30, maxWidth: 30
-                }}>
-                <img
-                  alt=""
-                  src={deletar}
-                  style={{ width: 20, height: 20 }}
-                ></img>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     )

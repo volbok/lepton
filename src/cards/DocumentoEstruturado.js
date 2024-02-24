@@ -4,28 +4,31 @@ import Context from '../pages/Context';
 import moment from 'moment';
 import axios from 'axios';
 // imagens.
-import logo from '../images/logo.svg';
 import back from '../images/back.svg';
 import print from '../images/imprimir.svg';
 import copiar from '../images/copiar.svg';
 import novo from '../images/novo.svg';
 import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
+// funções.
+import selector from '../functions/selector';
+// componentes.
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function DocumentoEstruturado() {
 
   // context.
   const {
     html,
-    unidades, unidade,
     atendimento,
-    atendimentos,
     paciente,
     pacientes,
     card, setcard,
     usuarios,
     usuario,
     tipodocumento, settipodocumento,
+    selecteddocumento, setselecteddocumento,
   } = useContext(Context);
 
   useEffect(() => {
@@ -77,7 +80,7 @@ function DocumentoEstruturado() {
         console.log(iddocumento);
         // inserir campos estruturados correspondentes.
         insertGrupoCamposEstruturados(iddocumento, tipodocumento, obj);
-        setselecteddocumentoestruturado([]);
+        setselecteddocumento([]);
       })
     })
   }
@@ -93,7 +96,7 @@ function DocumentoEstruturado() {
     axios.post(html + 'update_documento_estruturado/' + item.id, obj).then(() => {
       loadDocumentosEstruturados(tipodocumento);
       loadCamposEstruturados(null);
-      setselecteddocumentoestruturado([]);
+      setselecteddocumento([]);
     })
   }
 
@@ -144,7 +147,7 @@ function DocumentoEstruturado() {
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '31 - DOCUMENTO', '', 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '32 - DOCUMENTO DO PROFISSIONAL SOLICITANTE', '', 50, 1, 1);
 
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '33 - NOME DO PROFISSIONAL SOLICITANTE/ASSISTENTE', usuarios.filter(valor => valor.id_usuario == selecteddocumentoestruturado.id_usuario).map(valor => valor.nome_usuario), 50, 2, 1);
+        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '33 - NOME DO PROFISSIONAL SOLICITANTE/ASSISTENTE', usuarios.filter(valor => valor.id_usuario == selecteddocumento.id_usuario).map(valor => valor.nome_usuario), 50, 2, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '34 - DATA DA SOLICITAÇÃO', moment().format('DD/MM/YYYY'), 50, 1, 1);
         insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '35 - ASSINTAURA E CARIMBO (Nº DO REGISTRO DO CONSELHO)', '', 50, 1, 1);
 
@@ -168,7 +171,7 @@ function DocumentoEstruturado() {
         x.map(item => deleteCampoEstruturado(item.id));
         loadDocumentosEstruturados(tipodocumento);
         loadCamposEstruturados(null);
-        setselecteddocumentoestruturado([]);
+        setselecteddocumento([]);
       });
     });
   }
@@ -257,7 +260,7 @@ function DocumentoEstruturado() {
               console.log('CAMPO COPIADO COM SUCESSO');
             });
           });
-          setselecteddocumentoestruturado([])
+          setselecteddocumento([])
           loadDocumentosEstruturados(tipodocumento);
           loadCamposEstruturados(null);
         });
@@ -266,7 +269,6 @@ function DocumentoEstruturado() {
   }
 
   // LISTA DE DOCUMENTOS ESTRUTURADOS CARREGADOS.
-  const [selecteddocumentoestruturado, setselecteddocumentoestruturado] = useState([]);
   const ListaDeDocumentosEstruturados = useCallback(() => {
     return (
       <div id="componente lista de documentos e botões"
@@ -318,15 +320,9 @@ function DocumentoEstruturado() {
             <div id={'documento estruturado' + item.id}
               className='button'
               onClick={() => {
-                setselecteddocumentoestruturado(item);
+                setselecteddocumento(item);
                 loadCamposEstruturados(item.id);
-                setTimeout(() => {
-                  var botoes = document.getElementById("lista de documentos estruturados").getElementsByClassName("button-red");
-                  for (var i = 0; i < botoes.length; i++) {
-                    botoes.item(i).className = "button";
-                  }
-                  document.getElementById('documento estruturado' + item.id).className = "button-red";
-                }, 500);
+                selector("lista de documentos estruturados", 'documento estruturado' + item.id, 500);
               }}
               style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 180 }}
             >
@@ -354,11 +350,9 @@ function DocumentoEstruturado() {
                     display: item.status == 0 ? 'flex' : 'none',
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25,
-                    marginLeft: 0,
-                    marginRight: item.status == 0 ? 5 : 0,
                   }}
                   onClick={(e) => {
-                    setselecteddocumentoestruturado(item);
+                    setselecteddocumento(item);
                     updateDocumentoEstruturado(item);
                     e.stopPropagation();
                   }}>
@@ -376,7 +370,7 @@ function DocumentoEstruturado() {
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0
                   }}
                   onClick={() => {
-                    setselecteddocumentoestruturado(item);
+                    setselecteddocumento(item);
                     copiarDocumentoEstruturado(item.id);
                   }}>
                   <img
@@ -390,10 +384,10 @@ function DocumentoEstruturado() {
                   style={{
                     display: item.status == 1 ? 'flex' : 'none',
                     alignSelf: 'center',
-                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0
+                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0, marginRight: 0,
                   }}
                   onClick={() => {
-                    setselecteddocumentoestruturado(item);
+                    setselecteddocumento(item);
                     printDiv()
                   }}>
                   <img
@@ -529,13 +523,7 @@ function DocumentoEstruturado() {
                 style={{ padding: 10 }}
                 onClick={() => {
                   updateCampoEstruturado(item, valor);
-                  setTimeout(() => {
-                    var botoes = document.getElementById('lista opcoes ' + item.id).getElementsByClassName("button-red");
-                    for (var i = 0; i < botoes.length; i++) {
-                      botoes.item(i).className = "button";
-                    }
-                    document.getElementById('btn ' + valor).className = "button-red";
-                  }, 500);
+                  selector('lista opcoes ' + item.id, 'btn ' + valor, 500);
                 }}
               >
                 {valor}
@@ -709,9 +697,9 @@ function DocumentoEstruturado() {
         }}>
         <div className='text1' style={{ fontSize: 16 }}>{tipodocumento}</div>
         <div style={{
-          display: selecteddocumentoestruturado != [] ? 'flex' : 'none',
+          display: selecteddocumento != [] ? 'flex' : 'none',
           flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',
-          pointerEvents: selecteddocumentoestruturado.status == 0 ? 'auto' : 'none',
+          pointerEvents: selecteddocumento.status == 0 ? 'auto' : 'none',
         }}>
           {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2)) ? 1 : -1).map(item => campo(item, item.tipocampo, item.titulo, item.valor, item.altura, item.largura, item.obrigatorio, item.opcoes))}
         </div>
@@ -728,7 +716,7 @@ function DocumentoEstruturado() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    // a.close();
+    a.close();
   }
   function PrintDocumento() {
     return (
@@ -767,86 +755,14 @@ function DocumentoEstruturado() {
       </div>
     )
   };
-  function Header() {
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column', justifyContent: 'center'
-      }}>
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-          height: 100, width: '100%',
-          fontFamily: 'Helvetica',
-          breakInside: 'avoid',
-        }}>
-          <img
-            alt=""
-            src={logo}
-            style={{
-              margin: 0,
-              height: 100,
-              width: 100,
-            }}
-          ></img>
-          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
-            {tipodocumento == 'AIH' ? 'LAUDO PARA SOLICITAÇÃO DE AUTORIZAÇÃO DE INTERNAÇÃO HOSPITALAR' : tipodocumento}
-          </div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            borderRadius: 5, backgroundColor: 'gray', color: 'white',
-            padding: 10, width: 300,
-          }}>
-            <div>
-              {moment().format('DD/MM/YY - HH:mm')}
-            </div>
-            <div style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-              fontSize: 20,
-              fontFamily: 'Helvetica',
-              breakInside: 'avoid',
-            }}>
-              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
-            </div>
-            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
-            <div>{'ATENDIMENTO: ' + atendimento}</div>
-          </div>
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
-          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
-        </div>
-      </div>
-    )
-  }
-  function Footer() {
-    return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        height: 100, width: '100%',
-        fontFamily: 'Helvetica',
-        breakInside: 'avoid',
-      }}>
-        <div className="text1">
-          ____________________________________________________________________
-        </div>
-        <div className="text1">
-          {'PROFISSIONAL: ' + usuarios.filter(valor => valor.id_usuario == selecteddocumentoestruturado.id_usuario).map(valor => valor.nome_usuario + ' - ' + valor.conselho + '-' + valor.n_conselho)}
-        </div>
-      </div>
-    )
-  }
+
   function Conteudo() {
     return (
       <div
         id="conteudo doc-estruturado"
         style={{
           display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
-          justifyContent: 'space-evenly',
+          justifyContent: 'center',
           fontFamily: 'Helvetica',
           breakInside: 'auto',
           whiteSpace: 'pre-wrap',

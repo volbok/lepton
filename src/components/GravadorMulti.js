@@ -48,19 +48,18 @@ function GravadorMulti({ funcao, campos }) {
           ></img>
         </div>
         <div id="lista de resultados"
-          className="button"
+          className="button-opaque"
           style={{
             alignSelf: 'center',
             width: window.innerWidth < 426 ? '70vw' : 150,
             minWidth: window.innerWidth < 426 ? '70vw' : '',
             maxWidth: window.innerWidth < 426 ? '70vw' : '',
-            backgroundColor: 'grey',
             display: btngravavoz == "gravando" ? 'flex' : 'none',
             flexDirection: 'column', justifyContent: 'center', padding: 20,
           }}>
           {campo + ' ' + transcript.toUpperCase()}
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div id="botão excluir" className='button-red'
+            <div id="botão excluir" className='button-yellow'
               style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
               onClick={(e) => {
                 SpeechRecognition.stopListening();

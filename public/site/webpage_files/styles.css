@@ -206,6 +206,21 @@ pre.code-format {
   align-self: center;
 }
 
+.minicards {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  background-color: #F9E79F;
+  color: rgb(31, 122, 140, 1);
+  font-weight: bolder;
+  width: 150px;
+  height: 150px;
+}
+
 .card {
   display: flex;
   flex-direction: column;

@@ -456,7 +456,7 @@ function Laboratorio() {
           <div key={'laboratorio ' + item.id}
             style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
           >
-            <div className="button-yellow" style={{
+            <div className="button-grey" style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
               marginRight: 0,
               borderTopRightRadius: 0, borderBottomRightRadius: 0,
@@ -497,9 +497,10 @@ function Laboratorio() {
                   {item.resultado != null ? item.resultado : 'PENDENTE'}
                 </div>
               </div>
-              <div className={item.status == 0 ? 'button-red' : item.status == 1 ? 'button-yellow' : 'button-green'}
+              <div className='button'
                 style={{
                   width: 150, margin: 5,
+                  backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
                 }}>
                 {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
               </div>
@@ -527,7 +528,7 @@ function Laboratorio() {
           <div key={'imagem ' + item.id}
             style={{ display: tipoexame == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
           >
-            <div className="button-green" style={{
+            <div className="button-grey" style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
               marginRight: 0,
               borderTopRightRadius: 0, borderBottomRightRadius: 0,
@@ -568,9 +569,10 @@ function Laboratorio() {
                   {item.resultado != null ? item.resultado : 'PENDENTE'}
                 </div>
               </div>
-              <div className={item.status == 0 ? 'button-red' : item.status == 1 ? 'button-yellow' : 'button-green'}
+              <div className='button'
                 style={{
                   width: 150, margin: 5,
+                  backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
                 }}>
                 {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
               </div>

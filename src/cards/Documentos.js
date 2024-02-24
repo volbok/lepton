@@ -3,11 +3,9 @@ import React, { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
 import moment from "moment";
-
 // funções.
-// import toast from '../functions/toast';
+import selector from '../functions/selector';
 // imagens.
-import logo from '../images/logo.svg';
 import print from '../images/imprimir.svg';
 import back from '../images/back.svg';
 import copiar from '../images/copiar.svg';
@@ -17,9 +15,10 @@ import salvar from '../images/salvar.svg';
 import novo from '../images/novo.svg';
 import deletar from '../images/deletar.svg';
 import checkinput from '../functions/checkinput';
-
 // componentes.
 import Cid10 from '../functions/cid10';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function Documentos() {
 
@@ -30,7 +29,6 @@ function Documentos() {
     usuario,
     pacientes,
     paciente,
-    unidade, unidades,
     atendimentos, // todos os registros de atendimento para a unidade selecionada.
     atendimento, // corresponde ao id_atendimento das tabela "atendimento".
     card, setcard,
@@ -49,55 +47,15 @@ function Documentos() {
 
     prescricao,
     mobilewidth,
+
+    selecteddocumento, setselecteddocumento,
   } = useContext(Context);
 
-  const loadDocumentos = (situacao, item, status) => {
+  const loadDocumentos = () => {
     axios.get(html + "list_documentos/" + atendimento).then((response) => {
       var x = response.data.rows;
       setdocumentos(x.sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1));
       setselecteddocumento([]);
-      /*
-      if (situacao == 'atualizar') {
-        document.getElementById('documento ' + item.id).className = "button-red";
-        setTimeout(() => {
-          if (status == 1) {
-            document.getElementById("inputFieldDocumento").value = x.filter(valor => valor.id == item.id).map(valor => valor.texto);
-            document.getElementById("inputFieldDocumento").style.pointerEvents = 'none';
-          } else {
-            document.getElementById("inputFieldDocumento").style.pointerEvents = 'auto';
-            document.getElementById("inputFieldDocumento").focus();
-          }
-        }, 500);
-      } else if (situacao == 'inserir') {
-        let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
-        setTimeout(() => {
-          var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
-          for (var i = 0; i < botoes.length; i++) {
-            botoes.item(i).className = "button";
-          }
-          document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
-          document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
-          document.getElementById("inputFieldDocumento").focus();
-        }, 500);
-      } else if (situacao == 'copiar') {
-        document.getElementById('documento ' + item.id).className = "button-red";
-        let novodocumento = x.filter(item => item.tipo_documento == tipodocumento).sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1);
-        document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'none';
-        setTimeout(() => {
-          var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
-          for (var i = 0; i < botoes.length; i++) {
-            botoes.item(i).className = "button";
-          }
-          setTimeout(() => {
-            document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).style.display = 'flex';
-            document.getElementById('documento ' + novodocumento.map(valor => valor.id).pop()).className = "button-red";
-            document.getElementById("inputFieldDocumento").value = novodocumento.map(valor => valor.texto).pop();
-            document.getElementById("inputFieldDocumento").focus();
-          }, 300);
-        }, 500);
-
-      }
-      */
     })
   }
 
@@ -537,7 +495,6 @@ function Documentos() {
     })
   }
 
-  const [selecteddocumento, setselecteddocumento] = useState([]);
   const ListaDeDocumentos = useCallback(() => {
     return (
       <div
@@ -604,11 +561,7 @@ function Documentos() {
                   } else {
                     document.getElementById("inputFieldDocumento").value = item.texto;
                   }
-                  var botoes = document.getElementById("lista de documentos").getElementsByClassName("button-red");
-                  for (var i = 0; i < botoes.length; i++) {
-                    botoes.item(i).className = "button";
-                  }
-                  document.getElementById('documento ' + item.id).className = "button-red";
+                  selector("lista de documentos", 'documento ' + item.id, 100);
                 }, 1000);
               }}
               style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 180 }}
@@ -637,8 +590,6 @@ function Documentos() {
                     display: item.status == 0 ? 'flex' : 'none',
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25,
-                    marginLeft: 0,
-                    marginRight: item.status == 0 ? 5 : 0,
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
@@ -676,7 +627,7 @@ function Documentos() {
                   style={{
                     display: item.status == 1 ? 'flex' : 'none',
                     alignSelf: 'center',
-                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0
+                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0, marginRight: 0,
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
@@ -947,7 +898,7 @@ function Documentos() {
           <thead style={{ width: '100%' }}>
             <tr style={{ width: '100%' }}>
               <td style={{ width: '100%' }}>
-                <Header></Header>
+                <Header selecteddocumento={selecteddocumento}></Header>
               </td>
             </tr>
           </thead>
@@ -975,79 +926,7 @@ function Documentos() {
       </div>
     )
   };
-  function Header() {
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column', justifyContent: 'center'
-      }}>
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-          height: 100, width: '100%',
-          fontFamily: 'Helvetica',
-          breakInside: 'avoid',
-        }}>
-          <img
-            alt=""
-            src={logo}
-            style={{
-              margin: 0,
-              height: 100,
-              width: 100,
-            }}
-          ></img>
-          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
-            {tipodocumento}
-          </div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            borderRadius: 5, backgroundColor: 'gray', color: 'white',
-            padding: 10
-          }}>
-            <div>
-              {moment(selecteddocumento.data).format('DD/MM/YY - HH:mm')}
-            </div>
-            <div style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-              fontSize: 20,
-              fontFamily: 'Helvetica',
-              breakInside: 'avoid',
-            }}>
-              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
-            </div>
-            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
-            <div>{'ATENDIMENTO: ' + atendimento}</div>
-          </div>
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
-          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
-        </div>
-      </div>
-    )
-  }
-  function Footer() {
-    return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        height: 100, width: '100%',
-        fontFamily: 'Helvetica',
-        breakInside: 'avoid',
-      }}>
-        <div className="text1">
-          _______________________________________________
-        </div>
-        <div className="text1">
-          {'PROFISSIONAL: ' + selecteddocumento.profissional}
-        </div>
-      </div>
-    )
-  }
+ 
   function Conteudo() {
     return (
       <div style={{

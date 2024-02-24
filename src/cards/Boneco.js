@@ -158,7 +158,7 @@ function Boneco() {
                   width: 30,
                 }}
               ></img>
-              <div className='text2'>
+              <div className='text2' style={{marginTop: 0}}>
                 {pickdate1}
               </div>
             </div>
@@ -210,7 +210,7 @@ function Boneco() {
           <button
             key={'dispositivos: ' + item}
             onClick={() => updateInvasoes(item)}
-            className={dispositivo == item ? "button-red" : "button"}
+            className={dispositivo == item ? "button-selected" : "button"}
             style={{ width: 150, margin: 2.5 }}
           >
             {item}
@@ -393,35 +393,35 @@ function Boneco() {
               flex: 5,
             }}>
               <div
-                className={grau == 1 ? "button-red" : "button"}
+                className={grau == 1 ? "button-selected" : "button"}
                 onClick={() => setgrau(1)}
                 style={{ flex: 1, minWidth: 100, height: 50 }}
               >
                 ESTÁGIO 1
               </div>
               <div
-                className={grau == 2 ? "button-red" : "button"}
+                className={grau == 2 ? "button-selected" : "button"}
                 onClick={() => setgrau(2)}
                 style={{ flex: 1, minWidth: 100, height: 50 }}
               >
                 ESTÁGIO 2
               </div>
               <div
-                className={grau == 3 ? "button-red" : "button"}
+                className={grau == 3 ? "button-selected" : "button"}
                 onClick={() => setgrau(3)}
                 style={{ flex: 1, minWidth: 100, height: 50 }}
               >
                 ESTÁGIO 3
               </div>
               <div
-                className={grau == 4 ? "button-red" : "button"}
+                className={grau == 4 ? "button-selected" : "button"}
                 onClick={() => setgrau(4)}
                 style={{ flex: 1, minWidth: 100, height: 50 }}
               >
                 ESTÁGIO 4
               </div>
               <div
-                className={grau == 5 ? "button-red" : "button"}
+                className={grau == 5 ? "button-selected" : "button"}
                 onClick={() => setgrau(5)}
                 style={{ flex: 1, minWidth: 100, height: 50 }}
               >
@@ -462,7 +462,7 @@ function Boneco() {
             <div id="botões para salvar ou excluir"
               style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
               <div
-                className="button-red"
+                className="button-yellow"
                 onClick={() => { setshowinfolesoes(0) }}
               >
                 <img
@@ -609,7 +609,7 @@ function Boneco() {
                   key={'curativo ' + item}
                   style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
                   <button
-                    className={curativo == item ? "button-red" : "button"}
+                    className={curativo == item ? "button-selected" : "button"}
                     onClick={(e) => {
                       setcurativo(item);
                       setshowcurativoslist(0);
@@ -778,7 +778,7 @@ function Boneco() {
             ></img>
           </button>
           <div id="botão de retorno"
-            className="button-red"
+            className="button-yellow"
             style={{
               display: 'flex',
               alignSelf: 'center',

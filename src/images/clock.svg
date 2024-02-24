@@ -63,27 +63,27 @@
          id="stop886" />
     </linearGradient>
   </defs>
-  <g
-     id="g1"
-     transform="translate(-12.87341,-0.27486229)">
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:9.27314;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect833"
-       width="8.1507244"
-       height="84.317841"
-       x="100.33823"
-       y="23.877661" />
-    <circle
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:7.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="path840"
-       cx="104.55412"
-       cy="20.223888"
-       r="7.8696651" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.596624px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 97.808692,27.717789 V 72.96836 H 33.323031 L 47.425721,50.7604 33.323031,27.717789 Z"
-       id="path848"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-  </g>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:9.99998;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.996078;paint-order:fill markers stroke"
+     id="path1"
+     cx="60"
+     cy="60"
+     r="40.89415" />
+  <rect
+     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:9.99998;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.996078;paint-order:fill markers stroke"
+     id="rect2"
+     width="3.3727136"
+     height="26.700649"
+     x="57.711895"
+     y="35.59985"
+     ry="1.6863568" />
+  <rect
+     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:9.47679;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.996078;paint-order:fill markers stroke"
+     id="rect2-5"
+     width="3.8959081"
+     height="20.759476"
+     x="59.428852"
+     y="-78.136871"
+     ry="1.3111248"
+     transform="rotate(90)" />
 </svg>

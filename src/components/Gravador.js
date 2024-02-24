@@ -43,13 +43,12 @@ function Gravador({ funcao, continuo }) {
         ></img>
       </div>
       <div id="lista de resultados"
-        className="button"
+        className="button-opaque"
         style={{
           alignSelf: 'center',
           width: window.innerWidth < 426 ? '70vw' : 150,
           minWidth: window.innerWidth < 426 ? '70vw' : '',
           maxWidth: window.innerWidth < 426 ? '70vw' : '',
-          backgroundColor: 'grey',
           display: btngravavoz == "gravando" ? 'flex' : 'none',
           flexDirection: 'column', justifyContent: 'center', padding: 20,
         }}>

@@ -462,60 +462,6 @@ function Cadastro() {
     );
   }
 
-  function HeaderListaDePacientes() {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignSelf: "center",
-          marginBottom: 0,
-          marginTop: 10,
-          width: "calc(100vw + 50px)",
-        }}
-      >
-        <div className="header-row">
-          <div
-            className="header"
-            style={{
-              flex: window.innerWidth < 426 ? 6 : 2,
-            }}
-          >
-            NOME DO PACIENTE
-          </div>
-          <div
-            className="header"
-            style={{
-              display: "flex",
-              flex: 1,
-            }}
-          >
-            DN
-          </div>
-          <div
-            className="header"
-            style={{
-              display: "flex",
-              flex: 2,
-            }}
-          >
-            NOME DA MÃE
-          </div>
-          <div
-            className="header"
-            style={{
-              display: "flex",
-              flex: 1,
-            }}
-          >
-            STATUS
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   function ListaDePacientes() {
     return (
       <div
@@ -525,88 +471,75 @@ function Cadastro() {
             window.innerWidth < 426
               ? window.innerHeight - 130
               : window.innerHeight - 130,
+          display: 'flex',
+          flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'flex-start',
         }}
       >
         {arraypacientes
           .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
           .map((item) => (
             <div
+              className="button"
               key={"paciente " + item.id_paciente}
               style={{
                 display: arraypacientes.length > 0 ? "flex" : "none",
-                flexDirection: "column",
-                justifyContent: "center",
+                // flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                width: 'calc((100vw - 40px)/4 - 30px)', minWidth: 'calc((100vw - 40px)/4 - 30px)'
+              }}
+              onClick={() => {
+                setpaciente(item);
+                setatendimento(
+                  atendimentos.filter(
+                    (valor) =>
+                      valor.id_cliente == hospital &&
+                      valor.data_termino == null &&
+                      valor.id_paciente == item.id_paciente
+                  ));
+                setvieweditpaciente(1)
               }}
             >
+              <div style={{ width: '100%', margin: 5, marginBottom: 0, textAlign: 'left', opacity: 0.6 }}>
+                {'NOME DO PACIENTE:'}
+              </div>
+              <div style={{ width: '100%', margin: 5, marginTop: 0, textAlign: 'left' }}>
+                {item.nome_paciente.length > 25 ? item.nome_paciente.slice(0, 25) + '...' : item.nome_paciente}
+              </div>
+              <div style={{ width: '100%', margin: 5, marginBottom: 0, textAlign: 'left', opacity: 0.6 }}>
+                {'DATA DE NASCIMENTO:'}
+              </div>
+              <div style={{ width: '100%', margin: 5, marginTop: 0, textAlign: 'left' }}>
+                {moment(item.dn_paciente).format("DD/MM/YY")}
+              </div>
+              <div style={{ width: '100%', margin: 5, marginBottom: 0, textAlign: 'left', opacity: 0.6 }}>
+                {'NOME DA MÃE DO PACIENTE:'}
+              </div>
+              <div style={{ width: '100%', margin: 5, marginTop: 0, textAlign: 'left' }}>
+                {item.nome_mae_paciente.length > 25 ? item.nome_mae_paciente.slice(0, 25) + '...' : item.nome_mae_paciente}
+              </div>
               <div
-                className="row"
+                className="button"
                 style={{
-                  justifyContent:
-                    "space-between",
-                  flex: 6,
-                  margin: 0,
-                }}
-                onClick={() => {
-                  setpaciente(item);
-                  setatendimento(
-                    atendimentos.filter(
-                      (valor) =>
-                        valor.id_cliente == hospital &&
-                        valor.data_termino == null &&
-                        valor.id_paciente == item.id_paciente
-                    ));
-                  setvieweditpaciente(1)
-                }}
-              >
-                <div
-                  className="button"
-                  style={{
-                    flex: window.innerWidth < 426 ? 6 : 2,
-                  }}
-                >
-                  {item.nome_paciente}
-                </div>
-                <div
-                  className="button"
-                  style={{
-                    display: "flex",
-                    flex: 1,
-                  }}
-                >
-                  {moment(item.dn_paciente).format("DD/MM/YY")}
-                </div>
-                <div
-                  className="button"
-                  style={{
-                    display: "flex",
-                    flex: 2,
-                  }}
-                >
-                  {item.nome_mae_paciente}
-                </div>
-                <div
-                  className={
+                  width: 'calc(100% - 20px)',
+                  backgroundColor:
                     atendimentos.filter(
                       (valor) =>
                         valor.id_paciente == item.id_paciente &&
                         valor.data_termino == null
                     ).length > 0
-                      ? "button-green"
-                      : "button"
-                  }
-                  style={{
-                    display: "flex",
-                    flex: 1,
-                  }}
-                >
-                  {atendimentos.filter(
-                    (valor) =>
-                      valor.id_paciente == item.id_paciente &&
-                      valor.data_termino == null
-                  ).length > 0
-                    ? "EM ATENDIMENTO"
-                    : "INICIAR ATENDIMENTO"}
-                </div>
+                      ? "rgb(82, 190, 128, 1)"
+                      : "#66b2b2"
+                }}
+              >
+                {atendimentos.filter(
+                  (valor) =>
+                    valor.id_paciente == item.id_paciente &&
+                    valor.data_termino == null
+                ).length > 0
+                  ? "EM ATENDIMENTO"
+                  : "INICIAR ATENDIMENTO"}
               </div>
             </div>
           ))}
@@ -674,7 +607,7 @@ function Cadastro() {
           }}
         >
           <div id="botão para fechar tela de edição do paciente e movimentação de leito"
-            className="button-red"
+            className="button-yellow"
             onClick={() => setvieweditpaciente(0)}
             style={{ display: vieweditpaciente == 1 ? "flex" : "none", position: 'absolute', top: 10, right: 10 }}
           >
@@ -694,7 +627,7 @@ function Cadastro() {
               flexDirection: "column",
               justifyContent: 'flex-start',
               alignItems: "center",
-              height: '80vh',
+              height: '85vh',
               marginRight: 20
             }}
           >
@@ -1010,7 +943,7 @@ function Cadastro() {
               </div>
               <div id="btnDeletePaciente"
                 title="EXCLUIR PACIENTE"
-                className="button-red"
+                className="button-yellow"
                 onClick={() => {
                   modal(
                     setdialogo,
@@ -1067,7 +1000,7 @@ function Cadastro() {
                   "PACIENTE NÃO ESTÁ EM ATENDIMENTO NOS HOSPITAIS CADASTRADOS EM NOSSA BASE."
                 }
               </div>
-              <div className="button" onClick={() => {setviewseletorunidades(1)}}>
+              <div className="button" onClick={() => { setviewseletorunidades(1) }}>
                 INICIAR ATENDIMENTO
               </div>
               <div
@@ -1250,9 +1183,8 @@ function Cadastro() {
           id="unidades"
           style={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            flexWrap: "wrap",
+            flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'flex-start',
+            width: 'calc(90vw - 20px)',
           }}
         >
           {unidades
@@ -1261,14 +1193,15 @@ function Cadastro() {
               <div
                 id={"unidade: " + item}
                 className={
-                  selectedunidade == item.id_unidade ? "button-red" : "button"
+                  selectedunidade == item.id_unidade ? "button-selected" : "button"
                 }
                 style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   width: 150,
-                  height: 150,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
+                  height: 150
                 }}
                 onClick={() => {
                   console.log(item.id_unidade);
@@ -1469,10 +1402,8 @@ function Cadastro() {
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            alignSelf: "center",
+            flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'flex-start',
+            alignSelf: 'center',
           }}
         >
           {arrayleitos.map((item) => (
@@ -1480,13 +1411,12 @@ function Cadastro() {
               className="button"
               style={{
                 position: "relative",
-                width: 150,
-                height: 150,
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                width: 100,
+                height: 100,
                 display: "flex",
-                flexDirection: "column",
-                justifyItems: "center",
-                maxWidth: 100,
-                maxHeight: 100,
                 opacity:
                   atendimentos.filter(
                     (valor) =>
@@ -1736,15 +1666,15 @@ function Cadastro() {
                     .filter((valor) => valor.leito == item)
                     .map((valor) =>
                       valor.status == "LIVRE"
-                        ? "green"
+                        ? "rgb(82, 190, 128, 1)"
                         : valor.status == "OCUPADO"
-                          ? "orange"
+                          ? "#E59866"
                           : valor.status == "MANUTENÇÃO"
-                            ? "gray"
+                            ? "#CCD1D1 "
                             : valor.status == "DESATIVADO"
-                              ? "red"
+                              ? "#EC7063"
                               : valor.status == "LIMPEZA"
-                                ? "blue"
+                                ? "#85C1E9 "
                                 : "rgb(0, 0, 0, 0.5)"
                     ),
                 }}
@@ -1817,7 +1747,7 @@ function Cadastro() {
               " ANOS."}
           </div>
           <div
-            className="button-red"
+            className="button-yellow"
             style={{ position: "absolute", top: 10, right: 10 }}
             onClick={() => {
               setviewseletorunidades(0);
@@ -1901,7 +1831,6 @@ function Cadastro() {
             ></img>
           </div>
         </div>
-        <HeaderListaDePacientes></HeaderListaDePacientes>
         <ListaDePacientes></ListaDePacientes>
         <DadosPacienteAtendimento></DadosPacienteAtendimento>
         <MovimentaPaciente></MovimentaPaciente>

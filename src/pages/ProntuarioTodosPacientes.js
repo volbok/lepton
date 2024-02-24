@@ -36,6 +36,7 @@ import Interconsultas from "../cards/Interconsultas";
 import Exames from "../cards/Exames";
 import Prescricao from "./Prescricao";
 import Laboratorio from "../cards/Laboratorio";
+import selector from "../functions/selector";
 
 function Prontuario() {
   // context.
@@ -392,7 +393,7 @@ function Prontuario() {
           marginRight: 10,
           marginLeft: 10,
           height: window.innerHeight - 130,
-          width: 'calc(100% - 10px)',
+          width: '25vw',
           flex: 1,
         }}
       >
@@ -469,7 +470,7 @@ function Prontuario() {
                                 item.classificacao == 'VERDE' ? '#76D7C4' :
                                   item.classificacao == 'AMARELO' ? '#F9E79F' :
                                     item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
                           }}
                         >
                           <div
@@ -499,17 +500,7 @@ function Prontuario() {
                             getAllData(item.id_paciente, item.id_atendimento);
                             setidprescricao(0);
                             if (pagina == -1) {
-                              setTimeout(() => {
-                                var botoes = document
-                                  .getElementById("scroll atendimentos com pacientes")
-                                  .getElementsByClassName("button-red");
-                                for (var i = 0; i < botoes.length; i++) {
-                                  botoes.item(i).className = "button";
-                                }
-                                document.getElementById(
-                                  "atendimento " + item.id_atendimento
-                                ).className = "button-red";
-                              }, 100);
+                              selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                             }
                           }}
                         >
@@ -599,7 +590,7 @@ function Prontuario() {
                                 item.classificacao == 'VERDE' ? '#76D7C4' :
                                   item.classificacao == 'AMARELO' ? '#F9E79F' :
                                     item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#AEB6BF'
+                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
                           }}
                         >
                           <div
@@ -628,17 +619,7 @@ function Prontuario() {
                             getAllData(item.id_paciente, item.id_atendimento);
                             setidprescricao(0);
                             if (pagina == -1) {
-                              setTimeout(() => {
-                                var botoes = document
-                                  .getElementById("scroll atendimentos com pacientes")
-                                  .getElementsByClassName("button-red");
-                                for (var i = 0; i < botoes.length; i++) {
-                                  botoes.item(i).className = "button";
-                                }
-                                document.getElementById(
-                                  "atendimento " + item.id_atendimento
-                                ).className = "button-red";
-                              }, 100);
+                              selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                             }
                           }}
                         >
@@ -747,7 +728,7 @@ function Prontuario() {
         >
           <div
             id={"botão" + titulo + item.id_paciente}
-            className="button-yellow"
+            className="button"
             style={{
               display: "flex",
               borderColor: "#f2f2f2",
@@ -757,6 +738,7 @@ function Prontuario() {
               minHeight: 20,
               margin: 0,
               padding: 7.5,
+              backgroundColor: '#EC7063',
             }}
           >
             <img alt="" src={imagem} style={{ width: 30, height: 30 }}></img>
@@ -775,7 +757,7 @@ function Prontuario() {
             borderColor: "white",
             borderStyle: "dashed",
             borderWidth: 1,
-            backgroundColor: "#AEB6BF",
+            backgroundColor: "#006666",
             textAlign: "center",
             color: "white",
             fontSize: 14,
@@ -849,7 +831,7 @@ function Prontuario() {
               }}
             >
               <div
-                className="button-yellow"
+                className="button-grey"
                 style={{
                   margin: 5,
                   marginRight: 0,
@@ -1106,9 +1088,9 @@ function Prontuario() {
             backgroundColor: sinal != null && sinal.length > 0 ? yellow : "",
             borderColor: "transparent",
             margin: 5,
-            minWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
-            maxWidth: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
-            height: window.innerWidth < mobilewidth ? '35vw' : window.innerWidth / 7.2,
+            minWidth: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
+            maxWidth: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
+            height: window.innerWidth < mobilewidth ? '35vw' : 'calc((75vw - 40px)/4 - 40px)',
           }}
           onClick={() => {
             if (card == opcao) {
@@ -1802,14 +1784,14 @@ function Prontuario() {
           display: viewinterconsultas == 1 ? 'flex' : 'none',
           flexDirection: 'column', justifyContent: 'center'
         }}>
-        <div className="janela scroll" style={{ width: '40vw', height: '60vh' }}>
+        <div className="janela scroll" style={{ height: '60vh' }}>
           {allinterconsultas.filter(item => item.especialidade == usuario.tipo_usuario).map(item => (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: 'calc(100% - 5px)' }}>
               {atendimentos.filter(valor => valor.id_atendimento == item.id_atendimento && valor.situacao == 1).map(valor => (
                 <div
                   style={{
                     display: 'flex', flexDirection: 'row', justifyItems: 'center',
-                    width: '100%'
+                    width: '40vw'
                   }}
                   onClick={() => {
                     setviewlista(0);
@@ -1818,23 +1800,18 @@ function Prontuario() {
                     getAllData(valor.id_paciente, valor.id_atendimento);
                     setidprescricao(0);
                     if (pagina == -1) {
-                      setTimeout(() => {
-                        var botoes = document
-                          .getElementById("scroll atendimentos com pacientes")
-                          .getElementsByClassName("button-red");
-                        for (var i = 0; i < botoes.length; i++) {
-                          botoes.item(i).className = "button";
-                        }
-                        document.getElementById(
-                          "atendimento " + valor.id_atendimento
-                        ).className = "button-red";
-                      }, 100);
+                      selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                     }
                   }}
                 >
-                  <div className='button-yellow' style={{ width: 100 }}>{unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade)}</div>
-                  <div className='button' style={{ width: 100 }}>{'LEITO: ' + valor.leito}</div>
-                  <div className='button' style={{ width: '100%' }}>{valor.nome_paciente}</div>
+                  <div className='button-grey'
+                    style={{ width: 100, marginLeft: 2.5, marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
+                    {unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => item.nome_unidade + ' - LEITO ' + valor.leito)}
+                  </div>
+                  <div className='button'
+                    style={{ width: '100%', marginLeft: 0, marginRight: 2.5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+                    {valor.nome_paciente}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1874,7 +1851,7 @@ function Prontuario() {
             position: 'absolute', top: 80, right: 80,
             borderRadius: 50,
             width: 50, height: 50,
-            backgroundColor: 'rgb(229, 126, 52, 1)',
+            backgroundColor: '#EC7063',
             borderColor: 'rgb(215, 219, 221)',
             borderWidth: 5,
             borderStyle: 'solid',
@@ -1912,6 +1889,7 @@ function Prontuario() {
           scrollBehavior: "smooth",
           height: window.innerHeight - 25,
           minHeight: window.innerHeight - 25,
+          width: window.innerWidth < mobilewidth ? '100vw' : 'calc(75vw - 40px)',
           backgroundColor: 'rgba(242, 242, 242)',
         }}
       >
@@ -2001,6 +1979,7 @@ function Prontuario() {
           minHeight: window.innerHeight - 25,
           position: "relative",
           scrollBehavior: "smooth",
+          width: window.innerWidth < mobilewidth ? '100vw' : 'calc(75vw - 40px)',
           backgroundColor: 'rgba(242, 242, 242)'
         }}
       >

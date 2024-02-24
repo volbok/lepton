@@ -50,11 +50,15 @@ function App() {
   const [pickdate1, setpickdate1] = useState();
   const [pickdate2, setpickdate2] = useState();
 
+  // DEVE SER CONFIGURADO PARA CADA CLIENTE.
   const [cliente, setcliente] = useState({
     id_cliente: 1,
-    razao_social: "HOSPITAL EXEMPLO",
-    cnpj: "1001/001",
-  }); // hospitais.
+    razao_social: "HOSPITAL SÃO FRANCISCO",
+    cnpj: "CNPJ: 1001/001",
+    texto1: 'ENDEREÇO: RUA ITAPAGIPE, 226, CONCÓRDIA - BH/MG',
+    texto2: 'TELEFONE: (31) 1234-4321'
+  });
+
   const [unidades, setunidades] = useState([]);
   const [hospital, sethospital] = useState([]);
   const [unidade, setunidade] = useState([]);
@@ -121,6 +125,8 @@ function App() {
 
   const [tipodocumento, settipodocumento] = useState(null);
   const [documentos, setdocumentos] = useState([]);
+  const [selecteddocumento, setselecteddocumento] = useState([]);
+  const [selecteddocumentoestruturado, setselecteddocumentoestruturado] = useState([]);
 
   const [laboratorio, setlaboratorio] = useState([]);
   const [arrayespecialidades, setarrayespecialidades] = useState([
@@ -289,6 +295,8 @@ function App() {
         setsalatriagem,
         tipodocumento, settipodocumento,
         documentos, setdocumentos,
+        selecteddocumento, setselecteddocumento,
+        selecteddocumentoestruturado, setselecteddocumentoestruturado,
         laboratorio, setlaboratorio,
         arrayespecialidades, setarrayespecialidades,
         mobilewidth, setmobilewidth,

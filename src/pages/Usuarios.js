@@ -21,6 +21,7 @@ import novo from "../images/novo.svg";
 import salvar from "../images/salvar.svg";
 import editar from "../images/editar.svg";
 import modal from "../functions/modal";
+import selector from "../functions/selector";
 
 function Usuarios() {
   // context.
@@ -515,7 +516,7 @@ function Usuarios() {
                       setn_conselho(document.getElementById('inputNumeroConselho').value);
                       setespecialidade(item);
                     }}
-                    className={especialidade == item ? "button-red" : "button"}
+                    className={especialidade == item ? "button-selected" : "button"}
                     style={{ width: 150 }}>
                     {item}
                   </div>
@@ -529,7 +530,7 @@ function Usuarios() {
                 }}
               >
                 <div
-                  className="button-red"
+                  className="button-yellow"
                   onClick={(e) => {
                     setviewnewusuario(0);
                     e.stopPropagation();
@@ -682,17 +683,7 @@ function Usuarios() {
                   setacessoprontuario(item.prontuario);
                   setacessousuarios(item.usuarios);
                   loadTodosAcessos(item.id_usuario);
-                  setTimeout(() => {
-                    var botoes = document
-                      .getElementById("scroll usuários")
-                      .getElementsByClassName("button-red");
-                    for (var i = 0; i < botoes.length; i++) {
-                      botoes.item(i).className = "button";
-                    }
-                    document.getElementById(
-                      "usuario " + item.id_usuario
-                    ).className = "button-red";
-                  }, 300);
+                  selector("scroll usuários", "usuario " + item.id_usuario, 300);
                 }}
                 style={{
                   flex: 2,
@@ -734,14 +725,13 @@ function Usuarios() {
                   </div>
                   <div
                     id="btn-delete"
-                    className="button-red"
+                    className="button-yellow"
                     style={{
                       display: item.id_usuario == usuario.id ? "none" : "flex",
                       width: 25,
                       minWidth: 25,
                       height: 25,
                       minHeight: 25,
-                      backgroundColor: "rgb(231, 76, 60, 1)",
                     }}
                     onClick={() => {
                       modal(
@@ -797,7 +787,7 @@ function Usuarios() {
         setarrayacessos(x.filter((valor) => valor.id_usuario == id_usuario));
         console.log(id_usuario);
         document.getElementById("usuario " + id_usuario).className =
-          "button-red";
+          "button-selected";
       })
       .catch(function () {
         toast(
@@ -1027,14 +1017,14 @@ function Usuarios() {
       setTimeout(() => {
         document.getElementById(
           "usuario " + selectedusuario.id_usuario
-        ).className = "button-red";
+        ).className = "button-selected";
       }, 100);
     } else {
       setacesso(1);
       setTimeout(() => {
         document.getElementById(
           "usuario " + selectedusuario.id_usuario
-        ).className = "button-red";
+        ).className = "button-selected";
       }, 100);
     }
   };
@@ -1062,7 +1052,7 @@ function Usuarios() {
           }}
         >
           <div
-            className={acessoprontuario == 1 ? "button-red" : "button"}
+            className={acessoprontuario == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => {
               mudaModulo(acessoprontuario, setacessoprontuario);
@@ -1077,35 +1067,35 @@ function Usuarios() {
             PRONTUÁRIO
           </div>
           <div
-            className={acessofarmacia == 1 ? "button-red" : "button"}
+            className={acessofarmacia == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => mudaModulo(acessofarmacia, setacessofarmacia)}
           >
             FARMÁCIA
           </div>
           <div
-            className={acessolaboratorio == 1 ? "button-red" : "button"}
+            className={acessolaboratorio == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => mudaModulo(acessolaboratorio, setacessolaboratorio)}
           >
             LABORATÓRIO
           </div>
           <div
-            className={acessofaturamento == 1 ? "button-red" : "button"}
+            className={acessofaturamento == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => mudaModulo(acessofaturamento, setacessofaturamento)}
           >
             FATURAMENTO
           </div>
           <div
-            className={acessopaciente == 1 ? "button-red" : "button"}
+            className={acessopaciente == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => mudaModulo(acessopaciente, setacessopaciente)}
           >
             GESTÃO DE PACIENTES E LEITOS
           </div>
           <div
-            className={acessousuarios == 1 ? "button-red" : "button"}
+            className={acessousuarios == 1 ? "button-selected" : "button"}
             style={{ width: 150, height: 150 }}
             onClick={() => mudaModulo(acessousuarios, setacessousuarios)}
           >
