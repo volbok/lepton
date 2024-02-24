@@ -208,22 +208,6 @@ pre.code-format {
   align-self: center;
 }
 
-.minicards {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  border-radius: 5px;
-  margin: 10px;
-  padding: 10px;
-  background-color: #F9E79F;
-  color: rgb(31, 122, 140, 1);
-  font-weight: bolder;
-  font-size: 12px !important;
-  width: 130px;
-  height: 130px;
-}
-
 .card {
   display: flex;
   flex-direction: column;
@@ -252,6 +236,16 @@ pre.code-format {
   color: #ffffff !important
 }
 
+.imagem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  margin: 5px;
+  border-radius: 5px;
+  width: 90%;
+}
+
 .corrida {
   align-items: center;
   align-content: center;
@@ -262,22 +256,29 @@ pre.code-format {
   margin-bottom: 25px;
 }
 
-.corrida_imagem {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-self: center;
-  margin: 5px;
-  border-radius: 5px;
-  width: 70%
-}
-
 .corrida_card {
   margin-top: -100px;
   border-radius: 5px;
-  width: calc(70% - 20px);
+  width: calc(90% - 20px);
   background-color: #FCF3CF;
   padding: 10px;
+  padding-bottom: 25px;
+}
+
+.minicards {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  background-color: #F9E79F;
+  color: rgb(31, 122, 140, 1);
+  font-weight: bolder;
+  font-size: 12px !important;
+  width: 20%;
+  height: 140px;
 }
 
 @keyframes slide {
@@ -436,7 +437,7 @@ pre.code-format {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: rgb(31, 122, 140, 1);
+    background-color: #66b2b2;
     font-weight: bold;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -447,6 +448,16 @@ pre.code-format {
     width: 100vw;
     margin: 0px;
     margin: 0px;
+  }
+
+  .imagem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    margin: 5px;
+    border-radius: 5px;
+    width: 90vw;
   }
 
   .corrida {
@@ -460,14 +471,6 @@ pre.code-format {
     width: 90vw;
     padding: 0px;
     margin-bottom: 25px;
-  }
-
-  .corrida_card {
-    margin-top: -50px;
-    border-radius: 5px;
-    width: calc(90% - 20px);
-    background-color: #FCF3CF;
-    padding: 10px;
   }
 
   .card {
@@ -485,6 +488,29 @@ pre.code-format {
     height: auto;
   }
 
+  .corrida_card {
+    margin-top: -50px;
+    border-radius: 5px;
+    width: calc(90vw - 20px);
+    background-color: #FCF3CF;
+    padding: 10px;
+  }
+
+  .minicards {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #F9E79F;
+    color: rgb(31, 122, 140, 1);
+    font-weight: bolder;
+    font-size: 8px !important;
+    width: 100px;
+    height: 100px;
+  }
 
   ul {
     list-style-type: none;
