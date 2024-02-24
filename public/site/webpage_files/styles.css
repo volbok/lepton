@@ -4,7 +4,7 @@ body {
 }
 
 hr {
-  border: 1px solid #bfdbf7;
+  border: 1px solid #66b2b280;
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -81,10 +81,12 @@ pre.code-format {
   left: 5px;
   bottom: 5px;
   margin: 0px;
-  background-color: rgb(31, 122, 140, 0.8);
+  background-color: #66b2b2;
   border-radius: 5px;
+  display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
 }
 
@@ -94,7 +96,7 @@ pre.code-format {
     left: 5px;
     bottom: 5px;
     margin: 0px;
-    background-color: rgb(31, 122, 140, 0.8);
+    background-color: #66b2b2;
     border-radius: 5px;
     flex-direction: column;
     justify-content: center;
@@ -153,7 +155,7 @@ pre.code-format {
 
 .btn:active {
   display: flex;
-  background-color: rgb(229, 152, 102, 1);
+  background-color: rgb(31, 122, 140, 1);
   color: #ffffff;
   font-size: 14px;
   font-weight: bold;
@@ -169,7 +171,7 @@ pre.code-format {
 
 .btn-active {
   display: flex;
-  background-color: rgb(229, 152, 102, 1);
+  background-color: #03aacd;
   color: #ffffff;
   font-size: 14px;
   font-weight: bold;
@@ -180,7 +182,7 @@ pre.code-format {
   height: 50px;
   width: 200px;
   margin: 5px;
-  transition: 0.5s;
+  transition: 0.1s;
 }
 
 .telas {
@@ -217,8 +219,9 @@ pre.code-format {
   background-color: #F9E79F;
   color: rgb(31, 122, 140, 1);
   font-weight: bolder;
-  width: 150px;
-  height: 150px;
+  font-size: 12px !important;
+  width: 130px;
+  height: 130px;
 }
 
 .card {
@@ -346,7 +349,7 @@ pre.code-format {
     left: 5px;
     bottom: 5px;
     margin: 0px;
-    background-color: rgb(64, 74, 131, 0.8);
+    background-color: #66b2b2;
     border-radius: 5px;
     flex-direction: column;
     justify-content: center;
@@ -408,7 +411,7 @@ pre.code-format {
   }
 
   hr {
-    border: 1px solid #bfdbf7;
+    border: 1px solid #66b2b280;
     margin-top: 5px;
     margin-bottom: 5px;
   }

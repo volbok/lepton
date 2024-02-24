@@ -53,6 +53,7 @@ function Login() {
   }, [pagina]);
 
   // carregar configurações do usuário logado.
+  // eslint-disable-next-line
   const [tema, settema] = useState(1);
   const loadSettings = (usuario) => {
     axios.get(html + "settings/" + usuario).then((response) => {
@@ -1073,8 +1074,8 @@ function Login() {
 
   return (
     <div
-      className={tema != 3 ? "main" : "main"}
-      style={{ display: pagina == 0 ? "flex" : "none", backgroundColor: 'rgb(31, 122, 140, 0.8)' }}
+      className="main"
+      style={{ display: pagina == 0 ? "flex" : "none", backgroundColor: '#66b2b2' }}
     >
       <div
         className="scroll"
