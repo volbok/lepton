@@ -64,6 +64,7 @@ function App() {
   const [unidade, setunidade] = useState([]);
   const [usuario, setusuario] = useState({});
   const [usuarios, setusuarios] = useState([]); // lista todos os usuários cadastrados.
+  const [dono_documento, setdono_documento] = useState({});
 
   const [pagina, setpagina] = useState(0);
 
@@ -190,6 +191,7 @@ function App() {
         usuario,
         setusuario,
         usuarios, setusuarios,
+        dono_documento, setdono_documento,
 
         pagina,
         setpagina,

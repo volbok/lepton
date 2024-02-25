@@ -39,7 +39,7 @@ function Header() {
               width: 100,
             }}
           ></img>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 100, fontSize: 8, marginRight: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 100, fontSize: 10, marginRight: 10 }}>
             <div className='text1'>{cliente.razao_social}</div>
             <div className='text1'>{cliente.cnpj}</div>
             <div className='text1'>{cliente.texto1}</div>

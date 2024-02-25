@@ -5,7 +5,6 @@ import axios from 'axios';
 import moment from 'moment';
 // funções.
 import modal from '../functions/modal';
-import toast from '../functions/toast';
 // imagens.
 import deletar from '../images/deletar.svg';
 import novo from '../images/novo.svg';
@@ -16,13 +15,14 @@ function Interconsultas() {
   // context.
   const {
     html,
-    settoast,
     setdialogo,
     interconsultas, setinterconsultas,
     atendimento,
     card, setcard,
     mobilewidth,
     arrayespecialidades,
+    usuario,
+    paciente,
   } = useContext(Context);
 
   useEffect(() => {
@@ -53,10 +53,13 @@ function Interconsultas() {
       id_atendimento: atendimento,
       especialidade: especialidade,
       status: 'PENDENTE',
-      data_pedido: moment()
+      data_pedido: moment(),
+      parecer: null,
+      id_solicitante: usuario.id,
+      id_interconsultor: null,
+      id_paciente: paciente,
     }
     axios.post(html + 'insert_interconsulta', obj).then(() => {
-      // toast(settoast, 'INTERCONSULTA ADICIONADA COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
       loadInterconsultas();
       setviewinsertinterconsulta(0);
     })
@@ -143,10 +146,13 @@ function Interconsultas() {
                   id_atendimento: atendimento,
                   especialidade: selectedinterconsulta.especialidade,
                   status: item,
-                  data_pedido: selectedinterconsulta.data_pedido
+                  data_pedido: selectedinterconsulta.data_pedido,
+                  parecer: selectedinterconsulta.parecer,
+                  id_solicitante: selectedinterconsulta.id_solicitante,
+                  id_interconsultor: selectedinterconsulta.id_interconsultor,
+                  id_paciente: selectedinterconsulta.id_paciente,
                 }
                 axios.post(html + 'update_interconsulta/' + selectedinterconsulta.id_interconsulta, obj).then(() => {
-                  toast(settoast, 'INTERCONSULTA ADICIONADA COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
                   loadInterconsultas();
                   setviewopcoesstatus(0);
                 })
@@ -160,6 +166,7 @@ function Interconsultas() {
     )
   }
 
+  var timeout = null;
   return (
     <div id="scroll-interconsultas"
       className='card-aberto'
@@ -178,29 +185,26 @@ function Interconsultas() {
           <div key={'interconsulta ' + item.id_interconsulta}
             style={{
               display: 'flex',
-              flex: window.innerWidth < mobilewidth ? 1 : 8,
               flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
               justifyContent: 'center',
-              width: window.innerWidth < mobilewidth ? '80vw' : 300,
-              maxWidth: window.innerWidth < mobilewidth ? '80vw' : 300,
               margin: 5,
             }}>
             <div className='button'
               style={{
-                flex: 1,
                 flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
                 justifyContent: window.innerWidth < mobilewidth ? 'space-between' : 'center',
                 padding: window.innerWidth < mobilewidth ? 5 : 15,
                 paddingLeft: window.innerWidth < mobilewidth ? 20 : '',
                 paddingRight: window.innerWidth < mobilewidth ? 8 : '',
                 margin: 0,
+                width: window.innerWidth < mobilewidth ? '' : 100,
                 borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
                 borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
                 borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
                 borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
               }}>
               {moment(item.data_pedido).format('DD/MM/YY')}
-              <div className='button-red'
+              <div className='button-yellow'
                 style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
                 onClick={(e) => {
                   modal(setdialogo, 'CONFIRMAR EXCLUSÃO DA INTERCONSULTA PARA ' + item.especialidade + '?', deleteInterconsulta, item.id_interconsulta);
@@ -218,29 +222,61 @@ function Interconsultas() {
               </div>
             </div>
             <div
-              className='cor0'
+              className='janela'
               style={{
                 flex: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 padding: 2.5,
-                // backgroundColor: 'white',
                 borderTopLeftRadius: 0,
                 borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
                 borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
                 borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
               }}>
-              <div
-                className='input'
-                style={{
-                  margin: 0, padding: 0,
-                  // backgroundColor: 'white',
-                  // color: 'rgb(97, 99, 110, 1)'
-                }}>
+              <div className='text1'>
                 {item.especialidade}
               </div>
+              <textarea id={"inputParecer " + item.id_interconsulta}
+                className="textarea"
+                autoComplete="off"
+                placeholder='PARECER...'
+                onFocus={(e) => (e.target.placeholder = '')}
+                onBlur={(e) => (e.target.placeholder = 'PARECER...')}
+                defaultValue={item.parecer}
+                onKeyUp={(e) => {
+                  clearTimeout(timeout);
+                  var parecer = document.getElementById('inputParecer ' + item.id_interconsulta).value.toUpperCase();
+                  timeout = setTimeout(() => {
+                    var obj = {
+                      id_atendimento: item.id_atendimento,
+                      especialidade: item.especialidade,
+                      status: item.status,
+                      data_pedido: item.data_pedido,
+                      parecer: parecer,
+                      id_solicitante: item.id_solicitante,
+                      id_interconsultor: usuario.id,
+                      id_paciente: item.id_paciente,
+                    }
+                    axios.post(html + 'update_interconsulta/' + parseInt(item.id_interconsulta), obj).then(() => {
+                      // loadInterconsultas();
+                    });
+                  }, 2000);
+                  e.stopPropagation();
+                }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'center', justifyContent: 'center', alignSelf: 'center',
+                  width: window.innerWidth < mobilewidth ? '60vw' : 300,
+                  borderColor: 'transparent',
+                }}
+              >
+              </textarea>
               <div
-                className={item.status == 'PENDENTE' ? 'button-red' : item.status == 'ATIVA' ? 'button-yellow' : 'button-green'}
+                className="button"
+                style={{
+                  width: 'calc(100% - 20px)',
+                  backgroundColor: item.status == 'PENDENTE' ? '#EC7063' : item.status == 'ATIVA' ? '#F7DC6F' : 'rgb(82, 190, 128, 1)'
+                }}
                 onClick={(e) => { setselectedinterconsulta(item); setviewopcoesstatus(1); e.stopPropagation() }}
               >
                 {item.status}

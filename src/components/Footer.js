@@ -5,7 +5,7 @@ import Context from '../pages/Context';
 
 function Footer() {
   const {
-    selecteddocumento,
+    dono_documento,
   } = useContext(Context);
 
   return (
@@ -18,8 +18,11 @@ function Footer() {
       <div className="text1">
         _______________________________________________
       </div>
-      <div className="text1">
-        {'PROFISSIONAL: ' + selecteddocumento.profissional}
+      <div id="identificação - documento" className="text1">
+        {dono_documento.nome}
+      </div>
+      <div id="identificação - prescrição" className="text1">
+        {dono_documento.conselho}
       </div>
     </div>
   )

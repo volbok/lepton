@@ -47,6 +47,9 @@ function Prescricao() {
     card, setcard,
     idprescricao, setidprescricao,
     arrayitensprescricao, setarrayitensprescricao,
+    setselecteddocumento,
+    settipodocumento,
+    setdono_documento,
   } = useContext(Context);
 
   // history (router).
@@ -368,6 +371,7 @@ function Prescricao() {
           loadPrescricao();
           loadItensPrescricao();
           setidprescricao(0);
+          localStorage.setItem("id", 0);
         });
       });
     });
@@ -388,6 +392,7 @@ function Prescricao() {
       loadPrescricao();
       loadItensPrescricao();
       setidprescricao(0);
+      localStorage.setItem("id", 0);
       // montando aprazamentos para a tela de controle de dispensação da farmácia.
       axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
         let x = response.data.rows;
@@ -406,6 +411,7 @@ function Prescricao() {
       loadPrescricao();
       loadItensPrescricao();
       setidprescricao(0);
+      localStorage.setItem("id", 0);
     })
       .catch(function () {
         toast(settoast, 'ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.', 'black', 5000);
@@ -833,7 +839,12 @@ function Prescricao() {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="botão para nova prescrição."
             className='button-green'
-            onClick={() => { setidprescricao(0); insertPrescricao(); setexpand(0) }}
+            onClick={() => {
+              setidprescricao(0);
+              localStorage.setItem("id", 0);
+              insertPrescricao();
+              setexpand(0)
+            }}
           >
             <img
               alt=""
@@ -861,18 +872,24 @@ function Prescricao() {
             className='button'
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              minHeight: 180,
+              minHeight: 200,
             }}
             onClick={() => {
               setexpand(0);
               setidprescricao(item.id);
               setdataprescricao(item.data);
+              setselecteddocumento(item);
+              setdono_documento({
+                id: item.id_profissional,
+                conselho: 'CRM: ' + item.registro_profissional,
+                nome: item.nome_profissional,
+              })
+              settipodocumento('PRESCRIÇÃO MÉDICA');
               axios.get(html + 'list_itens_prescricoes/' + atendimento).then((response) => {
                 let x = response.data.rows;
                 setprescricao(response.data.rows);
                 ordenaListaItensPrescricao(x);
               });
-
               localStorage.setItem('id', item.id);
               setstatusprescricao(item.status);
               selector("scroll lista de prescrições", "item de prescrição " + item.id, 600);
@@ -882,8 +899,8 @@ function Prescricao() {
               style={{
                 display: 'flex',
                 flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
-                // pointerEvents: expand == 1 ? 'none' : 'auto',
-                // opacity: expand == 1 ? 0.5 : 1,
+                pointerEvents: localStorage.getItem("id") != item.id ? 'none' : 'auto',
+                opacity: localStorage.getItem("id") != item.id ? 0.5 : 1,
               }}>
               <div id="botão para excluir prescrição."
                 className='button-yellow'
@@ -930,7 +947,6 @@ function Prescricao() {
                 onClick={(e) => {
                   printDiv();
                   e.stopPropagation();
-                  // montaAprazamentos(item.id);
                 }}>
                 <img
                   alt=""
@@ -984,6 +1000,12 @@ function Prescricao() {
               </div>
             </div>
             <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontSize: 10 }}>
+                {item.nome_profissional}
+              </div>
+              <div style={{ fontSize: 10, marginBottom: 5 }}>
+                {item.registro_profissional}
+              </div>
               <div>
                 {moment(item.data).format('DD/MM/YY')}
               </div>
@@ -2171,7 +2193,6 @@ function Prescricao() {
         fontFamily: 'Helvetica',
         breakInside: 'auto',
         whiteSpace: 'pre-wrap',
-        marginTop: 20,
       }}>
         {arrayitensprescricao.filter(item => item.id_prescricao == idprescricao && item.id_componente_pai != null && item.id_componente_filho == null).map(item =>
         (
@@ -2306,7 +2327,8 @@ function Prescricao() {
           onClick={(e) => e.stopPropagation()}
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            maxHeight: '70vh', maxWidth: 520}}
+            maxHeight: '70vh', maxWidth: 520
+          }}
         >
           <div className='text1'>{'MODELOS DE PRESCRIÇÃO PERSONALIZADOS'}</div>
           <div
@@ -2466,6 +2488,7 @@ function Prescricao() {
     });
     loadModelosPrescricao();
     setidprescricao(0);
+    localStorage.setItem("id", 0);
   }
   const deleteItemModeloPrescricao = (id) => {
     axios.get(html + 'delete_item_model_prescricao/' + id);

@@ -45,9 +45,16 @@ function Login() {
       sethospital(cliente.id_cliente);
       loadUnidades();
       loadUsuarios();
-      localStorage.setItem('usuario', null);
-      localStorage.setItem('senha', null);
-      setviewlistaunidades(0);
+      setusuario(JSON.parse(localStorage.getItem('obj_usuario')));
+      console.log(JSON.parse(localStorage.getItem('obj_usuario')));
+      console.log(usuario.id);
+      if (usuario.id != undefined) {
+        loadAcessos(usuario.id);
+        loadUnidades();
+        setviewlistaunidades(1);
+      } else {
+        setviewlistaunidades(0);
+      }
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -304,7 +311,6 @@ function Login() {
       password = document.getElementById("inputSenha").value;
       let usuario = localStorage.getItem('usuario');
       let senha = localStorage.getItem('senha');
-
       if (bcrypt.compareSync(password, senha) == true) {
         var obj = {
           usuario: parseInt(usuario),
@@ -374,7 +380,7 @@ function Login() {
       .then((response) => {
         var x = response.data;
         // salvando os dados do usuário logado.
-        setusuario({
+        var obj = {
           id: x.id,
           nome_usuario: x.nome,
           dn_usuario: x.dn,
@@ -392,7 +398,10 @@ function Login() {
           faturamento: x.faturamento,
           usuarios: x.usuarios,
           primeiro_acesso: x.primeiro_acesso,
-        });
+        }
+
+        setusuario(obj);
+        localStorage.setItem('obj_usuario', JSON.stringify(obj));
         localStorage.setItem('usuario', x.id);
         localStorage.setItem('senha', x.senha);
         if (x.id != undefined && x.primeiro_acesso != 1) {
@@ -471,8 +480,8 @@ function Login() {
 
   let termo =
     'TERMO DE CONFIDENCIALIDADE\n\n' +
-    'AO CADASTRAR SUA SENHA DE ACESSO AO SISTEMA PULSAR, VOCÊ DECLARA QUE PROTEGERÁ SUA SENHA E NÃO A REPASSARÁ PARA TERCEIROS,' +
-    'BEM COMO NÃO DIVULGARÁ AS INFORMAÇÕES RELACIONADAS AOS PACIENTES DISPONIBILIZADAS NA APLICAÇÃO,' +
+    'AO CADASTRAR SUA SENHA DE ACESSO AO SISTEMA PULSAR, VOCÊ DECLARA QUE PROTEGERÁ SUA SENHA E NÃO A REPASSARÁ PARA TERCEIROS, ' +
+    'BEM COMO NÃO DIVULGARÁ AS INFORMAÇÕES RELACIONADAS AOS PACIENTES DISPONIBILIZADAS NA APLICAÇÃO, ' +
     'GARANTINDO ASSIM A CONFIDENCIALIDADE DOS DADOS SENSÍVEIS ARMAZENADOS NA PLATAFORMA.'
 
   const [viewcriarsenha, setviewcriarsenha] = useState(0);
@@ -532,71 +541,77 @@ function Login() {
     return (
       <div className="fundo"
         style={{ display: viewcriarsenha == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="janela">
+        <div className="janela" style={{ height: '80vh' }}>
           <div className="text1">{'BEM-VINDO À PLATAFORMA PULSAR, ' + usuario.nome_usuario + '.'}</div>
-          <div className="textarea"
+          <div className="textarea scroll"
             style={{
               marginBottom: 10, width: '50vw', height: 200, justifyContent: 'flex-start',
               whiteSpace: 'pre-wrap', textAlign: 'center',
             }}>
             {termo}
           </div>
-          <div className="text1">
-            DIGITE A SENHA
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="text1">
+                DIGITE A SENHA
+              </div>
+              <input
+                autoComplete="off"
+                placeholder="SENHA"
+                className="input"
+                type="password"
+                id="inputPrimeiraSenha"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "NOVA SENHA")}
+                style={{
+                  marginTop: 10,
+                  marginBottom: 10,
+                  width: 200,
+                  height: 50,
+                  alignSelf: "center",
+                }}
+              ></input>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="text1">
+                CONFIRME A NOVA SENHA
+              </div>
+              <input
+                autoComplete="off"
+                placeholder="REPITA A SENHA"
+                className="input"
+                type="password"
+                id="inputConfirmaPrimeiraSenha"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "REPITA SENHA")}
+                onKeyUp={() => {
+                  clearTimeout(timeout);
+                  timeout = setTimeout(() => {
+                    var primeirasenha = document.getElementById("inputPrimeiraSenha").value;
+                    var confirmaprimeirasenha = document.getElementById("inputConfirmaPrimeiraSenha").value;
+                    if (primeirasenha == confirmaprimeirasenha) {
+                      document.getElementById("btngerarsenha").style.opacity = 1;
+                      document.getElementById("btngerarsenha").style.pointerEvents = 'auto';
+                    } else {
+                      document.getElementById("inputPrimeiraSenha").value = '';
+                      document.getElementById("inputConfirmaPrimeiraSenha").value = '';
+                      toast(settoast, 'AS SENHAS NÃO CONFEREM', 'red', 2000);
+                      setTimeout(() => {
+                        document.getElementById("inputPrimeiraSenha").focus();
+                      }, 2100);
+                    }
+                  }, 3000);
+                }}
+                style={{
+                  marginTop: 10,
+                  marginBottom: 10,
+                  width: 200,
+                  height: 50,
+                  alignSelf: "center",
+                }}
+              ></input>
+            </div>
           </div>
-          <input
-            autoComplete="off"
-            placeholder="SENHA"
-            className="input"
-            type="password"
-            id="inputPrimeiraSenha"
-            onFocus={(e) => (e.target.placeholder = "")}
-            onBlur={(e) => (e.target.placeholder = "NOVA SENHA")}
-            style={{
-              marginTop: 10,
-              marginBottom: 10,
-              width: 200,
-              height: 50,
-              alignSelf: "center",
-            }}
-          ></input>
-          <div className="text1">
-            CONFIRME A NOVA SENHA
-          </div>
-          <input
-            autoComplete="off"
-            placeholder="REPITA A SENHA"
-            className="input"
-            type="password"
-            id="inputConfirmaPrimeiraSenha"
-            onFocus={(e) => (e.target.placeholder = "")}
-            onBlur={(e) => (e.target.placeholder = "REPITA SENHA")}
-            onKeyUp={() => {
-              clearTimeout(timeout);
-              timeout = setTimeout(() => {
-                var primeirasenha = document.getElementById("inputPrimeiraSenha").value;
-                var confirmaprimeirasenha = document.getElementById("inputConfirmaPrimeiraSenha").value;
-                if (primeirasenha == confirmaprimeirasenha) {
-                  document.getElementById("btngerarsenha").style.opacity = 1;
-                  document.getElementById("btngerarsenha").style.pointerEvents = 'auto';
-                } else {
-                  document.getElementById("inputPrimeiraSenha").value = '';
-                  document.getElementById("inputConfirmaPrimeiraSenha").value = '';
-                  toast(settoast, 'AS SENHAS NÃO CONFEREM', 'red', 2000);
-                  setTimeout(() => {
-                    document.getElementById("inputPrimeiraSenha").focus();
-                  }, 2100);
-                }
-              }, 3000);
-            }}
-            style={{
-              marginTop: 10,
-              marginBottom: 10,
-              width: 200,
-              height: 50,
-              alignSelf: "center",
-            }}
-          ></input>
           <div
             id="btngerarsenha"
             className="button"
@@ -663,6 +678,7 @@ function Login() {
             onClick={() => {
               setpagina(-1);
               history.push("/prontuario_todos_pacientes");
+              console.log(usuario);
             }}
           >
             TODOS OS PACIENTES
@@ -1075,22 +1091,11 @@ function Login() {
   return (
     <div
       className="main"
-      style={{ display: pagina == 0 ? "flex" : "none", backgroundColor: '#66b2b2' }}
+      style={{ display: pagina == 0 ? "flex" : "none" }}
     >
       <div
-        className="scroll"
+        className="chassi scroll"
         id="conteúdo do login"
-        style={{
-          position: 'relative',
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignSelf: "center",
-          width: "calc(100vw - 20px)",
-          height: "calc(100vh - 20px)",
-          backgroundColor: "transparent",
-          borderColor: "transparent",
-        }}
       >
         <div
           className="button-red"

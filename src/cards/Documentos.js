@@ -34,6 +34,7 @@ function Documentos() {
     card, setcard,
     tipodocumento, settipodocumento,
     documentos, setdocumentos,
+    setdono_documento,
     settoast,
 
     // dados para importação na evolução.
@@ -77,6 +78,7 @@ function Documentos() {
       settipodocumento('ALTA HOSPITALAR');
       preparaDocumentos();
     }
+    console.log(tipodocumento);
 
     // eslint-disable-next-line
   }, [card, paciente, atendimentos, atendimento]);
@@ -208,11 +210,15 @@ function Documentos() {
       texto: texto,
       status: status,
       tipo_documento: item.tipo_documento,
-      profissional: usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho
+      profissional: usuario.nome_usuario,
+      conselho: usuario.conselho + ': ' + usuario.n_conselho,
+      id_profissional: usuario.id,
     }
     axios.post(html + 'update_documento/' + item.id, obj).then(() => {
       if (status == 1) {
-        loadDocumentos('atualizar', item, status, document.getElementById("inputFieldDocumento").value.toUpperCase());
+        loadDocumentos();
+        setselecteddocumento([]);
+        localStorage.setItem("documento", 0);
       }
     })
   }
@@ -221,6 +227,7 @@ function Documentos() {
     axios.get(html + 'delete_documento/' + id).then(() => {
       loadDocumentos();
       setselecteddocumento([]);
+      localStorage.setItem("documento", 0);
     })
   }
 
@@ -468,12 +475,16 @@ function Documentos() {
       texto: texto,
       status: 0,
       tipo_documento: tipodocumento,
-      profissional: usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho
+      profissional: usuario.nome_usuario,
+      conselho: usuario.conselho + ': ' + usuario.n_conselho,
+      id_profissional: usuario.id,
     }
     console.log(obj);
     console.log(usuario);
     axios.post(html + 'insert_documento', obj).then(() => {
-      loadDocumentos('inserir');
+      loadDocumentos();
+      setselecteddocumento([]);
+      localStorage.setItem("documento", 0);
     })
   }
 
@@ -491,7 +502,9 @@ function Documentos() {
     }
     console.log(obj);
     axios.post(html + 'insert_documento', obj).then(() => {
-      loadDocumentos('copiar', item);
+      loadDocumentos();
+      setselecteddocumento([]);
+      localStorage.setItem("documento", 0);
     })
   }
 
@@ -554,6 +567,7 @@ function Documentos() {
             <div id={'documento ' + item.id}
               className='button'
               onClick={() => {
+                localStorage.setItem("documento", item.id);
                 setselecteddocumento(item);
                 setTimeout(() => {
                   if (item.id == localStorage.getItem("id")) {
@@ -562,15 +576,21 @@ function Documentos() {
                     document.getElementById("inputFieldDocumento").value = item.texto;
                   }
                   selector("lista de documentos", 'documento ' + item.id, 100);
-                }, 1000);
+                }, 200);
+
               }}
               style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 180 }}
             >
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+              <div id="botões"
+                style={{
+                  display: 'flex', flexDirection: 'row', justifyContent: 'center',
+                  pointerEvents: item.id == localStorage.getItem("documento") ? 'auto' : 'none',
+                  opacity: item.id == localStorage.getItem("documento") ? 1 : 0.3
+                }}>
                 <div id="botão para deletar documento"
                   className="button-yellow"
                   style={{
-                    display: item.profissional == usuario.nome_usuario + '\n' + usuario.conselho + '\n' + usuario.n_conselho ? 'flex' : 'none',
+                    display: item.id_profissional == usuario.id ? 'flex' : 'none',
                     alignSelf: 'center',
                     minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25,
                   }}
@@ -595,7 +615,7 @@ function Documentos() {
                     setselecteddocumento(item);
                     setTimeout(() => {
                       updateDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase(), 1);
-                    }, 1000);
+                    }, 200);
                   }}>
                   <img
                     alt=""
@@ -614,7 +634,7 @@ function Documentos() {
                     setselecteddocumento(item);
                     setTimeout(() => {
                       copiarDocumento(item, document.getElementById("inputFieldDocumento").value.toUpperCase())
-                    }, 1000);
+                    }, 200);
                   }}>
                   <img
                     alt=""
@@ -631,6 +651,11 @@ function Documentos() {
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
+                    setdono_documento({
+                      id: item.id_profissional,
+                      conselho: item.conselho,
+                      nome: item.profissional,
+                    });
                     setTimeout(() => {
                       printDiv()
                     }, 1000);
@@ -681,7 +706,7 @@ function Documentos() {
           alignSelf: 'center', alignContent: 'center',
           whiteSpace: 'pre-wrap',
           height: 'calc(100% - 20px)',
-          margin: 0, marginLeft: -5,
+          margin: 0,
           pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto',
           position: 'relative'
         }}
@@ -721,7 +746,7 @@ function Documentos() {
     }
     axios.post(html + 'insert_documento', obj).then(() => {
       setviewselectmodelos(0);
-      loadDocumentos('inserir');
+      loadDocumentos();
     })
   }
   const [viewselectmodelos, setviewselectmodelos] = useState(0);
@@ -742,7 +767,7 @@ function Documentos() {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
             {allmodels.filter(item => item.tipo_documento == tipodocumento).map(item => (
               <div className='button'
-                style={{ width: 150, height: 150, position: 'relative', backgroundColor: '#F0B27A' }}
+                style={{ width: 150, height: 150, position: 'relative', backgroundColor: '#008080' }}
                 onClick={() => insertModeloDocumento(item.texto)}
               >
                 <div>
@@ -759,7 +784,7 @@ function Documentos() {
                   {item.nome_modelo}
                 </div>
                 <div id="botão para acessar a janela de criação de modelo de documento."
-                  className="button-red"
+                  className="button-yellow"
                   onClick={(e) => { deletarModeloDocumento(item); e.stopPropagation() }}
                   style={{
                     position: 'absolute', top: 10, right: 10,
@@ -860,18 +885,34 @@ function Documentos() {
               height: '40vh'
             }}
           ></textarea>
-          <div id="inputSalvarModelo"
-            className="button"
-            onClick={() => checkinput("textarea", settoast, ["inputNomeModeloDocumento", "inputTextoModeloDocumento"], "inputSalvarModelo", criarModeloDocumento, [])}
-            style={{
-              display: 'flex',
-              alignSelf: 'center',
-            }}>
-            <img
-              alt=""
-              src={favorito_salvar}
-              style={{ width: 20, height: 20 }}
-            ></img>
+
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div id="sair dos modelos"
+              className="button-yellow"
+              onClick={() => setviewcreatemodelo(0)}
+              style={{
+                display: 'flex',
+                alignSelf: 'center',
+              }}>
+              <img
+                alt=""
+                src={back}
+                style={{ width: 25, height: 25 }}
+              ></img>
+            </div>
+            <div id="inputSalvarModelo"
+              className="button"
+              onClick={() => checkinput("textarea", settoast, ["inputNomeModeloDocumento", "inputTextoModeloDocumento"], "inputSalvarModelo", criarModeloDocumento, [])}
+              style={{
+                display: 'flex',
+                alignSelf: 'center',
+              }}>
+              <img
+                alt=""
+                src={favorito_salvar}
+                style={{ width: 25, height: 25 }}
+              ></img>
+            </div>
           </div>
         </div>
       </div>
@@ -926,7 +967,7 @@ function Documentos() {
       </div>
     )
   };
- 
+
   function Conteudo() {
     return (
       <div style={{
@@ -934,7 +975,6 @@ function Documentos() {
         fontFamily: 'Helvetica',
         breakInside: 'auto',
         whiteSpace: 'pre-wrap',
-        marginTop: 20,
       }}>
         {selecteddocumento.texto}
       </div>
@@ -947,11 +987,11 @@ function Documentos() {
       className='card-aberto'
       style={{
         display: card.toString().substring(0, 14) == 'card-documento' ? 'flex' : 'none',
-        flex: 3,
-        flexDirection: 'row', justifyContent: 'center',
-        alignContent: 'center', alignSelf: 'center', alignItems: 'center',
+        flexDirection: 'row',
         height: 'calc(100% - 20px)',
+        width: '100%',
         position: 'relative',
+        paddingLeft: 2.5, paddingRight: 2.5,
       }}
     >
       <FieldDocumento></FieldDocumento>
