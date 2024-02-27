@@ -115,52 +115,44 @@ function DocumentoEstruturado() {
         var x = response.data.rows;
         lastevolucao = x.filter(item => item.tipo_documento == 'EVOLUÇÃO').map(item => item.texto).slice(-1).pop();
         console.log(x.filter(item => item.tipo_documento == 'EVOLUÇÃO').map(item => item.texto).slice(-1).pop())
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '1 - NOME DO ESTABELECIMENTO DE SOLICITANTE', 'UNIDADE DE PRONTO ATENDIMENTO JUSTINÓPOLIS', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '2 - CNES', '6632858', 50, 1, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '3- NOME DO ESTABELECIMENTO EXECUTANTE', '', 0);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '4 - CNES', '', 0);
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '5 - NOME DO PACIENTE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop(), 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '6 - Nº DO PRONTUÁRIO', paciente, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '7 - CARTÃO NACIONAL DE SAÚDE (CNS)', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '8 - DATA DE NASCIMENTO', pacientes.filter(item => item.id_paciente == paciente).map(item => moment(item.dn_paciente).format('DD/MM/YY')).pop(), 1);
-        insertCampoEstruturado('opcaounica', iddocumento, tipodocumento, obj, '9 - SEXO', '', 1, 'M,F');
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '10 - RAÇA', '', 50, 1, 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '11 - NOME DA MÃE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_mae_paciente).pop(), 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '12 - TELEFONE DE CONTATO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '13 - NOME DO RESPONSÁVEL', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '14 - TELEFONE DE CONTATO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '15 - ENDEREÇO (RUA, Nº, BAIRRO', pacientes.filter(item => item.id_paciente == paciente).map(item => item.endereco).pop(), 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '16 - MUNICÍPIO DE RESIDÊNCIA', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '17 - CÓD. IBGE MUNICÍPIO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '18 - UF', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '19 - CEP', '', 1);
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '20 - PRINCIPAIS SINAIS E SINTOMAS CLÍNICOS', lastevolucao, 1, '');
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '21 - CONDIÇÕES QUE JUSTIFICAM A INTERNAÇÃO', 'RISCO DE MORTE', 1, '');
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '22 - PRINCIPAIS RESULTADOS DE PROVAS DIAGNÓSTICAS (RESULTADOS DE EXAMES REALIZADOS)', 'VIDE EXAMES ACIMA', 1, '');
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '23 - DIAGNÓSTICO INICIAL', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '24 - CID 10 PRINCIPAL', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '25 - CID 10 SECUNDÁRIO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '26 - CID 10 CAUSAS ASSOCIADAS', '', 1);
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '27 - DESCRIÇÃO DO PROCEDIMENTO SOLICITADO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '28 - CÓDIGO DO PROCEDIMENTO', '', 1);
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '29 - CLÍNICA', 'CLÍNICA MÉDICA', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '30 - CARÁTER DE INTERNAÇÃO', 'URGÊNCIA', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '31 - DOCUMENTO', '', 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '32 - DOCUMENTO DO PROFISSIONAL SOLICITANTE', '', 1);
-
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '33 - NOME DO PROFISSIONAL SOLICITANTE/ASSISTENTE', usuarios.filter(valor => valor.id_usuario == selecteddocumento.id_usuario).map(valor => valor.nome_usuario), 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '34 - DATA DA SOLICITAÇÃO', moment().format('DD/MM/YYYY'), 1);
-        insertCampoEstruturado('textarea', iddocumento, tipodocumento, obj, '35 - ASSINTAURA E CARIMBO (Nº DO REGISTRO DO CONSELHO)', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '1 - NOME DO ESTABELECIMENTO DE SOLICITANTE', 'UNIDADE DE PRONTO ATENDIMENTO JUSTINÓPOLIS', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '2 - CNES', '6632858', 50, 1, 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '3- NOME DO ESTABELECIMENTO EXECUTANTE', '', 0);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '4 - CNES', '', 0);
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '5 - NOME DO PACIENTE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop(), 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '6 - Nº DO PRONTUÁRIO', paciente, 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '7 - CARTÃO NACIONAL DE SAÚDE (CNS)', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '8 - DATA DE NASCIMENTO', pacientes.filter(item => item.id_paciente == paciente).map(item => moment(item.dn_paciente).format('DD/MM/YY')).pop(), 1);
+        insertCampoEstruturado('opcaounica', null, iddocumento, tipodocumento, obj, '9 - SEXO', '', 1, 'M,F');
+        insertCampoEstruturado('opcaounica', null, iddocumento, tipodocumento, obj, '10 - RAÇA', '', 1, 'BRANCA', 'PRETA', 'AMARELA');
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '11 - NOME DA MÃE', pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_mae_paciente).pop(), 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '12 - TELEFONE DE CONTATO', '', 1);
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '13 - NOME DO RESPONSÁVEL', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '14 - TELEFONE DE CONTATO', '', 1);
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '15 - ENDEREÇO (RUA, Nº, BAIRRO', pacientes.filter(item => item.id_paciente == paciente).map(item => item.endereco).pop(), 1);
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '16 - MUNICÍPIO DE RESIDÊNCIA', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '17 - CÓD. IBGE MUNICÍPIO', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '18 - UF', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '19 - CEP', '', 1);
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '20 - PRINCIPAIS SINAIS E SINTOMAS CLÍNICOS', lastevolucao, 1, '');
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '21 - CONDIÇÕES QUE JUSTIFICAM A INTERNAÇÃO', 'RISCO DE MORTE', 1, '');
+        insertCampoEstruturado('textarea', '60%', iddocumento, tipodocumento, obj, '22 - PRINCIPAIS RESULTADOS DE PROVAS DIAGNÓSTICAS (RESULTADOS DE EXAMES REALIZADOS)', 'VIDE EXAMES ACIMA', 1, '');
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '23 - DIAGNÓSTICO INICIAL', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '24 - CID 10 PRINCIPAL', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '25 - CID 10 SECUNDÁRIO', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '26 - CID 10 CAUSAS ASSOCIADAS', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '27 - DESCRIÇÃO DO PROCEDIMENTO SOLICITADO', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '28 - CÓDIGO DO PROCEDIMENTO', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '29 - CLÍNICA', 'CLÍNICA MÉDICA', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '30 - CARÁTER DE INTERNAÇÃO', 'URGÊNCIA', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '31 - DOCUMENTO', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '32 - DOCUMENTO DO PROFISSIONAL SOLICITANTE', '', 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '33 - NOME DO PROFISSIONAL SOLICITANTE/ASSISTENTE', usuarios.filter(valor => valor.id_usuario == selecteddocumento.id_usuario).map(valor => valor.nome_usuario), 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '34 - DATA DA SOLICITAÇÃO', moment().format('DD/MM/YYYY'), 1);
+        insertCampoEstruturado('textarea', null, iddocumento, tipodocumento, obj, '35 - ASSINTAURA E CARIMBO (Nº DO REGISTRO DO CONSELHO)', '', 1);
 
         // testando opção múltipla.
-        insertCampoEstruturado('opcaomultipla', iddocumento, tipodocumento, obj, '36 - OPÇÕES VARIADAS', '', 1, 'A,B,C,D');
-        insertCampoEstruturado('opcaounica', iddocumento, tipodocumento, obj, '37 - IAN E LEO VAMOS FICAR RICOS', '', 1, 'SIM, CORRETO MEU AMIGO');
+        insertCampoEstruturado('opcaomultipla', null, iddocumento, tipodocumento, obj, '36 - OPÇÕES VARIADAS PARA TESTE', '', 1, 'A,B,C,D');
 
         // FALTAM MAIS CAMPOS PARA CADASTRAR...
 
@@ -182,7 +174,7 @@ function DocumentoEstruturado() {
       });
     });
   }
-  const insertCampoEstruturado = (tipocampo, iddocumento, tipodocumento, obj, titulo, valor, obrigatorio, opcoes) => {
+  const insertCampoEstruturado = (tipocampo, largura, iddocumento, tipodocumento, obj, titulo, valor, obrigatorio, opcoes) => {
     var obj1 = {
       id_documento: iddocumento,
       id_paciente: obj.id_paciente,
@@ -192,7 +184,7 @@ function DocumentoEstruturado() {
       titulo: titulo,
       tipo: tipodocumento,
       altura: null,
-      largura: null,
+      largura: largura,
       obrigatorio: obrigatorio,
       tipocampo: tipocampo,
       opcoes: opcoes,
@@ -397,7 +389,7 @@ function DocumentoEstruturado() {
                   style={{
                     display: item.status == 1 ? 'flex' : 'none',
                     alignSelf: 'center',
-                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0, marginRight: 0,
+                    minHeight: 25, minWidth: 25, maxHeight: 24, maxWidth: 25, marginLeft: 0,
                   }}
                   onClick={() => {
                     setselecteddocumento(item);
@@ -430,16 +422,19 @@ function DocumentoEstruturado() {
   }, [arraydocumentosestruturados]);
 
   // CAMPOS ESTRUTURADOS PARA FORMULÁRIO E IMPRESSÃO.
-  const campo = (item, tipocampo, titulo, valor, obrigatorio, opcoes) => {
+  const campo = (item, tipocampo, largura, titulo, valor, obrigatorio, opcoes) => {
     var timeout = null;
+    let arrayvalor = [];
     let arrayopcoes = [];
 
-    let array = item.valor.split(",");
-    console.log(array);
+    if (valor != null) {
+      arrayvalor = valor.split(",");
+      console.log(arrayvalor);
+    }
 
     if (opcoes != null) {
-      console.log(opcoes.split(","));
-      arrayopcoes = opcoes.split(",")
+      arrayopcoes = opcoes.split(",");
+      console.log(arrayopcoes);
     }
 
     if (tipocampo == 'textarea') {
@@ -449,8 +444,9 @@ function DocumentoEstruturado() {
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
           position: 'relative',
           flexGrow: 'inherit',
-          backgroundColor: '#66b2b250',
+          backgroundColor: '#ffffff30',
           borderRadius: 5,
+          width: largura != null ? largura : '',
         }}
           onMouseLeave={() => {
             if (document.getElementById(titulo).value == '' && obrigatorio == 1) {
@@ -475,7 +471,9 @@ function DocumentoEstruturado() {
           <div
             className='text1'
             title={titulo}
-            style={{ alignSelf: 'flex-start', textAlign: 'left' }}>
+            style={{
+              alignSelf: 'flex-start', textAlign: 'left',
+            }}>
             {titulo}
           </div>
           <textarea
@@ -499,7 +497,7 @@ function DocumentoEstruturado() {
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
           flexGrow: 'inherit',
-          backgroundColor: '#66b2b250',
+          backgroundColor: '#ffffff30',
           borderRadius: 5,
         }}
           onMouseLeave={() => {
@@ -525,7 +523,9 @@ function DocumentoEstruturado() {
           <div
             className='text1'
             title={titulo}
-            style={{ alignSelf: 'flex-start', textAlign: 'left' }}>
+            style={{
+              alignSelf: 'flex-start', textAlign: 'left',
+            }}>
             {titulo}
           </div>
           <div id={'lista opcoes ' + item.id}
@@ -556,7 +556,7 @@ function DocumentoEstruturado() {
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
           flexGrow: 'inherit',
-          backgroundColor: '#66b2b250',
+          backgroundColor: '#ffffff30',
           borderRadius: 5,
         }}
           onMouseLeave={() => {
@@ -590,23 +590,23 @@ function DocumentoEstruturado() {
             {arrayopcoes.map(valor => (
               <div
                 id={'btn multi ' + valor}
-                className={array.filter(x => x == valor).length > 0 ? 'button-selected' : 'button'}
+                className={arrayvalor.filter(x => x == valor).length > 0 ? 'button-selected' : 'button'}
                 style={{ padding: 10 }}
                 onClick={() => {
-                  if (array.filter(item => item == valor).length == 1) {
+                  if (arrayvalor.filter(item => item == valor).length == 1) {
                     let newarray = [];
-                    array.filter(x => x != valor).map(x => newarray.push(x));
+                    arrayvalor.filter(x => x != valor).map(x => newarray.push(x));
                     console.log(newarray)
-                    array = newarray;
-                    console.log(array.toString());
-                    updateCampoEstruturado(item, array.toString());
+                    arrayvalor = newarray;
+                    console.log(arrayvalor.toString());
+                    updateCampoEstruturado(item, arrayvalor.toString());
                     setTimeout(() => {
                       document.getElementById('btn multi ' + valor).className = "button";
                     }, 500);
                   } else {
-                    array.push(valor);
-                    console.log(array.toString());
-                    updateCampoEstruturado(item, array.toString());
+                    arrayvalor.push(valor);
+                    console.log(arrayvalor.toString());
+                    updateCampoEstruturado(item, arrayvalor.toString());
                     setTimeout(() => {
                       document.getElementById('btn multi ' + valor).className = "button-selected";
                     }, 500);
@@ -620,7 +620,6 @@ function DocumentoEstruturado() {
         </div >
       )
     }
-
   }
 
   const printcampo = (tipocampo, titulo, valor) => {
@@ -704,24 +703,22 @@ function DocumentoEstruturado() {
     return (
       <div
         id="formulario"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          alignSelf: 'flex-start',
-          flex: 1,
-        }}>
-        <div className='text1' style={{ fontSize: 16 }}>{tipodocumento}</div>
-        <div
+
+      >
+        <div className='text1' style={{ fontSize: 24, color: '#ffffff' }}>{tipodocumento}</div>
+        <div className='scroll'
           style={{
-            display: selecteddocumento != [] ? 'flex' : 'none',
-            flexWrap: 'wrap',
-            pointerEvents: selecteddocumento.status == 0 ? 'auto' : 'none',
-            flex: 1,
+            display: 'flex',
+            flexDirection: 'row', justifyContent: 'center',
+            alignSelf: 'center', alignContent: 'center',
+            height: 'calc(100% - 20px)',
+            width: '100%',
+            margin: 0,
+            position: 'relative',
           }}>
-          {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2)) ? 1 : -1).map(item => campo(item, item.tipocampo, item.titulo, item.valor, item.obrigatorio, item.opcoes))}
+          {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2)) ? 1 : -1).map(item => campo(item, item.tipocampo, item.largura, item.titulo, item.valor, item.obrigatorio, item.opcoes))}
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -795,12 +792,12 @@ function DocumentoEstruturado() {
     <div id="scroll-documento-estruturado"
       className='card-aberto'
       style={{
-        position: 'relative',
         display: card == 'card-doc-estruturado-aih' ? 'flex' : 'none',
         flexDirection: 'row',
-        justifyContent: 'flex-start',
-        width: '100vw',
-        height: '300vh',
+        justifyContent: 'center',
+        height: '90vh',
+        position: 'relative',
+        alignSelf: 'center'
       }}
     >
       <Formulario></Formulario>

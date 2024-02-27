@@ -110,15 +110,46 @@ body {
 }
 
 .chassi {
-  position: relative;
+  position: relative !important;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-self: center;
-  width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
+  align-self: center !important;
+  width: calc(100vw - 10px);
+  height: calc(100vh - 10px);
   background-color: transparent !important;
   border-color: transparent !important;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.chassi::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chassi::-webkit-scrollbar-track {
+  background-color: var(--cor3);
+  border-radius: 5px;
+}
+
+.chassi::-webkit-scrollbar-button {
+  display: none;
+}
+
+.chassi::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.chassi::-webkit-scrollbar-thumb {
+  background-color: var(--cor1opaque);
+  border-radius: 5px;
+  transition: 500ms, 500ms ease-in-out;
+}
+
+.chassi::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor1);
+  border-radius: 5px;
+  transition: 500ms, 500ms ease-in-out;
 }
 
 .fundo {
@@ -159,9 +190,10 @@ body {
 
 .grid1 {
   display: flex;
-  align-items: flex-start;
   flex-direction: row;
   justify-content: center;
+  flex-wrap: wrap;
+  width: '100%';
   align-items: flex-start;
 }
 
@@ -514,7 +546,7 @@ body {
   cursor: default;
   margin: 0px;
   padding: 0px;
-  padding-right: 5px;
+  padding-right: 5px !important;
   scroll-behavior: smooth;
 }
 
@@ -994,7 +1026,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 5px;
   cursor: default;
   transition: 200ms ease-in-out;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .button-classifica-selected {
@@ -1585,6 +1617,25 @@ ESTILOS VARIÁVEIS CONFORME A RESPONSIVIDADE.
     height: var(--doc-height);
     justify-content: center;
     background-color: var(--pallete2);
+  }
+
+  .chassi {
+    position: relative !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-self: center !important;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
+    margin: 0;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .chassi::-webkit-scrollbar {
+    display: none;
   }
 
   .textarea {

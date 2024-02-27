@@ -153,19 +153,12 @@ function Prontuario() {
   // carregar lista de atendimentos ativos para a unidade selecionada.
   const [arrayatendimentos, setarrayatendimentos] = useState([]);
   const loadAtendimentos = () => {
-    /*
-    // Mecanismo para resgatar o token da localStorage e lançá-lo no header da requisição protegida.
-    var token = localStorage.getItem("token");
-    console.log(token);
-    axios.defaults.headers.common["Authorization"] = token;
-    */
-
     axios
       .get(html + "all_atendimentos")
       .then((response) => {
         let x = response.data.rows;
-        setatendimentos(x.filter(item => item.situacao == 1));
-        setarrayatendimentos(x.filter(item => item.situacao == 1));
+        setatendimentos(x.filter(item => item.situacao == 1 && item.id_unidade != 4));
+        setarrayatendimentos(x.filter(item => item.situacao == 1 && item.id_unidade != 4));
         loadAllInterconsultas();
         loadAllPrecaucoes();
       })
@@ -425,7 +418,7 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerWidth < mobilewidth ? '70vh' : '75vh',
+            height: window.innerWidth < mobilewidth ? '72vh' : '75vh',
             width: 'calc(100% - 20px)',
           }}
         >
@@ -677,7 +670,7 @@ function Prontuario() {
           style={{
             display: arrayatendimentos.length < 1 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerWidth < mobilewidth ? '70vh' : '75vh',
+            height: window.innerWidth < mobilewidth ? '72vh' : '75vh',
             width: 'calc(100% - 20px)',
           }}
         >
@@ -1848,13 +1841,16 @@ function Prontuario() {
 
   return (
     <div
-      className="main fadein"
+      className="main"
       style={{ display: pagina == -1 ? "flex" : "none" }}
     >
       <div
-        className="chassi scroll"
+        className="chassi"
         id="conteúdo do prontuário para todos os pacientes"
-        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
+        style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
+          position: 'relative',
+        }}
       >
         <div id="usuário, botões, busca de paciente e lista de pacientes"
           style={{
@@ -1862,9 +1858,7 @@ function Prontuario() {
             flexDirection: 'column', justifyContent: 'space-between',
             position: 'sticky', top: 5,
             width: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            minWidth: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            maxWidth: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            height: 'calc(100% - 10px)',
+            height: '90vh',
           }}
         >
           <div id='botão de interconsultas'
@@ -1887,20 +1881,14 @@ function Prontuario() {
           <Usuario></Usuario>
           <ListaDeAtendimentos></ListaDeAtendimentos>
         </div>
-        <div id="conteúdo cheio"
+        <div id="conteúdo cheio (cards)"
           style={{
-            display:
-              window.innerWidth < mobilewidth && viewlista == 1
-                ? "none"
-                : atendimento == null
-                  ? "none"
-                  : "flex",
+            display: atendimento != null && card == 0 && viewlista == 0 ? 'flex' : 'none',
             flexDirection: "row",
             justifyContent: 'center',
             alignContent: 'flex-start',
             flexWrap: "wrap",
-            width: '100%',
-            marginLeft: 2.5,
+            width: window.innerWidth < mobilewidth ? '90vw' : '65vw',
           }}
         >
           <CabecalhoPacienteMobile></CabecalhoPacienteMobile>
@@ -1908,8 +1896,8 @@ function Prontuario() {
           <div id="cards (cartões) visão desktop"
             className={arraycartoes.length == cartoes.length ? "grid" : "grid1"}
             style={{
-              display: window.innerWidth < mobilewidth ? 'none' : 'grid',
-              width: '100%',
+              display: window.innerWidth < mobilewidth ? 'none' : '',
+              width: '100%', alignSelf: 'center',
             }}>
             {cartao(null, "DIAS DE INTERNAÇÃO: " +
               atendimentos
@@ -1987,6 +1975,17 @@ function Prontuario() {
             {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
             {cartao(null, 'LABORATÓRIO E RX', 'card-laboratorio', null, 1)}
           </div>
+        </div>
+        <div id="conteúdo cheio (componentes)"
+          style={{
+            display: atendimento != null && viewlista == 0 && card != 0 ? 'flex' : 'none',
+            flexDirection: "row",
+            justifyContent: 'center',
+            alignContent: 'center',
+            flexWrap: "wrap",
+            width: window.innerWidth < mobilewidth ? '90vw' : '65vw',
+          }}
+        >
           <Alergias></Alergias>
           <Documentos></Documentos>
           <DocumentoEstruturado></DocumentoEstruturado>
@@ -2007,17 +2006,11 @@ function Prontuario() {
         </div>
         <div id="conteúdo vazio"
           style={{
-            display:
-              window.innerWidth < mobilewidth && viewlista == 1
-                ? "none"
-                : atendimento != null
-                  ? "none"
-                  : "flex",
+            display: window.innerWidth < mobilewidth ? "none" : atendimento == null ? "flex" : "none",
             flexDirection: "row",
             justifyContent: 'center',
             flexWrap: "wrap",
-            width: '100%',
-            marginLeft: 2.5,
+            width: '65vw',
           }}
         >
           <img

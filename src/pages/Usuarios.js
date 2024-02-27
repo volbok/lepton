@@ -13,15 +13,15 @@ import masknumbers from "../functions/masknumber";
 import maskoptions from "../functions/maskoptions";
 import maskdate from "../functions/maskdate";
 import maskphone from "../functions/maskphone";
-
+import modal from "../functions/modal";
+import selector from "../functions/selector";
 // imagens.
 import deletar from "../images/deletar.svg";
 import back from "../images/back.svg";
 import novo from "../images/novo.svg";
 import salvar from "../images/salvar.svg";
 import editar from "../images/editar.svg";
-import modal from "../functions/modal";
-import selector from "../functions/selector";
+import lupa from '../images/lupa.svg';
 
 function Usuarios() {
   // context.
@@ -100,64 +100,39 @@ function Usuarios() {
       });
   };
 
-  const [acessoprontuario, setacessoprontuario] = useState(0);
-  const [acessofarmacia, setacessofarmacia] = useState(0);
-  const [acessolaboratorio, setacessolaboratorio] = useState(0);
-  const [acessofaturamento, setacessofaturamento] = useState(0);
-  const [acessopaciente, setacessopaciente] = useState(0);
-  const [acessousuarios, setacessousuarios] = useState(0);
-
-  // registrando um usuário.
+  // inserindo um usuário.
   const insertUsuario = () => {
     var obj = {
-      nome_usuario: nomeusuario.toUpperCase(),
-      dn_usuario: moment(
-        dn,
-        "DD/MM/YYYY"
-      ),
-      cpf_usuario: cpf,
-      contato_usuario: contato.toUpperCase(),
-      senha: cpf,
-      login: cpf,
-      conselho: conselho.toUpperCase(),
-      n_conselho: n_conselho.toUpperCase(),
-      tipo_usuario: especialidade,
+      nome_usuario: document.getElementById("inputNome").value.toUpperCase(),
+      dn_usuario: moment(document.getElementById("inputDn").value, "DD/MM/YYYY"),
+      cpf_usuario: document.getElementById("inputCpf").value,
+      contato_usuario: document.getElementById("inputContato").value,
+      senha: document.getElementById("inputContato").value,
+      login: document.getElementById("inputCpf").value,
+      conselho: document.getElementById("inputConselho").value.toUpperCase(),
+      n_conselho: document.getElementById("inputNumeroConselho").value,
+      tipo_usuario: localStorage.getItem('especialidade'),
+      paciente: 0,
+      prontuario: 0,
+      laboratorio: 0,
+      farmacia: 0,
+      faturamento: 0,
+      usuarios: 0,
+      primeiro_acesso: 0,
     };
-    if (usuarios.filter((item) => item.cpf_usuario == cpf).length < 1) {
-      console.log(obj);
-      axios
-        .post(html + "inserir_usuario", obj)
-        .then(() => {
-          loadUsuarios();
-          setselectedusuario(0);
-          setviewnewusuario(0);
-          toast(
-            settoast,
-            "USUÁRIO CADASTRADO COM SUCESSO NA BASE PULSAR",
-            "rgb(82, 190, 128, 1)",
-            1500
-          );
-        })
-        .catch(function () {
-          toast(
-            settoast,
-            "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-            "black",
-            3000
-          );
-          setTimeout(() => {
-            setpagina(0);
-            history.push("/");
-          }, 5000);
-        });
-    } else {
-      toast(
-        settoast,
-        "USUÁRIO JÁ CADASTRADO NA BASE PULSAR",
-        "rgb(231, 76, 60, 1)",
-        3000
-      );
-    }
+    axios
+      .post(html + "inserir_usuario", obj)
+      .then(() => {
+        loadUsuarios();
+        setselectedusuario(0);
+        setviewnewusuario(0);
+        toast(
+          settoast,
+          "USUÁRIO CADASTRADO COM SUCESSO NA BASE PULSAR",
+          "rgb(82, 190, 128, 1)",
+          1500
+        );
+      })
   };
 
   // atualizando um usuário.
@@ -174,13 +149,13 @@ function Usuarios() {
       login: selectedusuario.login,
       conselho: document.getElementById("inputConselho").value.toUpperCase(),
       n_conselho: document.getElementById("inputNumeroConselho").value,
-      tipo_usuario: especialidade,
-      paciente: acessopaciente,
-      prontuario: acessoprontuario,
-      laboratorio: acessolaboratorio,
-      farmacia: acessofarmacia,
-      faturamento: acessofaturamento,
-      usuarios: acessousuarios,
+      tipo_usuario: localStorage.getItem('especialidade'),
+      paciente: localStorage.getItem('paciente'),
+      prontuario: localStorage.getItem('prontuario'),
+      laboratorio: localStorage.getItem('laboratorio'),
+      farmacia: localStorage.getItem('farmacia'),
+      faturamento: localStorage.getItem('faturamento'),
+      usuarios: localStorage.getItem('usuarios'),
     };
     console.log(obj);
     console.log(selectedusuario.id_usuario);
@@ -197,37 +172,27 @@ function Usuarios() {
           1500
         );
       })
-      .catch(function () {
-        toast(
-          settoast,
-          "ERRO DE CONEXÃO, REINICIANDO APLICAÇÃO.",
-          "black",
-          5000
-        );
-        setTimeout(() => {
-          setpagina(0);
-          history.push("/");
-        }, 3000);
-      });
+
+
   };
 
   const updateAcessoModulos = () => {
     var obj = {
       nome_usuario: selectedusuario.nome_usuario,
-      dn_usuario: selectedusuario.dn_usuario,
-      cpf_usuario: selectedusuario.cpf_usuario,
-      contato_usuario: selectedusuario.contato_usuario,
+      dn_usuario: localStorage.getItem('dn'),
+      cpf_usuario: localStorage.getItem('cpf'),
+      contato_usuario: localStorage.getItem('contato'),
       senha: selectedusuario.senha,
       login: selectedusuario.login,
       conselho: selectedusuario.conselho,
       n_conselho: selectedusuario.n_conselho,
-      tipo_usuario: especialidade,
-      paciente: acessopaciente,
-      prontuario: acessoprontuario,
-      laboratorio: acessolaboratorio,
-      farmacia: acessofarmacia,
-      faturamento: acessofaturamento,
-      usuarios: acessousuarios,
+      tipo_usuario: localStorage.getItem('especialidade'),
+      paciente: localStorage.getItem('paciente'),
+      prontuario: localStorage.getItem('prontuario'),
+      laboratorio: localStorage.getItem('laboratorio'),
+      farmacia: localStorage.getItem('farmacia'),
+      faturamento: localStorage.getItem('faturamento'),
+      usuarios: localStorage.getItem('usuarios'),
     };
     console.log(obj);
     console.log(selectedusuario.id_usuario);
@@ -278,6 +243,8 @@ function Usuarios() {
             "rgb(82, 190, 128, 1)",
             1500
           );
+          limpaCampos();
+          setselectedusuario(0);
         })
         .catch(function () {
           toast(
@@ -297,16 +264,10 @@ function Usuarios() {
   // componente para inserir novo usuário.
   const [viewnewusuario, setviewnewusuario] = useState(0);
   const [selectedusuario, setselectedusuario] = useState(0);
-  const [especialidade, setespecialidade] = useState(selectedusuario.tipo_usuario);
-  const [nomeusuario, setnomeusuario] = useState(null);
-  const [dn, setdn] = useState(null);
-  const [contato, setcontato] = useState(null);
-  const [cpf, setcpf] = useState(null);
-  const [conselho, setconselho] = useState(null);
-  const [n_conselho, setn_conselho] = useState(null);
 
   function InsertUsuario() {
     var timeout = null;
+    const [especialidade, setespecialidade] = useState(localStorage.getItem("especialidade"));
     return (
       <div
         className="fundo"
@@ -352,9 +313,7 @@ function Usuarios() {
                   id="inputNome"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "NOME DO USUÁRIO")}
-                  defaultValue={
-                    nomeusuario
-                  }
+                  defaultValue={localStorage.getItem('nome')}
                   style={{
                     flexDirection: "center",
                     justifyContent: "center",
@@ -384,9 +343,7 @@ function Usuarios() {
                   onKeyUp={() => {
                     maskdate(timeout, "inputDn");
                   }}
-                  defaultValue={
-                    moment(dn).format('DD/MM/YYYY')
-                  }
+                  defaultValue={moment(localStorage.getItem('dn')).format('DD/MM/YYYY')}
                   style={{
                     flexDirection: "center",
                     justifyContent: "center",
@@ -411,7 +368,7 @@ function Usuarios() {
                   id="inputContato"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "CONTATO")}
-                  defaultValue={contato}
+                  defaultValue={localStorage.getItem('contato')}
                   onKeyUp={() => {
                     maskphone(timeout, "inputContato");
                   }}
@@ -440,11 +397,13 @@ function Usuarios() {
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "CPF DO USUÁRIO")}
                   onKeyUp={() => {
-                    masknumbers(timeout, "inputCpf", 13);
+                    if (usuarios.filter(item => item.cpf_usuario == document.getElementById("inputCpf").value).length > 0) {
+                      toast(settoast, 'CPF JÁ CADASTRADO', '#EC7063', 1500);
+                    } else {
+                      masknumbers(timeout, "inputCpf", 13);
+                    }
                   }}
-                  defaultValue={
-                    cpf
-                  }
+                  defaultValue={localStorage.getItem('cpf')}
                   style={{
                     flexDirection: "center",
                     justifyContent: "center",
@@ -475,7 +434,7 @@ function Usuarios() {
                     "CREFITO",
                   ]);
                 }}
-                defaultValue={conselho}
+                defaultValue={localStorage.getItem('conselho')}
                 style={{
                   flexDirection: "center",
                   justifyContent: "center",
@@ -492,7 +451,7 @@ function Usuarios() {
                 id="inputNumeroConselho"
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "NÚMERO DO CONSELHO")}
-                defaultValue={n_conselho}
+                defaultValue={localStorage.getItem('n_conselho')}
                 onKeyUp={() => {
                   masknumbers(timeout, "inputNumeroConselho", 8);
                 }}
@@ -503,24 +462,29 @@ function Usuarios() {
                   width: "30vw",
                 }}
               ></input>
-              <div className="text1">ESPECIALIDADE MÉDICA</div>
-              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '50vw' }}>
-                {arrayespecialidades.map(item => (
-                  <div
-                    onClick={() => {
-                      setnomeusuario(document.getElementById('inputNome').value.toUpperCase());
-                      setdn(moment(document.getElementById('inputDn').value, 'DD/MM/YYYY'));
-                      setcontato(document.getElementById('inputContato').value);
-                      setcpf(document.getElementById('inputCpf').value);
-                      setconselho(document.getElementById('inputConselho').value.toUpperCase());
-                      setn_conselho(document.getElementById('inputNumeroConselho').value);
-                      setespecialidade(item);
-                    }}
-                    className={especialidade == item ? "button-selected" : "button"}
-                    style={{ width: 150 }}>
-                    {item}
-                  </div>
-                ))}
+              <div className="text1">{'ESPECIALIDADE: ' + especialidade}</div>
+              <div id="scroll das especialidades"
+                className="scroll"
+                style={{
+                  width: 460, height: 250,
+                  backgroundColor: 'white', borderColor: 'white',
+                  marginBottom: 15,
+                }}>
+                <div className="grid2">
+                  {arrayespecialidades.map(item => (
+                    <div id={'btn-especialidade: ' + item}
+                      className={localStorage.getItem('especialidade') == item ? 'button-selected' : 'button'}
+                      style={{ minWidth: 200 }}
+                      onClick={() => {
+                        localStorage.setItem('especialidade', item);
+                        setespecialidade(item);
+                        selector("scroll das especialidades", 'btn-especialidade: ' + item, 100);
+                      }}
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div
                 style={{
@@ -533,6 +497,7 @@ function Usuarios() {
                   className="button-yellow"
                   onClick={(e) => {
                     setviewnewusuario(0);
+                    setselectedusuario(0);
                     e.stopPropagation();
                   }}
                 >
@@ -647,7 +612,7 @@ function Usuarios() {
         style={{
           width: 400,
           maxWidth: 400,
-          height: "calc(100vh - 80px)",
+          height: "calc(100vh - 100px)",
           marginTop: 10,
         }}
       >
@@ -668,20 +633,22 @@ function Usuarios() {
                 onClick={() => {
                   localStorage.setItem("selecteduser", JSON.stringify(item));
                   setselectedusuario(item);
-                  setnomeusuario(item.nome_usuario);
-                  setdn(item.dn_usuario);
-                  setcpf(item.cpf_usuario);
-                  setcontato(item.contato_usuario);
-                  setconselho(item.conselho);
-                  setn_conselho(item.n_conselho);
-                  setespecialidade(item.tipo_usuario);
+                  localStorage.setItem('id', item.id_usuario);
+                  localStorage.setItem('nome', item.nome_usuario);
+                  localStorage.setItem('dn', item.dn_usuario);
+                  localStorage.setItem('cpf', item.cpf_usuario);
+                  localStorage.setItem('contato', item.contato_usuario);
+                  localStorage.setItem('conselho', item.conselho);
+                  localStorage.setItem('n_conselho', item.n_conselho);
+                  localStorage.setItem('especialidade', item.tipo_usuario);
                   // acessos.
-                  setacessofarmacia(item.farmacia);
-                  setacessofaturamento(item.faturamento);
-                  setacessolaboratorio(item.laboratorio);
-                  setacessopaciente(item.paciente);
-                  setacessoprontuario(item.prontuario);
-                  setacessousuarios(item.usuarios);
+                  localStorage.setItem('farmacia', item.farmacia);
+                  localStorage.setItem('faturamento', item.faturamento);
+                  localStorage.setItem('laboratorio', item.laboratorio);
+                  localStorage.setItem('paciente', item.paciente);
+                  localStorage.setItem('prontuario', item.prontuario);
+                  localStorage.setItem('usuarios', item.usuarios);
+
                   loadTodosAcessos(item.id_usuario);
                   selector("scroll usuários", "usuario " + item.id_usuario, 300);
                 }}
@@ -691,7 +658,7 @@ function Usuarios() {
                   paddingLeft: 10,
                 }}
               >
-                {item.nome_usuario}
+                {item.nome_usuario.length < 26 ? item.nome_usuario : item.nome_usuario.substring(0, 25) + '...'}
                 <div
                   style={{
                     display: "flex",
@@ -702,12 +669,7 @@ function Usuarios() {
                   <div
                     id="btn-edit"
                     className="button-yellow"
-                    style={{
-                      width: 25,
-                      minWidth: 25,
-                      height: 25,
-                      minHeight: 25,
-                    }}
+                    style={{ width: 50, height: 50 }}
                     onClick={() => {
                       setselectedusuario(item);
                       setviewnewusuario(2);
@@ -718,8 +680,8 @@ function Usuarios() {
                       src={editar}
                       style={{
                         margin: 10,
-                        height: 25,
-                        width: 25,
+                        height: 30,
+                        width: 30,
                       }}
                     ></img>
                   </div>
@@ -728,10 +690,8 @@ function Usuarios() {
                     className="button-yellow"
                     style={{
                       display: item.id_usuario == usuario.id ? "none" : "flex",
-                      width: 25,
-                      minWidth: 25,
-                      height: 25,
-                      minHeight: 25,
+                      width: 50,
+                      height: 50,
                     }}
                     onClick={() => {
                       modal(
@@ -747,8 +707,8 @@ function Usuarios() {
                       src={deletar}
                       style={{
                         margin: 10,
-                        height: 25,
-                        width: 25,
+                        height: 30,
+                        width: 30,
                       }}
                     ></img>
                   </div>
@@ -785,7 +745,6 @@ function Usuarios() {
         x = response.data.rows;
         settodosacessos(x);
         setarrayacessos(x.filter((valor) => valor.id_usuario == id_usuario));
-        console.log(id_usuario);
         document.getElementById("usuario " + id_usuario).className =
           "button-selected";
       })
@@ -808,7 +767,7 @@ function Usuarios() {
     var obj = {
       id_cliente: hospital,
       id_unidade: unidade,
-      id_usuario: selectedusuario.id_usuario,
+      id_usuario: id_usuario,
       boss: null,
     };
     axios
@@ -852,23 +811,41 @@ function Usuarios() {
       });
   };
 
-  function AcessosEModulos() {
+  function Acessos() {
     return (
-      <div
-        className="scroll"
-        id="scroll acessos e módulos"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          width: "calc(100vw - 460px)",
-          height: "calc(100vh - 30px)",
-          overflowY: "scroll",
-          marginLeft: 10,
-        }}
-      >
-        <ListaDeUnidades></ListaDeUnidades>
-        <ListaDeModulos></ListaDeModulos>
+      <div style={{ display: 'flex', width: '100%' }}>
+        <div
+          id="acessos e módulos"
+          style={{
+            display: selectedusuario != 0 ? "flex" : "none",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+          }}
+        >
+          <ListaDeUnidades></ListaDeUnidades>
+          <ListaDeModulos></ListaDeModulos>
+        </div>
+        <div
+          id="vazio"
+          style={{
+            display: selectedusuario == 0 ? "flex" : "none",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: '100%',
+          }}
+        >
+          <img
+            alt=""
+            src={lupa}
+            style={{
+              margin: 10,
+              height: 150,
+              width: 150,
+              opacity: 0.1,
+              alignSelf: 'center'
+            }}
+          ></img>
+        </div>
       </div>
     );
   }
@@ -1011,24 +988,24 @@ function Usuarios() {
     );
   }
 
-  const mudaModulo = (acesso, setacesso) => {
-    if (acesso == 1) {
-      setacesso(0);
-      setTimeout(() => {
-        document.getElementById(
-          "usuario " + selectedusuario.id_usuario
-        ).className = "button-selected";
-      }, 100);
+  const mudaModulo = (acesso, setstate) => {
+    if (localStorage.getItem(acesso) == 1) {
+      localStorage.setItem(acesso, 0);
+      setstate(0);
     } else {
-      setacesso(1);
-      setTimeout(() => {
-        document.getElementById(
-          "usuario " + selectedusuario.id_usuario
-        ).className = "button-selected";
-      }, 100);
+      localStorage.setItem(acesso, 1);
+      setstate(1);
     }
   };
+
   function ListaDeModulos() {
+    const [prontuario, setprontuario] = useState(localStorage.getItem("prontuario"));
+    const [farmacia, setfarmacia] = useState(localStorage.getItem("farmacia"));
+    const [laboratorio, setlaboratorio] = useState(localStorage.getItem("laboratorio"));
+    const [faturamento, setfaturamento] = useState(localStorage.getItem("faturamento"));
+    const [pacientes, setpacientes] = useState(localStorage.getItem("paciente"));
+    const [usuarios, setusuarios] = useState(localStorage.getItem("usuarios"));
+
     return (
       <div
         style={{
@@ -1051,53 +1028,52 @@ function Usuarios() {
             flexWrap: "wrap",
           }}
         >
-          <div
-            className={acessoprontuario == 1 ? "button-selected" : "button"}
+          <div id="btn-prontuario"
+            className={prontuario == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
             onClick={() => {
-              mudaModulo(acessoprontuario, setacessoprontuario);
+              mudaModulo('prontuario', setprontuario);
               if (viewunidades == 1 && arrayacessos.length == 0) {
                 setviewunidades(0);
               } else {
                 setviewunidades(1);
-                setacessoprontuario(1);
               }
             }}
           >
             PRONTUÁRIO
           </div>
-          <div
-            className={acessofarmacia == 1 ? "button-selected" : "button"}
+          <div id="btn-farmacia"
+            className={farmacia == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessofarmacia, setacessofarmacia)}
+            onClick={() => mudaModulo('farmacia', setfarmacia)}
           >
             FARMÁCIA
           </div>
-          <div
-            className={acessolaboratorio == 1 ? "button-selected" : "button"}
+          <div id="btn-laboratorio"
+            className={laboratorio == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessolaboratorio, setacessolaboratorio)}
+            onClick={() => mudaModulo('laboratorio', setlaboratorio)}
           >
             LABORATÓRIO
           </div>
-          <div
-            className={acessofaturamento == 1 ? "button-selected" : "button"}
+          <div id="btn-faturamento"
+            className={faturamento == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessofaturamento, setacessofaturamento)}
+            onClick={() => mudaModulo('faturamento', setfaturamento)}
           >
             FATURAMENTO
           </div>
-          <div
-            className={acessopaciente == 1 ? "button-selected" : "button"}
+          <div id="btn-paciente"
+            className={pacientes == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessopaciente, setacessopaciente)}
+            onClick={() => mudaModulo('paciente', setpacientes)}
           >
             GESTÃO DE PACIENTES E LEITOS
           </div>
-          <div
-            className={acessousuarios == 1 ? "button-selected" : "button"}
+          <div id="btn-usuarios"
+            className={usuarios == 1 ? 'button-selected' : 'button'}
             style={{ width: 150, height: 150 }}
-            onClick={() => mudaModulo(acessousuarios, setacessousuarios)}
+            onClick={() => mudaModulo('usuarios', setusuarios)}
           >
             GESTÃO DE USUÁRIOS
           </div>
@@ -1128,7 +1104,13 @@ function Usuarios() {
       <div
         className="fundo"
         style={{ display: viewnewacesso == 1 ? "flex" : "none" }}
-        onClick={() => setviewnewacesso(0)}
+        onClick={() => {
+          setviewnewacesso(0);
+          console.log(localStorage.getItem('id'));
+          setTimeout(() => {
+            document.getElementById("usuario " + localStorage.getItem('id')).className = "button-selected"
+          }, 200);
+        }}
       >
         <div className="janela" onClick={(e) => e.stopPropagation()}>
           <div
@@ -1163,30 +1145,36 @@ function Usuarios() {
             ))}
           </div>
         </div>
-      </div>
+      </div >
     );
+  }
+
+  const limpaCampos = () => {
+    localStorage.setItem('nome', '');
+    localStorage.setItem('dn', '');
+    localStorage.setItem('cpf', '');
+    localStorage.setItem('contato', '');
+    localStorage.setItem('conselho', '');
+    localStorage.setItem('n_conselho', '');
+    localStorage.setItem('tipo_usuario', '');
   }
 
   return (
     <div className="main" style={{ display: pagina == 5 ? "flex" : "none" }}>
       <div
-        id="cadastro de usuários e de acessos"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          height: window.innerHeight - 20,
-        }}
+        className="chassi"
+        id="conteúdo do prontuário"
+        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', position: 'relative' }}
       >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            position: 'sticky', top: 10,
           }}
         >
-          <div
-            id="botões e pesquisa"
+          <div id="botões e pesquisa"
             style={{
               display: "flex",
               flexDirection: "row",
@@ -1196,7 +1184,7 @@ function Usuarios() {
             }}
           >
             <div
-              className="button-red"
+              className="button-yellow"
               style={{ margin: 0, marginRight: 10, width: 50, height: 50 }}
               title={"VOLTAR PARA O LOGIN"}
               onClick={() => {
@@ -1220,14 +1208,8 @@ function Usuarios() {
               style={{ margin: 0, marginLeft: 10, width: 50, height: 50 }}
               title={"CADASTRAR USUÁRIO"}
               onClick={() => {
+                limpaCampos();
                 setselectedusuario(0);
-                setnomeusuario(null);
-                setdn(null);
-                setcontato(null);
-                setcpf(null);
-                setconselho(null);
-                setn_conselho(null);
-                setespecialidade(null);
                 setviewnewusuario(1);
               }}
             >
@@ -1244,7 +1226,7 @@ function Usuarios() {
           </div>
           <ListaDeUsuarios></ListaDeUsuarios>
         </div>
-        <AcessosEModulos></AcessosEModulos>
+        <Acessos></Acessos>
         <InsertUsuario></InsertUsuario>
         <InsertAcesso></InsertAcesso>
       </div>

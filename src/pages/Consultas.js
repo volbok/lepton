@@ -224,7 +224,7 @@ function Consultas() {
   }
 
   var timeout = null;
-  const [objpaciente, setobjpaciente] = useState();
+  const [objpaciente, setobjpaciente] = useState(null);
   useEffect(() => {
     if (pagina == -2) {
       console.log(usuario);
@@ -257,7 +257,7 @@ function Consultas() {
           }}
         >
           <div
-            className="button-red"
+            className="button-yellow"
             onClick={() => {
               setpagina(0);
               history.push("/");
@@ -359,7 +359,7 @@ function Consultas() {
   function SalaSelector() {
     return (
       <div className="fundo"
-        style={{ display: unidade == 5 && viewsalaselector == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        style={{ display: viewsalaselector == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="janela">
           <div className="text1">SELECIONE A SALA PARA ATENDIMENTO DO PACIENTE</div>
           <div id="salas para chamada"
@@ -418,7 +418,9 @@ function Consultas() {
     })
   }
 
-  const updateConsulta = (item) => {
+  const updateConsulta = ([item, status]) => {
+    console.log(item);
+    console.log(status);
     var obj = {
       data_inicio: item.data_inicio,
       data_termino: moment(),
@@ -427,7 +429,7 @@ function Consultas() {
       id_unidade: item.id_unidade,
       nome_paciente: item.nome_paciente,
       leito: null,
-      situacao: 2, // 2 = consulta encerrada.
+      situacao: status, // 4 = consulta encerrada, 5 = consulta cancelada.
       id_cliente: item.id_cliente,
       classificacao: item.classificacao,
       id_profissional: item.id_profissional,
@@ -525,8 +527,8 @@ function Consultas() {
           style={{
             display: arrayatendimentos.length > 0 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerWidth < mobilewidth ? '70vh' : '75vh',
-            width: 'calc(100% - 20px)',
+            height: window.innerWidth < mobilewidth ? '72vh' : 'calc(75vh + 25px)',
+            width: 'calc(100% - 20px)', marginTop: 5,
           }}
         >
           <div className="text3">
@@ -700,7 +702,7 @@ function Consultas() {
                           className="button"
                           title="ENCERRAR CONSULTA"
                           onClick={() => {
-                            modal(setdialogo, 'TEM CERTEZA QUE DESEJA FINALIZAR A CONSULTA?', updateConsulta, item);
+                            modal(setdialogo, 'TEM CERTEZA QUE DESEJA FINALIZAR A CONSULTA?', updateConsulta, [item, 4]);
                           }}
                           style={{
                             display: "flex",
@@ -711,6 +713,27 @@ function Consultas() {
                             height: 20,
                             minHeight: 20,
                             margin: 0,
+                            padding: 7.5,
+                          }}
+                        >
+                          <img alt="" src={flag} style={{ width: 25, height: 25 }}></img>
+                        </div>
+                        <div
+                          id="botão encerrar"
+                          className="button"
+                          title="CANCELAR CONSULTA"
+                          onClick={() => {
+                            modal(setdialogo, 'TEM CERTEZA QUE DESEJA CANCELAR A CONSULTA?', updateConsulta, [item, 5]);
+                          }}
+                          style={{
+                            display: "flex",
+                            borderColor: "#f2f2f2",
+                            backgroundColor: "#EC7063",
+                            width: 20,
+                            minWidth: 20,
+                            height: 20,
+                            minHeight: 20,
+                            margin: 0, marginLeft: 5,
                             padding: 7.5,
                           }}
                         >
@@ -759,7 +782,7 @@ function Consultas() {
           style={{
             display: arrayatendimentos.length < 1 ? "flex" : "none",
             justifyContent: "flex-start",
-            height: window.innerWidth < mobilewidth ? '70vh' : '75vh',
+            height: window.innerWidth < mobilewidth ? '72vh' : '75vh',
             width: 'calc(100% - 20px)',
           }}
         >
@@ -2135,7 +2158,7 @@ function Consultas() {
                       </div>
                       <div id="btn deletar agendamento de consulta"
                         title="DESMARCAR CONSULTA"
-                        className="button-red"
+                        className="button-yellow"
                         onClick={() => {
                           modal(
                             setdialogo,
@@ -2211,7 +2234,7 @@ function Consultas() {
           }}
           onClick={(e) => e.stopPropagation()}>
           <div id="botão para sair da tela de seleção dos horários"
-            className="button-red" style={{
+            className="button-yellow" style={{
               maxHeight: 50, maxWidth: 50,
               position: 'sticky', top: 10, right: 10, alignSelf: 'flex-end'
             }}
@@ -2251,11 +2274,28 @@ function Consultas() {
     return (
       <div className="fundo"
         onClick={() => setviewagendamento(0)}
-        style={{ display: viewagendamento == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
-        <div className="janela" style={{ display: 'flex', flexDirection: 'row' }}>
-          <DatePicker></DatePicker>
-          <ListaDeConsultas></ListaDeConsultas>
-          <ViewOpcoesHorarios></ViewOpcoesHorarios>
+        style={{ display: objpaciente != null && viewagendamento == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
+        <div className="janela" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className="text1" style={{ fontSize: 16 }}>{objpaciente != null ? 'AGENDAR CONSULTA PARA ' + objpaciente.nome_paciente + '.' : ''}</div>
+            <div
+              id="botão de retorno"
+              className="button-yellow"
+              style={{
+                display: "flex",
+                opacity: 1,
+                alignSelf: "center",
+              }}
+              onClick={() => setviewagendamento(0)}
+            >
+              <img alt="" src={back} style={{ width: 30, height: 30 }}></img>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <DatePicker></DatePicker>
+            <ListaDeConsultas></ListaDeConsultas>
+            <ViewOpcoesHorarios></ViewOpcoesHorarios>
+          </div>
         </div>
       </div>
     )
@@ -2342,13 +2382,13 @@ function Consultas() {
 
   return (
     <div
-      className="main fadein"
+      className="main"
       style={{ display: pagina == -2 ? "flex" : "none" }}
     >
       <div
-        className="chassi scroll"
+        className="chassi"
         id="conteúdo do prontuário"
-        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
+        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}
       >
         <div id="usuário, botões, busca de paciente e lista de pacientes"
           style={{
@@ -2356,9 +2396,7 @@ function Consultas() {
             flexDirection: 'column', justifyContent: 'space-between',
             position: 'sticky', top: 5,
             width: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            minWidth: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            maxWidth: window.innerWidth < mobilewidth ? '90vw' : '30vw',
-            height: 'calc(100% - 10px)',
+            height: '90vh',
           }}
         >
           <div id='botão de interconsultas'
@@ -2381,20 +2419,14 @@ function Consultas() {
           <Usuario></Usuario>
           <ListaDeAtendimentos></ListaDeAtendimentos>
         </div>
-        <div id="conteúdo cheio"
+        <div id="conteúdo cheio (cards)"
           style={{
-            display:
-              window.innerWidth < mobilewidth && viewlista == 1
-                ? "none"
-                : atendimento == null
-                  ? "none"
-                  : "flex",
+            display: atendimento != null && card == 0 && viewlista == 0 ? 'flex' : 'none',
             flexDirection: "row",
             justifyContent: 'center',
             alignContent: 'flex-start',
             flexWrap: "wrap",
-            width: '100%',
-            marginLeft: 2.5,
+            width: window.innerWidth < mobilewidth ? '90vw' : '65vw',
           }}
         >
           <CabecalhoPacienteMobile></CabecalhoPacienteMobile>
@@ -2402,8 +2434,8 @@ function Consultas() {
           <div id="cards (cartões) visão desktop"
             className={arraycartoes.length == cartoes.length ? "grid" : "grid1"}
             style={{
-              display: window.innerWidth < mobilewidth ? 'none' : 'grid',
-              width: '100%',
+              display: window.innerWidth < mobilewidth ? 'none' : '',
+              width: '100%', alignSelf: 'center',
             }}>
             {cartao(null, "DIAS DE INTERNAÇÃO: " +
               atendimentos
@@ -2481,6 +2513,17 @@ function Consultas() {
             {cartao(null, 'EXAMES DE IMAGEM', 'card-exames', null, 1)}
             {cartao(null, 'LABORATÓRIO E RX', 'card-laboratorio', null, 1)}
           </div>
+        </div>
+        <div id="conteúdo cheio (componentes)"
+          style={{
+            display: atendimento != null && viewlista == 0 && card != 0 ? 'flex' : 'none',
+            flexDirection: "row",
+            justifyContent: 'center',
+            alignContent: 'center',
+            flexWrap: "wrap",
+            width: window.innerWidth < mobilewidth ? '90vw' : '65vw',
+          }}
+        >
           <Alergias></Alergias>
           <Documentos></Documentos>
           <DocumentoEstruturado></DocumentoEstruturado>
@@ -2501,17 +2544,11 @@ function Consultas() {
         </div>
         <div id="conteúdo vazio"
           style={{
-            display:
-              window.innerWidth < mobilewidth && viewlista == 1
-                ? "none"
-                : atendimento != null
-                  ? "none"
-                  : "flex",
+            display: window.innerWidth < mobilewidth ? "none" : atendimento == null ? "flex" : "none",
             flexDirection: "row",
             justifyContent: 'center',
             flexWrap: "wrap",
-            width: '100%',
-            marginLeft: 2.5,
+            width: '65vw',
           }}
         >
           <img

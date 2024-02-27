@@ -1033,7 +1033,7 @@ function Cadastro() {
                     atendimentos.filter(
                       (item) =>
                         item.id_paciente == paciente.id_paciente &&
-                        item.data_termino == null
+                        item.data_termino == null && item.id_unidade != 4
                     ).length > 0
                       ? "flex"
                       : "none",
@@ -1173,7 +1173,7 @@ function Cadastro() {
   const [selectedunidade, setselectedunidade] = useState("");
   function SeletorDeUnidades() {
     return (
-      <div style={{width: '80%'}}>
+      <div style={{ width: '80%' }}>
         <div className="text1" style={{ marginTop: 50 }}>
           UNIDADES DE INTERNAÇÃO
         </div>
@@ -1223,13 +1223,13 @@ function Cadastro() {
                         id_cliente: hospital,
                         classificacao: null,
                       };
-                      console.log(obj);
                       axios
                         .post(html + "insert_atendimento", obj)
                         .then(() => {
                           loadAtendimentos();
                           loadLeitos(item.id_unidade);
                           setviewseletorunidades(0);
+                          setvieweditpaciente(0);
                         });
                     }
                   }

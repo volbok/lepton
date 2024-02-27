@@ -24,21 +24,28 @@ function Toast() {
         className='toasty'
         style={{
           display: 'flex',
-          alignItems: 'center',
-          textAlign: 'center',
-          backgroundColor: toast.cor,
-          padding: 10,
+          backgroundColor: '#ffffff',
+          padding: 5,
           minHeight: 50,
           maxHeight: 300,
-          // minWidth: 100,
-          // maxWidth: 300,
-          color: '#ffffff',
-          fontWeight: 'bold',
-          fontSize: 14,
           borderRadius: 5,
-          paddingLeft: 20, paddingRight: 20
-        }}>
-        {toast.mensagem}
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            color: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: 14,
+            backgroundColor: toast.cor,
+            padding: 5,
+            borderRadius: 5,
+            paddingLeft: 10, paddingRight: 10
+          }}>
+          {toast.mensagem}
+        </div>
       </div>
     </div >
   );

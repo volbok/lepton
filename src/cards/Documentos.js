@@ -170,7 +170,7 @@ function Documentos() {
                     'ATESTO QUE O(A) PACIENTE ' + pacientes.filter(item => item.id_paciente == paciente).map(item => item.nome_paciente).pop() +
                     ' NECESSITA AFASTAR-SE DO TRABALHO POR UM PERÍODO DE ' + localStorage.getItem("dias") + ' DIAS, A CONTAR DE ' +
                     moment(selecteddocumento.data).format('DD/MM/YY') + ', POR MOTIVO DE DOENÇA CID 10 ' + item.CAT + '.';;
-                  document.getElementById('documento ' + selecteddocumento.id).className = "button-red";
+                  document.getElementById('documento ' + selecteddocumento.id).className = "button-selected";
                 }, 500);
               }}
             >
@@ -512,13 +512,16 @@ function Documentos() {
     return (
       <div
         style={{
-          flex: 1,
-          width: '30vw',
-          height: '100%',
-          margin: 0, marginLeft: 10,
+          width: '25vw',
+          margin: 0,
+          height: 'calc(100vh - 72.5px)', marginLeft: 10,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          marginBottom: 10,
+          width: '100%',
+        }}>
           <div id="botão para sair da tela de documentos"
             className="button-yellow"
             style={{
@@ -533,7 +536,7 @@ function Documentos() {
             ></img>
           </div>
           <div className='button-green'
-            style={{ width: '100%', marginLeft: 0 }}
+            style={{ marginLeft: 0 }}
             onClick={() => montaTexto()}
           >
             <img
@@ -560,7 +563,7 @@ function Documentos() {
           style={{
             backgroundColor: 'white',
             borderColor: 'white',
-            height: 'calc(100% - 85px)'
+            height: 'calc(100% - 85px)',
           }}
         >
           {documentos.filter(item => item.tipo_documento == tipodocumento).map((item) => (
@@ -681,6 +684,7 @@ function Documentos() {
   function FieldDocumento() {
     return (
       <textarea
+        id="inputFieldDocumento"
         className="textarea"
         autoComplete='off'
         placeholder='DIGITE AQUI O TEXTO DO DOCUMENTO.'
@@ -701,16 +705,15 @@ function Documentos() {
         }}
         style={{
           display: 'flex',
-          flex: 2,
           flexDirection: 'row', justifyContent: 'center',
           alignSelf: 'center', alignContent: 'center',
           whiteSpace: 'pre-wrap',
           height: 'calc(100% - 20px)',
+          width: '100%',
           margin: 0,
           pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto',
-          position: 'relative'
+          position: 'relative',
         }}
-        id="inputFieldDocumento"
       >
       </textarea>
     )
@@ -988,10 +991,10 @@ function Documentos() {
       style={{
         display: card.toString().substring(0, 14) == 'card-documento' ? 'flex' : 'none',
         flexDirection: 'row',
-        height: 'calc(100% - 20px)',
-        width: '100%',
+        justifyContent: 'center',
+        height: '90vh',
         position: 'relative',
-        paddingLeft: 2.5, paddingRight: 2.5,
+        alignSelf: 'center'
       }}
     >
       <FieldDocumento></FieldDocumento>

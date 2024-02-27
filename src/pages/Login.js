@@ -639,6 +639,7 @@ function Login() {
   }
 
   // lista de unidades disponiveis para o usuário logado.
+
   function ListaDeUnidadesAssistenciais() {
     return (
       <div
@@ -667,12 +668,11 @@ function Login() {
               display: "flex",
               padding: 10,
               margin: 5,
-              width: 150,
-              minWidth: 150,
-              height: 150,
-              minHeight: 150,
-              maxWidth: 150,
-              maxHeight: 150,
+              minWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              maxWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              height: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              minHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              maxHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
               color: 'white',
             }}
             onClick={() => {
@@ -689,12 +689,11 @@ function Login() {
               display: "flex",
               padding: 10,
               margin: 5,
-              width: 150,
-              minWidth: 150,
-              height: 150,
-              minHeight: 150,
-              maxWidth: 150,
-              maxHeight: 150,
+              minWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              maxWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              height: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              minHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+              maxHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
               color: 'white',
             }}
             onClick={() => {
@@ -712,12 +711,11 @@ function Login() {
                 display: "flex",
                 padding: 10,
                 margin: 5,
-                width: 150,
-                minWidth: 150,
-                height: 150,
-                minHeight: 150,
-                maxWidth: 150,
-                maxHeight: 150,
+                minWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+                maxWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+                height: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+                minHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+                maxHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
                 color: 'white',
               }}
               onClick={() => {
@@ -750,8 +748,11 @@ function Login() {
         className="button"
         style={{
           display: acesso == 1 ? "flex" : "none",
-          width: 150,
-          height: 150,
+          minWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+          maxWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+          height: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+          minHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
+          maxHeight: window.innerWidth < mobilewidth ? "30vw" : "15vw",
           margin: 5,
           padding: 10,
         }}
@@ -1094,7 +1095,7 @@ function Login() {
       style={{ display: pagina == 0 ? "flex" : "none" }}
     >
       <div
-        className="chassi scroll"
+        className="chassi"
         id="conteúdo do login"
       >
         <div
@@ -1142,8 +1143,8 @@ function Login() {
               window.innerWidth < mobilewidth && viewalterarsenha == 1
                 ? "none"
                 : "flex",
-            margin: 20,
-            fontSize: 20,
+            margin: 20, marginTop: 10,
+            fontSize: 28,
           }}
         >
           PULSAR
