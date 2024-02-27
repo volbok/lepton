@@ -267,20 +267,22 @@ function DocumentoEstruturado() {
     });
   }
 
-  // LISTA DE DOCUMENTOS ESTRUTURADOS CARREGADOS.
   const ListaDeDocumentosEstruturados = useCallback(() => {
     return (
       <div id="componente lista de documentos e botões"
         style={{
           display: 'flex',
           flexDirection: 'column',
-          width: '20vw',
-          height: 'calc(100vh - 20px)',
-          position: 'sticky',
-          top: 10, right: 5, marginLeft: 7.5
+          justifyContent: 'space-between',
+          width: '25vw',
+          margin: 0, marginLeft: 10,
+          height: '100%',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          marginBottom: 10,
+        }}>
           <div id="botão para sair da tela de documentos"
             className="button-yellow"
             style={{
@@ -295,7 +297,7 @@ function DocumentoEstruturado() {
             ></img>
           </div>
           <div className='button-green'
-            style={{ width: '100%', marginLeft: 0 }}
+            style={{ marginLeft: 0 }}
             onClick={() => insertDocumentoEstruturado(tipodocumento)}
           >
             <img
@@ -311,8 +313,8 @@ function DocumentoEstruturado() {
           style={{
             backgroundColor: 'white',
             borderColor: 'white',
-            height: 'calc(100% - 110px)',
-            width: 'calc(100% - 20px)'
+            height: '100%', marginBottom: 0.5,
+            width: 'calc(100% - 20px)',
           }}
         >
           {arraydocumentosestruturados.map((item) => (
@@ -441,24 +443,25 @@ function DocumentoEstruturado() {
       return (
         <div style={{
           margin: 5, padding: 2.5,
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          display: 'flex',
+          flexDirection: 'column', justifyContent: 'space-between',
           position: 'relative',
-          flexGrow: 'inherit',
-          backgroundColor: '#ffffff30',
+          flexGrow: 1,
+          backgroundColor: '#00808030',
           borderRadius: 5,
           width: largura != null ? largura : '',
         }}
-          onMouseLeave={() => {
-            if (document.getElementById(titulo).value == '' && obrigatorio == 1) {
-              document.getElementById('check ' + titulo).style.display = 'flex'
-            } else {
+          onKeyUp={() => {
+            if (document.getElementById(titulo).value != '') {
               document.getElementById('check ' + titulo).style.display = 'none'
+            } else {
+              document.getElementById('check ' + titulo).style.display = 'flex'
             }
           }}
         >
           <div id={'check ' + titulo}
             style={{
-              display: 'none',
+              display: obrigatorio == 1 && valor == '' ? 'flex' : 'none',
               position: 'absolute', bottom: 5, right: 5,
               borderRadius: 50,
               backgroundColor: '#EC7063',
@@ -496,8 +499,8 @@ function DocumentoEstruturado() {
           margin: 5, padding: 2.5,
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
-          flexGrow: 'inherit',
-          backgroundColor: '#ffffff30',
+          flexGrow: 1,
+          backgroundColor: '#00808030',
           borderRadius: 5,
         }}
           onMouseLeave={() => {
@@ -510,7 +513,7 @@ function DocumentoEstruturado() {
         >
           <div id={'check ' + titulo}
             style={{
-              display: 'none',
+              display: obrigatorio == 1 && valor == '' ? 'flex' : 'none',
               position: 'absolute', bottom: 5, right: 5,
               borderRadius: 50,
               backgroundColor: '#EC7063',
@@ -555,8 +558,8 @@ function DocumentoEstruturado() {
           margin: 5, padding: 2.5,
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           position: 'relative',
-          flexGrow: 'inherit',
-          backgroundColor: '#ffffff30',
+          flexGrow: 1,
+          backgroundColor: '#00808030',
           borderRadius: 5,
         }}
           onMouseLeave={() => {
@@ -701,24 +704,21 @@ function DocumentoEstruturado() {
   // FORMULÁRIO.
   function Formulario() {
     return (
-      <div
+      <div className='scroll'
         id="formulario"
-
+        style={{
+          height: 'calc(100% - 10px)',
+          width: 'calc(100%)',
+          alignSelf: 'center',
+          margin: 0,
+          backgroundColor: 'white', borderColor: 'white',
+          display: 'flex',
+          flexDirection: 'row', flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+        }}
       >
-        <div className='text1' style={{ fontSize: 24, color: '#ffffff' }}>{tipodocumento}</div>
-        <div className='scroll'
-          style={{
-            display: 'flex',
-            flexDirection: 'row', justifyContent: 'center',
-            alignSelf: 'center', alignContent: 'center',
-            height: 'calc(100% - 20px)',
-            width: '100%',
-            margin: 0,
-            position: 'relative',
-          }}>
-          {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2)) ? 1 : -1).map(item => campo(item, item.tipocampo, item.largura, item.titulo, item.valor, item.obrigatorio, item.opcoes))}
-        </div>
-      </div >
+        {camposestruturados.sort((a, b) => parseInt(a.titulo.slice(0, 2)) > parseInt(b.titulo.slice(0, 2)) ? 1 : -1).map(item => campo(item, item.tipocampo, item.largura, item.titulo, item.valor, item.obrigatorio, item.opcoes))}
+      </div>
     )
   }
 
@@ -797,7 +797,7 @@ function DocumentoEstruturado() {
         justifyContent: 'center',
         height: '90vh',
         position: 'relative',
-        alignSelf: 'center'
+        alignSelf: 'center',
       }}
     >
       <Formulario></Formulario>

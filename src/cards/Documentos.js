@@ -189,7 +189,7 @@ function Documentos() {
         style={{
           display: tipodocumento != 'ATESTADO MÉDICO' || selecteddocumento.status != 0 ? 'none' : 'flex',
           alignSelf: 'center',
-          width: 100,
+          width: 100, minWidth: 100, maxWidth: 100
         }}
         onClick={() => {
           localStorage.setItem('texto', document.getElementById("inputFieldDocumento").value.toUpperCase());
@@ -236,13 +236,11 @@ function Documentos() {
   // inserir dados vitais.
   function GadgetDadosVitais() {
     return (
-      <div
-        className='button'
-        title={sinaisvitais.length > 0 ? 'CLIQUE PARA OBTER OS ÚLTIMOS DADOS VITAIS REGISTRADOS NO SISTEMA.' : 'SEM REGISTRO DE DADOS VITAIS PARA ESTE PACIENTE.'}
+      <div className='gadget'
+        id="GADGET PARA DADOS VITAIS"
         style={{
           display: tipodocumento == 'EVOLUÇÃO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
-          position: 'absolute', bottom: 10, left: 10, padding: 10,
-          opacity: sinaisvitais.length > 0 ? 1 : 0.5,
+          position: 'absolute', bottom: 20, left: 20
         }}
         onClick={() => {
           if (sinaisvitais.length > 0) {
@@ -251,7 +249,7 @@ function Documentos() {
             let posicao = fielddocumento.selectionStart;
             let textoanterior = fielddocumento.value.substring(0, posicao);
             let textoposterior = fielddocumento.value.substring(posicao, fielddocumento.value.length);
-            fielddocumento.value = textoanterior + '\n' + tag_dadosvitais + '\n' + textoposterior
+            fielddocumento.value = textoanterior + '\n' + tag_dadosvitais + '\n' + textoposterior;
           }
         }}
       >
@@ -306,9 +304,9 @@ function Documentos() {
             moment(selecteddocumento.data).format('DD/MM/YY') + ' POR MOTIVO DE DOENÇA CID 10 ' + cid + '.'
         }}
         style={{
-          display: selecteddocumento.id != undefined ? 'flex' : 'none',
+          display: 'flex',
           flexDirection: 'row', justifyContent: 'center',
-          width: 100
+          width: 100, minWidth: 100, maxWidth: 100,
         }}
       >
         {doenca}
@@ -318,26 +316,34 @@ function Documentos() {
   // componente que lista os principais gadgets de cid.
   function GadgetsParaAtestado() {
     return (
-      <div id="gadgets_atestado"
-        className='scroll'
+      <div className='gadget'
         style={{
-          display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
-          position: 'absolute', bottom: 10, left: 10,
-          width: 255, height: 180,
+          display: 'flex',
+          // display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
           flexDirection: 'column',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-          <div className='text1'>DIAS DE ATESTADO:</div>
+          position: 'absolute', bottom: 20, left: 20
+        }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <div className='text2'>DIAS DE ATESTADO:</div>
           <DiasAtestado></DiasAtestado>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
-          <BtnCid10></BtnCid10>
-          {gadgetAtestado('IVAS', 'J06.9')}
-          {gadgetAtestado('GECA', 'A90')}
-          {gadgetAtestado('PNM', 'J15.9')}
-          {gadgetAtestado('DENGUE', 'A90')}
-          {gadgetAtestado('ITU', 'N39')}
+        <div
+          className='scroll'
+          style={{
+            display: 'flex', justifyContent: 'flex-start',
+            flexDirection: 'column', flexWrap: 'wrap',
+            backgroundColor: 'transparent', borderStyle: 'none',
+            width: 255, height: 150,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+            <BtnCid10></BtnCid10>
+            {gadgetAtestado('IVAS', 'J06.9')}
+            {gadgetAtestado('GECA', 'A90')}
+            {gadgetAtestado('PNM', 'J15.9')}
+            {gadgetAtestado('DENGUE', 'A90')}
+            {gadgetAtestado('ITU', 'N39')}
+          </div>
         </div>
       </div>
     )
@@ -512,15 +518,17 @@ function Documentos() {
     return (
       <div
         style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
           width: '25vw',
-          margin: 0,
-          height: 'calc(100vh - 72.5px)', marginLeft: 10,
+          margin: 0, marginLeft: 10,
+          height: '100%',
         }}
       >
         <div style={{
           display: 'flex', flexDirection: 'row', justifyContent: 'center',
           marginBottom: 10,
-          width: '100%',
         }}>
           <div id="botão para sair da tela de documentos"
             className="button-yellow"
@@ -563,7 +571,8 @@ function Documentos() {
           style={{
             backgroundColor: 'white',
             borderColor: 'white',
-            height: 'calc(100% - 85px)',
+            height: '100%', marginBottom: 0.5,
+            width: 'calc(100% - 20px)',
           }}
         >
           {documentos.filter(item => item.tipo_documento == tipodocumento).map((item) => (
@@ -708,8 +717,8 @@ function Documentos() {
           flexDirection: 'row', justifyContent: 'center',
           alignSelf: 'center', alignContent: 'center',
           whiteSpace: 'pre-wrap',
-          height: 'calc(100% - 20px)',
-          width: '100%',
+          height: 'calc(100% - 30px)',
+          width: 'calc(100% - 20px)',
           margin: 0,
           pointerEvents: selecteddocumento == [] || selecteddocumento.status == 1 ? 'none' : 'auto',
           position: 'relative',
@@ -994,7 +1003,7 @@ function Documentos() {
         justifyContent: 'center',
         height: '90vh',
         position: 'relative',
-        alignSelf: 'center'
+        alignSelf: 'center',
       }}
     >
       <FieldDocumento></FieldDocumento>

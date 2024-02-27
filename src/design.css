@@ -6,6 +6,11 @@
   --pallete5: #004c4c;
   --pallete6: #004c4c80;
   --pallete7: #03aacd;
+  --red: #EC7063;
+  --orange: #E59866;
+  --yellow: #F7DC6F;
+  --green: rgb(82, 190, 128, 1);
+  --blue: #85C1E9;
 
   --cor1: rgb(31, 122, 140, 0.8) !important;
   --cor1hover: rgb(102, 178, 178) !important;
@@ -13,23 +18,21 @@
   --cor0: white;
   --cor2: rgba(242, 242, 242);
   --cor3: rgb(215, 219, 221);
-
   --cor4: #EDBB99 !important;
   --cor4hover: #E59866 !important;
-
   --cor5: rgb(82, 190, 128, 0.7);
-  --cor5hover: rgb(82, 190, 128, 1);
-  --cor5hover: rgb(133, 146, 158) !important;
-
+  --cor5hover: rgb(82, 190, 128, 1) !important;
   --cor6: #EC7063 !important;
   --cor6hover: #F1948A !important;
-
   --cor7: #004c4c40;
   --cor8: '#F1C40F';
+
   --texto1: #006666 !important;
   --texto2: #ffffff;
   --texto3: rgb(31, 122, 140, 1) !important;
+
   --placeholder: #004c4c60;
+
   --logo1: "green";
   --logo2: "yellow";
 
@@ -255,12 +258,77 @@ body {
   background-color: var(--cor8);
 }
 
+.pallete1 {
+  background-color: var(--pallete1) !important;
+}
+
+.pallete2 {
+  background-color: var(--pallete2) !important;
+}
+
+.pallete3 {
+  background-color: var(--pallete3) !important;
+}
+
+.pallete4 {
+  background-color: var(--pallete4) !important;
+}
+
+.pallete5 {
+  background-color: var(--pallete5) !important;
+}
+
+.pallete6 {
+  background-color: var(--pallete6) !important;
+}
+
+.pallete7 {
+  background-color: var(--pallete7) !important;
+}
+
+.red {
+  background-color: var(--red) !important;
+}
+
+.orange {
+  background-color: var(--orange) !important;
+}
+
+.yellow {
+  background-color: var(--yellow) !important;
+}
+
+.green {
+  background-color: var(--green) !important;
+}
+
+.blue {
+  background-color: var(--blue) !important;
+}
+
 .evidence {
   height: ''
 }
 
 .evidence:hover {
   height: '30vh';
+}
+
+.gadget {
+  display: flex;
+  opacity: 0.5;
+  background-color: var(--blue);
+  border-radius: 5px;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  transition: 300ms;
+}
+
+.gadget:hover {
+  display: flex;
+  opacity: 1;
+  transition: 300ms;
 }
 
 /* DESTAQUE PARA OS BOTÕES (PISCANDO) */
