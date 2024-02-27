@@ -1,5 +1,5 @@
 /* eslint eqeqeq: "off" */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import Context from '../pages/Context';
 import moment from 'moment';
 // imagens.
@@ -28,8 +28,6 @@ function Alertas() {
     card, setcard,
   } = useContext(Context);
 
-  let yellow = '#F1C40F';
-
   let lastsinaisvitais = sinaisvitais.sort((a, b) => moment(a.data_sinais_vitais) > moment(b.data_sinais_vitais) ? -1 : 1).slice(-1);
   let pas = lastsinaisvitais.map(item => item.pas);
   let pad = lastsinaisvitais.map(item => item.pad);
@@ -49,31 +47,20 @@ function Alertas() {
   sinaisvitais.sort((a, b) => moment(a.data_sinais_vitais) > moment(b.data_sinais_vitais) ? -1 : 1).slice(-3).map(item => arrayevacuacao.push(item.evacuacao));
   evacuacao = arrayevacuacao.filter(item => item.includes('+') || item.includes('PRESENTE') || item > 0);
 
-  useEffect(() => {
-    if (card == 'card-alertas') {
-
-    }
-    // eslint-disable-next-line
-  }, [card]);
-
   var height = 150;
   var heightmobile = '40vw'
-  var width = 150;
-  var widthmobile = '34vw'
 
   function AlertaInvasoes() {
     return (
-      <div id='alerta_invasoes' style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap'
-      }}>
+      <div id='alerta_invasoes'
+        className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}
+      >
         {invasoes.filter(item => item.data_retirada == null && moment().diff(item.data_implante, 'days') > 15).map(item => (
-          <div className='button-red' key={'invasoes ' + item.id_invasao}
+          <div className='button red' key={'invasoes ' + item.id_invasao}
             style={{
               height: window.innerWidth < mobilewidth ? heightmobile : height,
-              width: window.innerWidth < mobilewidth ? widthmobile : width,
-              backgroundColor: yellow,
+              flexGrow: 1,
+              padding: 20,
             }}>
             {'TEMPO PROLONGADO DE INVASÃO: ' + item.dispositivo + ' EM ' + item.local + ' - ' + moment().diff(item.data_implante, 'days') + ' DIAS.'}
           </div>
@@ -85,11 +72,11 @@ function Alertas() {
     return (
       <div id='alerta_pavm'>
         {invasoes.filter(item => item.data_retirada == null && (item.dispositivo == 'TOT' || item.dispositivo == 'TQT')).map(item => (
-          <div className='button-red'
+          <div className='button red'
             style={{
               height: window.innerWidth < mobilewidth ? heightmobile : height,
-              width: window.innerWidth < mobilewidth ? widthmobile : width,
-              backgroundColor: 'purple',
+              flexGrow: 1,
+              padding: 20,
             }}
           >
             {'RISCO DE PNEUMONIA ASSOCIADA A VENTILAÇÃO MECÂNICA: ' + item.dispositivo + '.'}
@@ -102,11 +89,11 @@ function Alertas() {
     if (pam < 70 && (fc > 100 || fr > 22 || tax < 36 || tax > 38 || diurese < 500)) {
       return (
         <div id='alerta_sepse'
-          className='button-red'
+          className='button red'
           style={{
             height: window.innerWidth < mobilewidth ? heightmobile : height,
-            width: window.innerWidth < mobilewidth ? widthmobile : width,
-            backgroundColor: 'red',
+            flexGrow: 1,
+            padding: 20,
             display: 'flex', flexDirection: 'column',
           }}
         >
@@ -130,21 +117,18 @@ function Alertas() {
   function AlertaDadosVitais() {
     return (
       <div id='alerta_dados'
-        className='button-red'
+        className='button yellow'
         style={{
           height: window.innerWidth < mobilewidth ? heightmobile : height,
-          width: window.innerWidth < mobilewidth ? widthmobile : width,
+          flexGrow: 1,
+          padding: 20,
           display: sinaisvitais.length > 0 && (
             pam < 70 || pam > 100 || fc < 50 || fc > 130 || fr < 15 || fr > 24 || tax < 35 || tax > 38 || sao2 < 90) ?
             'flex' : 'none',
           flexDirection: 'column',
-          backgroundColor: yellow,
         }}
       >
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          flexWrap: 'wrap', marginTop: 10
-        }}>
+        <div className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}>
           <div style={{ display: pam < 70 ? 'flex' : 'none' }}>{'HIPOTENSÃO: PAM ' + pam + ' mmHg'}</div>
           <div style={{ display: pam > 100 ? 'flex' : 'none' }}>{'HIPERTENSÃO: PAM ' + pam + ' mmHg'}</div>
           <div style={{ display: fc < 50 ? 'flex' : 'none' }}>{'BRADICARDIA: FC ' + fc + ' bpm'}</div>
@@ -161,21 +145,18 @@ function Alertas() {
   function AlertaDiureseBalanco() {
     return (
       <div id='alerta_diurese&balanco'
-        className='button-red'
+        className='button yellow'
         style={{
           height: window.innerWidth < mobilewidth ? heightmobile : height,
-          width: window.innerWidth < mobilewidth ? widthmobile : width,
+          flexGrow: 1,
+          padding: 20,
           display: sinaisvitais.length > 0 && (
             diurese < 500 || diurese > 3000 || balanco < -3000 || balanco > 2000) ?
             'flex' : 'none',
           flexDirection: 'column',
-          backgroundColor: yellow,
         }}
       >
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          flexWrap: 'wrap', marginTop: 10
-        }}>
+        <div className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}>
           <div style={{ display: diurese < 500 ? 'flex' : 'none' }}>{'DÉBITO URINÁRIO REDUZIDO: ' + diurese + ' ml/12h'}</div>
           <div style={{ display: diurese > 1500 ? 'flex' : 'none' }}>{'DÉBITO URINÁRIO AUMENTADO: ' + diurese + ' ml/12h'}</div>
           <div style={{ display: balanco < -1500 ? 'flex' : 'none' }}>{'BALANÇO HÍDRICO MUITO NEGATIVO: ' + balanco + ' ml/12h'}</div>
@@ -187,21 +168,22 @@ function Alertas() {
   function AlertaEstaseEvacuacao() {
     return (
       <div id='alerta_estase&evacuacao'
-        className='button-red'
+        className='button-yellow'
         style={{
           height: window.innerWidth < mobilewidth ? heightmobile : height,
-          width: window.innerWidth < mobilewidth ? widthmobile : width,
+          flexGrow: 1,
+          padding: 20,
           display: sinaisvitais.length > 0 && (
             estase > 200 || evacuacao.length == 0) ?
             'flex' : 'none',
           flexDirection: 'column',
-          backgroundColor: yellow,
         }}
       >
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          flexWrap: 'wrap', marginTop: 10
-        }}>
+        <div
+          className={window.innerWidth < mobilewidth ? 'grid2' : 'grid' }
+          style={{
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+          }}>
           <div style={{ display: estase > 200 ? 'flex' : 'none' }}>{'ESTASE GÁSTRICA: ' + estase + ' ml/12h'}</div>
           <div style={{ display: dietas.map(item => item.tipo) == 'SNE' ? 'flex' : 'none' }}>{'CONSIDERAR REDUÇÃO OU SUSPENSÃO DA DIETA ENTERAL.'}</div>
           <div style={{ display: evacuacao.length == 0 ? 'flex' : 'none' }}>{'AUSÊNCIA DE EVACUAÇÃO HÁ 3 DIAS'}</div>
@@ -212,16 +194,16 @@ function Alertas() {
   function AlertaDietaVm() {
     return (
       <div id='alerta_vm'
-        className='button-red'
+        className='button yellow'
         style={{
           height: window.innerWidth < mobilewidth ? heightmobile : height,
-          width: window.innerWidth < mobilewidth ? widthmobile : width,
+          flexGrow: 1,
+          padding: 20,
           display:
             dietas.filter(item => item.tipo == 'SUSPENSA' || item.tipo == 'ORAL' || item.tipo == 'NÃO DEFINIDA').length > 0 &&
               (invasoes.filter(item => item.dispositivo == 'TOT' && item.data_retirada == null).length > 0) ?
               'flex' : 'none',
           flexDirection: 'column',
-          backgroundColor: yellow,
         }}
       >
         <div>{'PACIENTE EM VENTILAÇÃO MECÂNICA E SEM DIETA ENTERAL PRESCRITA'}</div>
@@ -231,13 +213,13 @@ function Alertas() {
   function AlertaCulturas() {
     return (
       <div id='alerta_culturas'
-        className='button-red'
+        className='button yellow'
         style={{
           display: culturas.filter(item => item.data_resultado == null).length > 0 ? 'flex' : 'none',
           height: window.innerWidth < mobilewidth ? heightmobile : height,
-          width: window.innerWidth < mobilewidth ? widthmobile : width,
+          flexGrow: 1,
+          padding: 20,
           flexDirection: 'column',
-          backgroundColor: yellow,
         }}
       >
         {'COBRAR CULTURAS EM ABERTO: ' + culturas.filter(item => item.data_resultado == null).length}
@@ -247,20 +229,19 @@ function Alertas() {
   function AlertaAntibioticos() {
     return (
       <div id='alerta_antibioticos'
+        className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}
         style={{
-          display: antibioticos.filter(item => item.data_termino == null && moment().diff(moment(item.data_inicio), 'days') > 7).length > 0 ? 'flex' : 'none',
-          flexDirection: 'row',
-          flexWrap: 'wrap', margin: 0,
+          display: antibioticos.filter(item => item.data_termino == null && moment().diff(moment(item.data_inicio), 'days') > 7).length > 0 ? 'flex' : 'none'
         }}>
         {antibioticos.filter(item => item.data_termino == null && moment().diff(moment(item.data_inicio), 'days') > 7)
           .map(item => (
-            <div className='button-red' key={'alertaatb ' + item.id_antibiotico}
+            <div className='button yellow' key={'alertaatb ' + item.id_antibiotico}
               style={{
                 display: 'flex',
                 height: window.innerWidth < mobilewidth ? heightmobile : height,
-                width: window.innerWidth < mobilewidth ? widthmobile : width,
+                flexGrow: 1,
+                padding: 20,
                 flexDirection: 'column',
-                backgroundColor: yellow,
               }}
             >
               <div style={{
@@ -277,21 +258,21 @@ function Alertas() {
   function AlertaCgp() {
     return (
       <div id='alerta_cgp'
+      className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}
         style={{
           display: culturas.filter(item => JSON.stringify(item.resultado).includes('CGP') || JSON.stringify(item.resultado).includes('COCOS GRAM-POSITIVOS')).length > 0 ? 'flex' : 'none',
-          flexDirection: 'row', flexWrap: 'wrap',
         }}>
         {culturas.filter(item => JSON.stringify(item.resultado).includes('CGP') || JSON.stringify(item.resultado).includes('COCOS GRAM-POSITIVOS') || JSON.stringify(item.resultado).includes('STREPTO') || JSON.stringify(item.resultado).includes('STAPHYLO'))
           .map(item => (
             <div
               key={'culturas ' + item.resultado}
-              className='button-red'
+              className='button-yellow'
               style={{
                 display: 'flex',
                 flexDirection: 'column', justifyContent: 'center',
                 height: window.innerWidth < mobilewidth ? heightmobile : height,
-                width: window.innerWidth < mobilewidth ? widthmobile : width,
-                backgroundColor: yellow,
+                flexGrow: 1,
+                padding: 20,
               }}>
               <div>{'COCOS GRAM-POSITIVOS ISOLADOS EM:'}</div>
               <div style={{ margin: 5, marginLeft: 0, marginRight: 0 }}>
@@ -312,24 +293,24 @@ function Alertas() {
       <div className="text3">
         ALERTAS
       </div>
-      <div
+      <AlertaInvasoes></AlertaInvasoes>
+      <AlertaDadosVitais></AlertaDadosVitais>
+      <AlertaCgp></AlertaCgp>
+      <AlertaAntibioticos></AlertaAntibioticos>
+      <AlertaDiureseBalanco></AlertaDiureseBalanco>
+      <AlertaEstaseEvacuacao></AlertaEstaseEvacuacao>
+      <div className={window.innerWidth < mobilewidth ? 'grid2' : 'grid'}
         style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'center',
-          flexWrap: 'wrap', width: '100%'
+          width: '100%',
+          alignSelf: 'center',
         }}>
-        <AlertaInvasoes></AlertaInvasoes>
         <AlertaPavm></AlertaPavm>
         <AlertaSepse></AlertaSepse>
-        <AlertaDadosVitais></AlertaDadosVitais>
-        <AlertaDiureseBalanco></AlertaDiureseBalanco>
-        <AlertaEstaseEvacuacao></AlertaEstaseEvacuacao>
         <AlertaCulturas></AlertaCulturas>
-        <AlertaCgp></AlertaCgp>
-        <AlertaAntibioticos></AlertaAntibioticos>
         <AlertaDietaVm></AlertaDietaVm>
       </div>
       <div id="botão de retorno"
-        className="button-red"
+        className="button-yellow"
         style={{
           display: 'flex',
           alignSelf: 'center',

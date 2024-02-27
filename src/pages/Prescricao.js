@@ -1105,7 +1105,6 @@ function Prescricao() {
             onClick={() => {
               updateItemPrescricao(selectitemprescricao, document.getElementById("inputQtde " + selectitemprescricao.id).value, selectitemprescricao.via, selectitemprescricao.freq, false, true, false, selectitemprescricao.obs);
               document.getElementById("condição " + selectitemprescricao.id).innerHTML = 'ACM';
-              // document.getElementById("inputQtde " + selectitemprescricao.id).value = selectitemprescricao.qtde_item;
             }}
             className='button'
           >
@@ -1115,7 +1114,6 @@ function Prescricao() {
             onClick={() => {
               updateItemPrescricao(selectitemprescricao, document.getElementById("inputQtde " + selectitemprescricao.id).value, selectitemprescricao.via, selectitemprescricao.freq, false, false, true, selectitemprescricao.obs);
               document.getElementById("condição " + selectitemprescricao.id).innerHTML = 'SN';
-              // document.getElementById("inputQtde " + selectitemprescricao.id).value = selectitemprescricao.qtde_item;
             }}
             className='button'
           >
@@ -1194,7 +1192,8 @@ function Prescricao() {
           display: viewopcoesitensprescricao == 1 && statusprescricao == 0 && idprescricao != 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'flex-start',
           flexWrap: 'wrap',
           marginTop: 10, marginBottom: 0,
-          borderRadius: 5, backgroundColor: 'rgb(82, 190, 128, 0.3)',
+          borderRadius: 5,
+          backgroundColor: '#ffffff50',
         }}>
           {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
             <div

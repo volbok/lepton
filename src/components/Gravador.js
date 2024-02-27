@@ -18,7 +18,11 @@ function Gravador({ funcao, continuo }) {
   } = useSpeechRecognition();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <div className={btngravavoz == 'gravando' ? 'cor2' : ''}
+      style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+        borderRadius: 5,
+      }}>
       <div id="btngravavoz" className={btngravavoz}
         style={{ display: 'flex', width: 50, height: 50 }}
         onClick={listening ?
@@ -28,7 +32,7 @@ function Gravador({ funcao, continuo }) {
           (e) => {
             document.getElementById("btngravavoz").style.pointerEvents = 'none';
             setbtngravavoz("gravando");
-            SpeechRecognition.startListening({continuous: continuo});
+            SpeechRecognition.startListening({ continuous: continuo });
             e.stopPropagation();
           }}
       >
@@ -43,7 +47,7 @@ function Gravador({ funcao, continuo }) {
         ></img>
       </div>
       <div id="lista de resultados"
-        className="button-opaque"
+        className="button blue"
         style={{
           alignSelf: 'center',
           width: window.innerWidth < 426 ? '70vw' : 150,
@@ -54,7 +58,7 @@ function Gravador({ funcao, continuo }) {
         }}>
         {transcript.toUpperCase()}
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          <div id="botão excluir" className='button-red'
+          <div id="botão excluir" className='button-yellow'
             style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
             onClick={(e) => {
               SpeechRecognition.stopListening();

@@ -126,7 +126,7 @@ function Infusoes() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div id="botão de retorno"
-          className="button-red"
+          className="button-yellow"
           style={{
             display: 'flex',
             alignSelf: 'center',
@@ -214,7 +214,7 @@ function Infusoes() {
           ></input>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <div id="botão de retorno"
-              className="button-red"
+              className="button-yellow"
               style={{
                 display: 'flex',
                 alignSelf: 'center',
@@ -344,17 +344,17 @@ function Infusoes() {
     >
       <div className="text3">INFUSÕES</div>
       <Botoes></Botoes>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div className='grid3'>
         {infusoes.filter(item => item.data_termino == null).sort((a, b) => moment(a.data_inicio) < moment(b.data_inicio) ? 1 : -1).map((item) => (
-          <div
+          <div className='pallete4'
             key={'infusão ' + item.id_infusao}
-            className='row'
             style={{
               margin: 5,
               flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
-              height: window.innerWidth < mobilewidth ? 230 : 220,
-              maxHeight: window.innerWidth < mobilewidth ? 230 : 220,
-              width: 220
+              height: window.innerWidth < mobilewidth ? 230 : '',
+              maxHeight: window.innerWidth < mobilewidth ? 230 : '',
+              width: 220,
+              borderRadius: 5,
             }}
           >
             <div style={{
@@ -475,7 +475,6 @@ function Infusoes() {
                         axios.post(html + 'update_infusao/' + item.id_infusao, obj).then(() => {
                           loadInfusoes();
                         })
-                        // toast(settoast, 'INFUSÃO ATUALIZADA COM SUCESSO', 'rgb(82, 190, 128, 1)', 3000);
                         e.stopPropagation();
                       }
                     }, 500);

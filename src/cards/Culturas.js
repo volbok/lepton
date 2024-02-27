@@ -118,7 +118,7 @@ function Culturas() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div id="botão de retorno"
-          className="button-red"
+          className="button-yellow"
           style={{
             display: 'flex',
             alignSelf: 'center',
@@ -335,11 +335,8 @@ function Culturas() {
       <Botoes></Botoes>
       <FilterCulturas></FilterCulturas>
       <div
-        style={{
-          position: 'relative', display: 'flex', flexDirection: 'row',
-          justifyContent: 'space-evenly', flexWrap: 'wrap',
-          alignItems: 'flex-start', alignContent: 'flex-start',
-        }}>
+        className={window.innerWidth < mobilewidth ? 'grid1' : 'grid2'}
+        style={{ position: 'relative' }}>
         {arrayculturas.sort((a, b) => moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map((item) => (
           <div
             key={'cultura ' + item.id_cultura}
@@ -348,7 +345,8 @@ function Culturas() {
               position: 'relative',
               margin: 5,
               flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
-              width: window.innerWidth < mobilewidth ? '95%' : '',
+              width: '100%',
+              alignSelf: 'center',
             }}
           >
             <div style={{
@@ -356,7 +354,7 @@ function Culturas() {
               justifyContent: 'center', alignContent: 'center', alignItems: 'center',
             }}>
               <div id="identificador"
-                className='button-opaque'
+                className='button cor1opaque'
                 style={{
                   flex: 1,
                   flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
@@ -382,7 +380,7 @@ function Culturas() {
                     {moment(item.data_pedido).format('DD/MM/YY')}
                   </div>
                 </div>
-                <div className='button-red'
+                <div className='button-yellow'
                   style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
                   onClick={(e) => {
                     modal(setdialogo, 'CONFIRMAR EXCLUSÃO DA CULTURA ?', deleteCultura, item);
@@ -410,7 +408,6 @@ function Culturas() {
                   borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
                   marginTop: window.innerWidth < mobilewidth ? 0 : 5,
                   marginLeft: window.innerWidth < mobilewidth ? 5 : 0,
-                  // backgroundColor: 'white',
                   height: 200,
                   width: window.innerWidth < mobilewidth ? '95%' : '',
                 }}>

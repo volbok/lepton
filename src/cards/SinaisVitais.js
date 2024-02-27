@@ -406,7 +406,7 @@ function SinaisVitais() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <div id="botão de retorno"
-              className="button-red"
+              className="button-yellow"
               style={{
                 display: 'flex',
                 alignSelf: 'center',
@@ -460,7 +460,7 @@ function SinaisVitais() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <div id="botão de retorno"
-          className="button-red"
+          className="button-yellow"
           style={{ display: 'flex', alignSelf: 'center' }}
           onClick={() => setcard('')}>
           <img
@@ -515,7 +515,7 @@ function SinaisVitais() {
         style={{
           display: sinaisvitais.length < 1 ? 'none' : 'flex',
           flexDirection: 'column', justifyContent: 'center',
-          width: window.innerWidth < mobilewidth ? '80vw' : '100%', marginTop: 5,
+          width: window.innerWidth < mobilewidth ? '90vw' : '100%', marginTop: 5,
           alignSelf: 'center',
         }}>
         <div id="gráfico" className='scroll'
@@ -532,14 +532,12 @@ function SinaisVitais() {
                 alignItems: 'center',
               }}>
               <div id="pack de barras"
-                className='cor0'
+                className='cor1'
                 style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
                   alignItems: 'center',
-                  backgroundColor: 'white',
-                  // borderColor: 'white',
                   borderRadius: 5,
-                  padding: 10, margin: 5,
+                  padding: 10, paddingTop: 20, margin: 5,
                   height: '100%'
                 }}>
                 <div id="barras"
@@ -550,17 +548,19 @@ function SinaisVitais() {
                   <div id="barra + rótulo PAM"
                     style={{
                       display: selectgrafico == 0 || selectgrafico == 1 ? 'flex' : 'none',
-                      flexDirection: 'column', justifyContent: 'center'
+                      flexDirection: 'column', justifyContent: 'center',
                     }}>
-                    <div id="barra PAM" className='button cor0'
+                    <div id="barra PAM" className='button green'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: Math.ceil((2 * parseInt(item.pad) + parseInt(item.pas)) / 3),
                         minHeight: Math.ceil((2 * parseInt(item.pad) + parseInt(item.pas)) / 3),
-                        backgroundImage: "linear-gradient(#5DADE2, transparent)",
+                        position: 'relative',
                       }}>
-                      {Math.ceil((2 * parseInt(item.pad) + parseInt(item.pas)) / 3)}
+                      <div className="graphictag">
+                        {Math.ceil((2 * parseInt(item.pad) + parseInt(item.pas)) / 3)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>PAM</div>
                   </div>
@@ -569,39 +569,44 @@ function SinaisVitais() {
                       display: selectgrafico == 0 || selectgrafico == 2 ? 'flex' : 'none',
                       flexDirection: 'column', justifyContent: 'center'
                     }}>
-                    <div id="barraFC" className='button cor0'
+                    <div id="barraFC" className='button red'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: parseInt(item.fc),
                         minHeight: parseInt(item.fc),
-                        backgroundImage: "linear-gradient(#EC7063, transparent)",
+                        position: 'relative'
                       }}>
-                      {parseInt(item.fc)}
+                      <div className="graphictag">
+                        {parseInt(item.fc)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>FC</div>
                   </div>
                   <div id="barra + rótulo DIURESE (valor inteiro)"
                     style={{
                       display: isNaN(item.diurese) == false && (selectgrafico == 0 || selectgrafico == 3) ? 'flex' : 'none',
-                      flexDirection: 'column', justifyContent: 'center'
+                      flexDirection: 'column', justifyContent: 'center',
                     }}>
-                    <div id="barraDIURESE (válida)" className='button cor0'
+                    <div id="barraDIURESE (válida)" className='button yellow'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: Math.ceil(parseInt(item.diurese) / 10),
                         minHeight: Math.ceil(parseInt(item.diurese) / 10),
                         backgroundImage: "linear-gradient(#F4D03F, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseInt(item.diurese)}
+                      <div className="graphictag">
+                        {parseInt(item.diurese)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>DIURESE</div>
                   </div>
                   <div id="barra + rótulo DIURESE (valor texto)."
                     style={{
                       display: isNaN(item.diurese) == true && (selectgrafico == 0 || selectgrafico == 3) ? 'flex' : 'none',
-                      flexDirection: 'column', justifyContent: 'center'
+                      flexDirection: 'column', justifyContent: 'center',
                     }}>
                     <div id="barraDIURESE (inválida)" className='button cor0' // muitas vezes a diurese é medida em cruzes (não quantificada).
                       style={{
@@ -620,17 +625,19 @@ function SinaisVitais() {
                   <div id="barra + rótulo TAX"
                     style={{
                       display: selectgrafico == 0 || selectgrafico == 4 ? 'flex' : 'none',
-                      flexDirection: 'column', justifyContent: 'center'
+                      flexDirection: 'column', justifyContent: 'center',
                     }}>
-                    <div id="barraTAX" className='button cor0'
+                    <div id="barraTAX" className='button blue'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: parseFloat(item.tax),
                         minHeight: parseFloat(item.tax),
-                        backgroundImage: "linear-gradient(#58D68D, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseFloat(item.tax)}
+                      <div className="graphictag">
+                        {parseFloat(item.tax)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>TAX</div>
                   </div>
@@ -688,12 +695,7 @@ function SinaisVitais() {
         SINAIS VITAIS
       </div>
       <Botoes></Botoes>
-      <div style={{
-        display: 'flex',
-        flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
-        justifyContent: window.innerWidth < mobilewidth ? 'center' : 'space-evenly',
-        flexWrap: 'wrap'
-      }}>
+      <div className={window.innerWidth < mobilewidth ? 'grid1' : 'grid2'}>
         {sinaisvitais.sort((a, b) => moment(a.data_sinais_vitais) < moment(b.data_sinais_vitais) ? 1 : -1).slice(-4).map(item => (
           <div className='row'
             key={'sinais_vitais ' + item.id_sinais_vitais}
@@ -706,7 +708,7 @@ function SinaisVitais() {
             }}
           >
             <div id="identificador"
-              className='button-opaque'
+              className='button cor1opaque'
               style={{
                 flex: 1,
                 flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
@@ -728,7 +730,7 @@ function SinaisVitais() {
               }}>
                 <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_sinais_vitais).format('DD/MM/YY')}</div>
                 <div className='text2' style={{ color: '#ffffff', marginTop: 0 }}>{moment(item.data_sinais_vitais).format('HH:mm')}</div>
-                <div className='button-red'
+                <div className='button-yellow'
                   style={{ width: 25, minWidth: 25, height: 25, minHeight: 25, alignSelf: 'center' }}
                   onClick={(e) => {
                     modal(setdialogo, 'CONFIRMAR EXCLUSÃO DOS DADOS VITAIS ?', deleteSinaisVitais, item.id_sinais_vitais);
@@ -752,7 +754,7 @@ function SinaisVitais() {
                 width: '100%',
               }}>
                 <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_sinais_vitais).format('DD/MM/YY - HH:mm')}</div>
-                <div className='button-red'
+                <div className='button-yellow'
                   style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
                   onClick={(e) => {
                     modal(setdialogo, 'CONFIRMAR EXCLUSÃO DOS DADOS VITAIS ?', deleteSinaisVitais, item.id_sinais_vitais);
@@ -771,7 +773,7 @@ function SinaisVitais() {
               </div>
             </div>
             <div id="sinais vitais"
-              className='button'
+              className='button cor1'
               style={{
                 flex: window.innerWidth < mobilewidth ? 11 : 4,
                 display: 'flex', flexDirection: 'row',

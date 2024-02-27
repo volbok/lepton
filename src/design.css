@@ -3,9 +3,11 @@
   --pallete2: #66b2b2;
   --pallete3: #008080;
   --pallete4: #006666;
+  --pallete4: #006666;
   --pallete5: #004c4c;
   --pallete6: #004c4c80;
   --pallete7: #03aacd;
+
   --red: #EC7063;
   --orange: #E59866;
   --yellow: #F7DC6F;
@@ -131,7 +133,7 @@ body {
 }
 
 .chassi::-webkit-scrollbar-track {
-  background-color: var(--cor3);
+  background-color: var(--pallete1);
   border-radius: 5px;
 }
 
@@ -203,6 +205,11 @@ body {
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .grid5 {
@@ -329,6 +336,20 @@ body {
   display: flex;
   opacity: 1;
   transition: 300ms;
+}
+
+.graphics {
+  background-color: var(--pallete3) !important;
+  border-color: var(--pallete3) !important;
+}
+
+.graphictag {
+  position: absolute;
+  top: -15px;
+  border-radius: 5px;
+  background-color: var(--pallete4);
+  padding: 10px;
+  min-width: 20px;
 }
 
 /* DESTAQUE PARA OS BOTÕES (PISCANDO) */
@@ -624,7 +645,7 @@ body {
 }
 
 .scroll::-webkit-scrollbar-track {
-  background-color: var(--cor3);
+  background-color: var(--pallete2);
   border-radius: 5px;
 }
 
@@ -768,7 +789,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--cor2);
+  background-color: var(--pallete2);
   border-radius: 5px;
   padding: 10px;
   cursor: default;
@@ -808,7 +829,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .textarea::-webkit-scrollbar-track {
-  background-color: var(--cor3);
+  background-color: var(--pallete2);
   border-radius: 5px;
 }
 
@@ -858,7 +879,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .textarea_campo::-webkit-scrollbar-track {
-  background-color: var(--cor3);
+  background-color: var(--pallete2);
   border-radius: 5px;
 }
 
@@ -946,7 +967,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .textareadynamics::-webkit-scrollbar-track {
-  background-color: var(--cor3);
+  background-color: var(--pallete2);
   border-radius: 5px;
 }
 
@@ -1784,7 +1805,7 @@ ESTILOS VARIÁVEIS CONFORME A RESPONSIVIDADE.
   }
 
   .fundo {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--pallete6);
     border-width: 0px;
     border-radius: 5px;
     position: fixed;

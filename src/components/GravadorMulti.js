@@ -23,7 +23,12 @@ function GravadorMulti({ funcao, campos }) {
 
   const Gravador = (campo) => {
     return (
-      <div style={{ display: campos.indexOf(campo) == contador ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div className={btngravavoz == 'gravando' ? 'cor2' : ''}
+        style={{
+          display: campos.indexOf(campo) == contador ? 'flex' : 'none', flexDirection: 'column',
+          justifyContent: 'center', alignItems: 'center',
+          borderRadius: 5,
+        }}>
         <div id="btngravavoz" className={btngravavoz}
           style={{ display: 'flex', width: 50, height: 50 }}
           onClick={listening ?
@@ -48,7 +53,7 @@ function GravadorMulti({ funcao, campos }) {
           ></img>
         </div>
         <div id="lista de resultados"
-          className="button-opaque"
+          className="button blue"
           style={{
             alignSelf: 'center',
             width: window.innerWidth < 426 ? '70vw' : 150,

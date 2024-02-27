@@ -121,7 +121,7 @@ function Precaucoes() {
             {tipoprecaucao}
           </div>
           <div id="botão de retorno"
-            className="button-red"
+            className="button-yellow"
             style={{
               display: 'flex',
               alignSelf: 'center',
@@ -145,7 +145,7 @@ function Precaucoes() {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <div id="botão de retorno"
-            className="button-red"
+            className="button-yellow"
             style={{
               display: 'flex',
               alignSelf: 'center',

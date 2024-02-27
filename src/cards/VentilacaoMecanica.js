@@ -263,7 +263,7 @@ function VentilacaoMecanica() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <div id="botão de retorno"
-              className="button-red"
+              className="button-yellow"
               style={{
                 display: 'flex',
                 alignSelf: 'center',
@@ -324,7 +324,7 @@ function VentilacaoMecanica() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <div id="botão de retorno"
-          className="button-red"
+          className="button-yellow"
           style={{ display: 'flex', alignSelf: 'center' }}
           onClick={() => setcard('')}>
           <img
@@ -377,7 +377,7 @@ function VentilacaoMecanica() {
         style={{
           display: vm.length > 0 && vm.slice(-1).map(item => item.modo != 'OFF') ? 'flex' : 'none',
           flexDirection: 'column', justifyContent: 'center',
-          width: window.innerWidth < mobilewidth ? '80vw' : '65vw', marginTop: 5,
+          width: window.innerWidth < mobilewidth ? '90vw' : '65vw', marginTop: 5,
           alignSelf: 'center',
         }}>
         <div id="gráfico" className='scroll'
@@ -395,14 +395,12 @@ function VentilacaoMecanica() {
                 alignItems: 'center',
               }}>
               <div id="pack de barras"
-                className='cor0'
+                className='cor1'
                 style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
                   alignItems: 'center',
-                  backgroundColor: 'white',
-                  borderColor: 'white',
                   borderRadius: 5,
-                  padding: 10, margin: 5,
+                  padding: 10, paddingTop: 20, margin: 5,
                   height: '100%'
                 }}>
                 <div id="barras"
@@ -415,15 +413,17 @@ function VentilacaoMecanica() {
                       display: 'flex',
                       flexDirection: 'column', justifyContent: 'center'
                     }}>
-                    <div id="barra PRESSÃO" className='button cor0'
+                    <div id="barra PRESSÃO" className='button red'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: parseInt(item.pressao),
                         minHeight: parseInt(item.pressao),
-                        backgroundImage: "linear-gradient(#EC7063, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseInt(item.pressao)}
+                      <div className='graphictag'>
+                        {parseInt(item.pressao)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>PRESSÃO</div>
                   </div>
@@ -432,15 +432,17 @@ function VentilacaoMecanica() {
                       display: 'flex',
                       flexDirection: 'column', justifyContent: 'center'
                     }}>
-                    <div id="barra VOLUME" className='button cor0'
+                    <div id="barra VOLUME" className='button green'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: Math.ceil(parseInt(item.volume) / 3),
                         minHeight: Math.ceil(parseInt(item.volume) / 3),
-                        backgroundImage: "linear-gradient(#58D68D, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseInt(item.volume)}
+                      <div className='graphictag'>
+                        {parseInt(item.volume)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>VOLUME</div>
                   </div>
@@ -449,15 +451,17 @@ function VentilacaoMecanica() {
                       display: 'flex',
                       flexDirection: 'column', justifyContent: 'center'
                     }}>
-                    <div id="barra PEEP" className='button cor0'
+                    <div id="barra PEEP" className='button yellow'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: parseInt(item.peep),
                         minHeight: parseInt(item.peep),
-                        backgroundImage: "linear-gradient(#F4D03F, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseInt(item.peep)}
+                      <div className='graphictag'>
+                        {parseInt(item.peep)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>PEEP</div>
                   </div>
@@ -466,15 +470,17 @@ function VentilacaoMecanica() {
                       display: 'flex',
                       flexDirection: 'column', justifyContent: 'center'
                     }}>
-                    <div id="barra FIO2" className='button cor0'
+                    <div id="barra FIO2" className='button blue'
                       style={{
                         display: 'flex',
                         width: 20,
                         height: parseInt(item.fio2),
                         minHeight: parseInt(item.fio2),
-                        backgroundImage: "linear-gradient(#5DADE2, transparent)",
+                        position: 'relative',
                       }}>
-                      {parseInt(item.fio2)}
+                      <div className='graphictag'>
+                        {parseInt(item.fio2)}
+                      </div>
                     </div>
                     <div className='text1' style={{ fontSize: 12 }}>FIO2</div>
                   </div>
@@ -499,7 +505,7 @@ function VentilacaoMecanica() {
         VENTILAÇÃO MECÂNICA
       </div>
       <Botoes></Botoes>
-      <div id="fora da vm" className='button-green'
+      <div id="fora da vm" className='button green'
         // ativada quando o paciente não está intubado ou traqueostomizado.
         style={{
           display: vm.sort((a, b) => moment(a.data_vm) < moment(b.data_vm) ? -1 : 1).slice(-1).map(item => item.modo) == 'OFF' ? 'flex' : 'none',
@@ -508,104 +514,109 @@ function VentilacaoMecanica() {
         }}>
         {'PACIENTE FORA DA VM'}
       </div>
-      {vm.sort((a, b) => moment(a.data_vm) < moment(b.data_vm) ? -1 : 1).slice(-1).map(item => (
-        <div className='row'
-          key={'vm ' + item.id_vm}
-          onClick={(e) => { setitem_ventilacaomecanica(item); setviewinsertvm(2); e.stopPropagation(); }}
-          style={{
-            display: item.modo == 'OFF' ? 'none' : 'flex',
-            flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
-            width: '65vw'
-          }}
-        >
-          <div id="identificador"
-            className='button-yellow'
+      <div className={window.innerWidth < mobilewidth ? 'grid1' : 'grid2'}>
+        {vm.sort((a, b) => moment(a.data_vm) < moment(b.data_vm) ? -1 : 1).slice(-4).map(item => (
+          <div
+            key={'vm ' + item.id_vm}
+            onClick={(e) => { setitem_ventilacaomecanica(item); setviewinsertvm(2); e.stopPropagation(); }}
             style={{
-              flex: 1,
-              flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
-              justifyContent: 'center', alignSelf: 'center',
-              margin: 5, padding: 5,
-              height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth + 1) && window.innerWidth < 769 ? '60vh' : '20vh',
-              width: '95%',
-              marginBottom: window.innerWidth < mobilewidth ? 0 : 5,
-              marginRight: window.innerWidth < mobilewidth ? 5 : 0,
-              borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
-              borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
-              borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
-              borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
-            }}>
-            <div style={{
-              display: window.innerWidth < mobilewidth ? 'none' : 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_vm).format('DD/MM/YY')}</div>
-              <div className='button-red'
-                style={{ width: 25, minWidth: 25, height: 25, minHeight: 25, alignSelf: 'center' }}
-                onClick={(e) => {
-                  modal(setdialogo, 'CONFIRMAR EXCLUSÃO DO REGISTRO DE PARÂMETROS VENTILATÓRIOS ?', deleteVentilacaoMecanica, item.id_vm);
-                  e.stopPropagation();
-                }}>
-                <img
-                  alt=""
-                  src={deletar}
-                  style={{
-                    margin: 10,
-                    height: 25,
-                    width: 25,
-                  }}
-                ></img>
-              </div>
-            </div>
-            <div style={{
-              display: window.innerWidth < mobilewidth ? 'flex' : 'none',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}>
-              <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_vm).format('DD/MM/YY - HH:mm')}</div>
-              <div className='button-red'
-                style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
-                onClick={(e) => {
-                  modal(setdialogo, 'CONFIRMAR EXCLUSÃO DO REGISTRO DE PARÂMETROS VENTILATÓRIOS ?', deleteVentilacaoMecanica, item.id_vm);
-                  e.stopPropagation();
-                }}>
-                <img
-                  alt=""
-                  src={deletar}
-                  style={{
-                    margin: 10,
-                    height: 25,
-                    width: 25,
-                  }}
-                ></img>
-              </div>
-            </div>
-          </div>
-          <div id="parâmetros ventilatórios"
-            className='button'
-            style={{
-              flex: window.innerWidth < mobilewidth ? 11 : 4,
-              display: 'flex', flexDirection: 'row',
-              justifyContent: 'center',
-              flexWrap: 'wrap', width: '95%',
-              height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth) + 1 && window.innerWidth < 769 ? '60vh' : '20vh',
-              borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
-              borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
-              borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
-              borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
-              marginTop: window.innerWidth < mobilewidth ? 0 : 5,
-              marginLeft: window.innerWidth < mobilewidth ? 5 : 0,
+              display: item.modo == 'OFF' ? 'none' : 'flex',
+              flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+              // width: '65vw'
             }}
           >
-            {montaParametrosVentilatorios('MODO', item.modo, '', '', '')}
-            {montaParametrosVentilatorios('PRESSAO', item.pressao, 'cmH2O', 10, 24)}
-            {montaParametrosVentilatorios('VOLUME', item.volume, 'cmH2O', 200, 500)}
-            {montaParametrosVentilatorios('PEEP', item.peep, 'cmH2O', 5, 14)}
-            {montaParametrosVentilatorios('FIO2', item.fio2, '%', 10, 80)}
+            <div id="identificador"
+              className='button cor1opaque'
+              style={{
+                flex: 1,
+                flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
+                justifyContent: 'center', alignSelf: 'center',
+                margin: 5,
+                height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth + 1) && window.innerWidth < 769 ? '60vh' : '20vh',
+                width: window.innerWidth < mobilewidth ? '75vw' : '',
+                marginBottom: window.innerWidth < mobilewidth ? 0 : 5,
+                marginRight: window.innerWidth < mobilewidth ? 5 : 0,
+                borderTopLeftRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                padding: 20,
+              }}>
+              <div style={{
+                display: window.innerWidth < mobilewidth ? 'none' : 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}>
+                <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_vm).format('DD/MM/YY')}</div>
+                <div className='button-yellow'
+                  style={{ width: 25, minWidth: 25, height: 25, minHeight: 25, alignSelf: 'center' }}
+                  onClick={(e) => {
+                    modal(setdialogo, 'CONFIRMAR EXCLUSÃO DO REGISTRO DE PARÂMETROS VENTILATÓRIOS ?', deleteVentilacaoMecanica, item.id_vm);
+                    e.stopPropagation();
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+              </div>
+              <div style={{
+                display: window.innerWidth < mobilewidth ? 'flex' : 'none',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}>
+                <div className='text2' style={{ color: '#ffffff' }}>{moment(item.data_vm).format('DD/MM/YY - HH:mm')}</div>
+                <div className='button-yellow'
+                  style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
+                  onClick={(e) => {
+                    modal(setdialogo, 'CONFIRMAR EXCLUSÃO DO REGISTRO DE PARÂMETROS VENTILATÓRIOS ?', deleteVentilacaoMecanica, item.id_vm);
+                    e.stopPropagation();
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+              </div>
+            </div>
+            <div id="parâmetros ventilatórios"
+              className='button cor1'
+              style={{
+                flex: window.innerWidth < mobilewidth ? 11 : 4,
+                display: 'flex', flexDirection: 'row',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                height: window.innerWidth < mobilewidth ? '100vh' : window.innerWidth > parseInt(mobilewidth) + 1 && window.innerWidth < 769 ? '60vh' : '20vh',
+                width: window.innerWidth < mobilewidth ? '75vw' : '',
+                borderTopLeftRadius: window.innerWidth < mobilewidth ? 0 : 0,
+                borderTopRightRadius: window.innerWidth < mobilewidth ? 0 : 5,
+                borderBottomLeftRadius: window.innerWidth < mobilewidth ? 5 : 0,
+                borderBottomRightRadius: window.innerWidth < mobilewidth ? 5 : 5,
+                marginTop: window.innerWidth < mobilewidth ? 0 : 5,
+                marginLeft: window.innerWidth < mobilewidth ? 5 : 0,
+                padding: 20,
+              }}
+            >
+              {montaParametrosVentilatorios('MODO', item.modo, '', '', '')}
+              {montaParametrosVentilatorios('PRESSAO', item.pressao, 'cmH2O', 10, 24)}
+              {montaParametrosVentilatorios('VOLUME', item.volume, 'cmH2O', 200, 500)}
+              {montaParametrosVentilatorios('PEEP', item.peep, 'cmH2O', 5, 14)}
+              {montaParametrosVentilatorios('FIO2', item.fio2, '%', 10, 80)}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       {setDataGrafico()}
       <InsertVm></InsertVm>
     </div>

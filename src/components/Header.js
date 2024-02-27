@@ -15,7 +15,8 @@ function Header() {
     atendimentos, // todos os registros de atendimento para a unidade selecionada.
     atendimento, // corresponde ao id_atendimento das tabela "atendimento".
     selecteddocumento,
-    tipodocumento
+    tipodocumento,
+    alergias,
   } = useContext(Context);
 
   return (
@@ -74,6 +75,13 @@ function Header() {
       </div>
       <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
         {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
+      </div>
+      <div
+        style={{
+          display: alergias.length > 0 ? 'flex' : 'none',
+          fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 20, marginTop: 10,
+        }}>
+        {'ALERGIAS: ' + alergias.map(item => ' ' + item.alergia + ' ')}
       </div>
       <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', width: '100%', fontSize: 26, marginTop: 20, textAlign: 'center' }}>
         {tipodocumento}

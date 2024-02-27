@@ -28,6 +28,7 @@ function Boneco() {
     setviewdatepicker,
     card, setcard,
     mobilewidth,
+    invasoes, setinvasoes,
   } = useContext(Context);
 
   useEffect(() => {
@@ -39,7 +40,6 @@ function Boneco() {
   }, [card]);
 
   // carregando resgistros de invasões.
-  const [invasoes, setinvasoes] = useState([]);
   const loadInvasoes = () => {
     axios.get(html + 'list_invasoes/' + atendimento).then((response) => {
       setinvasoes(response.data.rows);
@@ -158,7 +158,7 @@ function Boneco() {
                   width: 30,
                 }}
               ></img>
-              <div className='text2' style={{marginTop: 0}}>
+              <div className='text2' style={{ marginTop: 0 }}>
                 {pickdate1}
               </div>
             </div>
@@ -740,79 +740,168 @@ function Boneco() {
           <Lesao local='ORELHA DIREITA' top='8%' bottom='' left='55%' right='' tamanho={20}></Lesao>
           <Lesao local='ORELHA ESQUERDA' top='8%' bottom='' left='' right='55%' tamanho={20}></Lesao>
         </div>
-        <div style={{
-          display: 'flex',
-          flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
-          justifyContent: 'center',
-          position: 'absolute',
-          top: window.innerWidth < mobilewidth ? -20 : 5,
-          right: window.innerWidth < mobilewidth ? -25 : -100,
-        }}>
-          <button
-            id="botão alternador invasão x lesão"
-            className="button"
-            style={{
-              padding: 10,
-              display: 'flex', flexDirection: 'column', justifyContent: 'center'
-            }}
-            title={randombody == 1 ? "VER LESÕES" : "VER INVASÕES"}
-            onClick={(e) => {
-              if (randombody == 1) {
-                setrandombody(2); e.stopPropagation();
-              } else {
-                setrandombody(1); e.stopPropagation();
-              }
-            }}
-          >
-            <div id="legenda">
-              {randombody == 1 ? 'INVASÕES' : 'LESÕES'}
-            </div>
-            <img
-              alt=""
-              src={refresh}
-              style={{
-                margin: 0,
-                height: 20,
-                width: 20,
-              }}
-            ></img>
-          </button>
-          <div id="botão de retorno"
-            className="button-yellow"
-            style={{
-              display: 'flex',
-              alignSelf: 'center',
-            }}
-            onClick={() => setcard('')}>
-            <img
-              alt=""
-              src={back}
-              style={{ width: 30, height: 30 }}
-            ></img>
-          </div>
-        </div>
+
       </div>
     );
   };
+
+  function Botoes() {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+        }}>
+        <button
+          id="botão alternador invasão x lesão"
+          className="button"
+          style={{
+            padding: 10,
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+            width: 100
+          }}
+          title={randombody == 1 ? "VER LESÕES" : "VER INVASÕES"}
+          onClick={(e) => {
+            if (randombody == 1) {
+              setrandombody(2); e.stopPropagation();
+            } else {
+              setrandombody(1); e.stopPropagation();
+            }
+          }}
+        >
+          <div id="legenda">
+            {randombody == 1 ? 'INVASÕES' : 'LESÕES'}
+          </div>
+          <img
+            alt=""
+            src={refresh}
+            style={{
+              margin: 0,
+              height: 20,
+              width: 20,
+            }}
+          ></img>
+        </button>
+        <div id="botão de retorno"
+          className="button-yellow"
+          style={{
+            display: 'flex',
+            alignSelf: 'center',
+          }}
+          onClick={() => setcard('')}>
+          <img
+            alt=""
+            src={back}
+            style={{ width: 30, height: 30 }}
+          ></img>
+        </div>
+      </div>
+    )
+  }
+
+  function DetalhesInvasoes() {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}>
+        <Botoes></Botoes>
+        <div className='scroll'
+          style={{
+            display: randombody == 1 ? 'flex' : 'none',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            height: 400,
+            textAlign: 'left',
+            alignItems: 'flex-start',
+            marginTop: 5
+          }}>
+          {invasoes.map(item => (
+            <div className="palette2" style={{
+              display: 'flex', flexDirection: 'row',
+            }}>
+              <div className='button red' style={{ marginRight: 5 }}>
+                {item.dispositivo}
+              </div>
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'center', fontWeight: 'bold', fontSize: 12
+              }}>
+                <div>
+                  {item.local}
+                </div>
+                <div>
+                  {'DATA: ' + moment(item.data_implante).format('DD/MM/YYYY')}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className='text1 janela scroll'
+          style={{
+            display: randombody == 2 ? 'flex' : 'none',
+            width: window.innerWidth < mobilewidth ? '80vw' : 300,
+            height: 400, marginRight: 20, textAlign: 'left',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start'
+          }}>
+          {lesoes.map(item => (
+            <div className="palette2" style={{
+              display: 'flex', flexDirection: 'row',
+            }}>
+              <div className='button red' style={{ marginRight: 5 }}>
+                {item.grau}
+              </div>
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'center',
+              }}>
+                <div>
+                  {item.local}
+                </div>
+                <div>
+                  {'DATA: ' + moment(item.data_abertura).format('DD/MM/YYYY')}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div id="boneco"
       className="card-aberto"
       style={{
         display: card == 'card-boneco' ? 'flex' : 'none',
-        flexDirection: 'column', justifyContent: 'center',
-        marginTop: window.innerWidth < mobilewidth ? 40 : 0,
+        flexDirection: 'column',
+        justifyContent: window.innerWidth < mobilewidth ? 'flex-start' : 'center',
+        marginTop: window.innerWidth < mobilewidth ? 20 : 0,
       }}
     >
       <div style={{
-        display: 'flex', flexDirection: 'column',
-        justifyContent: 'center', alignItems: 'center',
-        alignSelf: 'center',
+        display: 'flex',
+        flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
+        justifyContent: window.innerWidth < mobilewidth ? 'center' : 'space-evenly',
       }}>
-        <Body></Body>
-        <ShowInvasaoMenu></ShowInvasaoMenu>
-        <ShowInfoLesoes></ShowInfoLesoes>
-        <ShowCurativosList></ShowCurativosList>
+        <div
+          style={{
+            display: 'flex', flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+          }}
+        >
+          <Body></Body>
+          <ShowInvasaoMenu></ShowInvasaoMenu>
+          <ShowInfoLesoes></ShowInfoLesoes>
+          <ShowCurativosList></ShowCurativosList>
+        </div>
+        <DetalhesInvasoes></DetalhesInvasoes>
       </div>
     </div>
   )

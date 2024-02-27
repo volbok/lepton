@@ -113,7 +113,7 @@ function Propostas() {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div id="botão de retorno"
-          className="button-red"
+          className="button-yellow"
           style={{
             display: 'flex',
             width: 50, height: 50
@@ -201,7 +201,7 @@ function Propostas() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <div id="botão de retorno"
-              className="button-red"
+              className="button-yellow"
               style={{
                 display: 'flex',
                 alignSelf: 'center',
@@ -317,7 +317,7 @@ function Propostas() {
               flex: 5, alignItems: 'center',
             }}>
               <div id="identificador"
-                className='button-opaque'
+                className='button cor1opaque'
                 style={{
                   flex: 1,
                   flexDirection: window.innerWidth < mobilewidth ? 'row' : 'column',
@@ -350,7 +350,7 @@ function Propostas() {
                 }}>
                   <div className='text2 cor 1'>{moment(item.data_proposta).format('DD/MM/YY - HH:mm')}</div>
                 </div>
-                <div className='button-red'
+                <div className='button-yellow'
                   style={{ width: 25, minWidth: 25, height: 25, minHeight: 25 }}
                   onClick={(e) => {
                     modal(setdialogo, 'CONFIRMAR EXCLUSÃO DA EVOLUÇÃO ?', deleteProposta, item);
@@ -373,7 +373,6 @@ function Propostas() {
                   display: 'flex', flexDirection: window.innerWidth < mobilewidth ? 'column' : 'row',
                   justifyContent: 'center',
                   flex: 4,
-                  // backgroundColor: 'white',
                   padding: 5,
                   paddingBottom: window.innerWidth < mobilewidth ? 10 : 5,
                   height: window.innerWidth < mobilewidth ? 100 : 130,
@@ -436,7 +435,7 @@ function Propostas() {
                       alignItems: 'flex-end',
                       alignSelf: 'center',
                       padding: 10,
-                      // backgroundColor: '#f2f2f2',
+                      marginTop: window.innerWidth < mobilewidth ? 10 : '',
                       borderRadius: 5,
                       height: 90,
                     }}>
