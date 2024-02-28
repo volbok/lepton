@@ -318,8 +318,7 @@ function Documentos() {
     return (
       <div className='gadget'
         style={{
-          display: 'flex',
-          // display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
+          display: tipodocumento == 'ATESTADO MÉDICO' && selecteddocumento.id != undefined && selecteddocumento.status == 0 ? 'flex' : 'none',
           flexDirection: 'column',
           position: 'absolute', bottom: 20, left: 20
         }}>

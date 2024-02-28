@@ -52,7 +52,7 @@ function Infusoes() {
   Isto continua válido caso o usuário altere também o nome da droga.
   */
   const [infusao, setinfusao] = useState(0);
-  const updateInfusao = (item, data_inicio, data_termino) => {
+  const updateInfusao = (item, data_inicio) => {
     // encerrando a infusão selecionada para atualização.
     var obj = {
       id_atendimento: atendimento,
@@ -287,7 +287,6 @@ function Infusoes() {
               className="scroll cor0"
               style={{
                 display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-                // backgroundColor: 'white', 
                 borderColor: 'transparent',
                 borderRadius: 5, margin: 5,
                 height: 220, width: 200, minWidth: 200,
@@ -299,26 +298,10 @@ function Infusoes() {
                   <div key={'infusoes ' + item.id_infusao} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     <div className={'button'}
                       style={{
-
-                        /*
-                        backgroundImage:
-                        moment(item.data_inicio).format('DD/MM/YYYY') == valor && moment(item.data_termino).format('DD/MM/YYYY') != valor ? "linear-gradient(to right, #85C1E9, #5DADE2)" :
-                        moment(item.data_inicio).format('DD/MM/YYYY') != valor && moment(item.data_termino).format('DD/MM/YYYY') == valor ? "linear-gradient(to right, #5DADE2, #85C1E9)" :
-                        moment(item.data_inicio).format('DD/MM/YYYY') == valor && moment(item.data_termino).format('DD/MM/YYYY') == valor ? "linear-gradient(to right, #85C1E9, #5DADE2, #85C1E9)" :
-                        '',
-                        */
-
-                        // backgroundColor: '#5DADE2',
                         flexDirection: 'column', justifyContent: 'center',
                         alignSelf: 'center',
                         width: 170,
                         borderRadius: 5,
-
-                        /*
-                        borderTopLeftRadius: moment(item.data_inicio).format('DD/MM/YYYY') == valor ? 25 : 5,
-                        borderTopRightRadius: moment(item.data_termino).format('DD/MM/YYYY') == valor ? 25 : 5,
-                        */
-
                       }}>
                       <div>{item.droga}</div>
                       <div>{item.velocidade + ' ml/h'}</div>
