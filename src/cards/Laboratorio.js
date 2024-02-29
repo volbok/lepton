@@ -439,7 +439,7 @@ function Laboratorio() {
             display: 'flex',
             flexDirection: 'column',
             alignSelf: 'center',
-            width: '30vw',
+            width: 'calc(30vw + 2.5px)',
             height: '100%',
           }}
         >
@@ -617,7 +617,7 @@ function Laboratorio() {
                         flexDirection: 'row', justifyContent: 'center',
                         textAlign: 'left',
                         margin: 5,
-                        color: parseFloat(JSON.parse(item.resultado).map(item => item.valor)) < parseFloat(item.vref_min) || parseFloat(JSON.parse(item.resultado).map(item => item.valor)) > parseFloat(item.vref_max) ? '#EC7063' : '',
+                        color: item.resultado != null && (parseFloat(JSON.parse(item.resultado).map(item => item.valor)) < parseFloat(item.vref_min) || parseFloat(JSON.parse(item.resultado).map(item => item.valor)) > parseFloat(item.vref_max)) ? '#EC7063' : '',
                       }}>
                       {item.resultado != null && JSON.parse(item.resultado).length > 1 ?
                         JSON.parse(item.resultado).map(item => item.campo + ': ' + item.valor + ' ') :

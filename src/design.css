@@ -45,6 +45,20 @@
   display: none !important
 }
 
+.printable {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100vw;
+  padding: 10px;
+  border-radius: 5px;
+  border-color: black;
+  border-width: 1px;
+  font-family: Arial, Helvetica, sans-serif;
+  break-inside: 'avoid';
+  flex-grow: 'inherit',
+}
+
 /* OCULTANDO CABEÇALHO E RODAPÉ PARA IMPRESSÃO */
 @media print {
 
@@ -376,7 +390,7 @@ body {
   40% {
     transform: translate(20px, -20px);
   }
-  
+
   60% {
     transform: translate(-20px, 20px);
   }
