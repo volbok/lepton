@@ -65,26 +65,7 @@ function Laboratorio() {
     })
   }
   // atualizar pedido de exame de laboratorio.
-  const updateLaboratorio = (item, resultado, data_resultado, status) => {
-    var obj = {
-      id_paciente: item.id_paciente,
-      id_atendimento: item.id_atendimento,
-      data_pedido: item.data_pedido,
-      data_resultado: data_resultado,
-      codigo_exame: item.codigo_exame,
-      nome_exame: item.nome_exame,
-      material: item.material,
-      resultado: resultado,
-      status: status,
-      profissional: item.profissional,
-      unidade_medida: item.unidade_medida,
-      vref_min: item.vref_min,
-      vref_max: item.vref_max,
-      obs: item.obs,
-      random: item.obs,
-      array_campos: item.array_campos,
-    }
-    console.log(obj)
+  const updateLaboratorio = (item, obj) => {
     axios.post(html + 'update_laboratorio/' + item.id, obj).then(() => {
       loadAllLaboratorio();
     })
@@ -92,7 +73,7 @@ function Laboratorio() {
 
   // função valiosa que mapeia cada registro de exame e permite a edição dos resultados.
   const itemEditarLaboratorio = (item, titulo, array) => {
-    let localarray = [0, 1];
+    let localarray = [0];
     if (array != null) {
       localarray = array.split(',');
       console.log(localarray);
@@ -102,10 +83,12 @@ function Laboratorio() {
         style={{
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
           flexGrow: 1,
+          position: 'relative',
         }}
       >
-        <div>{titulo}</div>
-
+        <div style={{ height: 50 }}>
+          <div>{titulo}</div>
+        </div>
         <div id={'check ' + titulo}
           style={{
             display: 'none',
@@ -118,81 +101,77 @@ function Laboratorio() {
           }}>
           <div>!</div>
         </div>
-
         <div id="array de campos relativos ao exame."
-          style={{ display: array != null ? 'flex' : 'none', flexDirection: 'row', flexWrap: 'wrap' }}
+          className='scroll'
+          style={{
+            display: 'flex',
+            flexDirection: 'row', flexWrap: 'wrap',
+            height: 120, minHeight: 120, maxHeight: 100,
+            width: 'calc(100% - 30px)',
+            marginTop: 5,
+          }}
         >
           {localarray.map(campo => (
-            <div>
-              <div>{campo}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', width: 'calc(100% - 20px)' }}>
+              <div className='text1'>{campo}</div>
               <textarea id={'campo ' + campo}
                 className='textarea'
-                style={{ width: 150 }}>
+                style={{ width: 'calc(100% - 20px)' }}>
               </textarea>
             </div>
           ))}
         </div>
-        <div
-          style={{ display: array == null ? 'flex' : 'none', flexDirection: 'column' }}
-        >
-          <textarea id={"campo unico " + titulo}
-            className='textarea'
-            style={{ width: 150 }}>
-          </textarea>
-        </div>
-
         <div id={"botão para salvar o resultado " + item.id}
           className='button-green'
           style={{
             display: item.status == 1 ? 'flex' : 'none',
             alignSelf: 'center',
             maxHeight: 30, minHeight: 30, maxWidth: 30, minWidth: 30,
+            margin: 10,
+            marginTop: localarray.length > 1 ? 15 : 10,
           }}
           onClick={() => {
+            let arrayresultado = [];
+            // checando se algum campo está em branco.
             // eslint-disable-next-line
             localarray.map(campo => {
               if (document.getElementById("campo " + campo).value == '') {
                 document.getElementById('check ' + titulo).style.display = 'flex'
-              }
-            });
-            if (document.getElementById("campo único " + titulo).value == '') {
-              document.getElementById('check ' + titulo).style.display = 'flex'
-            } else {
-              let resultado = null;
-              if (array != null) {
-                resultado = [];
-                localarray.map(campo => resultado.push(
+              } else {
+                // salvando o registro de exame laboratorial.
+                localarray.map(campo => arrayresultado.push(
                   {
                     campo: campo,
-                    valor: document.getElementById('campo ' + campo).toUpperCase().value,
+                    valor: document.getElementById('campo ' + campo).value.toUpperCase(),
                   }
-                ))
-                resultado = JSON.stringify(resultado);
-              } else {
-                resultado = document.getElementById("campo unico " + titulo).toUpperCase().value
+                ));
+                console.log(arrayresultado);
+                let limitedjs = [];
+                limitedjs = JSON.stringify(arrayresultado);
+                let obj = {
+                  id: item.id,
+                  id_paciente: item.id_paciente,
+                  id_atendimento: item.id_atendimento,
+                  data_pedido: item.data_pedido,
+                  data_resultado: item.data_resultado,
+                  codigo_exame: item.codigo_exame,
+                  nome_exame: item.nome_exame,
+                  material: item.material,
+                  resultado: limitedjs,
+                  status: 2, // 0 = registrado, 1 = assinado, 2 = liberado,
+                  profissional: item.profissional,
+                  unidade_medida: item.unidade_medida,
+                  vref_min: item.vref_min,
+                  vref_max: item.vref_max,
+                  obs: item.obs,
+                  random: item.random,
+                  array_campos: item.array_campos
+                }
+                updateLaboratorio(item, obj);
               }
-
-              let obj = {
-                id: item.id,
-                id_paciente: item.id_paciente,
-                id_atendimento: item.id_atendimento,
-                data_pedido: item.data_pedido,
-                data_resultado: item.data_resultado,
-                codigo_exame: item.codigo_exame,
-                nome_exame: item.nome_exame,
-                material: item.material,
-                resultado: resultado,
-                status: 2, // 0 = registrado, 1 = assinado, 2 = liberado,
-                profissional: item.profissional,
-                unidade_medida: item.unidade_medida,
-                vref_min: item.vref_min,
-                vref_max: item.vref_max,
-                obs: item.obs,
-                random: item.random,
-              }
-              updateLaboratorio(item, obj);
-            }
-          }}>
+            });
+          }}
+        >
           <img
             alt=""
             src={salvar}
@@ -213,26 +192,27 @@ function Laboratorio() {
         style={{
           flexDirection: 'column',
           justifyContent: 'flex-start', margin: 10,
-          width: '80vw',
           height: 'calc(100% - 20px)',
+          width: 'calc(100% - 20px)',
         }}>
-        {listalaboratorio.filter(valor => valor.id_atendimento == localStorage.getItem('selectedatendimento')).map(valor =>
-          <div className='text1 cor3'
+        {listalaboratorio.filter(valor => valor.id_atendimento == localStorage.getItem('selectedatendimento') && valor.status == 1 && valor.material != 'IMAGEM').map(valor =>
+          <div className='cor3'
             style={{
               display: listalaboratorio.length > 0 ? 'flex' : 'none',
               flexDirection: 'column',
               justifyContent: 'center',
-              textAlign: 'left', alignItems: 'flex-start',
-              margin: 10, padding: 20,
+              alignItems: 'flex-start',
+              marginTop: 10, marginBottom: 10,
+              padding: 5,
               borderRadius: 5,
-              width: 'calc(100% - 60px)'
             }}>
+            <div className='button red' style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 0 }}>{moment(valor.data).format('DD/MM/YY - HH:mm')}</div>
             <div id="lista de exames para preenchimento dos resultados"
               className='grid'
               style={{
-                backgroundColor: 'white', borderRadius: 5, marginTop: 15,
+                borderRadius: 5, marginTop: 10,
               }}>
-              {laboratorio.filter(item => item.status == 1 && valor.id_atendimento == item.id_atendimento).map(item => itemEditarLaboratorio(item, item.nome_exame, item.array_campos))}
+              {laboratorio.filter(item => item.status == 1 && valor.id_atendimento == item.id_atendimento && item.random == valor.random && item.material != 'IMAGEM').map(item => itemEditarLaboratorio(item, item.nome_exame, item.array_campos))}
             </div>
           </div>
         )}
@@ -448,7 +428,8 @@ function Laboratorio() {
             <div id="lista de materiais"
               style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
               {arraymaterial.map(item => (
-                <div className='button' id={"material " + item} style={{ width: 200 }}
+                <div className='button'
+                  id={"material " + item} style={{ width: 200 }}
                   onClick={() => {
                     material = item;
                     selector("lista de materiais", "material " + item, 100);
@@ -514,33 +495,44 @@ function Laboratorio() {
           borderColor: 'white',
           alignSelf: 'flex-start',
         }}>
-        {listalaboratorio.map(valor => (
-          atendimentos.filter(item => item.id_atendimento == valor.id_atendimento).sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
-            <div id={"atendimento " + item.id_atendimento}
-              className='button'
+        {atendimentos.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
+          <div
+            style={{
+              display: laboratorio.filter(valor => valor.id_atendimento == item.id_atendimento).length > 0 ? 'flex' : 'none',
+              flexDirection: 'row',
+              minHeight: 150,
+            }}
+            onClick={() => {
+              loadListaLaboratorio(item.id_atendimento);
+              localStorage.setItem('selectedatendimento', item.id_atendimento);
+              selector("scroll lista de atendimentos resumida", "atendimento " + item.id_atendimento, 200);
+            }}
+          >
+            <div id="identificador"
+              className='button cor1opaque'
               style={{
-                display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                minHeight: 200,
-              }}
-              onClick={() => {
-                // não aparecem os atendimentos!!!
-                localStorage.setItem('selectedatendimento', item.id_atendimento);
-                selector("scroll lista de atendimentos resumida", "atendimento " + item.id_atendimento, 200);
+                marginRight: 0,
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
               }}
             >
-              <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontSize: 10 }}>
-                  {item.nome_paciente}
-                </div>
-                <div style={{ fontSize: 10, marginBottom: 5 }}>
-                  {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade)}
-                </div>
-                <div style={{ fontSize: 10, marginBottom: 5 }}>
-                  {item.leito}
-                </div>
+              <div>
+                {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
               </div>
             </div>
-          ))))
+
+            <div className='button pallete2'
+              id={"atendimento " + item.id_atendimento}
+              style={{
+                marginLeft: 0,
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+              }}
+            >
+              {item.nome_paciente}
+            </div>
+          </div>
+        ))
         }
       </div>
     )
@@ -605,7 +597,7 @@ function Laboratorio() {
         <div
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            height: 'calc(100vh - 20px)',
+            height: 'calc(100vh - 20px)', width: '100%'
           }}>
           <div className='text1'
             style={{ fontSize: 16, marginTop: 10 }}>

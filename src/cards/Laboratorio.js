@@ -138,7 +138,9 @@ function Laboratorio() {
       vref_max: item.vref_max,
       obs: item.obs,
       random: random,
+      array_campos: item.array_campos,
     }
+    console.log(obj);
     axios.post(html + 'insert_laboratorio', obj).then(() => {
       let random = localStorage.getItem('random');
       loadLaboratorio(random);
@@ -163,6 +165,7 @@ function Laboratorio() {
       vref_max: item.vref_max,
       obs: item.obs,
       random: item.random,
+      array_campos: item.array_campos,
     }
     axios.post(html + 'update_laboratorio/' + item.id, obj);
   }
@@ -613,15 +616,22 @@ function Laboratorio() {
                         display: item.resultado == null ? 'none' : 'flex',
                         flexDirection: 'row', justifyContent: 'center',
                         textAlign: 'left',
-                        margin: 5, color: 'yellow',
+                        margin: 5,
+                        color: parseFloat(JSON.parse(item.resultado).map(item => item.valor)) < parseFloat(item.vref_min) || parseFloat(JSON.parse(item.resultado).map(item => item.valor)) > parseFloat(item.vref_max) ? '#EC7063' : '',
                       }}>
-                      {item.resultado != null ? item.resultado + ' ' + item.unidade_medida + ' (VR: ' + item.vref_min + ' - ' + item.vref_max + ')' : 'PENDENTE'}
+                      {item.resultado != null && JSON.parse(item.resultado).length > 1 ?
+                        JSON.parse(item.resultado).map(item => item.campo + ': ' + item.valor + ' ') :
+                        item.resultado != null && JSON.parse(item.resultado).length == 1 ?
+                          JSON.parse(item.resultado).map(item => item.valor + ' ') : 'PENDENTE'
+                      }
+                      {item.unidade_medida != null ? item.unidade_medida : ''}
+                      {item.vref_max == null || item.vref_min == null ? '' : ' (VR: ' + item.vref_min + ' - ' + item.vref_max + ')'}
                     </div>
                     <img
                       alt=""
                       src={alerta}
                       style={{
-                        display: parseFloat(item.resultado) > parseFloat(item.vref_max) || parseFloat(item.resultado) < parseFloat(item.vref_min) ? 'flex' : 'none',
+                        display: 'none',
                         margin: 0, padding: 0,
                         height: 35,
                         width: 35,
