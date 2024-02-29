@@ -2,15 +2,16 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import Context from '../pages/Context';
 import axios from 'axios';
+import moment from "moment";
 // imagens.
 import salvar from '../images/salvar.svg';
 import back from '../images/back.svg';
-import moment from "moment";
 import preferencias from '../images/preferencias.svg';
 import deletar from '../images/deletar.svg';
+import lupa from '../images/lupa.svg';
+
 // router.
 import { useHistory } from "react-router-dom";
-import toast from '../functions/toast';
 // funções.
 import selector from "../functions/selector";
 
@@ -22,10 +23,19 @@ function Laboratorio() {
     pagina, setpagina,
     html,
     laboratorio, setlaboratorio,
-    atendimentos, setatendimentos,
+    setatendimentos, atendimentos,
     unidades,
-    settoast,
+    settipodocumento,
+    // setdono_documento,
   } = useContext(Context);
+
+  const [listalaboratorio, setlistalaboratorio] = useState([]);
+  const loadListaLaboratorio = (atendimento) => {
+    axios.get(html + 'lista_laboratorio/' + atendimento).then((response) => {
+      setlistalaboratorio(response.data.rows);
+      settipodocumento('RESULTADO DE EXAME LABORATORIAL');
+    });
+  }
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -41,11 +51,9 @@ function Laboratorio() {
   // history (router).
   let history = useHistory();
 
-  const [arrayatendimentos, setarrayatendimentos] = useState([])
   const loadAllAtendimentos = () => {
     axios.get(html + "all_atendimentos/").then((response) => {
       setatendimentos(response.data.rows);
-      setarrayatendimentos(response.data.rows);
     })
   }
 
@@ -69,131 +77,187 @@ function Laboratorio() {
       resultado: resultado,
       status: status,
       profissional: item.profissional,
+      unidade_medida: item.unidade_medida,
+      vref_min: item.vref_min,
+      vref_max: item.vref_max,
+      obs: item.obs,
+      random: item.obs,
+      array_campos: item.array_campos,
     }
     console.log(obj)
     axios.post(html + 'update_laboratorio/' + item.id, obj).then(() => {
       loadAllLaboratorio();
     })
   }
+
+  // função valiosa que mapeia cada registro de exame e permite a edição dos resultados.
+  const itemEditarLaboratorio = (item, titulo, array) => {
+    let localarray = [0, 1];
+    if (array != null) {
+      localarray = array.split(',');
+      console.log(localarray);
+    }
+    return (
+      <div className='button'
+        style={{
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+          flexGrow: 1,
+        }}
+      >
+        <div>{titulo}</div>
+
+        <div id={'check ' + titulo}
+          style={{
+            display: 'none',
+            position: 'absolute', bottom: 5, right: 5,
+            borderRadius: 50,
+            backgroundColor: '#EC7063',
+            color: 'white', fontWeight: 'bold',
+            width: 25, height: 25,
+            justifyContent: 'center',
+          }}>
+          <div>!</div>
+        </div>
+
+        <div id="array de campos relativos ao exame."
+          style={{ display: array != null ? 'flex' : 'none', flexDirection: 'row', flexWrap: 'wrap' }}
+        >
+          {localarray.map(campo => (
+            <div>
+              <div>{campo}</div>
+              <textarea id={'campo ' + campo}
+                className='textarea'
+                style={{ width: 150 }}>
+              </textarea>
+            </div>
+          ))}
+        </div>
+        <div
+          style={{ display: array == null ? 'flex' : 'none', flexDirection: 'column' }}
+        >
+          <textarea id={"campo unico " + titulo}
+            className='textarea'
+            style={{ width: 150 }}>
+          </textarea>
+        </div>
+
+        <div id={"botão para salvar o resultado " + item.id}
+          className='button-green'
+          style={{
+            display: item.status == 1 ? 'flex' : 'none',
+            alignSelf: 'center',
+            maxHeight: 30, minHeight: 30, maxWidth: 30, minWidth: 30,
+          }}
+          onClick={() => {
+            // eslint-disable-next-line
+            localarray.map(campo => {
+              if (document.getElementById("campo " + campo).value == '') {
+                document.getElementById('check ' + titulo).style.display = 'flex'
+              }
+            });
+            if (document.getElementById("campo único " + titulo).value == '') {
+              document.getElementById('check ' + titulo).style.display = 'flex'
+            } else {
+              let resultado = null;
+              if (array != null) {
+                resultado = [];
+                localarray.map(campo => resultado.push(
+                  {
+                    campo: campo,
+                    valor: document.getElementById('campo ' + campo).toUpperCase().value,
+                  }
+                ))
+                resultado = JSON.stringify(resultado);
+              } else {
+                resultado = document.getElementById("campo unico " + titulo).toUpperCase().value
+              }
+
+              let obj = {
+                id: item.id,
+                id_paciente: item.id_paciente,
+                id_atendimento: item.id_atendimento,
+                data_pedido: item.data_pedido,
+                data_resultado: item.data_resultado,
+                codigo_exame: item.codigo_exame,
+                nome_exame: item.nome_exame,
+                material: item.material,
+                resultado: resultado,
+                status: 2, // 0 = registrado, 1 = assinado, 2 = liberado,
+                profissional: item.profissional,
+                unidade_medida: item.unidade_medida,
+                vref_min: item.vref_min,
+                vref_max: item.vref_max,
+                obs: item.obs,
+                random: item.random,
+              }
+              updateLaboratorio(item, obj);
+            }
+          }}>
+          <img
+            alt=""
+            src={salvar}
+            style={{
+              margin: 10,
+              height: 25,
+              width: 25,
+            }}
+          ></img>
+        </div>
+      </div >
+    )
+  }
+
   function TelaResultadoLaboratorio() {
     return (
-      <div className='scroll'
+      <div
         style={{
           flexDirection: 'column',
           justifyContent: 'flex-start', margin: 10,
-          position: 'relative', width: 'calc(100% - 40px)',
-          height: 'calc(100% - 40px)'
+          width: '80vw',
+          height: 'calc(100% - 20px)',
         }}>
-        {arrayatendimentos.filter(valor => valor.situacao == 1 && laboratorio.filter(item => item.status == 1 && item.id_atendimento == valor.id_atendimento).length > 0).map(valor =>
+        {listalaboratorio.filter(valor => valor.id_atendimento == localStorage.getItem('selectedatendimento')).map(valor =>
           <div className='text1 cor3'
             style={{
-              display: 'flex', flexDirection: 'column',
+              display: listalaboratorio.length > 0 ? 'flex' : 'none',
+              flexDirection: 'column',
               justifyContent: 'center',
               textAlign: 'left', alignItems: 'flex-start',
               margin: 10, padding: 20,
               borderRadius: 5,
               width: 'calc(100% - 60px)'
             }}>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-              <div className='button' style={{ marginRight: 0, borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 200, backgroundColor: '#006666' }}>
-                {unidades.filter(item => item.id_unidade == valor.id_unidade).map(item => 'UNIDADE: ' + item.nome_unidade)}
-              </div>
-              <div className='button' style={{ marginLeft: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: 80 }}>
-                {'LEITO: ' + valor.leito}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-start', fontSize: 16, alignSelf: 'center', marginLeft: 10 }}>{valor.nome_paciente}</div>
-            </div>
             <div id="lista de exames para preenchimento dos resultados"
+              className='grid'
               style={{
-                display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly',
-                width: '100%', backgroundColor: 'white', borderRadius: 5, marginTop: 15,
+                backgroundColor: 'white', borderRadius: 5, marginTop: 15,
               }}>
-              {laboratorio.filter(item => item.status == 1 && valor.id_atendimento == item.id_atendimento).map(item => (
-                <div key={'laboratorio ' + item.id}
-                  style={{
-                    display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap',
-                    height: 220, margin: 5
-                  }}
-                >
-                  <div className="button-yellow" style={{
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                    marginRight: 0,
-                    borderTopRightRadius: 0, borderBottomRightRadius: 0, width: 70,
-                    backgroundColor: '#006666',
-                  }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5 }}>
-                      <div>
-                        {moment(item.data_pedido).format('DD/MM/YY')}
-                      </div>
-                      <div>
-                        {moment(item.data_pedido).format('HH:mm')}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="button" style={{
-                      marginLeft: 0,
-                      borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                    }}
-                  >
-                    <div style={{
-                      display: 'flex', flexDirection: 'column',
-                      justifyContent: 'flex-start', alignContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                      <div id="textarea para resultados."
-                        style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <div style={{
-                          display: 'flex', height: 50,
-                          alignItems: 'center'
-                        }}>
-                          <div style={{ width: '100%' }}>
-                            {item.nome_exame}
-                          </div>
-                        </div>
-                        <textarea id={"campo para digitar o resultado" + item.id}
-                          className='textarea'
-                          onClick={() => {
-                            if (item.nome_exame == 'HEMOGRAMA COMPLETO' && document.getElementById("campo para digitar o resultado" + item.id).value == "") {
-                              document.getElementById("campo para digitar o resultado" + item.id).value = "HGB: , HTO: , PLAQ: , GL: , BAST: , SEG: , LINF: ";
-                              document.getElementById("campo para digitar o resultado" + item.id).focus();
-                            }
-                          }}
-                          style={{ width: 200, height: 60, minHeight: 60, maxHeight: 60, alignSelf: 'center' }}
-                        >
-                        </textarea>
-                      </div>
-                      <div id={"botão para salvar o resultado " + item.id}
-                        className='button-green'
-                        style={{
-                          display: item.status == 1 ? 'flex' : 'none',
-                          alignSelf: 'center',
-                          maxHeight: 30, minHeight: 30, maxWidth: 30, minWidth: 30,
-                        }}
-                        onClick={(e) => {
-                          if (document.getElementById("campo para digitar o resultado" + item.id).value != '') {
-                            updateLaboratorio(item, document.getElementById("campo para digitar o resultado" + item.id).value.toUpperCase(), moment(), 2); e.stopPropagation();
-                          } else {
-                            toast(settoast, 'RESULTADO EM BRANCO!', 'red', 2000);
-                          }
-                        }}>
-                        <img
-                          alt=""
-                          src={salvar}
-                          style={{
-                            margin: 10,
-                            height: 25,
-                            width: 25,
-                          }}
-                        ></img>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {laboratorio.filter(item => item.status == 1 && valor.id_atendimento == item.id_atendimento).map(item => itemEditarLaboratorio(item, item.nome_exame, item.array_campos))}
             </div>
           </div>
         )}
+        <div id="lista vazia"
+          className='lupa'
+          style={{
+            display: listalaboratorio.length == 0 ? 'flex' : 'none',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            borderRadius: 5,
+            width: '100%',
+            height: '100%',
+          }}>
+          <img
+            alt=""
+            src={lupa}
+            style={{
+              margin: 10,
+              height: 150,
+              width: 150,
+              opacity: 0.1,
+              alignSelf: 'center'
+            }}
+          ></img>
+        </div>
       </div>
     )
   }
@@ -216,12 +280,17 @@ function Laboratorio() {
     })
   }
   // inserir registro de opção de exame laboratorial.
-  const inserirOpcaoLaboratorio = (nome, material) => {
+  const inserirOpcaoLaboratorio = (nome, material, unidade_medida, vref_min, vref_max, obs, array_campos) => {
     var obj = {
       codigo_exame: Math.random(),
       nome_exame: nome,
       material: material,
       disponivel: 1,
+      unidade_medida: unidade_medida,
+      vref_min: vref_min,
+      vref_max: vref_max,
+      obs: obs,
+      array_campos: array_campos
     }
     axios.post(html + 'insert_opcao_laboratorio/', obj).then(() => {
       loadOpcoesLaboratorio();
@@ -241,6 +310,11 @@ function Laboratorio() {
       nome_exame: item.nome_exame,
       material: item.material,
       disponivel: troca,
+      unidade_medida: item.unidade_medida,
+      vref_min: item.vref_min,
+      vref_max: item.vref_max,
+      obs: item.obs,
+      array_campos: item.array_campos
     }
     axios.post(html + 'update_opcao_laboratorio/' + item.id, obj).then(() => {
       loadOpcoesLaboratorio();
@@ -296,7 +370,7 @@ function Laboratorio() {
   }
 
   // tela para manejo das opções de exames laboratoriais (setup).
-  let arraymaterial = ['SANGUE', 'URINA', 'FEZES', 'ESCARRO', 'SECREÇÃO', 'LÍQUIDO EM GERAL', 'RX', 'USG', 'TOMOGRAFIA']
+  let arraymaterial = ['SANGUE', 'URINA', 'FEZES', 'ESCARRO', 'SECREÇÃO', 'LÍQUIDO EM GERAL', 'IMAGEM']
   const [viewopcoeslaboratorio, setviewopcoeslaboratorio] = useState(0);
   function ViewOpcoesLaboratorio() {
     let material = null;
@@ -426,43 +500,58 @@ function Laboratorio() {
     )
   }
 
-  const FiltraUnidades = useCallback(() => {
+  // lista de atendimentos para filtragem das prescrições de exames laboratoriais.
+  const ListaAtendimentos = useCallback(() => {
     return (
-      <div id="lista de unidades"
-        className='scroll cor0'
+      <div id="scroll lista de atendimentos resumida"
+        className='scroll'
         style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
-          overflowY: 'hidden', overflowX: 'scroll',
-          width: '60vw', marginLeft: 10
+          display: 'flex',
+          width: '15vw',
+          height: '100%',
+          margin: 5, marginTop: 10,
+          backgroundColor: 'white',
+          borderColor: 'white',
+          alignSelf: 'flex-start',
         }}>
-        {unidades.map(item => (
-          <div id={"unidade" + item.id_unidade}
-            className="button"
-            style={{ width: 200, minWidth: 200 }}
-            onClick={() => {
-              setarrayatendimentos(atendimentos.filter(valor => valor.id_unidade == item.id_unidade));
-              selector("lista de unidades", "unidade" + item.id_unidade, 300);
-            }}
-          >
-            {item.nome_unidade}
-          </div>
-        ))}
+        {listalaboratorio.map(valor => (
+          atendimentos.filter(item => item.id_atendimento == valor.id_atendimento).sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
+            <div id={"atendimento " + item.id_atendimento}
+              className='button'
+              style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                minHeight: 200,
+              }}
+              onClick={() => {
+                // não aparecem os atendimentos!!!
+                localStorage.setItem('selectedatendimento', item.id_atendimento);
+                selector("scroll lista de atendimentos resumida", "atendimento " + item.id_atendimento, 200);
+              }}
+            >
+              <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: 10 }}>
+                  {item.nome_paciente}
+                </div>
+                <div style={{ fontSize: 10, marginBottom: 5 }}>
+                  {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade)}
+                </div>
+                <div style={{ fontSize: 10, marginBottom: 5 }}>
+                  {item.leito}
+                </div>
+              </div>
+            </div>
+          ))))
+        }
       </div>
     )
     // eslint-disable-next-line
-  }, [arrayatendimentos]);
+  }, [atendimentos, listalaboratorio]);
 
-  return (
-    <div id="tela do laboratório"
-      className='main'
-      style={{
-        display: pagina == 7 ? 'flex' : 'none',
-        flexDirection: 'column', justifyContent: 'center',
-      }}
-    >
+  function Botoes() {
+    return (
       <div style={{
         display: 'flex', flexDirection: 'row', justifyContent: 'center',
-        alignSelf: 'center', alignItems: 'center', marginTop: 10
+        alignSelf: 'center', alignItems: 'center',
       }}>
         <div id="botão para sair da tela de laboratório"
           className="button-red" style={{ maxHeight: 50 }}
@@ -489,10 +578,42 @@ function Laboratorio() {
             }}
           ></img>
         </div>
-        <FiltraUnidades></FiltraUnidades>
       </div>
-      <div className='text1' style={{ fontSize: 16, marginTop: 10 }}>LISTA DE EXAMES LABORATORIAIS PARA PREENCHIMENTO DO RESULTADO</div>
-      <TelaResultadoLaboratorio></TelaResultadoLaboratorio>
+    )
+  }
+
+  return (
+    <div id="tela do laboratório"
+      className='main'
+      style={{
+        display: pagina == 7 ? 'flex' : 'none'
+      }}
+    >
+      <div className='chassi'
+        style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
+        }}>
+        <div
+          style={{
+            position: 'sticky', top: 0,
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            height: 'calc(100vh - 20px)',
+          }}>
+          <Botoes></Botoes>
+          <ListaAtendimentos></ListaAtendimentos>
+        </div>
+        <div
+          style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            height: 'calc(100vh - 20px)',
+          }}>
+          <div className='text1'
+            style={{ fontSize: 16, marginTop: 10 }}>
+            LISTA DE EXAMES LABORATORIAIS PARA PREENCHIMENTO DO RESULTADO
+          </div>
+          <TelaResultadoLaboratorio></TelaResultadoLaboratorio>
+        </div>
+      </div>
       <ViewOpcoesLaboratorio></ViewOpcoesLaboratorio>
     </div>
   )

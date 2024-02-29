@@ -8,6 +8,7 @@ import 'moment/locale/pt-br';
 import { useHistory } from 'react-router-dom';
 // funções.
 import toast from '../functions/toast';
+import selector from '../functions/selector';
 // imagens.
 import salvar from '../images/salvar.svg';
 import deletar from '../images/deletar.svg';
@@ -22,7 +23,6 @@ import preferencias from '../images/preferencias.svg';
 // componentes.
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import selector from '../functions/selector';
 
 function Prescricao() {
 

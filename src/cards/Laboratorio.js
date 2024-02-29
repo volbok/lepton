@@ -9,10 +9,14 @@ import novo from '../images/novo.svg';
 import back from '../images/back.svg';
 import moment from "moment";
 import print from '../images/imprimir.svg';
-import logo from '../images/logo.svg';
-import lupa from '../images/lupa.svg';
+import lupa from '../images/lupa_cinza.svg';
+import dots_teal from '../images/dots_teal.svg';
+import alerta from '../images/alerta.svg';
 // funções.
 import selector from '../functions/selector';
+// componentes.
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function Laboratorio() {
 
@@ -20,23 +24,23 @@ function Laboratorio() {
   const {
     html,
     laboratorio, setlaboratorio,
-    unidade,
-    unidades,
     atendimento,
-    atendimentos,
     paciente,
-    pacientes,
     usuario,
     card, setcard,
-
     settipodocumento,
     setdono_documento,
   } = useContext(Context);
+
+  const [tipoexame, settipoexame] = useState(0);
 
   useEffect(() => {
     if (card == 'card-laboratorio') {
       loadOpcoesLaboratorio();
       loadListaLaboratorio();
+      localStorage.setItem('random', null);
+      localStorage.setItem('status', null);
+      setlaboratorio([]);
     }
     // eslint-disable-next-line
   }, [card]);
@@ -77,7 +81,7 @@ function Laboratorio() {
     axios.post(html + 'insert_lista_laboratorio', obj).then(() => {
       setlaboratorio([]);
       localStorage.setItem('random', random);
-      setviewinsertlaboratorio(1);
+      loadListaLaboratorio();
     });
   }
 
@@ -91,8 +95,10 @@ function Laboratorio() {
       id_profissional: usuario.id,
       nome_profissional: usuario.nome_usuario,
       registro_profissional: usuario.n_conselho,
+      random: item.random,
     }
     axios.post(html + 'update_lista_laboratorio/' + item.id, obj).then(() => {
+      assinarPedidos();
       loadListaLaboratorio();
     });
   }
@@ -110,6 +116,7 @@ function Laboratorio() {
     axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
       var x = response.data.rows;
       setlaboratorio(x.filter(item => item.random == random));
+      selector("scroll lista de pedidos de exames laboratoriais", "pedido de laboratorio " + random, 200);
     });
   }
 
@@ -132,7 +139,10 @@ function Laboratorio() {
       obs: item.obs,
       random: random,
     }
-    axios.post(html + 'insert_laboratorio', obj);
+    axios.post(html + 'insert_laboratorio', obj).then(() => {
+      let random = localStorage.getItem('random');
+      loadLaboratorio(random);
+    });
   }
 
   // atualizar pedido de exame laboratorial.
@@ -160,13 +170,22 @@ function Laboratorio() {
   // deletar item de exame laboratorial.
   const deleteLaboratorio = (id) => {
     axios.get(html + 'delete_laboratorio/' + id).then(() => {
-      loadLaboratorio();
+      let random = localStorage.getItem('random');
+      loadLaboratorio(random);
     });
   }
 
   // deletar itens de laboratório relacionados a um pedido de exames laboratoriais deletado.
   const deleteMassaItensLaboratorio = (random) => {
-    laboratorio.filter(item => item.random == random).map(item => deleteLaboratorio(item));
+    axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
+      var x = response.data.rows;
+      x.filter(item => item.random == random).map(item => axios.get(html + 'delete_laboratorio/' + item.id));
+      // cigarrete
+      localStorage.setItem('random', null);
+      localStorage.setItem('status', null);
+      loadListaLaboratorio();
+      setlaboratorio([]);
+    });
   }
 
   // ### //
@@ -176,6 +195,7 @@ function Laboratorio() {
     // eslint-disable-next-line
     array.map(item => {
       opcoeslaboratorio.filter(valor => valor.nome_exame == item).map(item => insertLaboratorio(item, random));
+      loadLaboratorio(random);
     });
   }
 
@@ -183,24 +203,41 @@ function Laboratorio() {
     axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
       // converte o status dos pedidos de exames laboratoriais de 0 para 1 (solicitados >> assinados). 
       var x = response.data.rows;
-      x.filter(item => item.status == 0).map(item => updateLaboratorio(item, null, null, 1));
+      let random = localStorage.getItem("random");
+      x.filter(item => item.random == random && item.status == 0).map(item => updateLaboratorio(item, null, null, 1));
       setTimeout(() => {
-        loadLaboratorio();
-        printDiv();
+        localStorage.setItem('random', null);
+        localStorage.setItem('status', null);
+        setlaboratorio([]);
       }, 1000);
     });
   }
 
   // imprimir requisição de exames laboratoriais.
-  function printDiv() {
-    console.log('PREPARANDO DOCUMENTO PARA IMPRESSÃO');
-    let printdocument = document.getElementById("IMPRESSÃO - LABORATORIO").innerHTML;
-    var a = window.open();
-    a.document.write('<html>');
-    a.document.write(printdocument);
-    a.document.write('</html>');
-    a.print();
+  function printDiv(random) {
+    axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
+      var x = response.data.rows;
+      if (x.filter(item => item.material != 'IMAGEM' && item.random == random).length > 0) {
+        let printdocumentlaboratorio = document.getElementById("IMPRESSÃO - LABORATORIO").innerHTML;
+        var a = window.open();
+        a.document.write('<html>');
+        a.document.write(printdocumentlaboratorio);
+        a.document.write('</html>');
+        a.print();
+        a.close();
+      }
+      if (x.filter(item => item.material == 'IMAGEM' && item.random == random).length > 0) {
+        let printdocumentimagem = document.getElementById("IMPRESSÃO - IMAGEM").innerHTML;
+        var b = window.open();
+        b.document.write('<html>');
+        b.document.write(printdocumentimagem);
+        b.document.write('</html>');
+        b.print();
+        b.close();
+      }
+    });
   }
+
   function PrintLaboratorio() {
     return (
       <div id="IMPRESSÃO - LABORATORIO"
@@ -222,7 +259,7 @@ function Laboratorio() {
                     display: 'flex', flexDirection: 'column',
                     breakInside: 'auto', alignSelf: 'center', width: '100%'
                   }}>
-                  <Conteudo></Conteudo>
+                  <ConteudoLaboratorio></ConteudoLaboratorio>
                 </div>
               </td>
             </tr>
@@ -238,80 +275,45 @@ function Laboratorio() {
       </div>
     )
   };
-  function Header() {
+  function PrintImagem() {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column', justifyContent: 'center'
-      }}>
-        <div style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-          height: 100, width: '100%',
-          fontFamily: 'Helvetica',
-          breakInside: 'avoid',
-        }}>
-          <img
-            alt=""
-            src={logo}
-            style={{
-              margin: 0,
-              height: 100,
-              width: 100,
-            }}
-          ></img>
-          <div className="text1" style={{ fontSize: 24, height: '', alignSelf: 'center' }}>
-            {'SOLICITAÇÃO DE EXAMES LABORATORIAIS'}
-          </div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-            borderRadius: 5, backgroundColor: 'gray', color: 'white',
-            padding: 10
-          }}>
-            <div>
-              {moment().format('DD/MM/YY - HH:mm')}
-            </div>
-            <div style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-              fontSize: 20,
-              fontFamily: 'Helvetica',
-              breakInside: 'avoid',
-            }}>
-              {'LEITO: ' + atendimentos.filter(valor => valor.id_paciente == paciente && valor.situacao == 1).map(valor => valor.leito)}
-            </div>
-            <div>{'UNIDADE: ' + unidades.filter(item => item.id_unidade == unidade).map(item => item.nome_unidade)}</div>
-            <div>{'ATENDIMENTO: ' + atendimento}</div>
-          </div>
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 22, marginTop: 10 }}>
-          {'NOME CIVIL: ' + atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.nome_paciente)}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'DN: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => moment(valor.dn_paciente).format('DD/MM/YYYY'))}
-        </div>
-        <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>
-          {'NOME DA MÃE: ' + pacientes.filter(valor => valor.id_paciente == atendimentos.filter(valor => valor.id_atendimento == atendimento).map(valor => valor.id_paciente)).map(valor => valor.nome_mae_paciente)}
-        </div>
+      <div id="IMPRESSÃO - IMAGEM"
+        className="print"
+      >
+        <table style={{ width: '100%' }}>
+          <thead style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Header></Header>
+              </td>
+            </tr>
+          </thead>
+          <tbody style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <div id="campos"
+                  style={{
+                    display: 'flex', flexDirection: 'column',
+                    breakInside: 'auto', alignSelf: 'center', width: '100%'
+                  }}>
+                  <ConteudoImagem></ConteudoImagem>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot style={{ width: '100%' }}>
+            <tr style={{ width: '100%' }}>
+              <td style={{ width: '100%' }}>
+                <Footer></Footer>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     )
-  }
-  function Footer() {
-    return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        height: 100, width: '100%',
-        fontFamily: 'Helvetica',
-        breakInside: 'avoid',
-      }}>
-        <div className="text1">
-          _______________________________________________
-        </div>
-        <div className="text1">
-          {'PROFISSIONAL: ' + usuario.nome_usuario + ' - ' + usuario.conselho + '-' + usuario.n_conselho}
-        </div>
-      </div>
-    )
-  }
-  function Conteudo() {
+  };
+
+  function ConteudoLaboratorio() {
     return (
       <div style={{
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
@@ -320,7 +322,22 @@ function Laboratorio() {
         whiteSpace: 'pre-wrap',
         marginTop: 20,
       }}>
-        {laboratorio.filter(item => item.status == 1).map(item => (
+        {laboratorio.filter(item => item.status == 1 && item.material != 'IMAGEM' && item.random == localStorage.getItem("random")).map(item => (
+          <div>{moment(item.data_pedido).format('DD/MM/YY - HH:mm') + ' - ' + item.nome_exame}</div>
+        ))}
+      </div>
+    )
+  }
+  function ConteudoImagem() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        fontFamily: 'Helvetica',
+        breakInside: 'auto',
+        whiteSpace: 'pre-wrap',
+        marginTop: 20,
+      }}>
+        {laboratorio.filter(item => item.status == 1 && item.material == 'IMAGEM' && item.random == localStorage.getItem("random")).map(item => (
           <div>{moment(item.data_pedido).format('DD/MM/YY - HH:mm') + ' - ' + item.nome_exame}</div>
         ))}
       </div>
@@ -364,12 +381,14 @@ function Laboratorio() {
   // filtro de exame laboratorial por nome.
   function FilterLaboratorio() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 20, marginBottom: 5 }}>
+      <div style={{
+        display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%',
+      }}>
         <input
-          className="input cor2"
+          className="input"
           autoComplete="off"
           placeholder={
-            window.innerWidth < 426 ? "BUSCAR EXAME..." : "BUSCAR..."
+            window.innerWidth < 426 ? "BUSCAR..." : "BUSCAR..."
           }
           onFocus={(e) => (e.target.placeholder = "")}
           onBlur={(e) =>
@@ -388,86 +407,139 @@ function Laboratorio() {
     );
   }
 
+  // ['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO']
+  const mountPackLaboratorio = (titulo, array) => {
+    return (
+      <div className='button'
+        style={{ height: 130, width: '', paddingLeft: 10, paddingRight: 10, flexGrow: 1 }}
+        onClick={() => insertPackLaboratorio(array)}
+      >
+        {titulo}
+      </div>
+    )
+  }
+
   const InsertLaboratorio = useCallback(() => {
     return (
-      <div className="fundo"
-        onClick={(e) => { setviewinsertlaboratorio(0); e.stopPropagation() }}
-        style={{ display: viewinsertlaboratorio == 1 ? 'flex' : 'none' }}>
-        <div className="janela"
-          onClick={(e) => e.stopPropagation()}
-          style={{ flexDirection: 'column', position: 'relative' }}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          display: viewinsertlaboratorio == 1 ? 'flex' : 'none',
+          flexDirection: 'column',
+          position: 'absolute', top: 0, left: 0, bottom: 0,
+          margin: 0,
+          justifyContent: 'center',
+        }}>
+        <div
+          className="janela scroll"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignSelf: 'center',
+            width: '30vw',
+            height: '100%',
+          }}
+        >
+          <div className="button"
+            title="CLIQUE PARA ALTERNAR ENTRE EXAMES LABORATORIAIS OU DE RX"
+            style={{ width: 'calc(100% - 20px)', alignSelf: 'center' }}
+            onClick={() => {
+              if (tipoexame == 0) {
+                settipoexame(1);
+              } else {
+                settipoexame(0);
+              }
+            }}
+          >
+            {tipoexame == 1 ? 'RX' : 'LABORATÓRIO'}
+          </div>
           <div className='text3' style={{ marginBottom: 20 }}>{tipoexame == 0 ? 'SOLICITAÇÃO DE EXAMES LABORATORIAIS' : 'SOLICITAÇÃO DE RX'}</div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
             <div id="filtro e lista de opções de exames laboratoriais"
-              style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}
             >
-              <FilterLaboratorio></FilterLaboratorio>
-              <div id="botão de retorno"
-                className="button-yellow"
-                style={{
-                  position: 'absolute',
-                  top: 10, right: 10,
-                  display: 'flex',
-                  alignSelf: 'center',
-                }}
-                onClick={() => setviewinsertlaboratorio(0)}>
-                <img
-                  alt=""
-                  src={back}
-                  style={{ width: 30, height: 30 }}
-                ></img>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <FilterLaboratorio></FilterLaboratorio>
+                <div id="botão de retorno"
+                  className="button-yellow"
+                  style={{
+                    display: 'flex',
+                    alignSelf: 'center',
+                  }}
+                  onClick={() => setviewinsertlaboratorio(0)}>
+                  <img
+                    alt=""
+                    src={back}
+                    style={{ width: 30, height: 30 }}
+                  ></img>
+                </div>
               </div>
-              <div className='scroll' style={{ height: 300, width: '40vw' }}>
+              <div className='scroll'
+                style={{
+                  height: 300,
+                  width: 'calc(100% - 20px)',
+                  backgroundColor: 'white', borderColor: 'white',
+                  marginTop: 5,
+                }}>
                 {arrayopcoeslaboratorio.filter(item => item.material != 'IMAGEM').map(item => (
                   <div style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
-                    <div className='button'
-                      style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}
-                    >
-                      {item.nome_exame}
-                    </div>
-                    <div id="btnsalvarlaboratorio"
-                      className='button-green'
-                      onClick={() => {
-                        let random = localStorage.getItem('random');
-                        insertLaboratorio(item, random);
+                    <div className='button cor1opaque'
+                      style={{
+                        display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+                        width: '90%'
                       }}
                     >
-                      <img
-                        alt=""
-                        src={salvar}
-                        style={{
-                          margin: 10,
-                          height: 30,
-                          width: 30,
+                      <div style={{ width: '100%' }}>
+                        {item.nome_exame}
+                      </div>
+                      <div id="btnsalvarlaboratorio"
+                        className='button-green'
+                        onClick={() => {
+                          let random = localStorage.getItem('random');
+                          insertLaboratorio(item, random);
                         }}
-                      ></img>
+                      >
+                        <img
+                          alt=""
+                          src={salvar}
+                          style={{
+                            margin: 10,
+                            height: 30,
+                            width: 30,
+                          }}
+                        ></img>
+                      </div>
                     </div>
                   </div>
                 ))}
                 {arrayopcoeslaboratorio.filter(item => item.material == 'IMAGEM').map(item => (
                   <div style={{ display: tipoexame == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center' }}>
-                    <div className='button'
-                      style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '50vw' }}
-                    >
-                      {item.nome_exame}
-                    </div>
-                    <div id="btnsalvarlaboratorio"
-                      className='button-green'
-                      onClick={() => {
-                        let random = Math.random();
-                        // insertListaLaboratorio(random);
-                        insertLaboratorio(item, random);
+                    <div className='button cor1opaque'
+                      style={{
+                        display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+                        width: '90%'
                       }}
                     >
-                      <img
-                        alt=""
-                        src={salvar}
-                        style={{
-                          margin: 10,
-                          height: 30,
-                          width: 30,
+                      <div style={{ width: '100%' }}>
+                        {item.nome_exame}
+                      </div>
+                      <div id="btnsalvarlaboratorio"
+                        className='button-green'
+                        onClick={() => {
+                          let random = localStorage.getItem('random');
+                          insertLaboratorio(item, random);
                         }}
-                      ></img>
+                      >
+                        <img
+                          alt=""
+                          src={salvar}
+                          style={{
+                            margin: 10,
+                            height: 30,
+                            width: 30,
+                          }}
+                        ></img>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -476,24 +548,10 @@ function Laboratorio() {
             <div style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
               <div className='text1'>PACOTES DE EXAMES</div>
               <div id="packs para solicitação de exames"
-                className='scroll'
-                style={{
-                  width: '20vw', marginLeft: 10, height: 330,
-                  display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly'
-                }}
+                className='grid2'
               >
-                <div className='button'
-                  style={{ height: 100, width: 100, paddingLeft: 10, paddingRight: 10 }}
-                  onClick={() => insertPackLaboratorio(['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
-                >
-                  BÁSICO
-                </div>
-                <div className='button'
-                  style={{ height: 100, width: 100, paddingLeft: 10, paddingRight: 10 }}
-                  onClick={() => insertPackLaboratorio(['URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
-                >
-                  FUNÇÃO RENAL
-                </div>
+                {mountPackLaboratorio('BÁSICO', ['HEMOGRAMA COMPLETO', 'PROTEÍNA C REATIVA (PCR)', 'URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])}
+                {mountPackLaboratorio('FUNÇÃO RENAL', ['URÉIA', 'CREATININA', 'SÓDIO', 'POTÁSSIO'])};
               </div>
             </div>
           </div>
@@ -501,7 +559,235 @@ function Laboratorio() {
       </div>
     )
     // eslint-disable-next-line
-  }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio]);
+  }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio, tipoexame]);
+
+  function ItensLaboratorio() {
+    return (
+      <div id="lista de itens de exames laboratoriais"
+        className='scroll'
+        style={{ display: 'flex', flexDirection: 'column', width: '70vw', height: 'calc(100% - 20px)', marginRight: 5 }}>
+        <div id="lista cheia"
+          style={{
+            display: laboratorio.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%'
+          }}>
+          {laboratorio.filter(item => item.material != 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
+            <div key={'laboratorio ' + item.id}
+              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+            >
+              <div className="button-grey" style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
+                marginRight: 0,
+                borderTopRightRadius: 0, borderBottomRightRadius: 0,
+              }}>
+                <div>
+                  {moment(item.data_pedido).format('DD/MM/YY')}
+                </div>
+                <div>
+                  {moment(item.data_pedido).format('HH:mm')}
+                </div>
+              </div>
+              <div
+                className="button" style={{
+                  width: '100%',
+                  marginLeft: 0,
+                  borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                }}
+              >
+                <div style={{
+                  display: 'flex', flexDirection: 'column',
+                  justifyContent: 'flex-start', alignContent: 'flex-start',
+                  alignItems: 'flex-start', width: '100%',
+                }}>
+                  <div style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+                    width: '100%', margin: 5, textAlign: 'left'
+                  }}>
+                    <div>{item.nome_exame}</div>
+                    <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div
+                      style={{
+                        display: item.resultado == null ? 'none' : 'flex',
+                        flexDirection: 'row', justifyContent: 'center',
+                        textAlign: 'left',
+                        margin: 5, color: 'yellow',
+                      }}>
+                      {item.resultado != null ? item.resultado + ' ' + item.unidade_medida + ' (VR: ' + item.vref_min + ' - ' + item.vref_max + ')' : 'PENDENTE'}
+                    </div>
+                    <img
+                      alt=""
+                      src={alerta}
+                      style={{
+                        display: parseFloat(item.resultado) > parseFloat(item.vref_max) || parseFloat(item.resultado) < parseFloat(item.vref_min) ? 'flex' : 'none',
+                        margin: 0, padding: 0,
+                        height: 35,
+                        width: 35,
+                      }}
+                    ></img>
+                  </div>
+                </div>
+                <div className='button'
+                  style={{
+                    width: 200, margin: 5,
+                    backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
+                  }}>
+                  {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
+                </div>
+                <div className='button-red'
+                  style={{
+                    display: item.status == 0 ? 'flex' : 'none'
+                  }}
+                  onClick={(e) => {
+                    deleteLaboratorio(item.id); e.stopPropagation()
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+              </div>
+            </div>
+          ))}
+          <img
+            alt=""
+            src={dots_teal}
+            style={{
+              display: laboratorio.filter(item => item.material == 'IMAGEM').length > 0 ? 'flex' : 'none',
+              margin: 10,
+              height: 30,
+              opacity: 1,
+              alignSelf: 'center'
+            }}
+          ></img>
+          {laboratorio.filter(item => item.material == 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
+            <div key={'imagem ' + item.id}
+              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
+            >
+              <div className="button-grey" style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
+                marginRight: 0,
+                borderTopRightRadius: 0, borderBottomRightRadius: 0,
+              }}>
+                <div>
+                  {moment(item.data_pedido).format('DD/MM/YY')}
+                </div>
+                <div>
+                  {moment(item.data_pedido).format('HH:mm')}
+                </div>
+              </div>
+              <div
+                className="button" style={{
+                  width: '100%',
+                  marginLeft: 0,
+                  borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                }}
+              >
+                <div style={{
+                  display: 'flex', flexDirection: 'column',
+                  justifyContent: 'flex-start', alignContent: 'flex-start',
+                  alignItems: 'flex-start', width: '100%',
+                }}>
+                  <div style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+                    width: '100%', margin: 5, textAlign: 'left'
+                  }}>
+                    <div>{item.nome_exame}</div>
+                    <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
+                  </div>
+                  <div
+                    style={{
+                      display: item.resultado == null ? 'none' : 'flex',
+                      flexDirection: 'column', justifyContent: 'center',
+                      textAlign: 'left',
+                      margin: 5, color: 'yellow'
+                    }}>
+                    {item.resultado != null ? item.resultado : 'PENDENTE'}
+                  </div>
+                </div>
+                <div className='button'
+                  style={{
+                    width: 150, margin: 5,
+                    backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
+                  }}>
+                  {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
+                </div>
+                <div className='button-red'
+                  style={{
+                    display: item.status == 0 ? 'flex' : 'none'
+                  }}
+                  onClick={(e) => {
+                    deleteLaboratorio(item.id); e.stopPropagation()
+                  }}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 25,
+                      width: 25,
+                    }}
+                  ></img>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div id="lista vazia"
+          className='lupa'
+          style={{
+            display: laboratorio.length == 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%', height: '100%',
+          }}>
+          <img
+            alt=""
+            src={lupa}
+            style={{
+              margin: 10,
+              height: 150,
+              width: 150,
+              opacity: 0.1,
+              alignSelf: 'center'
+            }}
+          ></img>
+        </div>
+        <BotaoAdicionarExame></BotaoAdicionarExame>
+      </div>
+    )
+  }
+
+  function BotaoAdicionarExame() {
+    return (
+      <div id="botão para inserir exame laboratorial."
+        className='button-green'
+        style={{
+          display: setviewinsertlaboratorio == 0 || (localStorage.getItem('random') != null && localStorage.getItem('status') == 0) ? 'flex' : 'none',
+          width: 50, maxWidth: 50,
+          alignSelf: 'center',
+        }}
+        onClick={(e) => {
+          setviewinsertlaboratorio(1);
+        }}>
+        <img
+          alt=""
+          src={novo}
+          style={{
+            margin: 10,
+            height: 25,
+            width: 25,
+          }}
+        ></img>
+      </div>
+    )
+  }
 
   function Botoes() {
     return (
@@ -522,8 +808,11 @@ function Laboratorio() {
         <div id="botão para novo pedido de exame laboratorial"
           className='button-green'
           onClick={() => {
-            let random = localStorage.setItem("random", Math.random());
+            let random = Math.random();
+            localStorage.setItem("random", random);
+            console.log(random);
             insertListaLaboratorio(random);
+            setviewinsertlaboratorio(0);
           }}
         >
           <img
@@ -536,7 +825,7 @@ function Laboratorio() {
     )
   }
 
-  function ListaLaboratorio() {
+  const ListaLaboratorio = useCallback(() => {
     return (
       <div id="scroll lista de pedidos de exames laboratoriais"
         className='scroll'
@@ -551,31 +840,29 @@ function Laboratorio() {
           alignSelf: 'flex-start',
         }}>
         {listalaboratorio.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
-          <div id={"pedido de laboratório " + item.id}
+          <div id={"pedido de laboratorio " + item.random}
             className='button'
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
               minHeight: 200,
             }}
             onClick={() => {
-              localStorage.setItem('lista_laboratorio', JSON.stringify(item));
               setdono_documento({
                 id: item.id_profissional,
                 conselho: 'CRM: ' + item.registro_profissional,
                 nome: item.nome_profissional,
               })
-              settipodocumento('SOLICIAÇÃO DE EXAME LABORATORIAL');
-              localStorage.setItem('random', item.random);
+              settipodocumento('SOLICITAÇÃO DE EXAME LABORATORIAL');
+              console.log(item.random);
+              localStorage.setItem('random', item.random); // valor randômico chave para relacionar documento de laboratório aos respectivos itens de exames laboratoriais.
+              localStorage.setItem('status', item.status); // status 1 == pedido assinado. status 0 == pedido aberto.
               loadLaboratorio(item.random);
-              selector("scroll lista de pedidos de exames laboratoriais", "pedido de laboratorio " + item.id, 200);
             }}
           >
-            <div id="conjunto de botoes do item de prescricao"
+            <div id="conjunto de botoes do item de laboratório"
               style={{
                 display: 'flex',
                 flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
-                pointerEvents: localStorage.getItem("id") != item.id ? 'none' : 'auto',
-                opacity: localStorage.getItem("id") != item.id ? 0.5 : 1,
               }}>
               <div id="botão para excluir pedido de exame laboratorial e seus respectivos itens de exames laboratoriais."
                 className='button-yellow'
@@ -585,9 +872,10 @@ function Laboratorio() {
                   maxHeight: 30, height: 30, minHeight: 30
                 }}
                 onClick={(e) => {
-                  deleteListaLaboratorio(item);
+                  console.log(item.random);
+                  deleteListaLaboratorio(item.id);
                   deleteMassaItensLaboratorio(item.random);
-                  e.stopPropagation()
+                  e.stopPropagation();
                 }}
               >
                 <img
@@ -596,7 +884,7 @@ function Laboratorio() {
                   style={{ width: 25, height: 25 }}
                 ></img>
               </div>
-              <div id="botão para salvar pedido de exame laboratorial."
+              <div id="botão para assinar pedido de exame laboratorial."
                 style={{
                   display: item.status == 0 ? 'flex' : 'none',
                   maxWidth: 30, width: 30, minWidth: 30,
@@ -605,6 +893,7 @@ function Laboratorio() {
                 className='button-green'
                 onClick={(e) => {
                   updateListaLaboratorio(item, 1);
+                  setviewinsertlaboratorio(0);
                   e.stopPropagation();
                 }}
               >
@@ -624,7 +913,7 @@ function Laboratorio() {
                 }}
                 title={'IMPRIMIR PEDIDO DE EXAMES'}
                 onClick={(e) => {
-                  printDiv();
+                  printDiv(item.random);
                   e.stopPropagation();
                 }}>
                 <img
@@ -656,264 +945,19 @@ function Laboratorio() {
         }
       </div >
     )
-  }
+    // eslint-disable-next-line
+  }, [listalaboratorio]);
 
-  const [tipoexame, settipoexame] = useState(0);
   return (
     <div id="scroll-exames"
       className='card-aberto'
       style={{
         display: card == 'card-laboratorio' ? 'flex' : 'none',
         flexDirection: 'row', justifyContent: 'space-evenly',
+        height: 'calc(100% - 20px)'
       }}
     >
-      <div id="lista de itens de exames laboratoriais"
-        style={{ display: 'flex', flexDirection: 'column', width: '70vw' }}>
-        <div className="button"
-          title="CLIQUE PARA ALTERNAR ENTRE EXAMES LABORATORIAIS OU DE RX"
-          style={{ width: '30vw', alignSelf: 'center' }}
-          onClick={() => {
-            if (tipoexame == 0) {
-              settipoexame(1);
-            } else {
-              settipoexame(0);
-            }
-          }}
-        >
-          {tipoexame == 1 ? 'RX' : 'LABORATÓRIO'}
-        </div>
-        <div id="lista cheia"
-          style={{
-            display: laboratorio.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%'
-          }}>
-          {laboratorio.filter(item => item.material != 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
-            <div key={'laboratorio ' + item.id}
-              style={{ display: tipoexame == 0 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
-            >
-              <div className="button-grey" style={{
-                display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
-                marginRight: 0,
-                borderTopRightRadius: 0, borderBottomRightRadius: 0,
-              }}>
-                <div>
-                  {moment(item.data_pedido).format('DD/MM/YY')}
-                </div>
-                <div>
-                  {moment(item.data_pedido).format('HH:mm')}
-                </div>
-              </div>
-              <div
-                className="button" style={{
-                  width: '100%',
-                  marginLeft: 0,
-                  borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                }}
-              >
-                <div style={{
-                  display: 'flex', flexDirection: 'column',
-                  justifyContent: 'flex-start', alignContent: 'flex-start',
-                  alignItems: 'flex-start', width: '100%',
-                }}>
-                  <div style={{
-                    display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
-                    width: '100%', margin: 5, textAlign: 'left'
-                  }}>
-                    <div>{item.nome_exame}</div>
-                    <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
-                  </div>
-                  <div
-                    style={{
-                      display: item.resultado == null ? 'none' : 'flex',
-                      flexDirection: 'column', justifyContent: 'center',
-                      textAlign: 'left',
-                      margin: 5, color: 'yellow'
-                    }}>
-                    {item.resultado != null ? item.resultado : 'PENDENTE'}
-                  </div>
-                </div>
-                <div className='button'
-                  style={{
-                    width: 150, margin: 5,
-                    backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
-                  }}>
-                  {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
-                </div>
-                <div className='button-red'
-                  style={{
-                    display: item.status == 0 ? 'flex' : 'none'
-                  }}
-                  onClick={(e) => {
-                    deleteLaboratorio(item.id); e.stopPropagation()
-                  }}>
-                  <img
-                    alt=""
-                    src={deletar}
-                    style={{
-                      margin: 10,
-                      height: 25,
-                      width: 25,
-                    }}
-                  ></img>
-                </div>
-              </div>
-            </div>
-          ))}
-          {laboratorio.filter(item => item.material == 'IMAGEM').sort((a, b) => a.status < b.status ? 1 : -1 && moment(a.data_pedido) < moment(b.data_pedido) ? 1 : -1).map(item => (
-            <div key={'imagem ' + item.id}
-              style={{ display: tipoexame == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center', width: '100%' }}
-            >
-              <div className="button-grey" style={{
-                display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 100,
-                marginRight: 0,
-                borderTopRightRadius: 0, borderBottomRightRadius: 0,
-              }}>
-                <div>
-                  {moment(item.data_pedido).format('DD/MM/YY')}
-                </div>
-                <div>
-                  {moment(item.data_pedido).format('HH:mm')}
-                </div>
-              </div>
-              <div
-                className="button" style={{
-                  width: '100%',
-                  marginLeft: 0,
-                  borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-                }}
-              >
-                <div style={{
-                  display: 'flex', flexDirection: 'column',
-                  justifyContent: 'flex-start', alignContent: 'flex-start',
-                  alignItems: 'flex-start', width: '100%',
-                }}>
-                  <div style={{
-                    display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
-                    width: '100%', margin: 5, textAlign: 'left'
-                  }}>
-                    <div>{item.nome_exame}</div>
-                    <div style={{ opacity: 0.5, marginLeft: 5 }}>{'(' + item.material + ')'}</div>
-                  </div>
-                  <div
-                    style={{
-                      display: item.resultado == null ? 'none' : 'flex',
-                      flexDirection: 'column', justifyContent: 'center',
-                      textAlign: 'left',
-                      margin: 5, color: 'yellow'
-                    }}>
-                    {item.resultado != null ? item.resultado : 'PENDENTE'}
-                  </div>
-                </div>
-                <div className='button'
-                  style={{
-                    width: 150, margin: 5,
-                    backgroundColor: item.status == 0 ? '#EC7063' : item.status == 1 ? '#F9E79F' : 'rgb(82, 190, 128, 0.7)',
-                  }}>
-                  {item.status == 0 ? 'A CONFIRMAR' : item.status == 1 ? 'SOLICITADO' : 'LIBERADO'}
-                </div>
-                <div className='button-red'
-                  style={{
-                    display: item.status == 0 ? 'flex' : 'none'
-                  }}
-                  onClick={(e) => {
-                    deleteLaboratorio(item.id); e.stopPropagation()
-                  }}>
-                  <img
-                    alt=""
-                    src={deletar}
-                    style={{
-                      margin: 10,
-                      height: 25,
-                      width: 25,
-                    }}
-                  ></img>
-                </div>
-              </div>
-            </div>
-          ))}
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div id="botão para inserir exame laboratorial."
-              className='button-green'
-              style={{
-                display: 'flex'
-              }}
-              onClick={(e) => {
-                loadOpcoesLaboratorio();
-                setviewinsertlaboratorio(1);
-              }}>
-              <img
-                alt=""
-                src={novo}
-                style={{
-                  margin: 10,
-                  height: 25,
-                  width: 25,
-                }}
-              ></img>
-            </div>
-            <div id="botão para imprimir exames laboratoriais solicitados."
-              className='button-green'
-              style={{
-                display: laboratorio.filter(item => item.status == 0).length > 0 ? 'flex' : 'none',
-              }}
-              onClick={() => {
-                assinarPedidos();
-              }}>
-              <img
-                alt=""
-                src={print}
-                style={{
-                  margin: 10,
-                  height: 25,
-                  width: 25,
-                }}
-              ></img>
-            </div>
-            <div id="botão para sair da tela de exames laboratoriais"
-              className="button-yellow"
-              style={{
-                display: 'flex',
-                alignSelf: 'center',
-              }}
-              onClick={() => setcard('')}>
-              <img
-                alt=""
-                src={back}
-                style={{ width: 30, height: 30 }}
-              ></img>
-            </div>
-          </div>
-        </div>
-        <div id="lista vazia"
-          style={{
-            display: laboratorio.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%'
-          }}>
-          <div id="conteúdo vazio"
-            style={{
-              display: laboratorio.length == 0 ? "flex" : "none",
-              flexDirection: "row",
-              justifyContent: 'center',
-              flexWrap: "wrap",
-              width: '65vw',
-            }}
-          >
-            <img
-              alt=""
-              src={lupa}
-              style={{
-                margin: 10,
-                height: 150,
-                width: 150,
-                opacity: 0.1,
-                alignSelf: 'center'
-              }}
-            ></img>
-          </div>
-        </div>
-      </div>
+      <ItensLaboratorio></ItensLaboratorio>
       <div id='lista de pedidos de exames laboratoriais'
         style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
@@ -922,6 +966,7 @@ function Laboratorio() {
       </div>
       <InsertLaboratorio></InsertLaboratorio>
       <PrintLaboratorio></PrintLaboratorio>
+      <PrintImagem></PrintImagem>
     </div>
   )
 }

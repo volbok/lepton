@@ -236,6 +236,11 @@ body {
   border-color: var(--cor1hover);
 }
 
+.cor1opaque {
+  background-color: var(--cor1opaque) !important;
+  border-color: var(--cor1opaque) !important;
+}
+
 .cor2 {
   background-color: var(--cor2) !important;
   border-color: var(--cor2) !important;
@@ -350,6 +355,40 @@ body {
   background-color: var(--pallete4);
   padding: 10px;
   min-width: 20px;
+}
+
+/* DESTAQUE PARA LUPA (LISTAS VAZIAS) */
+.lupa {
+  animation-name: lupa;
+  animation-iteration-count: infinite;
+  animation-duration: 10000ms;
+}
+
+@keyframes lupa {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  20% {
+    transform: translate(20px, 20px);
+  }
+
+  40% {
+    transform: translate(20px, -20px);
+  }
+  
+  60% {
+    transform: translate(-20px, 20px);
+  }
+
+  80% {
+    transform: translate(-20px, -20px);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+
 }
 
 /* DESTAQUE PARA OS BOTÕES (PISCANDO) */

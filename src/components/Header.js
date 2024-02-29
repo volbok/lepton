@@ -79,11 +79,11 @@ function Header() {
       <div
         style={{
           display: alergias.length > 0 ? 'flex' : 'none',
-          fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 20, marginTop: 10,
+          fontFamily: 'Helvetica', fontWeight: 'bold', fontSize: 16, marginTop: 10, color: 'red', textDecoration: 'underline'
         }}>
         {'ALERGIAS: ' + alergias.map(item => ' ' + item.alergia + ' ')}
       </div>
-      <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', width: '100%', fontSize: 26, marginTop: 20, textAlign: 'center' }}>
+      <div style={{ fontFamily: 'Helvetica', fontWeight: 'bold', width: '100%', fontSize: 22, marginTop: 20, textAlign: 'center' }}>
         {tipodocumento}
       </div>
     </div>
