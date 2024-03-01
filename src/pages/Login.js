@@ -1145,6 +1145,7 @@ function Login() {
                 : "flex",
             margin: 20, marginTop: 10,
             fontSize: 28,
+            
           }}
         >
           PULSAR
