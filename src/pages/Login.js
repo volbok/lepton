@@ -45,15 +45,16 @@ function Login() {
       sethospital(cliente.id_cliente);
       loadUnidades();
       loadUsuarios();
-      setusuario(JSON.parse(localStorage.getItem('obj_usuario')));
-      console.log(JSON.parse(localStorage.getItem('obj_usuario')));
-      console.log(usuario.id);
+        
       if (usuario.id != undefined) {
+        // setusuario(JSON.parse(localStorage.getItem('obj_usuario')));
         loadAcessos(usuario.id);
         loadUnidades();
         setviewlistaunidades(1);
       } else {
         setviewlistaunidades(0);
+        loadUnidades();
+        loadUsuarios();
       }
     }
     // eslint-disable-next-line
