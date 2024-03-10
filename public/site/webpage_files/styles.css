@@ -75,44 +75,23 @@ h1 {
   height: 50px;
   margin: 5px;
   padding: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
   transition: 0.5s;
-  width: 200px
 }
 
 .btn:hover {
   display: flex;
   background-color: #66b2b2;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 5px;
-  flex-direction: column;
-  justify-content: center;
-  height: 50px;
-  margin: 5px;
-  padding: 0px;
-  padding-left: 10px;
-  padding-right: 10px;
   transition: 0.5s;
-  width: 200px
 }
 
 .btn:active {
   display: flex;
   background-color: #66b2b2;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 5px;
-  flex-direction: column;
-  justify-content: center;
-  height: 50px;
-  margin: 5px;
-  padding: 0px;
+  color: #ffffff !important;
   transition: 0.5s;
-  width: 200px
 }
 
 .telas {
@@ -325,31 +304,34 @@ h1 {
   padding-bottom: 20px;
 }
 
-.body::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: 10px;
   height: 10px;
+  margin-right: 10px;
 }
 
-.body::-webkit-scrollbar-track {
-  background-color: var(--pallete2);
+body::-webkit-scrollbar-track {
+  background-color:#b2d8d8;
   border-radius: 5px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
-.body::-webkit-scrollbar-button {
+body::-webkit-scrollbar-button {
   display: none;
 }
 
-.body::-webkit-scrollbar-corner {
+body::-webkit-scrollbar-corner {
   display: none;
 }
 
-.body::-webkit-scrollbar-thumb {
-  background-color: var(--cor1);
+body::-webkit-scrollbar-thumb {
+  background-color: #1f7a8c;
   border-radius: 5px;
   transition: 500ms, 500ms ease-in-out;
 }
 
-.body::-webkit-scrollbar-thumb:hover {
+body::-webkit-scrollbar-thumb:hover {
   background-color: var(--cor1hover);
   border-radius: 5px;
   transition: 500ms, 500ms ease-in-out;
