@@ -15,6 +15,7 @@ import Painel from "./pages/Painel";
 import Laboratorio from "./pages/Laboratorio";
 import Agendamento from "./pages/Agendamento";
 import Farmacia from "./pages/Farmacia";
+import Almoxarifado from "./pages/Almoxarifado";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -146,6 +147,8 @@ function App() {
 
   const [idprescricao, setidprescricao] = useState(0);
 
+  // almoxarifado.
+  const [almoxarifado, setalmoxarifado] = useState([]);
 
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
@@ -303,6 +306,7 @@ function App() {
         arrayespecialidades, setarrayespecialidades,
         mobilewidth, setmobilewidth,
         idprescricao, setidprescricao,
+        almoxarifado, setalmoxarifado,
       }}
     >
       <div>
@@ -337,6 +341,9 @@ function App() {
             </Route>
             <Route path="/farmacia">
               <Farmacia></Farmacia>
+            </Route>
+            <Route path="/almoxarifado">
+              <Almoxarifado></Almoxarifado>
             </Route>
             <Route path="/agendamento">
               <Agendamento></Agendamento>

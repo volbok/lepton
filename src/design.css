@@ -166,7 +166,7 @@ body {
 }
 
 .chassi::-webkit-scrollbar-thumb:hover {
-  background-color: var(--cor1);
+  background-color: var(--cor1opaque);
   border-radius: 5px;
   transition: 500ms, 500ms ease-in-out;
 }

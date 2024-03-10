@@ -33,6 +33,7 @@ function Laboratorio() {
     dono_documento,
     setatendimento, setunidade, setpaciente,
     setpacientes,
+    atendimento,
   } = useContext(Context);
 
   const [listalaboratorio, setlistalaboratorio] = useState([]);
@@ -43,13 +44,20 @@ function Laboratorio() {
     });
   }
 
+  const [listaalllaboratorio, setlistaalllaboratorio] = useState([]);
+  const loadAllListaLaboratorio = (atendimento) => {
+    axios.get(html + 'lista_all_laboratorio').then((response) => {
+      setlistaalllaboratorio(response.data.rows);
+    });
+  }
+
   useEffect(() => {
     // eslint-disable-next-line
     if (pagina == 7) {
       console.log('PÁGINA LABORATÓRIO');
       loadPacientes();
       loadAllAtendimentos();
-      loadAllLaboratorio();
+      loadAllListaLaboratorio();
       loadOpcoesLaboratorio();
     }
     // eslint-disable-next-line
@@ -66,9 +74,11 @@ function Laboratorio() {
   // history (router).
   let history = useHistory();
 
+  const [arrayatendimentos, setarrayatendimentos] = useState([]);
   const loadAllAtendimentos = () => {
     axios.get(html + "all_atendimentos/").then((response) => {
       setatendimentos(response.data.rows);
+      setarrayatendimentos(response.data.rows);
     })
   }
 
@@ -153,38 +163,38 @@ function Laboratorio() {
               if (document.getElementById("campo " + campo).value == '') {
                 document.getElementById('check ' + titulo).style.display = 'flex'
               } else {
-                // salvando o registro de exame laboratorial.
-                localarray.map(campo => arrayresultado.push(
+                // populando os resultados na array.
+                arrayresultado.push(
                   {
                     campo: campo,
                     valor: document.getElementById('campo ' + campo).value.toUpperCase(),
                   }
-                ));
-                console.log(arrayresultado);
-                let limitedjs = [];
-                limitedjs = JSON.stringify(arrayresultado);
-                let obj = {
-                  id: item.id,
-                  id_paciente: item.id_paciente,
-                  id_atendimento: item.id_atendimento,
-                  data_pedido: item.data_pedido,
-                  data_resultado: item.data_resultado,
-                  codigo_exame: item.codigo_exame,
-                  nome_exame: item.nome_exame,
-                  material: item.material,
-                  resultado: limitedjs,
-                  status: 2, // 0 = registrado, 1 = assinado, 2 = liberado,
-                  profissional: item.profissional,
-                  unidade_medida: item.unidade_medida,
-                  vref_min: item.vref_min,
-                  vref_max: item.vref_max,
-                  obs: item.obs,
-                  random: item.random,
-                  array_campos: item.array_campos
-                }
-                updateLaboratorio(item, obj);
-              }
+                )
+              };
             });
+            // salvando o registro.
+            if (localarray.length > 0) {
+              let obj = {
+                id: item.id,
+                id_paciente: item.id_paciente,
+                id_atendimento: item.id_atendimento,
+                data_pedido: item.data_pedido,
+                data_resultado: item.data_resultado,
+                codigo_exame: item.codigo_exame,
+                nome_exame: item.nome_exame,
+                material: item.material,
+                resultado: JSON.stringify(arrayresultado),
+                status: 2, // 0 = registrado, 1 = assinado, 2 = liberado,
+                profissional: item.profissional,
+                unidade_medida: item.unidade_medida,
+                vref_min: item.vref_min,
+                vref_max: item.vref_max,
+                obs: item.obs,
+                random: item.random,
+                array_campos: item.array_campos
+              }
+              updateLaboratorio(item, obj);
+            }
           }}
         >
           <img
@@ -210,7 +220,7 @@ function Laboratorio() {
           height: 'calc(100% - 20px)',
           width: 'calc(100% - 20px)',
         }}>
-        {listalaboratorio.filter(valor => valor.id_atendimento == localStorage.getItem('selectedatendimento') && valor.status == 1 && valor.material != 'IMAGEM').map(valor =>
+        {listalaboratorio.filter(valor => valor.id_atendimento == atendimento && valor.status == 1 && valor.material != 'IMAGEM').map(valor =>
           <div className='cor3'
             style={{
               display: listalaboratorio.length > 0 ? 'flex' : 'none',
@@ -222,7 +232,15 @@ function Laboratorio() {
               borderRadius: 5,
             }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div className='button red' style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 0 }}>{moment(valor.data).format('DD/MM/YY - HH:mm')}</div>
+              <div className='button pallete3' style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 0 }}>{moment(valor.data).format('DD/MM/YY - HH:mm')}</div>
+              <div className='button red'
+                style={{
+                  display: valor.urgente == 1 ? 'flex' : 'none',
+                  paddingLeft: 20, paddingRight: 20,
+                  marginBottom: 0, marginLeft: 0,
+                }}>
+                URGENTE
+              </div>
               <div id="botão para imprimir documento"
                 className="button-green"
                 style={{
@@ -398,7 +416,16 @@ function Laboratorio() {
         >
           {'PROFISSIONAL SOLICITANTE:' + dono_documento.nome + ' - Nº CONSELHO' + dono_documento.conselho}
         </div>
-        {laboratorio.filter(item => item.status == 2 && item.random == localStorage.getItem('random') && item.material != 'IMAGEM').map(item => itemLaboratorioConstructor(item))}
+        <div
+          style={{
+            display: listalaboratorio.filter(item => item.id_atendimento == atendimento && item.status == 1 && item.random == localStorage.getItem('random') && item.urgente == 1).length > 0 ? 'flex' : 'none',
+            textDecoration: 'underline',
+            fontWeight: 'bolder',
+            margin: 20,
+          }}>
+          {'URGENTE'}
+        </div>
+        {laboratorio.filter(item => item.id_atendimento == atendimento && item.status == 2 && item.random == localStorage.getItem('random') && item.material != 'IMAGEM').map(item => itemLaboratorioConstructor(item))}
       </div>
     )
   }
@@ -680,6 +707,65 @@ function Laboratorio() {
     )
   }
 
+  const [filterpaciente, setfilterpaciente] = useState("");
+  var searchpaciente = "";
+  const filterPaciente = () => {
+    clearTimeout(timeout);
+    document.getElementById("inputPaciente").focus();
+    searchpaciente = document
+      .getElementById("inputPaciente")
+      .value.toUpperCase();
+    timeout = setTimeout(() => {
+      if (searchpaciente == "") {
+        setfilterpaciente("");
+        setarrayatendimentos(atendimentos);
+        document.getElementById("inputPaciente").value = "";
+        setTimeout(() => {
+          document.getElementById("inputPaciente").focus();
+        }, 100);
+      } else {
+        setfilterpaciente(document.getElementById("inputPaciente").value.toUpperCase());
+        if (atendimentos.filter((item) => item.nome_paciente.includes(searchpaciente)).length > 0) {
+          setarrayatendimentos(atendimentos.filter((item) => item.nome_paciente.includes(searchpaciente)));
+          setTimeout(() => {
+            document.getElementById("inputPaciente").value = searchpaciente;
+            document.getElementById("inputPaciente").focus()
+          }, 100)
+        } else {
+          setarrayatendimentos(atendimentos.filter((item) => item.leito.includes(searchpaciente)));
+          setTimeout(() => {
+            document.getElementById("inputPaciente").value = searchpaciente;
+            document.getElementById("inputPaciente").focus()
+          }, 100)
+        }
+      }
+    }, 1000);
+  };
+  // filtro de paciente por nome.
+  function FilterPaciente() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+        <input
+          className="input cor2"
+          autoComplete="off"
+          placeholder={
+            "BUSCAR..."
+          }
+          onFocus={(e) => (e.target.placeholder = "")}
+          onBlur={(e) =>
+            e.target.placeholder = "BUSCAR..."
+          }
+          onKeyUp={() => filterPaciente()}
+          type="text"
+          id="inputPaciente"
+          defaultValue={filterpaciente}
+          maxLength={100}
+          style={{ width: '100%' }}
+        ></input>
+      </div>
+    );
+  }
+
   // lista de atendimentos para filtragem das prescrições de exames laboratoriais.
   const ListaAtendimentos = useCallback(() => {
     return (
@@ -694,10 +780,10 @@ function Laboratorio() {
           borderColor: 'white',
           alignSelf: 'flex-start',
         }}>
-        {atendimentos.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
+        {arrayatendimentos.map((item) => (
           <div
             style={{
-              display: laboratorio.filter(valor => valor.id_atendimento == item.id_atendimento).length > 0 ? 'flex' : 'none',
+              display: listaalllaboratorio.filter(valor => valor.id_atendimento == item.id_atendimento).length > 0 ? 'flex' : 'none',
               flexDirection: 'row',
               minHeight: 150,
             }}
@@ -706,8 +792,9 @@ function Laboratorio() {
               setatendimento(item.id_atendimento);
               setpaciente(parseInt(item.id_paciente));
               loadListaLaboratorio(item.id_atendimento);
+              loadAllLaboratorio();
               localStorage.setItem('selectedatendimento', item.id_atendimento);
-              selector("scroll lista de atendimentos resumida", "atendimento " + item.id_atendimento, 200);
+              selector("scroll lista de atendimentos resumida", "atendimento " + item.id_atendimento, 1000);
             }}
           >
             <div id="identificador"
@@ -719,19 +806,30 @@ function Laboratorio() {
               }}
             >
               <div>
-                {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
+                {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) == 'AMBULATÓRIO' ? 'AMB' : unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
               </div>
             </div>
-
             <div className='button pallete2'
               id={"atendimento " + item.id_atendimento}
               style={{
+                display: 'flex',
+                flexDirection: 'column',
                 marginLeft: 0,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
+                width: 200,
               }}
             >
               {item.nome_paciente}
+              <div className='red'
+                style={{
+                  display: listaalllaboratorio.filter(valor => valor.id_atendimento == item.id_atendimento && valor.urgente == 1).length > 0 ? 'flex' : 'none',
+                  marginTop: 10,
+                  padding: 10, borderRadius: 5,
+                }}
+              >
+                {'URGENTE'}
+              </div>
             </div>
           </div>
         ))
@@ -739,7 +837,7 @@ function Laboratorio() {
       </div>
     )
     // eslint-disable-next-line
-  }, [atendimentos, listalaboratorio]);
+  }, [arrayatendimentos, listaalllaboratorio, listalaboratorio, laboratorio]);
 
   function Botoes() {
     return (
@@ -794,6 +892,7 @@ function Laboratorio() {
             height: 'calc(100vh - 20px)',
           }}>
           <Botoes></Botoes>
+          <FilterPaciente></FilterPaciente>
           <ListaAtendimentos></ListaAtendimentos>
         </div>
         <div

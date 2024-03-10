@@ -15,6 +15,7 @@ import lupa from '../images/lupa.svg';
 import lupa_cinza from '../images/lupa_cinza.svg';
 import esteto from "../images/esteto.svg";
 import call from "../images/call.svg";
+import dots_teal from "../images/dots_teal.svg";
 // funções.
 import toast from "../functions/toast";
 // router.
@@ -90,7 +91,6 @@ function Prontuario() {
     card, setcard,
     prescricao, setprescricao,
     consultorio, setconsultorio,
-    setlaboratorio,
 
     mobilewidth,
 
@@ -799,6 +799,12 @@ function Prontuario() {
                     </div>
                   ))
               }
+              <div style={{
+                display: arrayatendimentos.filter(valor => valor.classificacao == x && x != null).length > 0 ? 'flex' : 'none',
+                flexDirection: 'column', alignContent: 'center'
+              }}>
+                <img alt="" src={dots_teal} style={{ height: 30 }}></img>
+              </div>
             </div>
           ))}
         </div>
@@ -1160,9 +1166,11 @@ function Prontuario() {
       setbusyinterconsultas(0);
     })
     // laboratorio.
+    /*
     axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
       setlaboratorio(response.data.rows);
     })
+    */
   };
 
   // estado para alternância entre lista de pacientes e conteúdo do passômetro para versão mobile.
@@ -2147,7 +2155,7 @@ function Prontuario() {
             width: '65vw',
           }}
         >
-          <img
+          <img className="lupa"
             alt=""
             src={lupa}
             style={{

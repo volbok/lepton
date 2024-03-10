@@ -14,6 +14,7 @@ import prec_respiratorio from "../images/prec_respiratorio.svg";
 import lupa from '../images/lupa.svg';
 import lupa_cinza from '../images/lupa_cinza.svg';
 import esteto from "../images/esteto.svg";
+import dots_teal from "../images/dots_teal.svg";
 // funções.
 import toast from "../functions/toast";
 // router.
@@ -89,8 +90,7 @@ function Prontuario() {
     card, setcard,
     prescricao, setprescricao,
     consultorio, setconsultorio,
-    setlaboratorio,
-
+   
     mobilewidth,
 
     setunidade,
@@ -424,244 +424,252 @@ function Prontuario() {
         >
           {arrayclassificacao.map(x => (
             <div>
-              {
-                arrayatendimentos
-                  .filter(item => item.leito != 'F' && item.classificacao == x)
-                  .sort((a, b) => (a.leito > b.leito ? 1 : -1))
-                  .map((item) => (
-                    <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
-                      <div
-                        className="row"
-                        style={{
-                          position: "relative",
-                          margin: 2.5, padding: 0,
-                        }}
-                      >
+              <div>
+                {
+                  arrayatendimentos
+                    .filter(item => item.leito != 'F' && item.classificacao == x)
+                    .sort((a, b) => (a.leito > b.leito ? 1 : -1))
+                    .map((item) => (
+                      <div key={"pacientes" + item.id_atendimento} style={{ width: '100%' }}>
                         <div
-                          className="button-yellow"
+                          className="row"
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            marginRight: 0,
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                            minHeight: 100,
-                            height: 100,
-                            width: 80, minWidth: 80, maxWidth: 80,
-                            backgroundColor:
-                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
-                                item.classificacao == 'VERDE' ? '#76D7C4' :
-                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
-                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
+                            position: "relative",
+                            margin: 2.5, padding: 0,
                           }}
                         >
                           <div
-                            className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 16 }}
-                          >
-                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
-                          </div>
-                        </div>
-                        <div
-                          id={"atendimento " + item.id_atendimento}
-                          className="button"
-                          style={{
-                            flex: 3,
-                            marginLeft: 0,
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            minHeight: 100,
-                            height: 100,
-                            width: '100%',
-                          }}
-                          onClick={() => {
-                            setviewlista(0);
-                            setunidade(parseInt(item.id_unidade));
-                            setatendimento(item.id_atendimento);
-                            setpaciente(parseInt(item.id_paciente));
-                            getAllData(item.id_paciente, item.id_atendimento);
-                            setidprescricao(0);
-                            if (pagina == -1) {
-                              selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
-                            }
-                          }}
-                        >
-                          <div
+                            className="button-yellow"
                             style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "flex-start",
-                              padding: 5
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              marginRight: 0,
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              minHeight: 100,
+                              height: 100,
+                              width: 80, minWidth: 80, maxWidth: 80,
+                              backgroundColor:
+                                item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                  item.classificacao == 'VERDE' ? '#76D7C4' :
+                                    item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                      item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                        item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
                             }}
                           >
-                            {pacientes.filter(
-                              (valor) => valor.id_paciente == item.id_paciente
-                            )
-                              .map((valor) => valor.nome_paciente)}
-                            <div>
-                              {moment().diff(
-                                moment(
-                                  pacientes
-                                    .filter(
-                                      (valor) => valor.id_paciente == item.id_paciente
-                                    )
-                                    .map((item) => item.dn_paciente)
-                                ),
-                                "years"
-                              ) + " ANOS"}
+                            <div
+                              className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                              style={{ margin: 5, padding: 0, fontSize: 16 }}
+                            >
+                              {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
                             </div>
                           </div>
-                        </div>
-                        <div
-                          id="informações do paciente"
-                          style={{
-                            position: "absolute",
-                            right: -5,
-                            bottom: -5,
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {tagsDosPacientes(
-                            "INTERCONSULTAS",
-                            item,
-                            allinterconsultas,
-                            esteto
-                          )}
-                          {tagsDosPacientes(
-                            "PRECAUÇÕES",
-                            item,
-                            allprecaucoes,
-                            prec_padrao
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-              }
-              {
-                arrayatendimentos
-                  .filter(item => item.leito == 'F' && item.classificacao == x)
-                  .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
-                  .map((item) => (
-                    <div key={"pacientes" + item.id_atendimento}>
-                      <div
-                        className="row"
-                        style={{
-                          padding: 0,
-                          flex: 4,
-                          position: "relative",
-                          margin: 2.5
-                        }}
-                      >
-                        <div
-                          className="button-yellow"
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            marginRight: 0,
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                            minHeight: 100,
-                            height: 100,
-                            width: 80, minWidth: 80, maxWidth: 80,
-                            backgroundColor:
-                              item.classificacao == 'AZUL' ? '#85C1E9 ' :
-                                item.classificacao == 'VERDE' ? '#76D7C4' :
-                                  item.classificacao == 'AMARELO' ? '#F9E79F' :
-                                    item.classificacao == 'LARANJA' ? '#FAD7A0' :
-                                      item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
-                          }}
-                        >
                           <div
-                            className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
-                            style={{ margin: 5, padding: 0, fontSize: 16 }}
-                          >
-                            {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
-                          </div>
-                        </div>
-                        <div
-                          id={"atendimento " + item.id_atendimento}
-                          className="button"
-                          style={{
-                            flex: 3,
-                            marginLeft: 0,
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            minHeight: 100,
-                            height: 100,
-                          }}
-                          onClick={() => {
-                            setviewlista(0);
-                            setunidade(parseInt(item.id_unidade));
-                            setatendimento(item.id_atendimento);
-                            setpaciente(parseInt(item.id_paciente));
-                            getAllData(item.id_paciente, item.id_atendimento);
-                            setidprescricao(0);
-                            if (pagina == -1) {
-                              selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
-                            }
-                          }}
-                        >
-                          <div
+                            id={"atendimento " + item.id_atendimento}
+                            className="button"
                             style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "flex-start",
-                              padding: 5
+                              flex: 3,
+                              marginLeft: 0,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              minHeight: 100,
+                              height: 100,
+                              width: '100%',
+                            }}
+                            onClick={() => {
+                              setviewlista(0);
+                              setunidade(parseInt(item.id_unidade));
+                              setatendimento(item.id_atendimento);
+                              setpaciente(parseInt(item.id_paciente));
+                              getAllData(item.id_paciente, item.id_atendimento);
+                              setidprescricao(0);
+                              if (pagina == -1) {
+                                selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
+                              }
                             }}
                           >
-                            {pacientes
-                              .filter(
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                padding: 5
+                              }}
+                            >
+                              {pacientes.filter(
                                 (valor) => valor.id_paciente == item.id_paciente
                               )
-                              .map((valor) => valor.nome_paciente)}
-                            <div>
-                              {moment().diff(
-                                moment(
-                                  pacientes
-                                    .filter(
-                                      (valor) => valor.id_paciente == item.id_paciente
-                                    )
-                                    .map((item) => item.dn_paciente)
-                                ),
-                                "years"
-                              ) + " ANOS"}
+                                .map((valor) => valor.nome_paciente)}
+                              <div>
+                                {moment().diff(
+                                  moment(
+                                    pacientes
+                                      .filter(
+                                        (valor) => valor.id_paciente == item.id_paciente
+                                      )
+                                      .map((item) => item.dn_paciente)
+                                  ),
+                                  "years"
+                                ) + " ANOS"}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div
-                          id="informações do paciente"
-                          style={{
-                            position: "absolute",
-                            right: -5,
-                            bottom: -5,
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {tagsDosPacientes(
-                            "INTERCONSULTAS",
-                            item,
-                            allinterconsultas,
-                            esteto
-                          )}
-                          {tagsDosPacientes(
-                            "PRECAUÇÕES",
-                            item,
-                            allprecaucoes,
-                            prec_padrao
-                          )}
+                          <div
+                            id="informações do paciente"
+                            style={{
+                              position: "absolute",
+                              right: -5,
+                              bottom: -5,
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                            }}
+                          >
+                            {tagsDosPacientes(
+                              "INTERCONSULTAS",
+                              item,
+                              allinterconsultas,
+                              esteto
+                            )}
+                            {tagsDosPacientes(
+                              "PRECAUÇÕES",
+                              item,
+                              allprecaucoes,
+                              prec_padrao
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-              }
+                    ))
+                }
+                {
+                  arrayatendimentos
+                    .filter(item => item.leito == 'F' && item.classificacao == x)
+                    .sort((a, b) => (a.nome_paciente > b.nome_paciente ? 1 : -1))
+                    .map((item) => (
+                      <div key={"pacientes" + item.id_atendimento}>
+                        <div
+                          className="row"
+                          style={{
+                            padding: 0,
+                            flex: 4,
+                            position: "relative",
+                            margin: 2.5
+                          }}
+                        >
+                          <div
+                            className="button-yellow"
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              marginRight: 0,
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              minHeight: 100,
+                              height: 100,
+                              width: 80, minWidth: 80, maxWidth: 80,
+                              backgroundColor:
+                                item.classificacao == 'AZUL' ? '#85C1E9 ' :
+                                  item.classificacao == 'VERDE' ? '#76D7C4' :
+                                    item.classificacao == 'AMARELO' ? '#F9E79F' :
+                                      item.classificacao == 'LARANJA' ? '#FAD7A0' :
+                                        item.classificacao == 'VERMELHO' ? '#F1948A' : '#006666'
+                            }}
+                          >
+                            <div
+                              className={item.classificacao == 'AMARELO' ? 'text1' : 'text2'}
+                              style={{ margin: 5, padding: 0, fontSize: 16 }}
+                            >
+                              {unidades.filter(valor => valor.id_unidade == item.id_unidade).map(valor => valor.nome_unidade) + ' - ' + item.leito}
+                            </div>
+                          </div>
+                          <div
+                            id={"atendimento " + item.id_atendimento}
+                            className="button"
+                            style={{
+                              flex: 3,
+                              marginLeft: 0,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              minHeight: 100,
+                              height: 100,
+                            }}
+                            onClick={() => {
+                              setviewlista(0);
+                              setunidade(parseInt(item.id_unidade));
+                              setatendimento(item.id_atendimento);
+                              setpaciente(parseInt(item.id_paciente));
+                              getAllData(item.id_paciente, item.id_atendimento);
+                              setidprescricao(0);
+                              if (pagina == -1) {
+                                selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
+                              }
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                padding: 5
+                              }}
+                            >
+                              {pacientes
+                                .filter(
+                                  (valor) => valor.id_paciente == item.id_paciente
+                                )
+                                .map((valor) => valor.nome_paciente)}
+                              <div>
+                                {moment().diff(
+                                  moment(
+                                    pacientes
+                                      .filter(
+                                        (valor) => valor.id_paciente == item.id_paciente
+                                      )
+                                      .map((item) => item.dn_paciente)
+                                  ),
+                                  "years"
+                                ) + " ANOS"}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            id="informações do paciente"
+                            style={{
+                              position: "absolute",
+                              right: -5,
+                              bottom: -5,
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                            }}
+                          >
+                            {tagsDosPacientes(
+                              "INTERCONSULTAS",
+                              item,
+                              allinterconsultas,
+                              esteto
+                            )}
+                            {tagsDosPacientes(
+                              "PRECAUÇÕES",
+                              item,
+                              allprecaucoes,
+                              prec_padrao
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                }
+              </div>
+              <div style={{
+                display: arrayatendimentos.filter(valor => valor.classificacao == x && x != null).length > 0 ? 'flex' : 'none',
+                flexDirection: 'column', alignContent: 'center'
+              }}>
+                <img alt="" src={dots_teal} style={{ height: 30 }}></img>
+              </div>
             </div>
           ))}
         </div>
@@ -1023,9 +1031,11 @@ function Prontuario() {
       setbusyinterconsultas(0);
     })
     // laboratorio.
+    /*
     axios.get(html + 'atendimento_laboratorio/' + atendimento).then((response) => {
       setlaboratorio(response.data.rows);
     })
+    */
   };
 
   // estado para alternância entre lista de pacientes e conteúdo do passômetro para versão mobile.
@@ -1823,7 +1833,7 @@ function Prontuario() {
             display: allinterconsultas.filter(item => item.especialidade == usuario.tipo_usuario).length == 0 ? 'flex' : 'none',
             height: '60vh',
           }}>
-          <img
+          <img className="lupa"
             alt=""
             src={lupa_cinza}
             style={{
@@ -2013,7 +2023,7 @@ function Prontuario() {
             width: '65vw',
           }}
         >
-          <img
+          <img className="lupa"
             alt=""
             src={lupa}
             style={{

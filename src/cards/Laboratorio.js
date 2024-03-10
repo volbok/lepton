@@ -33,6 +33,7 @@ function Laboratorio() {
   } = useContext(Context);
 
   const [tipoexame, settipoexame] = useState(0);
+  const [urgente, seturgente] = useState(0);
 
   useEffect(() => {
     if (card == 'card-laboratorio') {
@@ -43,7 +44,7 @@ function Laboratorio() {
       setlaboratorio([]);
     }
     // eslint-disable-next-line
-  }, [card]);
+  }, [card, atendimento]);
 
   // OPÇÕES DE ITENS DE LABORATORIO.
   // lista de opções de exames laboratoriais disponíveis para o cliente.
@@ -61,6 +62,7 @@ function Laboratorio() {
   // carregar lista de pedidos de exames laboratoriais para o atendimento.
   const [listalaboratorio, setlistalaboratorio] = useState([]);
   const loadListaLaboratorio = () => {
+    console.log(atendimento);
     axios.get(html + 'lista_laboratorio/' + atendimento).then((response) => {
       setlistalaboratorio(response.data.rows);
     });
@@ -77,8 +79,10 @@ function Laboratorio() {
       nome_profissional: usuario.nome_usuario,
       registro_profissional: usuario.n_conselho,
       random: random,
+      urgente: 0,
     }
     axios.post(html + 'insert_lista_laboratorio', obj).then(() => {
+      console.log(obj);
       setlaboratorio([]);
       localStorage.setItem('random', random);
       loadListaLaboratorio();
@@ -87,6 +91,7 @@ function Laboratorio() {
 
   // atualizar pedido de exame laboratorial.
   const updateListaLaboratorio = (item, status) => {
+    console.log(urgente);
     var obj = {
       id_paciente: paciente,
       id_atendimento: atendimento,
@@ -96,6 +101,7 @@ function Laboratorio() {
       nome_profissional: usuario.nome_usuario,
       registro_profissional: usuario.n_conselho,
       random: item.random,
+      urgente: urgente,
     }
     axios.post(html + 'update_lista_laboratorio/' + item.id, obj).then(() => {
       assinarPedidos();
@@ -139,6 +145,7 @@ function Laboratorio() {
       obs: item.obs,
       random: random,
       array_campos: item.array_campos,
+      metodo: item.metodo,
     }
     console.log(obj);
     axios.post(html + 'insert_laboratorio', obj).then(() => {
@@ -166,6 +173,7 @@ function Laboratorio() {
       obs: item.obs,
       random: item.random,
       array_campos: item.array_campos,
+      metodo: item.metodo,
     }
     axios.post(html + 'update_laboratorio/' + item.id, obj);
   }
@@ -456,6 +464,19 @@ function Laboratorio() {
           >
             {tipoexame == 1 ? 'RX' : 'LABORATÓRIO'}
           </div>
+          <div className={urgente == 0 ? "button" : "button red"}
+            title="CLIQUE PARA ALTERNAR ENTRE PEDIDO DE URGÊNCIA OU DE ROTINA"
+            style={{ width: 'calc(100% - 20px)', alignSelf: 'center' }}
+            onClick={() => {
+              if (urgente == 0 || urgente == null) {
+                seturgente(1);
+              } else {
+                seturgente(0);
+              }
+            }}
+          >
+            {urgente == 1 ? 'URGENTE' : 'ROTINA'}
+          </div>
           <div className='text3' style={{ marginBottom: 20 }}>{tipoexame == 0 ? 'SOLICITAÇÃO DE EXAMES LABORATORIAIS' : 'SOLICITAÇÃO DE RX'}</div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
             <div id="filtro e lista de opções de exames laboratoriais"
@@ -562,7 +583,7 @@ function Laboratorio() {
       </div>
     )
     // eslint-disable-next-line
-  }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio, tipoexame]);
+  }, [viewinsertlaboratorio, opcoeslaboratorio, arrayopcoeslaboratorio, tipoexame, urgente]);
 
   function ItensLaboratorio() {
     return (
@@ -836,127 +857,143 @@ function Laboratorio() {
   }
 
   const ListaLaboratorio = useCallback(() => {
-    return (
-      <div id="scroll lista de pedidos de exames laboratoriais"
-        className='scroll'
-        style={{
-          position: 'sticky',
-          top: 5,
-          width: '12vw', minWidth: '12vw', maxWidth: '12vw',
-          height: 'calc(100vh - 115px)',
-          margin: 5, marginTop: 10,
-          backgroundColor: 'white',
-          borderColor: 'white',
-          alignSelf: 'flex-start',
-        }}>
-        {listalaboratorio.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
-          <div id={"pedido de laboratorio " + item.random}
-            className='button'
-            style={{
-              display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              minHeight: 200,
-            }}
-            onClick={() => {
-              setdono_documento({
-                id: item.id_profissional,
-                conselho: 'CRM: ' + item.registro_profissional,
-                nome: item.nome_profissional,
-              })
-              settipodocumento('SOLICITAÇÃO DE EXAME LABORATORIAL');
-              console.log(item.random);
-              localStorage.setItem('random', item.random); // valor randômico chave para relacionar documento de laboratório aos respectivos itens de exames laboratoriais.
-              localStorage.setItem('status', item.status); // status 1 == pedido assinado. status 0 == pedido aberto.
-              loadLaboratorio(item.random);
-            }}
-          >
-            <div id="conjunto de botoes do item de laboratório"
+    if (card == 'card-laboratorio') {
+      return (
+        <div id="scroll lista de pedidos de exames laboratoriais"
+          className='scroll'
+          style={{
+            position: 'sticky',
+            top: 5,
+            width: '12vw', minWidth: '12vw', maxWidth: '12vw',
+            height: 'calc(100vh - 115px)',
+            margin: 5, marginTop: 10,
+            backgroundColor: 'white',
+            borderColor: 'white',
+            alignSelf: 'flex-start',
+          }}>
+          {listalaboratorio.sort((a, b) => moment(a.data) > moment(b.data) ? -1 : 1).map((item) => (
+            <div id={"pedido de laboratorio " + item.random}
+              className='button'
               style={{
-                display: 'flex',
-                flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
-              }}>
-              <div id="botão para excluir pedido de exame laboratorial e seus respectivos itens de exames laboratoriais."
-                className='button-yellow'
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                minHeight: 200,
+              }}
+              onClick={() => {
+                setdono_documento({
+                  id: item.id_profissional,
+                  conselho: 'CRM: ' + item.registro_profissional,
+                  nome: item.nome_profissional,
+                })
+                settipodocumento('SOLICITAÇÃO DE EXAME LABORATORIAL');
+                console.log(item.random);
+                localStorage.setItem('random', item.random); // valor randômico chave para relacionar documento de laboratório aos respectivos itens de exames laboratoriais.
+                localStorage.setItem('status', item.status); // status 1 == pedido assinado. status 0 == pedido aberto.
+                loadLaboratorio(item.random);
+              }}
+            >
+              <div id="conjunto de botoes do item de laboratório"
                 style={{
-                  display: item.status == 0 ? 'flex' : 'none',
-                  maxWidth: 30, width: 30, minWidth: 30,
-                  maxHeight: 30, height: 30, minHeight: 30
-                }}
-                onClick={(e) => {
-                  console.log(item.random);
-                  deleteListaLaboratorio(item.id);
-                  deleteMassaItensLaboratorio(item.random);
-                  e.stopPropagation();
-                }}
-              >
-                <img
-                  alt=""
-                  src={deletar}
-                  style={{ width: 25, height: 25 }}
-                ></img>
-              </div>
-              <div id="botão para assinar pedido de exame laboratorial."
-                style={{
-                  display: item.status == 0 ? 'flex' : 'none',
-                  maxWidth: 30, width: 30, minWidth: 30,
-                  maxHeight: 30, height: 30, minHeight: 30
-                }}
-                className='button-green'
-                onClick={(e) => {
-                  updateListaLaboratorio(item, 1);
-                  setviewinsertlaboratorio(0);
-                  e.stopPropagation();
-                }}
-              >
-                <img
-                  alt=""
-                  src={salvar}
-                  style={{ width: 20, height: 20 }}
-                ></img>
-              </div>
-              <div
-                id="botão para imprimir pedido de exames laboratoriais"
-                className='button-green'
-                style={{
-                  display: item.status > 0 ? 'flex' : 'none',
-                  maxWidth: 30, width: 30, minWidth: 30,
-                  maxHeight: 30, height: 30, minHeight: 30
-                }}
-                title={'IMPRIMIR PEDIDO DE EXAMES'}
-                onClick={(e) => {
-                  printDiv(item.random);
-                  e.stopPropagation();
+                  display: 'flex',
+                  flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
                 }}>
-                <img
-                  alt=""
-                  src={print}
+                <div id="botão para excluir pedido de exame laboratorial e seus respectivos itens de exames laboratoriais."
+                  className='button-yellow'
                   style={{
-                    height: 20,
-                    width: 20,
+                    display: item.status == 0 ? 'flex' : 'none',
+                    maxWidth: 30, width: 30, minWidth: 30,
+                    maxHeight: 30, height: 30, minHeight: 30
                   }}
-                ></img>
+                  onClick={(e) => {
+                    console.log(item.random);
+                    deleteListaLaboratorio(item.id);
+                    deleteMassaItensLaboratorio(item.random);
+                    e.stopPropagation();
+                  }}
+                >
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{ width: 25, height: 25 }}
+                  ></img>
+                </div>
+                <div id="botão para assinar pedido de exame laboratorial."
+                  style={{
+                    display: item.status == 0 ? 'flex' : 'none',
+                    maxWidth: 30, width: 30, minWidth: 30,
+                    maxHeight: 30, height: 30, minHeight: 30
+                  }}
+                  className='button-green'
+                  onClick={(e) => {
+                    updateListaLaboratorio(item, 1);
+                    setviewinsertlaboratorio(0);
+                    e.stopPropagation();
+                  }}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{ width: 20, height: 20 }}
+                  ></img>
+                </div>
+                <div
+                  id="botão para imprimir pedido de exames laboratoriais"
+                  className='button-green'
+                  style={{
+                    display: item.status > 0 ? 'flex' : 'none',
+                    maxWidth: 30, width: 30, minWidth: 30,
+                    maxHeight: 30, height: 30, minHeight: 30
+                  }}
+                  title={'IMPRIMIR PEDIDO DE EXAMES'}
+                  onClick={(e) => {
+                    printDiv(item.random);
+                    e.stopPropagation();
+                  }}>
+                  <img
+                    alt=""
+                    src={print}
+                    style={{
+                      height: 20,
+                      width: 20,
+                    }}
+                  ></img>
+                </div>
+              </div>
+              <div className='red'
+                style={{
+                  display: item.urgente == 1 ? 'flex' : 'none',
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  padding: 5,
+                }}
+              >
+                URGENTE
+              </div>
+              <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: 10 }}>
+                  {item.nome_profissional}
+                </div>
+                <div style={{ fontSize: 10, marginBottom: 5 }}>
+                  {item.registro_profissional}
+                </div>
+                <div>
+                  {moment(item.data).format('DD/MM/YY')}
+                </div>
+                <div>
+                  {moment(item.data).format('HH:mm')}
+                </div>
               </div>
             </div>
-            <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: 10 }}>
-                {item.nome_profissional}
-              </div>
-              <div style={{ fontSize: 10, marginBottom: 5 }}>
-                {item.registro_profissional}
-              </div>
-              <div>
-                {moment(item.data).format('DD/MM/YY')}
-              </div>
-              <div>
-                {moment(item.data).format('HH:mm')}
-              </div>
-            </div>
-          </div>
-        ))
-        }
-      </div >
-    )
+          ))
+          }
+        </div >
+      )
+    } else {
+      return null;
+    }
     // eslint-disable-next-line
-  }, [listalaboratorio]);
+  }, [atendimento, listalaboratorio, urgente]);
 
   return (
     <div id="scroll-exames"

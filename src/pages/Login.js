@@ -45,7 +45,7 @@ function Login() {
       sethospital(cliente.id_cliente);
       loadUnidades();
       loadUsuarios();
-        
+
       if (usuario.id != undefined) {
         // setusuario(JSON.parse(localStorage.getItem('obj_usuario')));
         loadAcessos(usuario.id);
@@ -748,7 +748,7 @@ function Login() {
       <div
         className="button"
         style={{
-          display: acesso == 1 ? "flex" : "none",
+          display: acesso != 0 || acesso != null ? "flex" : "none",
           minWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
           maxWidth: window.innerWidth < mobilewidth ? "30vw" : "15vw",
           height: window.innerWidth < mobilewidth ? "30vw" : "15vw",
@@ -820,6 +820,12 @@ function Login() {
             8
           )}
           {montaModuloDeApoio(
+            "ALMOXARIFADO",
+            usuario.almoxarifado,
+            "/almoxarifado",
+            "ALMOXARIFADO"
+          )}
+          {montaModuloDeApoio(
             "FATURAMENTO",
             usuario.faturamento,
             "/financeiro",
@@ -853,6 +859,8 @@ function Login() {
         farmacia: usuario.farmacia,
         faturamento: usuario.faturamento,
         usuarios: usuario.usuarios,
+        primeiro_acesso: usuario.primeiro_acesso,
+        almoxarifado: usuario.almoxarifado,
       };
       axios
         .post(html + "update_usuario/" + usuario.id, obj)
@@ -1146,7 +1154,7 @@ function Login() {
                 : "flex",
             margin: 20, marginTop: 10,
             fontSize: 28,
-            
+
           }}
         >
           PULSAR
