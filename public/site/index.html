@@ -4,9 +4,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+	<meta name="viewport" content="width=device-width, shrink-to-fit=no">
 	<meta name="description" content="">
-	<meta name="author" content="">
+	<meta name="author" content="PULSAR SAÚDE LTDA">
 	<title>Conheça o Pulsar Saúde!</title>
 
 	<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600" rel="stylesheet">
@@ -16,48 +16,52 @@
 </head>
 
 <body class="fade">
-	<!-- painel lateral -->
-	<div id="painel lateral" class="panel" style="justify-content: space-between;">
-		<img style="align-self: center; margin-top: 25px;" src="webpage_files/logo.svg" alt="Pulsar" width="80%"></img>
-		<p
-			style="color: white; align-self: center; font-size: 24px; font-weight: bold; margin: 5px; text-align: center;">
-			PULSAR SAÚDE
-		</p>
-		<div>
-			<p href="#gap1" id='btn1' class="btn" onclick="click1()" style="margin-top: 30px;">INTRODUÇÃO</p>
-			<p href="#gap2" id='btn2' class="btn" onclick="click2()">MÓDULOS DISPONÍVEIS</p>
-			<p href="#gap3" id='btn3' class="btn" onclick="click3()">CORRIDA DE LEITO</p>
-			<p href="#gap4" id='btn4' class="btn" onclick="click4()">TELAS</p>
-			<p href="#gap5" id='btn5' class="btn" onclick="click5()">CONTATO</p>
+	<!-- menu -->
+	<div id="menu" class="menu">
+		<div class="panel">
+			<div style="display: flex; flex-direction: row; justify-content: center; width: 100%; margin-top: 20px;">
+				<img src="webpage_files/logo.svg" alt="Pulsar"></img>
+				<p
+					style="left: 150px; bottom: 50px; color: white; align-self: center; font-size: 36px; font-weight: bold; margin: 0px; padding: 0px;">
+					PULSAR SAÚDE
+				</p>
+			</div>
+			<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-evenly;">
+				<p href="#gap1" id='btn1' class="btn" onclick="click1()">INTRODUÇÃO</p>
+				<p href="#gap2" id='btn2' class="btn" onclick="click2()">MÓDULOS DISPONÍVEIS</p>
+				<p href="#gap3" id='btn3' class="btn" onclick="click3()">CORRIDA DE LEITO</p>
+				<p href="#gap4" id='btn4' class="btn" onclick="click4()">TELAS</p>
+				<p href="#gap5" id='btn5' class="btn" onclick="click5()">CONTATO</p>
+			</div>
 		</div>
 	</div>
+
 	<!-- conteúdo -->
 	<div class="onlymobile">
-		<img style="align-self: center; margin-top: 25px;" src="webpage_files/logo.svg" alt="Pulsar" width="80%"></img>
+		<img style="align-self: center; margin-top: 25px;" src="webpage_files/logo.svg" alt="Pulsar" width="100%"></img>
 		<p
 			style="color: white; align-self: center; font-size: 36px; font-weight: bold; margin: 0px; margin-top: 5px; margin-bottom: 20px; text-align: center;">
 			PULSAR SAÚDE
 		</p>
-
 	</div>
 	<div id="conteudo" class="content">
 
-		<div class="title">
-			<h1>UM PRONTUÁRIO ELETRÔNICO PRÁTICO E RÁPIDO.</h1>
-			<p>
-				PULSAR SAÚDE - Uma solução inovadora para prontuário eletrônico. Ideal para clínicas e hospitais.
-			</p>
-			<img class="imagem slide" src="webpage_files/mockup.png" alt="Pulsar"></img>
-			<img class="imagem" style="align-self: center; margin-top: 25px; border-radius: 5px; margin-bottom: 20px;"
-				src="webpage_files/banner_claro.png" alt="Pulsar" width="90%">
-			<video class="video" controls autoplay
-				style="margin-top: 40px; margin-bottom: 40px; align-self: center; border-radius: 5px;">
-				<source src="webpage_files/videos/video.mp4" type="video/mp4">
-				SEU BROWSER NÃO SUPORTA VÍDEOS! É... VOCÊ PRECISA DE NÓS.
-			</video>
-		</div>
+		<h1>UM PRONTUÁRIO ELETRÔNICO PRÁTICO E RÁPIDO.</h1>
+		<p style="text-align: center;">
+			PULSAR SAÚDE - Uma solução inovadora, feita para a gestão hospitalar, das unidades de pronto-atendimento
+			(UPAs)
+			e das unidades básicas de saúde (UBS) do seu município.
+		</p>
+		<img class="imagem slide" src="webpage_files/mockup.png" alt="Pulsar"></img>
+		<img class="imagem scroll-animation"
+			style="align-self: center; margin-top: 25px; border-radius: 5px; margin-bottom: 20px;"
+			src="webpage_files/banner_claro.png" alt="Pulsar" width="100%">
+		<video class="video scroll-pop" controls autoplay style="margin-top: 40px; margin-bottom: 40px;">
+			<source src="webpage_files/videos/video.mp4" type="video/mp4">
+			SEU BROWSER NÃO SUPORTA VÍDEOS! É... VOCÊ PRECISA DE NÓS.
+		</video>
 
-		<div id="gap1" class="col-lg-12">
+		<div id="gap1">
 			</img>
 			<h1>INTRODUÇÃO</h1>
 			<p>
@@ -77,100 +81,96 @@
 			</p>
 		</div>
 
-		<div class="col-lg-12">
-			<hr>
-		</div> <!-- separador -->
-
-		<div id="gap2" class="col-lg-12">
-			<h1>MÓDULOS DISPONÍVEIS NO PACOTE BÁSICO</h1>
-			<div
-				style=" display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: center;">
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/gestao.png" alt="Pulsar"
-						width="80px"></img>
-					<h3 class="card_title">GESTÃO DE PACIENTES</h3>
-					<p class="card_text">
-						Em poucos cliques, é possível movimentar pacientes internados no hospital entre os diversos
-						setores
-						assistenciais.
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/documentos.png" alt="Pulsar"
-						width="80px"></img>
-					<h3 class="card_title">DOCUMENTOS ELETRÔNICOS</h3>
-					<p class="card_text">
-						Crie evoluções multidisciplinares, relatórios, sumários de alta, receitas, atestados e quasiquer
-						outros documentos necessários, sendo possível gravar e utilizar modelos personalizados dos seus
-						principais documentos, dinamizando sua rotina de
-						trabalho.
-						E mais: sinais vitais, exames complementares e resultados de
-						exames laboratoriais podem ser automaticamente herdados
-						às suas evoluções (chega de copiar e colar, tudo já estará na mão).
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/esteto.svg" alt="Pulsar"
-						width="80px"></img>
-					<h3 class="card_title">PRESCRIÇÃO</h3>
-					<p class="card_text">
-						Inspirados no melhor modelo de prescrição existente no mercado, criamos um módulo de prescrição
-						rápido e
-						extremamente prático. Nele também é possível
-						copiar os itens de prescrição e seus componentes, bem como criar modelos pessoais de prescrição.
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/laboratorio.png"
-						alt="Pulsar" width="80px"></img>
-					<h3 class="card_title">LABORATÓRIO E IMAGEM</h3>
-					<p class="card_text">
-						Solicite exames laboratoriais e de imagem fazendo uso de packs/combos que aceleram todo o
-						processo.
-						A depender da disponibilidade do cliente, o sistema Pulsar pode ser integrado ao equipamentos de
-						laboratório (exigindo desenvolvimento à parte).
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/farmacia.png" alt="Pulsar"
-						width="80px"></img>
-					<h3 class="card_title">FARMÁCIA</h3>
-					<p class="card_text">
-						O módulo da farmácia já é integrado à prescrição, permitindo à equipe a separação ordenada das
-						medicações a serem dispensadas.
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/agendamento.png"
-						alt="Pulsar" width="80px"></img>
-					<h3 class="card_title">AGENDAMENTO DE CONSULTAS AMBULATORIAIS</h3>
-					<p class="card_text">
-						A aplicação Pulsar permite o fácil agendamento de consultas para cada profissional e
-						especialidade
-						médica cadastrada.
-						O profissional especialista pode ver de casa sua agenda de consultas e acessar facilmente no
-						prontuário os pacientes para atendimento.
-						O paciente recebe por WhatsApp os dados de sua consulta agendada.
-					</p>
-				</div>
-				<div class="card">
-					<img style="align-self: center; margin: 5px;" src="webpage_files/icones/triagem.png" alt="Pulsar"
-						width="80px"></img>
-					<h3 class="card_title">TRIAGEM PARA PRONTO-ATENDIMENTO E CHAMADA EM TELA</h3>
-					<p class="card_text">
-						Se seu serviço oferece pronto-atendimento, Pulsar tem o módulo de triagem com modelo de
-						classificação de risco já embutido. As chamadas para triagem e para atendimento nos consultórios
-						é feita em tela de chamadas, com alerta sonoro e voz informando o nome do paciente.
-					</p>
+		<div style="background-color: #66b2b2; width: 100%;">
+			<div id="gap2" class="scroll-animation">
+				<h1 style="color: white;">MÓDULOS DISPONÍVEIS NO PACOTE BÁSICO</h1>
+				<div class="grid">
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/gestao.png" alt="Pulsar"
+							width="80px"></img>
+						<h3 class="card_title">GESTÃO DE PACIENTES</h3>
+						<p class="card_text">
+							Em poucos cliques, é possível movimentar pacientes internados no hospital entre os diversos
+							setores
+							assistenciais.
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/documentos.png"
+							alt="Pulsar" width="80px"></img>
+						<h3 class="card_title">DOCUMENTOS ELETRÔNICOS</h3>
+						<p class="card_text">
+							Crie evoluções multidisciplinares, relatórios, sumários de alta, receitas, atestados e
+							quasiquer
+							outros documentos necessários, sendo possível gravar e utilizar modelos personalizados dos
+							seus
+							principais documentos, dinamizando sua rotina de
+							trabalho.
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/esteto.svg" alt="Pulsar"
+							width="80px"></img>
+						<h3 class="card_title">PRESCRIÇÃO</h3>
+						<p class="card_text">
+							Inspirados no melhor modelo de prescrição existente no mercado, criamos um módulo de
+							prescrição
+							rápido e
+							extremamente prático. Nele também é possível
+							copiar os itens de prescrição e seus componentes, bem como criar modelos pessoais de
+							prescrição.
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/laboratorio.png"
+							alt="Pulsar" width="80px"></img>
+						<h3 class="card_title">LABORATÓRIO E IMAGEM</h3>
+						<p class="card_text">
+							Solicite exames laboratoriais e de imagem fazendo uso de packs/combos que aceleram todo o
+							processo.
+							A depender da disponibilidade do cliente, o sistema Pulsar pode ser integrado ao
+							equipamentos de
+							laboratório (exigindo desenvolvimento à parte).
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/farmacia.png"
+							alt="Pulsar" width="80px"></img>
+						<h3 class="card_title">FARMÁCIA</h3>
+						<p class="card_text">
+							O módulo da farmácia já é integrado à prescrição, permitindo à equipe a separação ordenada
+							das
+							medicações a serem dispensadas.
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/agendamento.png"
+							alt="Pulsar" width="80px"></img>
+						<h3 class="card_title">AGENDAMENTO DE CONSULTAS AMBULATORIAIS</h3>
+						<p class="card_text">
+							A aplicação Pulsar permite o fácil agendamento de consultas para cada profissional e
+							especialidade
+							médica cadastrada.
+							O profissional pode acessar de casa sua agenda de consultas e o
+							prontuário dos pacientes para atendimento.
+						</p>
+					</div>
+					<div class="card">
+						<img style="align-self: center; margin: 5px;" src="webpage_files/icones/triagem.png"
+							alt="Pulsar" width="80px"></img>
+						<h3 class="card_title">TRIAGEM PARA PRONTO-ATENDIMENTO E CHAMADA EM TELA</h3>
+						<p class="card_text">
+							Pulsar tem o módulo de triagem com modelo de
+							classificação de risco já embutido. As chamadas para triagem e para atendimento nos
+							consultórios
+							é feita em tela de chamadas, com alerta sonoro e voz informando o nome do paciente.
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="col-lg-12">
-			<hr>
-		</div> <!-- separador -->
-
-		<div id="gap3" class="col-lg-12">
+		<div id="gap3">
 			<h1>FEATURE EM DESTAQUE: CORRIDA DE LEITO</h1>
 			<div class="corrida">
 				<img class="imagem" src="webpage_files/corrida_de_leitos.jpg" alt="Pulsar">
@@ -187,7 +187,8 @@
 						de antibioticoterapia, riscos, medidas de precaução), auxiliando na segurança da assistência ao
 						paciente!
 						Veja abaixo o que pode ser gerido na corrida de leitos:
-					<div style="display: flex; flex-direction: row; justify-content: center; flex-wrap: wrap;">
+					</p>
+					<div class="grid">
 						<div class="minicards">
 							TEMPO DE INTERNAÇÃO
 						</div>
@@ -231,16 +232,11 @@
 							INTERCONSULTAS
 						</div>
 					</div>
-					</p>
 				</div>
 			</div>
 		</div>
 
-		<div class="col-lg-12">
-			<hr>
-		</div> <!-- separador -->
-
-		<div id="gap4" class="col-lg-12" style="display: flex; flex-direction: column; justify-content: center;">
+		<div id="gap4" style="display: flex; flex-direction: column; justify-content: center;">
 			<h1>ALGUMAS TELAS</h1>
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
 				<img class='telas' src="webpage_files/telas/tela inicial.png" alt="Tela inicial"></img>
@@ -251,7 +247,6 @@
 				<img class='telas' src="webpage_files/telas/evolução.png" alt="Evolucao livre"></img>
 				<img class='telas' src="webpage_files/telas/prescrição.png" alt="Prescrição"></img>
 				<img class='telas' src="webpage_files/telas/propostas.png" alt="Propostas"></img>
-				<img class='telas' src="webpage_files/telas/alergias.png" alt="Alergias"></img>
 				<img class='telas' src="webpage_files/telas/controles.png" alt="Controles"></img>
 				<img class='telas' src="webpage_files/telas/invasoes.png" alt="Invasoes"></img>
 				<img class='telas' src="webpage_files/telas/vm.png" alt="VM"></img>
@@ -261,18 +256,12 @@
 			</div>
 		</div>
 
-		<div class="col-lg-12">
-			<hr>
-		</div style="margin-top: 40px"> <!-- separador -->
-
-		<div id="gap5" class="col-lg-12" style="margin-bottom: 20px;">
+		<div id="gap5" style="margin-bottom: 20px; justify-content: center; text-align: center;">
 			<h1>CONVERSE COM NOSSO TIME!</h1>
 			<p>
-				Mande um e-mail ou converse conosco pelo Whatsapp. Em poucas horas podemos disponibilizar a solução para
-				você.
+				Mande uma mensagem pelo Whatsapp, em poucas horas podemos disponibilizar a solução para
+				você!
 			<p>WhatsApp: (31) 99226-6268.</p>
-			<p>E-mail: <a href="mailto: contato@pulsarsaude.net">contato@pulsarsaude.net</a></p>
-			</p>
 			<a href="https://api.whatsapp.com/send?phone=5531992266268&text=Quero mais informações!" target="_blank"
 				style="position:fixed;bottom:20px;right:30px;">
 				<svg enable-background="new 0 0 512 512" width="50" height="50" version="1.1" viewBox="0 0 512 512"
@@ -291,6 +280,22 @@
 
 	<!-- javascript -->
 	<script>
+
+		function animateMenu() {
+			var prevScrollPos = window.pageYOffset;
+			window.onscroll = () => {
+				var currentScrollPos = window.pageYOffset;
+				if (prevScrollPos > currentScrollPos) {
+					document.getElementById("menu").style.top = "0";
+				} else {
+					document.getElementById("menu").style.top = "-500px";
+				}
+				prevScrollPos = currentScrollPos;
+			}
+		}
+
+		animateMenu();
+
 		var step1 = document.getElementById("gap1");
 		var step2 = document.getElementById("gap2");
 		var step3 = document.getElementById("gap3");
