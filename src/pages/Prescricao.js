@@ -50,6 +50,7 @@ function Prescricao() {
     setselecteddocumento,
     settipodocumento,
     setdono_documento,
+    setalmoxarifado, almoxarifado,
   } = useContext(Context);
 
   // history (router).
@@ -57,6 +58,7 @@ function Prescricao() {
 
   useEffect(() => {
     if (card == 'card-prescricao') {
+      loadAlmoxarifado();
       loadModelosPrescricao();
       loadOpcoesPrescricao();
       loadItensPrescricao();
@@ -67,6 +69,13 @@ function Prescricao() {
 
   var timeout = null;
   const [expand, setexpand] = useState(0);
+
+  // ALMOXARIFADO //
+  const loadAlmoxarifado = () => {
+    axios.get(html + 'almoxarifado').then((response) => {
+      setalmoxarifado(response.data.rows);
+    });
+  }
 
   // ## OPÇÕES DE ITENS DE PRESCRIÇÃO ## //
   // recuperando opções de itens de prescrição.
@@ -183,7 +192,7 @@ function Prescricao() {
       obs: obs,
       id_componente_filho: null,
       id_componente_pai: id_componente_pai,
-      codigo_item: null,
+      codigo_item: codigo_item,
     }
     axios.post(html + 'update_opcoes_prescricao/' + id, obj).then(() => {
       loadOpcoesPrescricao();
@@ -198,6 +207,7 @@ function Prescricao() {
       });
   }
   // atualizando um registro de opção de item de prescrição.
+  // COCORE
   const updateOpcaoComplementoPrescricao = (item, qtde) => {
     var obj = {
       nome_item: item.nome_item,
@@ -206,7 +216,9 @@ function Prescricao() {
       via: null,
       freq: null,
       obs: null,
-      id_pai: item.id_pai,
+      id_componente_filho: item.id_componente_filho,
+      id_componente_pai: item.id_componente_pai,
+      codigo_item: item.codigo_item,
     }
     axios.post(html + 'update_opcoes_prescricao/' + item.id, obj).then(() => {
       console.log(JSON.stringify(obj));
@@ -724,6 +736,7 @@ function Prescricao() {
   const [via, setvia] = useState('VIA');
   const [freq, setfreq] = useState('FREQ');
   const [obs, setobs] = useState('');
+  const [codigo_item, setcodigo_item] = useState(null);  
   const [id_componente_pai, setid_componente_pai] = useState(null);
   const [id, setid] = useState(null);
 
@@ -1195,7 +1208,18 @@ function Prescricao() {
           borderRadius: 5,
           backgroundColor: '#ffffff50',
         }}>
-          {arrayopcoesprescricao.filter(item => item.id_componente_pai != null).map(item => (
+          {arrayopcoesprescricao.filter(item =>
+            item.id_componente_pai != null
+            &&
+            // listar apenas opções de itens de prescrição cadastrados no almoxarifado.
+            almoxarifado.filter(valor => valor.codigo_item == item.codigo_item).length == 1
+            &&
+            // listar apenas opções de itens de prescrição com estoque no almoxarifado.
+            almoxarifado.filter(valor => valor.codigo_item == item.codigo_item).map(valor => valor.qtde_item) > 0
+            &&
+            // listar apenas opções de itens de prescrição com registro no estoque assinado como liberado.
+            almoxarifado.filter(valor => valor.codigo_item == item.codigo_item).map(valor => valor.liberado) == 1
+          ).map(item => (
             <div
               className="button-green"
               style={{
@@ -1563,6 +1587,7 @@ function Prescricao() {
                         setvia(item.via);
                         setfreq(item.freq);
                         setobs(item.obs);
+                        setcodigo_item(item.codigo_item);
                         selector("scroll itens", "optionItem " + item.id, 100);
                       }, 200);
                     }}
@@ -2626,6 +2651,7 @@ function Prescricao() {
         qtde: item.qtde_item,
         prazo: valor,
         dispensado: false,
+        codigo_item: item.codigo_item,
       }
       axios.post(html + 'insert_aprazamento', obj);
       return null;

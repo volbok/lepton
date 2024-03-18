@@ -806,7 +806,12 @@ function Login() {
             "/usuarios",
             5
           )}
-          {montaModuloDeApoio("FARMÁCIA", usuario.farmacia, "/farmacia", 6)}
+           {montaModuloDeApoio(
+            "CADASTRO DE USUÁRIOS",
+            usuario.usuarios,
+            "/usuarios",
+            5
+          )}
           {montaModuloDeApoio(
             "LABORATÓRIO",
             usuario.laboratorio,
@@ -815,9 +820,9 @@ function Login() {
           )}
           {montaModuloDeApoio(
             "FARMÁCIA",
-            usuario.laboratorio,
+            usuario.farmacia,
             "/farmacia",
-            8
+            'FARMÁCIA'
           )}
           {montaModuloDeApoio(
             "ALMOXARIFADO",

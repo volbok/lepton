@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 // functions.
 import modal from "../functions/modal";
 import selector from "../functions/selector";
+import toast from "../functions/toast";
 
 function Farmacia() {
 
@@ -26,12 +27,21 @@ function Farmacia() {
     pacientes, setpacientes,
     setpaciente,
     setdialogo,
+    almoxarifado, setalmoxarifado,
+    settoast,
   } = useContext(Context);
+
+  const loadAlmoxarifado = () => {
+    axios.get(html + 'almoxarifado').then((response) => {
+      setalmoxarifado(response.data.rows);
+    });
+  }
 
   useEffect(() => {
     // eslint-disable-next-line
-    if (pagina == 8) {
+    if (pagina == 'FARMÁCIA') {
       loadPacientes();
+      loadAlmoxarifado();
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -80,20 +90,74 @@ function Farmacia() {
   };
 
   const updateAprazamentos = (item) => {
-    console.log(item);
-    var obj = {
-      id_atendimento: atendimento,
-      id_prescricao: item.id_prescricao,
-      id_componente_pai: item.id_componente_pai,
-      id_componente_filho: item.id_componente_filho,
-      nome: item.nome,
-      qtde: item.qtde,
-      prazo: item.prazo,
-      dispensado: true,
-    }
-    axios.post(html + 'update_aprazamento/' + item.id, obj).then(() => {
-      loadAprazamentos(item.id_prescricao);
+    let alerta = [];
+    // eslint-disable-next-line
+    aprazamentos.filter(valor => valor.prazo == item.prazo && (valor.id_componente_pai == item.id_componente_pai || valor.id_componente_filho == item.id_componente_pai)).map(valor => {
+      console.log(valor.qtde);
+      // eslint-disable-next-line
+      almoxarifado.filter(x => x.codigo_item == valor.codigo_item).map(x => {
+        console.log('APRAZAMENTO: ' + valor.qtde);
+        console.log('ALMOXARIFADO: ' + x.qtde_item);
+        if (valor.qtde != null && valor.qtde > x.qtde_item) {
+          alerta.push(x)
+        }
+      })
     })
+
+    console.log(alerta.length);
+
+    if (alerta.length == 0) {
+      console.log(item);
+      var obj = {
+        id_atendimento: atendimento,
+        id_prescricao: item.id_prescricao,
+        id_componente_pai: item.id_componente_pai,
+        id_componente_filho: item.id_componente_filho,
+        nome: item.nome,
+        qtde: item.qtde,
+        prazo: item.prazo,
+        dispensado: true,
+        codigo_item: item.codigo_item,
+      }
+      axios.post(html + 'update_aprazamento/' + item.id, obj).then(() => {
+        loadAprazamentos(item.id_prescricao);
+        debitaQtdeitemAlmoxarifado(item.id_componente_pai, item.prazo);
+      });
+    } else {
+      toast(settoast, 'ITEM EM FALTA NO ESTOQUE, NÃO É POSSÍVEL DISPENSAR!', '#EC7063', 2000);
+    }
+  }
+
+  const debitaQtdeitemAlmoxarifado = (id_componente_pai, prazo) => {
+    // eslint-disable-next-line
+    aprazamentos.filter(valor => valor.prazo == prazo && (valor.id_componente_pai == id_componente_pai || valor.id_componente_filho == id_componente_pai)).map(valor => {
+      // eslint-disable-next-line
+      almoxarifado.filter(x => x.codigo_item == valor.codigo_item).map(x => {
+        let nova_qtde = parseInt(x.qtde_item) - parseInt(valor.qtde);
+        console.log(valor);
+        console.log('ESTOQUE: ' + parseInt(x.qtde_item));
+        console.log('CONSUMO: ' + parseInt(valor.qtde));
+        console.log('QTDE: ' + nova_qtde);
+        let obj = {
+          categoria: x.categoria,
+          codigo_item: x.codigo_item,
+          nome_item: x.nome_item,
+          qtde_item: nova_qtde,
+          obs: x.obs,
+          data_entrada: x.data_entrada,
+          codigo_fornecedor: x.codigo_fornecedor,
+          cnpj_fornecedor: x.cnpj_fornecedor,
+          codigo_compra: x.codigo_compra,
+          id_setor_origem: null,
+          id_setor_destino: null,
+          liberado: x.liberado,
+        }
+        axios.post(html + 'update_almoxarifado/' + x.id, obj).then(() => {
+          console.log('ITEM DE ALMOXARIFADO ATUALIZADO COM SUCESSO.');
+        });
+      });
+    });
+    loadAlmoxarifado();
   }
 
   const [filterpaciente, setfilterpaciente] = useState("");
@@ -259,7 +323,7 @@ function Farmacia() {
                             setatendimento(item.id_atendimento);
                             setpaciente(item.id_paciente);
                             loadPrescricao(item.id_atendimento);
-                            if (pagina == 8) {
+                            if (pagina == 'FARMÁCIA') {
                               selector("scroll atendimentos com pacientes", "atendimento " + item.id_atendimento, 100);
                             }
                           }}
@@ -325,7 +389,9 @@ function Farmacia() {
           width: 'calc(100% - 20px)'
         }}>
         {unidades.map(item => (
-          <div id={"unidade" + item.id_unidade}
+          <div
+            key={"unidade" + item.id_unidade}
+            id={"unidade" + item.id_unidade}
             className="button"
             style={{ width: 150, minWidth: 150 }}
             onClick={() => {
@@ -349,16 +415,15 @@ function Farmacia() {
   function ScrollPrescricoes() {
     return (
       <div style={{
-        display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%',
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%',
       }}>
         <div id="lista de prescrições"
-          className="scroll"
           style={{
             display: arraylistaprescricao.filter(valor => valor.id_atendimento == atendimento).length > 0 ? 'flex' : 'none',
-            height: 'calc(100vh - 30px)',
-            width: '100%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
+            width: '100%',
+            alignContent: 'center', alignItems: 'center',
           }}>
           {arraylistaprescricao
             .filter(valor => moment(valor.data) > moment().subtract(1, 'days').startOf('day'))
@@ -366,7 +431,6 @@ function Farmacia() {
               <div className="cor1" style={{ width: 'calc(100% - 40px)', borderRadius: 5, margin: 5, padding: 5 }}>
                 <div style={{
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                  width: 'calc(100%)',
                 }}
                 >
                   <div id="botão indicador de data e hora da prescrição"
@@ -425,7 +489,6 @@ function Farmacia() {
                           }}
                           onClick={() => {
                             modal(setdialogo, 'TEM CERTEZA QUE DESEJA DISPENSAR A MEDICAÇÃO ' + aprazamento.nome + '?', updateAprazamentos, aprazamento);
-                            // updateAprazamentos(aprazamento); console.log('DISPENSANDO MEDICAÇÃO')
                           }}
                         >
                           <img
@@ -440,7 +503,6 @@ function Farmacia() {
                         </div>
                         <div className="button"
                           style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: 0 }}
-                        // onClick={() => { updateAprazamentos(aprazamento); console.log('DISPENSANDO MEDICAÇÃO') }}
                         >
                           {aprazamento.prazo}
                         </div>
@@ -474,28 +536,22 @@ function Farmacia() {
             ))}
         </div>
         <div id="lista de prescrições - atendimento não selecionado"
-          className="scroll"
           style={{
             display: atendimento == null ? 'flex' : 'none',
-            height: 'calc(100vh - 30px)',
-            width: '100%',
           }}>
           <div className="text1" style={{ alignSelf: 'center', alignContent: 'center' }}>
             SELECIONE UM ATENDIMENTO PARA LIBERAR OS ITENS DE PRESCRIÇÃO.
           </div>
         </div>
         <div id="lista de prescrições - sem prescrições"
-          className="scroll"
           style={{
             display: atendimento != null && arraylistaprescricao.filter(valor => valor.id_atendimento == atendimento).length == 0 ? 'flex' : 'none',
-            height: 'calc(100vh - 30px)',
-            width: '100%',
           }}>
           <div className="text1" style={{ alignSelf: 'center', alignContent: 'center' }}>
             SEM PRESCRIÇÕES PARA ESTE ATENDIMENTO.
           </div>
         </div>
-      </div >
+      </div>
     )
   }
 
@@ -503,32 +559,19 @@ function Farmacia() {
     <div id="tela da farmácia"
       className='main'
       style={{
-        display: pagina == 8 ? 'flex' : 'none',
-        flexDirection: 'row', justifyContent: 'center',
-        position: 'relative',
+        display: pagina == 'FARMÁCIA' ? 'flex' : 'none',
       }}
     >
-      <div
+      <div className='chassi'
         style={{
-          display: 'flex', flexDirection: 'column',
-          justifyContent: 'space-between',
-          height: 'calc(100vh - 20px)',
-          width: '30vw',
-          margin: 5
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',
         }}>
-        <FiltraUnidades></FiltraUnidades>
-        <ListaDeAtendimentos></ListaDeAtendimentos>
-      </div>
-      <div
-        style={{
-          display: 'flex', flexDirection: 'column',
-          justifyContent: 'center',
-          margin: 5, paddingLeft: 5, paddingRight: 10,
-          width: '100%'
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', position: 'sticky', top: 5, width: '25vw' }}>
+          <FiltraUnidades></FiltraUnidades>
+          <ListaDeAtendimentos></ListaDeAtendimentos>
+        </div>
         <ScrollPrescricoes></ScrollPrescricoes>
       </div>
-
     </div>
   )
 }
