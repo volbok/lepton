@@ -436,6 +436,11 @@ body::-webkit-scrollbar-thumb:hover {
     grid-template-columns: 1fr;
   }
 
+  .pricegrid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
   .telas {
     border-radius: 5px;
     margin: 10px;
