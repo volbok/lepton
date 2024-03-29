@@ -145,6 +145,21 @@ h1 {
   color: #ffffff !important
 }
 
+.pricecard {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 30px;
+  background-color: rgb(31, 122, 140, 0.5);
+  color: #ffffff;
+  font-weight: bold;
+  width: auto;
+  height: auto;
+}
+
 .imagem {
   display: flex;
   flex-direction: column;
@@ -299,6 +314,11 @@ h1 {
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.pricegrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .menu {

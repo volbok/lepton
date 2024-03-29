@@ -30,8 +30,9 @@
 				<p href="#gap1" id='btn1' class="btn" onclick="click1()">INTRODUÇÃO</p>
 				<p href="#gap2" id='btn2' class="btn" onclick="click2()">MÓDULOS DISPONÍVEIS</p>
 				<p href="#gap3" id='btn3' class="btn" onclick="click3()">CORRIDA DE LEITO</p>
-				<p href="#gap4" id='btn4' class="btn" onclick="click4()">TELAS</p>
-				<p href="#gap5" id='btn5' class="btn" onclick="click5()">CONTATO</p>
+				<p href="#gap4" id='btn3' class="btn" onclick="click4()">PREÇOS</p>
+				<p href="#gap5" id='btn4' class="btn" onclick="click5()">TELAS</p>
+				<p href="#gap6" id='btn5' class="btn" onclick="click6()">CONTATO</p>
 			</div>
 		</div>
 	</div>
@@ -48,8 +49,8 @@
 
 		<h1>UM PRONTUÁRIO ELETRÔNICO PRÁTICO E RÁPIDO.</h1>
 		<p style="text-align: center;">
-			PULSAR SAÚDE - Uma solução inovadora, feita para a gestão hospitalar, das unidades de pronto-atendimento
-			(UPAs)
+			PULSAR SAÚDE - Uma solução inovadora, feita para revolucionar a assistência do paciente e a trazer
+			praticidade ao trabalho da equipe assistencial.
 			e das unidades básicas de saúde (UBS) do seu município.
 		</p>
 		<img class="imagem slide" src="webpage_files/mockup.png" alt="Pulsar"></img>
@@ -236,7 +237,34 @@
 			</div>
 		</div>
 
-		<div id="gap4" style="display: flex; flex-direction: column; justify-content: center;">
+		<div id="gap4" style="display: flex; flex-direction: column; justify-content: center; align-items: center; align-self: center;">
+			<h1>PREÇOS</h1>
+			<div class="pricegrid">
+				<div class="pricecard" style="background-color: #82E0AA;">
+					<div style="font-size: 28px; margin: 20px">PACOTE LIGHT</div>
+					<div style="font-size: 20px; margin: 5px">USO EM PEQUENOS CONSULTÓRIOS</div>
+					<div style="font-size: 20px; margin: 5px">ATÉ 100 ATENDIMENTOS POR DIA, DOIS PROFISSIONAIS DE SAÚDE
+						(USO SIMULTÂNEO)</div>
+					<div style="font-size: 28px; margin: 10px;">R$ 200/MÊS</div>
+				</div>
+				<div class="pricecard" style="background-color: #82E0AA;">
+					<div style="font-size: 28px; margin: 20px">PACOTE MEDIUM</div>
+					<div style="font-size: 20px; margin: 5px">USO EM CLÍNICAS MAIORES</div>
+					<div style="font-size: 20px; margin: 5px">ATÉ 500 ATENDIMENTOS POR DIA, ATÉ 5 PROFISSIONAIS DE
+						SAÚDE (USO SIMULTÂNEO)</div>
+					<div style="font-size: 28px; margin: 10px;">R$ 1.000/MÊS</div>
+				</div>
+				<div class="pricecard" style="background-color: #82E0AA;">
+					<div style="font-size: 28px; margin: 20px">PACOTE HEAVY</div>
+					<div style="font-size: 20px; margin: 5px">USO EM POLICLÍNICAS E HOSPITAIS</div>
+					<div style="font-size: 20px; margin: 5px">ATÉ 5000 ATENDIMENTOS POR DIA, ATÉ 20 PROFISSIONAIS DE
+						SAÚDE (USO SIMULTÂNEO)</div>
+					<div style="font-size: 28px; margin: 10px;">R$ 10.000/MÊS</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="gap5" style="display: flex; flex-direction: column; justify-content: center;">
 			<h1>ALGUMAS TELAS</h1>
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
 				<img class='telas' src="webpage_files/telas/tela inicial.png" alt="Tela inicial"></img>
@@ -256,12 +284,13 @@
 			</div>
 		</div>
 
-		<div id="gap5" style="margin-bottom: 20px; justify-content: center; text-align: center;">
+		<div id="gap6" style="margin-bottom: 20px; justify-content: center; text-align: center;">
 			<h1>CONVERSE COM NOSSO TIME!</h1>
 			<p>
 				Mande uma mensagem pelo Whatsapp, em poucas horas podemos disponibilizar a solução para
 				você!
 			<p>WhatsApp: (31) 99226-6268.</p>
+			<p><a href="mailto:contato@pulsarsaude.net">contato@pulsarsaude.net</a></p>
 			<a href="https://api.whatsapp.com/send?phone=5531992266268&text=Quero mais informações!" target="_blank"
 				style="position:fixed;bottom:20px;right:30px;">
 				<svg enable-background="new 0 0 512 512" width="50" height="50" version="1.1" viewBox="0 0 512 512"
@@ -301,6 +330,8 @@
 		var step3 = document.getElementById("gap3");
 		var step4 = document.getElementById("gap4");
 		var step5 = document.getElementById("gap5");
+		var step6 = document.getElementById("gap6");
+
 		function click1() {
 			step1.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
 		}
@@ -315,6 +346,9 @@
 		}
 		function click5() {
 			step5.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+		}
+		function click6() {
+			step6.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
 		}
 	</script>
 </body>
