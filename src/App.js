@@ -16,6 +16,7 @@ import Laboratorio from "./pages/Laboratorio";
 import Agendamento from "./pages/Agendamento";
 import Farmacia from "./pages/Farmacia";
 import Almoxarifado from "./pages/Almoxarifado";
+import Resultados from "./pages/Resultados";
 // componentes.
 import Toast from "./components/Toast";
 import Modal from "./components/Modal";
@@ -344,6 +345,9 @@ function App() {
             </Route>
             <Route path="/almoxarifado">
               <Almoxarifado></Almoxarifado>
+            </Route>
+            <Route path="/resultados">
+              <Resultados></Resultados>
             </Route>
             <Route path="/agendamento">
               <Agendamento></Agendamento>

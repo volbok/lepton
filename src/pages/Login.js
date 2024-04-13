@@ -806,7 +806,7 @@ function Login() {
             "/usuarios",
             5
           )}
-           {montaModuloDeApoio(
+          {montaModuloDeApoio(
             "CADASTRO DE USUÁRIOS",
             usuario.usuarios,
             "/usuarios",
@@ -1209,6 +1209,22 @@ function Login() {
         <AlterarSenha></AlterarSenha>
         <BtnPainel></BtnPainel>
         <LandPage></LandPage>
+        <div
+          className="text1"
+          style={{
+            display: "flex",
+            textDecoration: "underline",
+            color: "white",
+            marginTop:
+              window.innerWidth < mobilewidth && viewalterarsenha == 1 ? 20 : 0,
+          }}
+          onClick={() => {
+            setpagina('RESULTADOS');
+            history.push("/resultados");
+          }}
+        >
+          RESULTADOS DE EXAMES
+        </div>
       </div>
     </div >
   );

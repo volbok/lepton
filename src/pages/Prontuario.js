@@ -225,6 +225,7 @@ function Prontuario() {
   var timeout = null;
   useEffect(() => {
     if (pagina == 1) {
+      setcard('');
       setpaciente([]);
       setatendimento(null);
       loadPacientes();
