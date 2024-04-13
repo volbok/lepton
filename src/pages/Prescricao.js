@@ -24,6 +24,7 @@ import preferencias from '../images/preferencias.svg';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+
 function Prescricao() {
 
   /*
@@ -736,7 +737,7 @@ function Prescricao() {
   const [via, setvia] = useState('VIA');
   const [freq, setfreq] = useState('FREQ');
   const [obs, setobs] = useState('');
-  const [codigo_item, setcodigo_item] = useState(null);  
+  const [codigo_item, setcodigo_item] = useState(null);
   const [id_componente_pai, setid_componente_pai] = useState(null);
   const [id, setid] = useState(null);
 

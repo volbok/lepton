@@ -11,10 +11,16 @@ import lab_green from "../images/lab_green.svg";
 import lab_red from "../images/lab_red.png";
 import lab_yellow from "../images/lab_yellow.svg";
 
+// html2pdf
+import { Preview, print } from 'react-html2pdf';
+
 // componentes.
 import Logo from "../components/Logo";
 // router.
 import { useHistory } from "react-router-dom";
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function Resultados() {
   // context.
@@ -33,6 +39,7 @@ function Resultados() {
   useEffect(() => {
     if (pagina == 'RESULTADOS') {
       setcomponent('LOGIN');
+      localStorage.setItem('dados_exame', '');
     }
     // eslint-disable-next-line
   }, [pagina]);
@@ -185,6 +192,7 @@ function Resultados() {
     // eslint-disable-next-line
   };
 
+  const [random, setrandom] = useState(0);
   function Exames() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -195,6 +203,9 @@ function Resultados() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div id={"lista_exame " + item.id}
                 onClick={() => {
+                  localStorage.setItem('random', item.random);
+                  localStorage.setItem('nome_profissional', item.nome_profissional);
+                  localStorage.setItem('registro_profissional', item.registro_profissional);
                   if (document.getElementById('todososexames ' + item.id).style.display == 'none') {
                     document.getElementById('todososexames ' + item.id).style.display = 'flex';
                   } else {
@@ -273,9 +284,14 @@ function Resultados() {
                   </div>
                 ))}
                 <div className="button"
-                  onClick={() => printDiv()}
+                  onClick={() => {
+                    setrandom(localStorage.getItem('random'));
+                    setTimeout(() => {
+                      printDiv();
+                    }, 2000);
+                  }}
                 >
-                  IMRPIMIR
+                  IMPRIMIR
                 </div>
               </div>
             </div>
@@ -285,15 +301,162 @@ function Resultados() {
     )
   }
 
-  function PrintDiv() {
-    return (
-      <div id="IMPRESSÃO"
-        className="print"
-      >
-        {'IMPRESSÃO'}
-      </div>
-    )
+  function Conteudo() {
+    if (exames.length > 0) {
+      return (
+        <div
+          id="conteudo laudo de exames laboratoriais"
+          style={{
+            display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+            justifyContent: 'center',
+            fontFamily: 'Helvetica',
+            breakInside: 'auto',
+            whiteSpace: 'pre-wrap',
+            flex: 1,
+          }}>
+          <div id='profissional requisitante'
+            style={{ display: 'flex', flexDirection: 'row', alignSelf: 'flex-end', fontSize: 12, textAlign: 'right', width: '100%' }}
+          >
+            {
+              'PROFISSIONAL SOLICITANTE:' + localStorage.getItem('nome_profissional') + ' - Nº CONSELHO: ' + localStorage.getItem('registro_profissional')
+            }
+          </div>
+          {exames.filter(item => item.random == random).map(item => itemLaboratorioConstructor(item))}
+        </div>
+      )
+    } else {
+      return null
+    }
   }
+
+  const styles = {
+    grid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+    }
+  }
+
+  const itemLaboratorioConstructor = (item) => {
+    console.log(item);
+    let resultado = JSON.parse(item.resultado);
+    if (resultado != null && resultado.length > 1) {
+      return (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            width: '100%',
+            padding: 10,
+            margin: 10,
+            borderRadius: 5,
+            borderColor: 'black',
+            borderWidth: 1,
+            borderStyle: 'solid',
+            fontFamily: 'Helvetica',
+            breakInside: 'avoid',
+            flexGrow: 'inherit',
+          }}
+        >
+          <div style={{ fontSize: 22, fontWeight: 'bolder' }}>{item.nome_exame}</div>
+          <div>{'MATERIAL: ' + item.material}</div>
+          <div style={{ marginTop: 15 }}>{'RESULTADO:'}</div>
+          <div style={styles.grid}>
+            {resultado.map(valor => (
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                margin: 5, padding: 10, backgroundColor: '#00000030', borderRadius: 5,
+              }}
+              >
+                <div>{valor.campo + ': ' + valor.valor}</div>
+                <div style={{ fontSize: 12 }}>{valor.vref_min == null || valor.vref_man == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    } else if (resultado != null && resultado.length == 1) {
+      return (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            width: '100%',
+            padding: 10,
+            margin: 10,
+            borderRadius: 5,
+            borderColor: 'black',
+            borderWidth: 1,
+            borderStyle: 'solid',
+            fontFamily: 'Helvetica',
+            breakInside: 'avoid',
+            flexGrow: 'inherit',
+          }}
+        >
+          <div>
+            {resultado.map(valor => (
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                margin: 5, padding: 10, backgroundColor: '#00000030', borderRadius: 5,
+              }}
+              >
+                <div style={{ fontSize: 22, fontWeight: 'bolder' }}>{valor.campo}</div>
+                <div>{'MATERIAL: ' + item.material}</div>
+                <div style={{ marginTop: 15 }}>{'RESULTADO:'}</div>
+                <div>{valor.valor}</div>
+                <div style={{ fontSize: 12 }}>{valor.vref_min == null || valor.vref_max == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  }
+
+  function PrintDocumento() {
+    if (exames.length > 0) {
+      return (
+        <Preview id="pdf">
+          <div id="IMPRESSÃO"
+            className="print"
+          >
+            <table style={{ width: '100%' }}>
+              <thead style={{ width: '100%' }}>
+                <tr style={{ width: '100%' }}>
+                  <td style={{ width: '100%' }}>
+                    <Header></Header>
+                  </td>
+                </tr>
+              </thead>
+              <tbody style={{ width: '100%' }}>
+                <tr style={{ width: '100%' }}>
+                  <td style={{ width: '100%' }}>
+                    <div id="campos"
+                      style={{
+                        display: 'flex', flexDirection: 'column',
+                        breakInside: 'auto', alignSelf: 'center', width: '100%'
+                      }}>
+                      <Conteudo></Conteudo>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot style={{ width: '100%' }}>
+                <tr style={{ width: '100%' }}>
+                  <td style={{ width: '100%' }}>
+                    <Footer></Footer>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </Preview>
+      )
+    } else {
+      return null
+    }
+  };
 
   function printDiv() {
     let printdocument = document.getElementById("IMPRESSÃO").innerHTML;
@@ -302,7 +465,8 @@ function Resultados() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    // a.close();
+    print('MEUS EXAMES', 'pdf');
+
   }
 
   const [listaexames, setlistaexames] = useState([]);
@@ -415,7 +579,7 @@ function Resultados() {
           ></img>
         </div>
         <Exames></Exames>
-        <PrintDiv></PrintDiv>
+        <PrintDocumento></PrintDocumento>
       </div>
     </div>
   )
