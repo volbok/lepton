@@ -586,7 +586,7 @@ function Resultados() {
           backgroundColor: 'white', width: '100vw', height: '100vh',
         }}
         >
-          <div id="pdf" style={{widt: '100%'}}>
+          <div id="pdf" style={{ width: '100%', backgroundColor: 'white' }}>
             <table style={{ width: '100%' }}>
               <thead style={{ width: '100%' }}>
                 <tr style={{ width: '100%' }}>
@@ -625,7 +625,7 @@ function Resultados() {
         </div>
       )
     }
-  };
+  }
 
   function printDiv() {
     let printdocument = document.getElementById("pdf").innerHTML;
