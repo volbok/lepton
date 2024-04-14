@@ -45,6 +45,10 @@
   display: none !important
 }
 
+.noprint {
+  display: flex !important
+}
+
 .printable {
   display: flex;
   flex-direction: column;
@@ -69,6 +73,10 @@
 
   .print {
     display: flex !important
+  }
+
+  .noprint {
+    display: none !important
   }
 
 }

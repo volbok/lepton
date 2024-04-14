@@ -10,17 +10,15 @@ import power from "../images/power.svg";
 import lab_green from "../images/lab_green.svg";
 import lab_red from "../images/lab_red.png";
 import lab_yellow from "../images/lab_yellow.svg";
+import logo from '../images/logo.svg';
 
 // html2pdf
-import { Preview, print } from 'react-html2pdf';
+// import { Preview, print } from 'react-html2pdf';
 
 // componentes.
 import Logo from "../components/Logo";
 // router.
 import { useHistory } from "react-router-dom";
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 function Resultados() {
   // context.
@@ -29,6 +27,8 @@ function Resultados() {
     pagina,
     setpagina,
     settoast,
+    cliente,
+    mobilewidth,
   } = useContext(Context);
 
   // history (router).
@@ -69,12 +69,6 @@ function Resultados() {
               setcomponent('RESULTADOS');
               loadListaExames();
               loadExames();
-              toast(
-                settoast,
-                "LOGIN REALIZADO COM SUCESSO",
-                "rgb(82, 190, 128, 1)",
-                3000
-              );
             } else {
               toast(
                 settoast,
@@ -203,7 +197,10 @@ function Resultados() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div id={"lista_exame " + item.id}
                 onClick={() => {
+                  // setrandom(item.random);
                   localStorage.setItem('random', item.random);
+                  localStorage.setItem('id_paciente', item.data);
+                  localStorage.setItem('data_exames', item.data);
                   localStorage.setItem('nome_profissional', item.nome_profissional);
                   localStorage.setItem('registro_profissional', item.registro_profissional);
                   if (document.getElementById('todososexames ' + item.id).style.display == 'none') {
@@ -218,6 +215,7 @@ function Resultados() {
                 }}>
                 <div className="button cor1"
                   style={{
+                    marginLeft: 0,
                     marginRight: 0,
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
@@ -229,6 +227,7 @@ function Resultados() {
                   style={{
                     display: 'flex', flexDirection: 'column',
                     marginLeft: 0,
+                    marginRight: 0,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                   }}
@@ -243,33 +242,41 @@ function Resultados() {
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignContent: 'center',
+                  backgroundColor: 'white',
+                  borderRadius: 5,
+                  marginTop: 0,
                 }}
               >
                 {exames.filter(valor => valor.random == item.random).map((item) => (
                   <div
                     style={{
                       display: 'grid',
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
                       gridTemplateColumns: '3fr 2fr 1fr',
                       width: '90%',
                       alignSelf: 'center',
+                      alignContent: 'flex-start',
                     }}>
-                    <div className="text2"
+                    <div className="text1"
                       style={{
                         display: 'flex',
                         flexDirection: 'row',
                         textAlign: 'left', justifyContent: 'flex-start', alignContent: 'flex-start',
                         width: '100%',
+                        alignSelf: 'flex-start',
                       }}>
                       {item.nome_exame}
                     </div>
-                    <div className="text2">{item.material}</div>
+                    <div className="text1" style={{ alignSelf: 'flex-start' }}>{item.material}</div>
                     <div
                       style={{
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'center',
                         width: '100%',
-                        alignSelf: 'center', alignContent: 'center',
+                        alignSelf: 'flex-start', alignContent: 'center',
+                        marginTop: 5,
                       }}>
                       <img
                         alt=""
@@ -283,19 +290,139 @@ function Resultados() {
                     </div>
                   </div>
                 ))}
-                <div className="button"
-                  onClick={() => {
-                    setrandom(localStorage.getItem('random'));
-                    setTimeout(() => {
-                      printDiv();
-                    }, 2000);
-                  }}
-                >
-                  IMPRIMIR
+                <div style={{
+                  display: 'flex', flexDirection: 'row', justifyContent: 'center',
+                  width: '60vw',
+                  alignSelf: 'center',
+                }}>
+                  <div
+                    className="button"
+                    style={{ width: 150 }}
+                    onClick={() => {
+                      setrandom(localStorage.getItem('random'));
+                      setTimeout(() => {
+                        // setcomponent('PDF');
+                        printDiv();
+                      }, 1000);
+                    }}
+                  >
+                    BAIXAR PDF
+                  </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    )
+  }
+
+  function Header() {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column', justifyContent: 'center',
+        fontFamily: 'Helvetica',
+        breakInside: 'avoid',
+      }}>
+        <div style={{
+          display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+          width: '100%',
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+            <img
+              alt=""
+              src={logo}
+              style={{
+                margin: 0,
+                height: 0.2 * window.innerWidth,
+                width: 0.2 * window.innerWidth,
+              }}
+            ></img>
+            <div style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+              alignItems: 'flex-start',
+              textAlign: 'left',
+              marginRight: 10,
+              alignContent: 'flex-start',
+            }}>
+              <div className='text1'
+                style={{
+                  margin: 1.5, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 8 : 10,
+                  color: 'black',
+                }}>
+                {cliente.razao_social}
+              </div>
+              <div className='text1'
+                style={{
+                  margin: 2, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 9 : 12,
+                  color: 'black',
+                }}>
+                {cliente.cnpj}
+              </div>
+              <div className='text1'
+                style={{
+                  margin: 2, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 9 : 12,
+                  color: 'black',
+                }}>
+                {cliente.texto1}
+              </div>
+              <div className='text1'
+                style={{
+                  margin: 2, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 9 : 12,
+                  color: 'black',
+                }}>
+                {cliente.texto2}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            }}>
+            <div
+              style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'flex-start',
+                borderRadius: 5, backgroundColor: 'gray', color: 'white',
+                padding: 5, margin: 10,
+                alignSelf: 'flex-start',
+              }}>
+              <div
+                className="text1"
+                style={{
+                  margin: 2, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 12 : 14,
+                  color: 'white',
+                }}>
+                {'DATA DO EXAME: ' + moment(localStorage.getItem("data_exames")).format('DD/MM/YY - HH:mm')}
+              </div>
+              <div
+                className="text1"
+                style={{
+                  display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+                  margin: 2, padding: 0, alignSelf: 'flex-start', textAlign: 'left',
+                  fontSize: window.innerWidth < mobilewidth ? 12 : 14,
+                  color: 'white',
+                  alignContent: 'flex-start',
+                }}>
+                {'PRONTUÁRIO: ' + paciente.map(item => item.id_paciente)}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="text1" style={{ alignSelf: 'flex-start', textAlign: 'left', margin: 2, marginTop: 10, padding: 0, color: 'black' }}>
+          {'NOME CIVIL: ' + paciente.map(item => item.nome_paciente)}
+        </div>
+        <div className="text1" style={{ alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black' }}>
+          {'DN: ' + paciente.map(item => moment(item.dn_paciente).format('DD/MM/YYYY'))}
+        </div>
+        <div className="text1" style={{ alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black' }}>
+          {'NOME DA MÃE: ' + paciente.map(item => item.nome_mae_paciente)}
         </div>
       </div>
     )
@@ -307,26 +434,63 @@ function Resultados() {
         <div
           id="conteudo laudo de exames laboratoriais"
           style={{
-            display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+            display: 'flex', flexDirection: 'column',
+            flexWrap: 'wrap',
             justifyContent: 'center',
             fontFamily: 'Helvetica',
             breakInside: 'auto',
             whiteSpace: 'pre-wrap',
             flex: 1,
+            alignSelf: 'flex-start',
+            alignContent: 'flex-start',
           }}>
           <div id='profissional requisitante'
-            style={{ display: 'flex', flexDirection: 'row', alignSelf: 'flex-end', fontSize: 12, textAlign: 'right', width: '100%' }}
+            className="text1"
+            style={{
+              display: 'flex', flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black', fontWeight: 'normal',
+              fontSize: 10,
+            }}
           >
-            {
-              'PROFISSIONAL SOLICITANTE:' + localStorage.getItem('nome_profissional') + ' - Nº CONSELHO: ' + localStorage.getItem('registro_profissional')
-            }
+            {'PROFISSIONAL SOLICITANTE:' + localStorage.getItem('nome_profissional') + ' - Nº CONSELHO: ' + localStorage.getItem('registro_profissional')}
           </div>
-          {exames.filter(item => item.random == random).map(item => itemLaboratorioConstructor(item))}
+          {exames.filter(item => item.random == random && item.resultado != null && item.status == 2).map(item => itemLaboratorioConstructor(item))}
         </div>
       )
     } else {
       return null
     }
+  }
+
+  function Footer() {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        fontFamily: 'Helvetica',
+        breakInside: 'avoid',
+      }}>
+        <div>_____________________________</div>
+        <div
+          className="text1"
+          style={{
+            alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black',
+            fontSize: 10,
+          }}
+        >
+          {'NOME DO RESPONSÁVEL TÉCNICO PELO LABORATÓRIO'}
+        </div>
+        <div
+          className="text1"
+          style={{
+            alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black', fontWeight: 'normal',
+            fontSize: 10,
+          }}
+        >
+          {'RESPONSÁVEL TÉCNICO'}
+        </div>
+      </div>
+    )
   }
 
   const styles = {
@@ -347,8 +511,8 @@ function Resultados() {
             flexDirection: 'column',
             justifyContent: 'flex-start',
             width: '100%',
-            padding: 10,
-            margin: 10,
+            padding: 5,
+            margin: 5,
             borderRadius: 5,
             borderColor: 'black',
             borderWidth: 1,
@@ -358,18 +522,18 @@ function Resultados() {
             flexGrow: 'inherit',
           }}
         >
-          <div style={{ fontSize: 22, fontWeight: 'bolder' }}>{item.nome_exame}</div>
-          <div>{'MATERIAL: ' + item.material}</div>
-          <div style={{ marginTop: 15 }}>{'RESULTADO:'}</div>
+          <div style={{ fontSize: 12, fontWeight: 'bolder' }}>{item.nome_exame}</div>
+          <div style={{ fontSize: 8, fontWeight: 'normal' }}>{'MATERIAL: ' + item.material}</div>
+          <div style={{ fontSize: 8, fontWeight: 'normal', marginTop: 5 }}>{'RESULTADO:'}</div>
           <div style={styles.grid}>
             {resultado.map(valor => (
               <div style={{
                 display: 'flex', flexDirection: 'column',
-                margin: 5, padding: 10, backgroundColor: '#00000030', borderRadius: 5,
+                margin: 2, padding: 2, borderRadius: 5,
               }}
               >
-                <div>{valor.campo + ': ' + valor.valor}</div>
-                <div style={{ fontSize: 12 }}>{valor.vref_min == null || valor.vref_man == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
+                <div style={{ fontSize: 12, fontWeight: 'bolder' }}>{valor.campo + ': ' + valor.valor}</div>
+                <div style={{ fontSize: 8 }}>{valor.vref_min == null || valor.vref_man == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
               </div>
             ))}
           </div>
@@ -383,8 +547,8 @@ function Resultados() {
             flexDirection: 'column',
             justifyContent: 'flex-start',
             width: '100%',
-            padding: 10,
-            margin: 10,
+            padding: 5,
+            margin: 5,
             borderRadius: 5,
             borderColor: 'black',
             borderWidth: 1,
@@ -398,14 +562,14 @@ function Resultados() {
             {resultado.map(valor => (
               <div style={{
                 display: 'flex', flexDirection: 'column',
-                margin: 5, padding: 10, backgroundColor: '#00000030', borderRadius: 5,
+                margin: 2, padding: 2, borderRadius: 5,
               }}
               >
-                <div style={{ fontSize: 22, fontWeight: 'bolder' }}>{valor.campo}</div>
-                <div>{'MATERIAL: ' + item.material}</div>
-                <div style={{ marginTop: 15 }}>{'RESULTADO:'}</div>
-                <div>{valor.valor}</div>
-                <div style={{ fontSize: 12 }}>{valor.vref_min == null || valor.vref_max == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
+                <div style={{ fontSize: 12, fontWeight: 'bolder' }}>{valor.campo}</div>
+                <div style={{ fontSize: 8 }}>{'MATERIAL: ' + item.material}</div>
+                <div style={{ fontSize: 8, marginTop: 5 }}>{'RESULTADO:'}</div>
+                <div style={{ fontSize: 12, fontWeight: 'bolder' }}>{valor.valor}</div>
+                <div style={{ fontSize: 8 }}>{valor.vref_min == null || valor.vref_max == null ? '' : 'REFERÊNCIA: ' + valor.vref_min + ' A ' + valor.vref_max + '.'}</div>
               </div>
             ))}
           </div>
@@ -417,10 +581,12 @@ function Resultados() {
   function PrintDocumento() {
     if (exames.length > 0) {
       return (
-        <Preview id="pdf">
-          <div id="IMPRESSÃO"
-            className="print"
-          >
+        <div style={{
+          flexDirection: 'column', justifyContent: 'flex-start',
+          backgroundColor: 'white', width: '100vw', height: '100vh',
+        }}
+        >
+          <div id="pdf">
             <table style={{ width: '100%' }}>
               <thead style={{ width: '100%' }}>
                 <tr style={{ width: '100%' }}>
@@ -451,22 +617,24 @@ function Resultados() {
               </tfoot>
             </table>
           </div>
-        </Preview>
+        </div>
       )
     } else {
-      return null
+      return (
+        <div>
+        </div>
+      )
     }
   };
 
   function printDiv() {
-    let printdocument = document.getElementById("IMPRESSÃO").innerHTML;
+    let printdocument = document.getElementById("pdf").innerHTML;
     var a = window.open('  ', 'DOCUMENTO PARA IMPRESSÃO');
     a.document.write('<html>');
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    print('MEUS EXAMES', 'pdf');
-
+    a.close();
   }
 
   const [listaexames, setlistaexames] = useState([]);
@@ -500,7 +668,10 @@ function Resultados() {
     >
       <div id="conteúdo do login"
         className="chassi"
-        style={{ display: component == 'LOGIN' ? 'flex' : 'none' }}
+        style={{
+          display: component == 'LOGIN' ? 'flex' : 'none',
+          visibility: component == 'LOGIN' ? 'visible' : 'hidden',
+        }}
       >
         <div
           className="button-red"
@@ -548,8 +719,10 @@ function Resultados() {
         className="chassi"
         style={{
           display: component == 'RESULTADOS' ? 'flex' : 'none',
+          visibility: component == 'RESULTADOS' ? 'visible' : 'hidden',
           flexDirection: 'column',
           justifyContent: 'flex-start',
+          overflowY: 'scroll',
         }}
       >
         <div
@@ -579,6 +752,16 @@ function Resultados() {
           ></img>
         </div>
         <Exames></Exames>
+      </div>
+      <div id="impressão"
+        style={{
+          display: component == 'PDF' ? 'flex' : 'none',
+          visibility: component == 'PDF' ? 'visible' : 'hidden',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+        }}
+        onClick={() => setcomponent('RESULTADOS')}
+      >
         <PrintDocumento></PrintDocumento>
       </div>
     </div>
