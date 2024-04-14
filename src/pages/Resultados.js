@@ -655,7 +655,7 @@ function Resultados() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    a.close();
+    // a.close();
   }
 
   const [listaexames, setlistaexames] = useState([]);
