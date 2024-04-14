@@ -5,12 +5,14 @@ import Context from "./Context";
 // funções.
 import toast from "../functions/toast";
 import moment from "moment";
+import selector from "../functions/selector";
 // imagens.
 import power from "../images/power.svg";
 import lab_green from "../images/lab_green.svg";
-import lab_red from "../images/lab_red.png";
+import lab_red from "../images/lab_red.svg";
 import lab_yellow from "../images/lab_yellow.svg";
 import logo from '../images/logo.svg';
+import zoio from '../images/zoio.svg';
 
 // html2pdf
 // import { Preview, print } from 'react-html2pdf';
@@ -162,6 +164,16 @@ function Resultados() {
               document.getElementById("inputDn").focus();
             }}
           >
+            <img
+              alt=""
+              src={zoio}
+              style={{
+                margin: 5,
+                height: 30,
+                width: 30,
+                opacity: 0.6,
+              }}
+            ></img>
           </div>
         </div>
         <div
@@ -192,12 +204,17 @@ function Resultados() {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="text2" style={{ fontSize: 24 }}>{'OLÁ, ' + paciente.map(item => item.nome_paciente)}</div>
         <div className="text2">{'ACESSE ABAIXO OS RESULTADOS DOS SEUS EXAMES'}</div>
-        <div>
+        <div id="lista de pedidos de exames" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
           {listaexames.sort((a, b) => moment(a.data) < moment(b.data) ? 1 : -1).map(item => (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'center',
+                width: window.innerWidth < mobilewidth ? '90vw' : '50vw',
+                alignSelf: 'center', alignContent: 'center',
+              }}>
               <div id={"lista_exame " + item.id}
                 onClick={() => {
-                  // setrandom(item.random);
                   localStorage.setItem('random', item.random);
                   localStorage.setItem('id_paciente', item.data);
                   localStorage.setItem('data_exames', item.data);
@@ -208,12 +225,14 @@ function Resultados() {
                   } else {
                     document.getElementById('todososexames ' + item.id).style.display = 'none';
                   }
+                  selector("lista de pedidos de exames", "botao_exame " + item.id, 300);
                 }}
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 2fr',
                 }}>
-                <div className="button cor1"
+                <div
+                  className="button"
                   style={{
                     marginLeft: 0,
                     marginRight: 0,
@@ -223,13 +242,15 @@ function Resultados() {
                 >
                   {moment(item.data).format('DD/MM/YYYY')}
                 </div>
-                <div className="button"
+                <div id={"botao_exame " + item.id}
+                  className="button"
                   style={{
                     display: 'flex', flexDirection: 'column',
                     marginLeft: 0,
                     marginRight: 0,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
+                    opacity: 0.8,
                   }}
                 >
                   <div>{item.nome_profissional}</div>
@@ -253,7 +274,7 @@ function Resultados() {
                       display: 'grid',
                       flexDirection: 'row',
                       justifyContent: 'flex-start',
-                      gridTemplateColumns: '3fr 2fr 1fr',
+                      gridTemplateColumns: window.innerWidth < mobilewidth ? '3fr 2fr 1fr' : '1fr 1fr 1fr',
                       width: '90%',
                       alignSelf: 'center',
                       alignContent: 'flex-start',
@@ -634,7 +655,7 @@ function Resultados() {
     a.document.write(printdocument);
     a.document.write('</html>');
     a.print();
-    // a.close();
+    a.close();
   }
 
   const [listaexames, setlistaexames] = useState([]);
