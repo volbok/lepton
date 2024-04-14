@@ -335,8 +335,8 @@ function Resultados() {
               src={logo}
               style={{
                 margin: 0,
-                height: 0.2 * window.innerWidth,
-                width: 0.2 * window.innerWidth,
+                height: window.innerWidth < mobilewidth ? 0.2 * window.innerWidth : 75,
+                width: window.innerWidth < mobilewidth ? 0.2 * window.innerWidth : 75,
               }}
             ></img>
             <div style={{
@@ -424,7 +424,7 @@ function Resultados() {
         <div className="text1" style={{ alignSelf: 'flex-start', textAlign: 'left', margin: 2, padding: 0, color: 'black' }}>
           {'NOME DA MÃE: ' + paciente.map(item => item.nome_mae_paciente)}
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -443,6 +443,7 @@ function Resultados() {
             flex: 1,
             alignSelf: 'flex-start',
             alignContent: 'flex-start',
+            width: 'calc(100% - 20px)',
           }}>
           <div id='profissional requisitante'
             className="text1"
@@ -510,7 +511,6 @@ function Resultados() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            width: '100%',
             padding: 5,
             margin: 5,
             borderRadius: 5,
@@ -586,7 +586,7 @@ function Resultados() {
           backgroundColor: 'white', width: '100vw', height: '100vh',
         }}
         >
-          <div id="pdf">
+          <div id="pdf" style={{widt: '100%'}}>
             <table style={{ width: '100%' }}>
               <thead style={{ width: '100%' }}>
                 <tr style={{ width: '100%' }}>
@@ -759,6 +759,7 @@ function Resultados() {
           visibility: component == 'PDF' ? 'visible' : 'hidden',
           flexDirection: 'column',
           justifyContent: 'flex-start',
+          width: '100%',
         }}
         onClick={() => setcomponent('RESULTADOS')}
       >
