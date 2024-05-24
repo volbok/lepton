@@ -148,13 +148,59 @@ function Cadastro() {
       numero_documento: document
         .getElementById("inputEditNumeroDocumento")
         .value.toUpperCase(),
+      cns: document
+        .getElementById("inputEditCns")
+        .value.toUpperCase(),
       endereco: document
         .getElementById("inputEditEndereco")
         .value.toUpperCase(),
+
+      logradouro: document
+        .getElementById("inputEditLogradouro")
+        .value.toUpperCase(),
+      bairro: document
+        .getElementById("inputEditBairro")
+        .value.toUpperCase(),
+      localidade: document
+        .getElementById("inputEditLocalidade")
+        .value.toUpperCase(),
+      uf: document
+        .getElementById("inputEditUf")
+        .value.toUpperCase(),
+      cep: document
+        .getElementById("inputEditCep")
+        .value.toUpperCase(),
+
       telefone: document
         .getElementById("inputEditTelefone")
         .value.toUpperCase(),
       email: document.getElementById("inputEditEmail").value,
+
+      nome_responsavel: document
+        .getElementById("inputEditNomeResponsavel")
+        .value.toUpperCase(),
+      sexo: document
+        .getElementById("inputEditSexo")
+        .value.toUpperCase(),
+      nacionalidade: document
+        .getElementById("inputEditNacionalidade")
+        .value.toUpperCase(),
+      cor: document
+        .getElementById("inputEditCor")
+        .value.toUpperCase(),
+      etnia: document
+        .getElementById("inputEditEtnia")
+        .value.toUpperCase(),
+
+      orgao_emissor: document
+        .getElementById("inputEditOrgaoEmissor")
+        .value.toUpperCase(),
+      endereco_numero: document
+        .getElementById("inputEditEnderecoNumero")
+        .value.toUpperCase(),
+      endereco_complemento: document
+        .getElementById("inputEditEnderecoComplemento")
+        .value.toUpperCase(),
     };
     axios
       .post(html + "insert_paciente", obj)
@@ -573,6 +619,10 @@ function Cadastro() {
             " - CEP: " +
             endereco.cep;
           document.getElementById("inputEditCep").value = endereco.cep;
+          document.getElementById("inputEditLogradouro").value = endereco.logradouro.toUpperCase();
+          document.getElementById("inputEditBairro").value = endereco.bairro.toUpperCase();
+          document.getElementById("inputEditLocalidade").value = endereco.localidade.toUpperCase();
+          document.getElementById("inputEditUf").value = endereco.uf.toUpperCase();
         } else {
           document.getElementById("inputEditEndereco").value = "";
           document.getElementById("inputEditCep").value = "CEP";
@@ -629,8 +679,7 @@ function Cadastro() {
               marginRight: vieweditpaciente == 1 ? 20 : '',
             }}
           >
-            <div
-              id="nome do paciente"
+            <div id="nome do paciente"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -659,8 +708,36 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div
-              id="dn paciente"
+            <div id="nome do responsavel"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">NOME DO RESPONSÁVEL</div>
+              <textarea
+                autoComplete="off"
+                placeholder="NOME DO RESPONSÁVEL"
+                className="textarea"
+                type="text"
+                id="inputEditNomeResponsavel"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "NOME DO RESPONSÁVEL")}
+                defaultValue={vieweditpaciente == 1 ? paciente.nome_responsavel : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 400,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+            <div id="dn paciente"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -695,8 +772,125 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div
-              id="documento"
+            <div id="sexo"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">SEXO</div>
+              <textarea
+                autoComplete="off"
+                placeholder="SEXO"
+                className="textarea"
+                type="text"
+                id="inputEditSexo"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "SEXO")}
+                defaultValue={vieweditpaciente == 1 ? paciente.sexo : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  textAlign: "center",
+                  width: 100,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+            <div id="nacionalidade"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">NACIONALIDADE</div>
+              <textarea
+                autoComplete="off"
+                placeholder="NACIONALIDADE"
+                className="textarea"
+                type="text"
+                id="inputEditNacionalidade"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "NACIONALIDADE")}
+                defaultValue={vieweditpaciente == 1 ? paciente.nacionalidade : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 400,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+            <div id="cor"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">COR</div>
+              <textarea
+                autoComplete="off"
+                placeholder="COR"
+                className="textarea"
+                type="text"
+                id="inputEditCor"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "COR")}
+                defaultValue={vieweditpaciente == 1 ? paciente.cor : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 400,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+            <div id="etnia"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">ETNIA</div>
+              <textarea
+                autoComplete="off"
+                placeholder="ETNIA"
+                className="textarea"
+                type="text"
+                id="inputEditEtnia"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "ETNIA")}
+                defaultValue={vieweditpaciente == 1 ? paciente.etnia : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 400,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+
+            <div id="documento"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -712,12 +906,11 @@ function Cadastro() {
                   flexWrap: "wrap",
                 }}
               >
-                <input
+                <input id="inputEditTipoDocumento"
                   autoComplete="off"
                   placeholder="TIPO DE DOC."
                   className="input destacaborda"
                   type="text"
-                  id="inputEditTipoDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "TIPO DE DOC.")}
                   defaultValue={vieweditpaciente == 1 ? paciente.tipo_documento : ''}
@@ -731,12 +924,11 @@ function Cadastro() {
                     textAlign: "center",
                   }}
                 ></input>
-                <textarea
+                <textarea id="inputEditNumeroDocumento"
                   autoComplete="off"
                   placeholder="NÚMERO DO DOCUMENTO"
                   className="textarea"
                   type="text"
-                  id="inputEditNumeroDocumento"
                   onFocus={(e) => (e.target.placeholder = "")}
                   onBlur={(e) => (e.target.placeholder = "NÚMERO DO DOCUMENTO")}
                   defaultValue={vieweditpaciente == 1 ? paciente.numero_documento : ''}
@@ -744,7 +936,8 @@ function Cadastro() {
                     flexDirection: "center",
                     justifyContent: "center",
                     alignSelf: "center",
-                    width: 200,
+                    textAlign: "center",
+                    width: 100,
                     padding: 15,
                     height: 20,
                     minHeight: 20,
@@ -752,6 +945,65 @@ function Cadastro() {
                   }}
                 ></textarea>
               </div>
+            </div>
+            <div id="orgao emissor"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">ÓRGÃO EMISSOR</div>
+              <textarea
+                autoComplete="off"
+                placeholder="ÓRGÃO EMISSOR"
+                className="textarea"
+                type="text"
+                id="inputEditOrgaoEmissor"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "ÓRGÃO EMISSOR")}
+                defaultValue={vieweditpaciente == 1 ? paciente.orgao_emissor : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 200,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
+            </div>
+            <div id="cns"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div className="text1">CNS</div>
+              <textarea
+                title="CNS = CARTÃO NACIONAL DE SAÚDE."
+                autoComplete="off"
+                placeholder="CNS"
+                className="textarea"
+                type="text"
+                id="inputEditCns"
+                onFocus={(e) => (e.target.placeholder = "")}
+                onBlur={(e) => (e.target.placeholder = "CNS")}
+                defaultValue={vieweditpaciente == 1 ? paciente.cns : ''}
+                style={{
+                  flexDirection: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  width: 200,
+                  padding: 15,
+                  height: 20,
+                  minHeight: 20,
+                  maxHeight: 20,
+                }}
+              ></textarea>
             </div>
             <div id="nome da mae"
               style={{
@@ -782,7 +1034,7 @@ function Cadastro() {
                 }}
               ></textarea>
             </div>
-            <div id="endereco"
+            <div id="endereco completo"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -816,10 +1068,9 @@ function Cadastro() {
                   }, 2000);
                 }}
               ></textarea>
-              <textarea
+              <textarea id="inputEditEndereco"
                 className="textarea"
                 type="text"
-                id="inputEditEndereco"
                 defaultValue={vieweditpaciente == 1 ? paciente.endereco : ''}
                 style={{
                   flexDirection: "center",
@@ -832,7 +1083,178 @@ function Cadastro() {
                   maxHeight: 75,
                 }}
               ></textarea>
+
+              <div id="endereco - logradouro"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">LOGRADOURO</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditLogradouro"
+                  placeholder="LOGRADOURO"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "LOGRADOURO (RUA, PRAÇA)...")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.logradouro : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 400,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
+              <div id="endereco - numero"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">NÚMERO</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditEnderecoNumero"
+                  placeholder="NÚMERO"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "NUMERO...")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.endereco_numero : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 100,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
+              <div id="endereco - complemento"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">COMPLEMENTO</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditEnderecoComplemento"
+                  placeholder="COMPLEMENTO"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "COMPLEMENTO...")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.endereco_complemento : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 400,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
+              <div id="endereco - bairro"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">BAIRRO</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditBairro"
+                  placeholder="BAIRRO"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "BAIRRO...")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.bairro : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 400,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
+              <div id="endereco - localidade"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">CIDADE/LOCALIDADE</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditLocalidade"
+                  placeholder="LOCALIDADE"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "LOCALIDADE (CIDADE)...")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.localidade : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: 400,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
+              <div id="endereco - uf"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="text1">UF</div>
+                <textarea
+                  className="textarea"
+                  type="text"
+                  id="inputEditUf"
+                  placeholder="UF"
+                  onFocus={(e) => (e.target.placeholder = "")}
+                  onBlur={(e) => (e.target.placeholder = "UF")}
+                  defaultValue={vieweditpaciente == 1 ? paciente.uf : ''}
+                  style={{
+                    flexDirection: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    textAlign: "center",
+                    width: 100,
+                    padding: 15,
+                    height: 20,
+                    minHeight: 20,
+                    maxHeight: 20,
+                  }}
+                ></textarea>
+              </div>
             </div>
+
             <div id="telefone"
               style={{
                 display: "flex",
@@ -857,7 +1279,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: 150,
+                  width: 100,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -886,7 +1308,7 @@ function Cadastro() {
                   flexDirection: "center",
                   justifyContent: "center",
                   alignSelf: "center",
-                  width: 200,
+                  width: 400,
                   padding: 15,
                   height: 20,
                   minHeight: 20,
@@ -1139,9 +1561,28 @@ function Cadastro() {
       exames_atuais: paciente.exames_atuais,
       tipo_documento: document.getElementById("inputEditTipoDocumento").value.toUpperCase(),
       numero_documento: document.getElementById("inputEditNumeroDocumento").value.toUpperCase(),
+      cns: document.getElementById("inputEditCns").value.toUpperCase(),
       endereco: document.getElementById("inputEditEndereco").value.toUpperCase(),
+
+      logradouro: document.getElementById("inputEditLogradouro").value.toUpperCase(),
+      bairro: document.getElementById("inputEditBairro").value.toUpperCase(),
+      localidade: document.getElementById("inputEditLocalidade").value.toUpperCase(),
+      uf: document.getElementById("inputEditUf").value.toUpperCase(),
+      cep: document.getElementById("inputEditCep").value.toUpperCase(),
+
       telefone: document.getElementById("inputEditTelefone").value.toUpperCase(),
       email: document.getElementById("inputEditEmail").value,
+
+      nome_responsavel: document.getElementById("inputEditNomeResponsavel").value.toUpperCase(),
+      sexo: document.getElementById("inputEditSexo").value.toUpperCase(),
+      nacionalidade: document.getElementById("inputEditNacionalidade").value.toUpperCase(),
+      cor: document.getElementById("inputEditCor").value.toUpperCase(),
+      etnia: document.getElementById("inputEditEtnia").value.toUpperCase(),
+
+      orgao_emissor: document.getElementById("inputEditOrgaoEmissor").value.toUpperCase(),
+      endereco_numero: document.getElementById("inputEditEnderecoNumero").value.toUpperCase(),
+      endereco_complemento: document.getElementById("inputEditEnderecoComplemento").value.toUpperCase(),
+
     };
     axios
       .post(html + "update_paciente/" + paciente.id_paciente, obj)

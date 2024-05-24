@@ -90,7 +90,7 @@ function Prontuario() {
     card, setcard,
     prescricao, setprescricao,
     consultorio, setconsultorio,
-   
+
     mobilewidth,
 
     setunidade,

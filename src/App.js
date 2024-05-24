@@ -56,6 +56,7 @@ function App() {
   const [cliente, setcliente] = useState({
     id_cliente: 1,
     razao_social: "HOSPITAL SÃO FRANCISCO",
+    cnes: "1234287",
     cnpj: "CNPJ: 1001/001",
     texto1: 'ENDEREÇO: RUA ITAPAGIPE, 226, CONCÓRDIA - BH/MG',
     texto2: 'TELEFONE: (31) 1234-4321'

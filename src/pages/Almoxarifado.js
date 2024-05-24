@@ -148,6 +148,7 @@ function Almoxarifado() {
             style={{
               display: 'flex',
               flexDirection: 'column',
+              marginTop: 20,
             }}
             onClick={() => {
               localStorage.setItem("selected_item", JSON.stringify(item));
