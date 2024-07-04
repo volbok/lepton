@@ -16,6 +16,7 @@ import Laboratorio from "./pages/Laboratorio";
 import Agendamento from "./pages/Agendamento";
 import Farmacia from "./pages/Farmacia";
 import Almoxarifado from "./pages/Almoxarifado";
+import Faturamento from "./pages/Faturamento";
 import Resultados from "./pages/Resultados";
 // componentes.
 import Toast from "./components/Toast";
@@ -151,6 +152,9 @@ function App() {
 
   // almoxarifado.
   const [almoxarifado, setalmoxarifado] = useState([]);
+
+  // faturamento.
+  const [aih, setaih] = useState([]);
 
   // resolvendo a responsividade para o innerHeight nos celulares.
   const [altura, setaltura] = useState(`${window.innerHeight}px`);
@@ -309,6 +313,7 @@ function App() {
         mobilewidth, setmobilewidth,
         idprescricao, setidprescricao,
         almoxarifado, setalmoxarifado,
+        aih, setaih,
       }}
     >
       <div>
@@ -346,6 +351,9 @@ function App() {
             </Route>
             <Route path="/almoxarifado">
               <Almoxarifado></Almoxarifado>
+            </Route>
+            <Route path="/faturamento">
+              <Faturamento></Faturamento>
             </Route>
             <Route path="/resultados">
               <Resultados></Resultados>

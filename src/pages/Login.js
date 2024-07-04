@@ -807,12 +807,6 @@ function Login() {
             5
           )}
           {montaModuloDeApoio(
-            "CADASTRO DE USUÁRIOS",
-            usuario.usuarios,
-            "/usuarios",
-            5
-          )}
-          {montaModuloDeApoio(
             "LABORATÓRIO",
             usuario.laboratorio,
             "/laboratorio",
@@ -833,8 +827,8 @@ function Login() {
           {montaModuloDeApoio(
             "FATURAMENTO",
             usuario.faturamento,
-            "/financeiro",
-            9
+            "/faturamento",
+            "FATURAMENTO"
           )}
         </div>
       </div>

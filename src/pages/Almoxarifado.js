@@ -143,7 +143,7 @@ function Almoxarifado() {
     return (
       <div id="scroll lista de almoxarifado"
         className='grid'>
-        {arrayalmoxarifado.map((item) => (
+        {arrayalmoxarifado.sort((a, b) => a.nome_item > b.nome_item ? 1 : -1).map((item) => (
           <div className='button cor1opaque'
             style={{
               display: 'flex',

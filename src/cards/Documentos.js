@@ -457,7 +457,7 @@ function Documentos() {
       let texto =
         'INFORME ABAIXO OS DIAS E O CID DO ATESTADO.';
       insertDocumento(texto);
-      document.getElementById("gadgets_atestado").style.display = 'flex';
+      // document.getElementById("gadgets_atestado").style.display = 'flex';
     } else if (tipodocumento == 'ALTA HOSPITALAR') {
       let anamnese = documentos.filter(item => item.tipo_documento == 'ADMISSÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
       let evolucao = documentos.filter(item => item.tipo_documento == 'EVOLUÇÃO').sort((a, b) => moment(a.data) > moment(b.data) ? 1 : -1).slice(-1).map(item => item.texto).pop();
@@ -467,7 +467,7 @@ function Documentos() {
         anamnese + '\n\n' +
         evolucao
       insertDocumento(texto);
-      document.getElementById("gadgets_atestado").style.display = 'flex';
+      // document.getElementById("gadgets_atestado").style.display = 'flex';
     }
   }
 
@@ -587,8 +587,10 @@ function Documentos() {
                     document.getElementById("inputFieldDocumento").value = item.texto;
                   }
                   selector("lista de documentos", 'documento ' + item.id, 100);
+                  if (selecteddocumento == 'ATESTADO MÉDICO' && item.status == 0) {
+                    document.getElementById("gadgets_atestado").style.display = 'flex';
+                  }
                 }, 200);
-
               }}
               style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 180 }}
             >
