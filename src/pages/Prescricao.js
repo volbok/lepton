@@ -2100,7 +2100,10 @@ function Prescricao() {
   // impressão da prescrição.
   function PrintPrescricao() {
     return (
-      <div id="IMPRESSÃO - PRESCRIÇÃO" className="print">
+      <div id="IMPRESSÃO - PRESCRIÇÃO"
+        className="print"
+        style={{ width: 2480, height: 3508, backgroundColor: 'red' }}
+      >
         <table style={{ width: '100%' }}>
           <thead style={{ width: '100%' }}>
             <tr style={{ width: '100%' }}>
